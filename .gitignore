@@ -1,0 +1,36 @@
+# Charlie MJ Language - Git ignore rules.
+# Never commit generated packages, local test artifacts, secrets or editor files.
+
+# Packaged extension builds
+*.zip
+*.crx
+*.xpi
+/dist/
+/build/
+
+# Local developer state
+.env
+.env.*
+*.local
+
+# Node/Python tooling if future build scripts are added
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Local screenshots and generated exports used during testing
+/test-output/
+/local-downloads/

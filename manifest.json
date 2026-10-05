@@ -1,0 +1,104 @@
+{
+  "manifest_version": 3,
+  "name": "Charlie MJ Language",
+  "short_name": "Charlie MJ",
+  "version": "3.5.0",
+  "description": "Charlie MJ Language: a local-first YouTube language-learning workspace with independent caption fetching, timeline-synchronized dual subtitles, transcript mining, vocabulary, focus mode, bookmarks and study tools.",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "storage",
+    "downloads",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "commands",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.youtube.com/*",
+    "https://*.googlevideo.com/*",
+    "https://api.mymemory.translated.net/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Charlie MJ Language",
+    "default_popup": "src/popup/popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "src/content/youtube-page-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "src/content/youtube.js"
+      ],
+      "css": [
+        "src/content/youtube.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "exclude_matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "src/content/page-translator.js"
+      ],
+      "css": [
+        "src/content/page-translator.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "src/options/options.html",
+  "commands": {
+    "toggle-focus-mode": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "Toggle Charlie MJ Focus Mode"
+    },
+    "save-current-vocabulary": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Save the current subtitle as vocabulary"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*"
+      ],
+      "matches": [
+        "https://*.youtube.com/*"
+      ]
+    }
+  ]
+}
