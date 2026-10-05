@@ -2,7 +2,6 @@
 # Never commit generated packages, local test artifacts, secrets or editor files.
 
 # Packaged extension builds
-*.zip
 *.crx
 *.xpi
 /dist/
