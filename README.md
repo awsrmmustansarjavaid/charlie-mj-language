@@ -2,6 +2,22 @@
 
 Charlie MJ Language is a local-first Chrome extension for turning YouTube videos into a personal language-learning workspace.
 
+![Charlie MJ Language v4.1.2](assets/charlie-mj-language-v4.0.0-thumbnail.png)
+
+> **Watch → Understand → Capture → Learn → Organize → Review → Export**
+
+Charlie MJ Language is a local-first Chrome extension for learning languages from YouTube. v4.0.0 adds independent subtitle typography, word-to-word and sentence-to-sentence learning modes, CEFR/difficulty display, sentence mining, replay/A-B/slow playback, Study Mode, and a grid-based vocabulary library with word/sentence filters and tags.
+
+## Download
+
+<p align="center">
+  <a href="/downloads/charlie-mj-language-v4.1.2.zip">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
+  </a>
+</p>
+
+**Release:** `v4.1.2` · **Chrome MV3** · **MIT License** · **No GitHub Actions required**
+
 ## v4.1.2 — Learning Workspace polish update
 
 - Complete Transcript + Word Learning + Sentence Learning
