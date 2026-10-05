@@ -38,6 +38,7 @@
     $('#levelFilter').onchange = render;
     $('#tagFilter').oninput = render;
     $('#videoFilter').onchange = render;
+    $('#typeFilter').onchange = render;
     $('#pageForm').addEventListener('submit', createPage);
     $('#confirmYes').onclick = confirmDelete;
     $('#pagePickerForm').addEventListener('submit', submitPagePicker);
@@ -94,14 +95,16 @@
     const level = $('#levelFilter').value;
     const tag = $('#tagFilter').value.trim().toLowerCase();
     const videoId = $('#videoFilter').value;
+    const type = $('#typeFilter').value;
     const filtered = data.filter(item => {
       const haystack = JSON.stringify(item).toLowerCase();
       const levels = String(item.level || '').toUpperCase();
       const tags = (item.tags || []).map(String).join(' ').toLowerCase();
-      return (!query || haystack.includes(query)) && (!level || levels === level) && (!tag || tags.includes(tag)) && (!videoId || item.videoId === videoId);
+      return (!query || haystack.includes(query)) && (!level || levels === level) && (!tag || tags.includes(tag)) && (!videoId || item.videoId === videoId) && (!type || (item.type || 'word') === type);
     });
 
     $('#levelFilter').disabled = !['vocabulary', 'bookmarks'].includes(info.key) && !info.custom;
+    $('#typeFilter').disabled = info.key !== 'vocabulary';
     renderNav();
     renderVideoFilter();
     renderStats(filtered, info);
@@ -199,6 +202,13 @@
     let payload = buildReadableBundle(bundles), mime = 'text/plain', ext = 'txt';
     if (format === 'json') { payload = JSON.stringify({ program: 'Charlie MJ Language', exportedAt: new Date().toISOString(), pages: bundles.map(x => ({ id: x.page.id, name: x.page.name, items: x.items })) }, null, 2); mime = 'application/json'; ext = 'json'; }
     if (format === 'csv') { payload = buildCSV(bundles.flatMap(x => x.items.map(item => ({ page: x.page.name, ...item })))); mime = 'text/csv'; ext = 'csv'; }
+    if (format === 'srt' || format === 'vtt') {
+      const source = bundles.flatMap(x => x.items).filter(item => item.sentence || item.subtitle);
+      const cueTime = seconds => { const ms = Math.max(0, Math.round((Number(seconds) || 0) * 1000)); const h = Math.floor(ms / 3600000); const m = Math.floor((ms % 3600000) / 60000); const sec = Math.floor((ms % 60000) / 1000); const milli = ms % 1000; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}${format === 'srt' ? ',' : '.'}${String(milli).padStart(3,'0')}`; };
+      const rows = source.map((item,i) => { const start = Number(item.timestamp) || 0; const end = start + Math.max(1, Number(item.duration) || 2); return `${format === 'srt' ? `${i+1}\n` : ''}${cueTime(start)} --> ${cueTime(end)}\n${item.sentence || item.subtitle || ''}${item.translation ? `\n${item.translation}` : ''}`; }).join('\n\n');
+      payload = format === 'vtt' ? `WEBVTT\n\n${rows}` : rows; mime = 'text/plain'; ext = format;
+    }
+    if (format === 'anki') { payload = bundles.flatMap(x=>x.items).map(item=>`${String(item.word||item.sentence||'').replaceAll('\t',' ')}\t${String(item.translation||item.sentenceTranslation||'').replaceAll('\t',' ')}\t${String(item.sentence||'').replaceAll('\t',' ')}`).join('\n'); mime='text/tab-separated-values'; ext='txt'; }
     await downloadText(`${settings.downloadRoot}/Exports/${name}.${ext}`, payload, mime);
     $('#exportDialog').close(); notify('Selected library pages exported.');
   }

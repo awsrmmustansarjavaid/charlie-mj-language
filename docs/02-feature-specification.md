@@ -103,3 +103,16 @@
 - Select text on ordinary web pages
 - Translate selection without rewriting the page
 - Context-menu translation
+
+
+## v4.0.0 Final learning features
+
+- Independent original and translation subtitle typography: size, bold, underline and italic.
+- Word-to-word and sentence-to-sentence display modes.
+- A1–C2 CEFR labels plus Beginner–Proficient difficulty labels for active sentences.
+- Source POS colors remain mapped to corresponding translated tokens in word-to-word mode.
+- Save Word and Save Sentence records with explicit `type`, lemma, level, tags, video metadata and timestamp.
+- Vocabulary grid filters for Word-to-Word and Sentence-to-Sentence records.
+- Replay current sentence, A/B replay, slow playback, auto-pause and Study Mode.
+- Browser speech synthesis pronunciation button for saved/selected words.
+- Library export support for TXT, CSV, JSON, SRT, VTT and Anki-compatible TSV.

@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Charlie MJ Language",
   "short_name": "Charlie MJ",
-  "version": "3.5.0",
-  "description": "Charlie MJ Language: a local-first YouTube language-learning workspace with independent caption fetching, timeline-synchronized dual subtitles, transcript mining, vocabulary, focus mode, bookmarks and study tools.",
+  "version": "4.0.0",
+  "description": "Charlie MJ Language: a local-first YouTube language-learning workspace with independent subtitle fetching, timeline-synchronized dual subtitles, word-to-word and sentence-to-sentence learning, vocabulary mining, Study Mode, replay controls and library exports.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",

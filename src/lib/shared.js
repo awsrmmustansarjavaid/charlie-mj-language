@@ -20,7 +20,11 @@ export const DEFAULT_SETTINGS = {
   downloadSaveAs: false,
   showToolbarUnderVideo: true,
   wordCardAutoCloseMs: 6000,
-  theme: 'midnight'
+  theme: 'dark',
+  subtitleDisplayMode: 'both', originalFontSize: 28, translationFontSize: 22, originalBold: true, translationBold: false,
+  originalUnderline: false, translationUnderline: false, originalItalic: false, translationItalic: false, sentenceShowLevel: true,
+  replayCount: 1, playbackSpeed: 1, autoPauseAfterSubtitle: false, studyModeDefault: false, showWordPronunciation: true,
+  showWordTransliteration: false, markKnownStopsHighlight: true
 };
 
 export const POS_COLORS = {

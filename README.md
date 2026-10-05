@@ -1,16 +1,36 @@
-# 🌍 Charlie MJ Language
 
-**Charlie MJ Language** is a Chrome Manifest V3 language-learning workspace built directly around YouTube. It combines dual subtitles, interactive vocabulary, transcript mining, translation, CEFR-style levels, grammar/POS highlighting, Focus Mode, timeline bookmarks, screenshots, Watch Later and local learning productivity tools.
 
-> **Watch → Understand → Capture → Organize → Review → Improve**
+![Charlie MJ Language v4.0.0](assets/charlie-mj-language-v4.0.0-thumbnail.png)
+
+> **Watch → Understand → Capture → Learn → Organize → Review → Export**
+
+Charlie MJ Language is a local-first Chrome extension for learning languages from YouTube. v4.0.0 adds independent subtitle typography, word-to-word and sentence-to-sentence learning modes, CEFR/difficulty display, sentence mining, replay/A-B/slow playback, Study Mode, and a grid-based vocabulary library with word/sentence filters and tags.
 
 ## Download
 
 <p align="center">
-  <a href="/downloads/charlie-mj-language-v3.5.0.zip">
-    <img src="https://img.shields.io/badge/⬇%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
+  <a href="/downloads/charlie-mj-language-v4.0.0.zip">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
+
+**Release:** `v4.0.0` · **Chrome MV3** · **MIT License** · **No GitHub Actions required**
+
+### v4.0 highlights
+
+- Word-to-word dual subtitles with source POS colors preserved on corresponding translation words
+- Sentence-to-sentence translation mode with CEFR A1–C2 and Beginner–Proficient difficulty labels
+- Separate original/translation text size, bold, underline and italic controls
+- Save Word and Save Sentence with timestamp, video URL/title, lemma, level and tags
+- Vocabulary library filters for **Word-to-Word** and **Sentence-to-Sentence** records in a responsive grid
+- Replay current sentence, A/B replay, 0.5×–1.5× playback, auto-pause and Study Mode
+- Transcript timestamp navigation, vocabulary mining, notes, bookmarks, Watch Later and exports
+- TXT, CSV, JSON, SRT, VTT and Anki-compatible export paths
+- Local-first learner data and configurable translation providers
+
+**Charlie MJ Language** is a Chrome Manifest V3 language-learning workspace built directly around YouTube. It combines dual subtitles, interactive vocabulary, transcript mining, translation, CEFR-style levels, grammar/POS highlighting, Focus Mode, timeline bookmarks, screenshots, Watch Later and local learning productivity tools.
+
+> **Watch → Understand → Capture → Organize → Review → Improve**
 
 ## Why I built it
 
@@ -143,4 +163,4 @@ MIT. Third-party services and third-party video content remain subject to their 
 
 ## Latest YouTube caption architecture
 
-See `docs/20-realtime-caption-fetch-v3.5.0.md` for the realtime caption/transcript pipeline and timeline synchronization design.
+See `docs/21-caption-engine-root-cause-v3.6.0.md` for the historical caption-engine root-cause fix; the v4.0.0 release keeps that acquisition pipeline and adds the final learning/display layer documented in `docs/22-final-release-v4.0.0.md`.

@@ -242,3 +242,16 @@ body.cmj-toolbar-dragging * { cursor: grabbing !important; }
 #cmj-language-root[data-cmj-theme="light"] .cmj-tabs button { color:#0f172a; }
 #cmj-language-root[data-cmj-theme="light"] .cmj-original-line,
 #cmj-language-root[data-cmj-theme="light"] .cmj-translation-line { background:rgba(255,255,255,.88); text-shadow:0 1px 3px rgba(255,255,255,.8); }
+
+/* v4.0 learning display controls */
+.cmj-sentence-text,.cmj-sentence-translation{cursor:pointer}
+.cmj-study-hidden{filter:blur(10px);opacity:.35;cursor:pointer;transition:.18s ease}
+.cmj-study-hidden:hover{filter:blur(4px);opacity:.6}
+.cmj-subtitle-meta{letter-spacing:.03em}
+.cmj-vocab-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.cmj-vocab-filter button{border:1px solid rgba(125,211,252,.2);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;padding:7px 10px;cursor:pointer}
+.cmj-vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.cmj-vocab-card{height:100%}
+.cmj-card-label,.cmj-tag{display:inline-block!important;width:max-content!important;padding:3px 7px;border-radius:999px;background:rgba(56,189,248,.12);color:#7dd3fc!important;font-size:10px!important;margin-right:4px}
+
+.cmj-word-speak{position:absolute;right:40px;top:7px;border:0!important;background:transparent!important;color:#7dd3fc!important;font-size:16px!important;padding:3px 6px!important;cursor:pointer}.cmj-level-A1{box-shadow:inset 0 0 0 1px rgba(74,222,128,.15)}.cmj-level-A2{box-shadow:inset 0 0 0 1px rgba(134,239,172,.15)}.cmj-level-B1{box-shadow:inset 0 0 0 1px rgba(125,211,252,.18)}.cmj-level-B2{box-shadow:inset 0 0 0 1px rgba(167,139,250,.18)}.cmj-level-C1{box-shadow:inset 0 0 0 1px rgba(251,146,60,.18)}.cmj-level-C2{box-shadow:inset 0 0 0 1px rgba(248,113,113,.2)}

@@ -1,5 +1,5 @@
 /**
- * Charlie MJ Language - YouTube MAIN-world caption bridge v3.5.
+ * Charlie MJ Language - YouTube MAIN-world caption bridge v3.6.
  *
  * Why this bridge exists:
  * - YouTube's current timedtext URLs can return HTTP 200 with an empty body
@@ -26,6 +26,9 @@
   const seenDataSignatures = new Set();
   let currentVideoId = '';
   let installedNetworkHooks = false;
+  let lastTranscriptAttemptAt = 0;
+  let transcriptAttemptPromise = null;
+  let transcriptPanelFallbackAt = 0;
 
   const emit = (name, payload) => {
     try { document.dispatchEvent(new CustomEvent(name, { detail: JSON.stringify(payload) })); } catch (_) {}
@@ -157,16 +160,68 @@
     return null;
   }
 
+  function findTranscriptParamsDeep(root, depth = 0, seen = new Set()) {
+    if (!root || depth > 10 || typeof root !== 'object') return '';
+    if (seen.has(root)) return '';
+    seen.add(root);
+    if (root.getTranscriptEndpoint?.params) return String(root.getTranscriptEndpoint.params);
+    if (root.continuationEndpoint?.getTranscriptEndpoint?.params) return String(root.continuationEndpoint.getTranscriptEndpoint.params);
+    if (root.continuationEndpoint?.getTranscriptEndpoint?.params) return String(root.continuationEndpoint.getTranscriptEndpoint.params);
+    for (const value of Object.values(root)) {
+      const found = findTranscriptParamsDeep(value, depth + 1, seen);
+      if (found) return found;
+    }
+    return '';
+  }
+
+  function parseTranscriptSegments(json) {
+    const segments = [];
+    const actions = Array.isArray(json?.actions) ? json.actions : [];
+    for (const action of actions) {
+      const body = action?.updateEngagementPanelAction?.content?.transcriptRenderer?.content
+        ?.transcriptSearchPanelRenderer?.body?.transcriptSegmentListRenderer;
+      const initial = body?.initialSegments || [];
+      for (const item of initial) {
+        const r = item?.transcriptSegmentRenderer;
+        if (!r) continue;
+        const start = Number(r.startMs || r.startTimeMs || 0) / 1000;
+        const end = Number(r.endMs || 0) / 1000;
+        const text = r.snippet?.runs?.map(run => run.text || '').join('') || r.snippet?.simpleText || '';
+        if (text.trim()) segments.push({ start, duration: Math.max(0, end - start), text: cleanCaptionText(text) });
+      }
+    }
+    return segments.filter(x => x.text);
+  }
+
+  async function fetchInnertubeNextTranscriptParams(videoId, context, key) {
+    try {
+      const endpoint = `https://www.youtube.com/youtubei/v1/next${key ? `?key=${encodeURIComponent(key)}` : ''}`;
+      const response = await fetch(endpoint, {
+        method: 'POST', credentials: 'include', cache: 'no-store',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ context, videoId })
+      });
+      if (!response.ok) return '';
+      const json = await response.json();
+      return findTranscriptParamsDeep(json);
+    } catch (_) { return ''; }
+  }
+
   async function fetchInnertubeTranscript() {
     const videoId = getVideoId();
     if (!videoId) return false;
+    if (transcriptAttemptPromise) return transcriptAttemptPromise;
+    if (performance.now() - lastTranscriptAttemptAt < 1200) return false;
+    lastTranscriptAttemptAt = performance.now();
+    transcriptAttemptPromise = (async () => {
     const data = getInitialData();
-    const params = findTranscriptParams(data);
-    if (!params) return false;
     const context = getInnertubeContext();
     if (!context) return false;
     try {
       const key = window.ytcfg?.data_?.INNERTUBE_API_KEY || window.ytcfg?.get?.('INNERTUBE_API_KEY') || '';
+      let params = findTranscriptParams(data);
+      if (!params) params = await fetchInnertubeNextTranscriptParams(videoId, context, key);
+      if (!params) return false;
       const endpoint = `https://www.youtube.com/youtubei/v1/get_transcript${key ? `?key=${encodeURIComponent(key)}` : ''}`;
       const response = await fetch(endpoint, {
         method: 'POST', credentials: 'include', cache: 'no-store',
@@ -175,19 +230,12 @@
       });
       if (!response.ok) return false;
       const json = await response.json();
-      const segments = [];
-      const initial = json?.actions?.flatMap(a => a?.updateEngagementPanelAction?.content?.transcriptRenderer?.content?.transcriptSearchPanelRenderer?.body?.transcriptSegmentListRenderer?.initialSegments || []) || [];
-      for (const item of initial) {
-        const r = item?.transcriptSegmentRenderer;
-        if (!r) continue;
-        const startMs = Number(r.startMs || r.startTimeMs || 0);
-        const endMs = Number(r.endMs || 0);
-        const text = r.snippet?.runs?.map(run => run.text || '').join('') || r.snippet?.simpleText || '';
-        if (text.trim()) segments.push({ start: startMs / 1000, duration: endMs > startMs ? (endMs - startMs) / 1000 : 0, text: cleanCaptionText(text) });
-      }
+      const segments = parseTranscriptSegments(json);
       if (segments.length) { emitCaptions(segments, 'innertube-get-transcript'); return true; }
     } catch (_) {}
     return false;
+    })();
+    try { return await transcriptAttemptPromise; } finally { transcriptAttemptPromise = null; }
   }
 
   function installNetworkHooks() {
@@ -255,6 +303,64 @@
     if (segments.length) emitCaptions(segments, 'player-transcript-response');
   }
 
+  function parseTimestampText(text) {
+    const parts = String(text || '').trim().split(':').map(Number);
+    if (parts.some(Number.isNaN)) return NaN;
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if (parts.length === 2) return parts[0] * 60 + parts[1];
+    return parts[0] || 0;
+  }
+
+  function readTranscriptPanelDOM() {
+    try {
+      const rows = [...document.querySelectorAll('ytd-transcript-segment-renderer')];
+      if (!rows.length) return false;
+      const segments = [];
+      for (const row of rows) {
+        const timeNode = row.querySelector('.segment-timestamp, [class*="segment-timestamp"], yt-formatted-string.segment-timestamp');
+        const textNode = row.querySelector('.segment-text, yt-formatted-string.segment-text');
+        const start = parseTimestampText(timeNode?.textContent || row.getAttribute('data-start-time') || '0');
+        const text = cleanCaptionText(textNode?.textContent || row.textContent || '');
+        if (text && Number.isFinite(start)) segments.push({ start, duration: 0, text });
+      }
+      if (segments.length > 2) {
+        for (let i = 0; i < segments.length; i += 1) {
+          segments[i].duration = Math.max(0, (segments[i + 1]?.start ?? segments[i].start + 3) - segments[i].start);
+        }
+        emitCaptions(segments, 'youtube-transcript-dom');
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  function triggerTranscriptPanelFallback() {
+    try {
+      if (readTranscriptPanelDOM()) return true;
+      if (performance.now() - transcriptPanelFallbackAt < 1800) return false;
+      transcriptPanelFallbackAt = performance.now();
+      const buttons = [...document.querySelectorAll('button, yt-button-shape, ytd-button-renderer, tp-yt-paper-button')];
+      const button = buttons.find(node => /show transcript|transcript/i.test(node.getAttribute('aria-label') || node.textContent || ''));
+      if (!button) return false;
+      button.click();
+      let attempts = 0;
+      const timer = setInterval(() => {
+        attempts += 1;
+        if (readTranscriptPanelDOM() || attempts >= 20) {
+          clearInterval(timer);
+          if (attempts < 20) {
+            setTimeout(() => {
+              const close = [...document.querySelectorAll('button, yt-button-shape, ytd-button-renderer')]
+                .find(node => /close transcript/i.test(node.getAttribute('aria-label') || ''));
+              close?.click();
+            }, 80);
+          }
+        }
+      }, 120);
+      return true;
+    } catch (_) { return false; }
+  }
+
   function scan() {
     currentVideoId = getVideoId();
     try {
@@ -267,7 +373,8 @@
     } catch (_) {}
     // This is the key CC-independent route: YouTube's transcript endpoint is
     // called directly using the endpoint params already embedded in the page.
-    fetchInnertubeTranscript().catch(() => {});
+    fetchInnertubeTranscript().then(found => { if (!found) triggerTranscriptPanelFallback(); }).catch(() => triggerTranscriptPanelFallback());
+    triggerTranscriptPanelFallback();
   }
 
   installNetworkHooks();
@@ -280,11 +387,11 @@
   }, 150);
 
   window.addEventListener('yt-navigate-finish', () => {
-    seenTrackSignatures.clear(); seenDataSignatures.clear(); currentVideoId = getVideoId(); scan();
+    seenTrackSignatures.clear(); seenDataSignatures.clear(); lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan();
   }, true);
-  window.addEventListener('yt-page-data-fetched', () => { currentVideoId = getVideoId(); scan(); }, true);
-  window.addEventListener('yt-page-data-updated', () => { currentVideoId = getVideoId(); scan(); }, true);
+  window.addEventListener('yt-page-data-fetched', () => { lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan(); }, true);
+  window.addEventListener('yt-page-data-updated', () => { lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan(); }, true);
   window.addEventListener('beforeunload', () => clearInterval(timer), { once: true });
 
-  emit(DIAG_EVENT, { version: '3.5.0', networkHooks: installedNetworkHooks });
+  emit(DIAG_EVENT, { version: '4.0.0', networkHooks: installedNetworkHooks });
 })();

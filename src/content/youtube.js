@@ -1,5 +1,5 @@
 /**
- * Charlie MJ Language - YouTube learning engine.
+ * Charlie MJ Language - YouTube learning engine v4.0.0.
  *
  * This is the main YouTube integration for the extension. It deliberately uses
  * a DOM/player-oriented design instead of a popup-only design because the
@@ -49,7 +49,10 @@
     notesSaveTimer: null,
     syncFrame: null,
     lastSyncAt: 0,
-    captionDiagnostics: ''
+    captionDiagnostics: '',
+    sentenceReplayCount: 1,
+    abRange: null,
+    studyMode: false
   };
 
   const DEFAULTS = {
@@ -81,6 +84,20 @@
     toolbarAutoHideDelayMs: 1800,
     theme: 'dark',
     subtitlePreloadTranslations: 2,
+    subtitleDisplayMode: 'both',
+    originalFontSize: 28,
+    translationFontSize: 22,
+    originalBold: true,
+    translationBold: false,
+    originalUnderline: false,
+    translationUnderline: false,
+    originalItalic: false,
+    translationItalic: false,
+    sentenceShowLevel: true,
+    sentenceDifficulty: 'auto',
+    autoPauseAfterSubtitle: false,
+    replayCount: 1,
+    playbackSpeed: 1,
     grammarColors: {
       noun: '#38bdf8', verb: '#fb7185', adjective: '#a78bfa', adverb: '#4ade80', pronoun: '#facc15',
       preposition: '#f472b6', conjunction: '#fb923c', determiner: '#818cf8', numeral: '#a3e635', particle: '#22d3ee',
@@ -127,6 +144,7 @@
     const stored = await chrome.storage.local.get('settings');
     state.settings = { ...DEFAULTS, ...(stored.settings || {}) };
     state.focusMode = Boolean(state.settings.focusMode);
+    state.studyMode = Boolean(state.settings.studyModeDefault);
     state.settings.toolbarPosition = { left: 50, top: null, bottom: 58, ...(state.settings.toolbarPosition || {}) };
 
     document.addEventListener(EVENT_NAME, onPlayerResponse);
@@ -643,9 +661,15 @@
       <button class="cmj-more-button" data-cmj-toolbar="more" title="More tools">⋮</button>
       <div class="cmj-more-menu" hidden>
         <button data-cmj-toolbar="translate">🌐 Translate current subtitle</button>
+        <button data-cmj-toolbar="replay">🔁 Replay current sentence</button>
+        <button data-cmj-toolbar="speed">⏱ Speed 1×</button>
+        <button data-cmj-toolbar="ab">A/B Replay</button>
+        <button data-cmj-toolbar="study">🧠 Study Mode</button>
+        <button data-cmj-toolbar="save-sentence">📝 Save Sentence</button>
         <button data-cmj-toolbar="download-transcript">⬇ Complete transcript + translation</button>
         <button data-cmj-toolbar="download-vocabulary">📚 Custom vocabulary + translation</button>
         <button data-cmj-toolbar="report">📊 Video learning report</button>
+        <button data-cmj-toolbar="diagnostics">🧪 Caption engine status</button>
         <button data-cmj-toolbar="settings">⚙ Extension settings</button>
       </div>
     </div>`;
@@ -678,6 +702,11 @@
     if (action === 'focus') toggleFocusMode();
     if (action === 'more') $('.cmj-more-menu', button.parentElement)?.toggleAttribute('hidden');
     if (action === 'translate') translateCurrent(false);
+    if (action === 'replay') replayCurrentSentence();
+    if (action === 'speed') cyclePlaybackSpeed(button);
+    if (action === 'ab') toggleABReplay();
+    if (action === 'study') toggleStudyMode();
+    if (action === 'save-sentence') saveCurrentSentence();
     if (action === 'download-transcript') downloadTranscript('both');
     if (action === 'download-vocabulary') downloadVocabulary();
     if (action === 'report') showLearningReport();
@@ -685,14 +714,21 @@
   }
 
   async function onRootClick(event) {
+    if (event.target.closest('[data-cmj-sentence-translation]') && state.studyMode) { revealStudyTranslation(); return; }
+    const sentence = event.target.closest('[data-cmj-sentence]');
+    if (sentence) { saveCurrentSentence(); return; }
     const word = event.target.closest('.cmj-word');
     if (word) {
       showWordCard(word.dataset.word || '');
       return;
     }
+    if (event.target.closest('[data-cmj-word-speak]')) { const word = $('.cmj-word-card strong')?.textContent || ''; if (word && 'speechSynthesis' in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(word)); } return; }
     if (event.target.closest('[data-cmj-word-close]')) { closeWordCard(); return; }
     const wordCard = event.target.closest('.cmj-word-card');
     if (!wordCard) closeWordCard();
+
+    const vocabFilter = event.target.closest('[data-cmj-vocab-filter]')?.dataset.cmjVocabFilter;
+    if (vocabFilter) { state.settings.libraryVocabularyFilter = vocabFilter; renderPanel('vocabulary'); return; }
 
     const openUrl = event.target.closest('[data-cmj-open-url]')?.dataset.cmjOpenUrl;
     if (openUrl) { window.open(openUrl, '_blank', 'noopener,noreferrer'); return; }
@@ -734,6 +770,7 @@
     if (key !== state.lastCaptionKey) {
       state.lastCaptionKey = key;
       renderCurrentSubtitle();
+      if (state.settings.autoPauseAfterSubtitle) { const video = getVideo(); if (video && !video.paused) video.pause(); }
       if (state.settings.autoTranslate) {
         translateCurrent(true).catch(() => {});
         prefetchTranslations(state.activeIndex + 1, Number(state.settings.subtitlePreloadTranslations || 2));
@@ -769,12 +806,39 @@
       layer.innerHTML = state.nativeCaptionText ? '' : '<div class="cmj-no-caption">Fetching YouTube subtitles…</div>';
       return;
     }
-
     const cleanOriginal = stripYouTubeCaptionArtifacts(current.text);
-    const original = renderWords(cleanOriginal, false);
     const translated = stripYouTubeCaptionArtifacts(state.translationCache[state.activeIndex] || '');
+    const mode = state.settings.subtitleDisplayMode || 'both';
+    const original = renderWords(cleanOriginal, false);
     const translationHTML = translated ? renderWords(translated, true, cleanOriginal) : '<span class="cmj-translation-placeholder">Translation</span>';
-    layer.innerHTML = `<div class="cmj-original-line">${original}</div><div class="cmj-translation-line">${translationHTML}</div><div class="cmj-subtitle-meta">${formatTime(current.start)} · ${state.settings.showLevels ? getSentenceLevel(cleanOriginal) : ''}</div>`;
+    const level = state.settings.sentenceShowLevel !== false ? getSentenceLevel(cleanOriginal) : '';
+    const difficulty = getDifficultyLabel(level);
+    const originalStyle = subtitleInlineStyle('original');
+    const translationStyle = subtitleInlineStyle('translation');
+    const sentenceClass = state.studyMode ? ' cmj-study-active' : '';
+    const originalBlock = `<div class="cmj-original-line cmj-level-${level}${sentenceClass}" style="${originalStyle}">${mode === 'sentence' ? `<span class="cmj-sentence-text" data-cmj-sentence="1">${escapeHTML(cleanOriginal)}</span>` : original}</div>`;
+    const sentenceTranslation = translated ? escapeHTML(translated) : '<span class="cmj-translation-placeholder">Translation</span>';
+    const translationBlock = `<div class="cmj-translation-line${sentenceClass}" style="${translationStyle}">${mode === 'sentence' ? `<span class="cmj-sentence-translation" data-cmj-sentence-translation="1">${sentenceTranslation}</span>` : translationHTML}</div>`;
+    layer.innerHTML = `${mode === 'translation' ? '' : originalBlock}${mode === 'original' ? '' : translationBlock}<div class="cmj-subtitle-meta">${formatTime(current.start)} · ${escapeHTML(level)} · ${escapeHTML(difficulty)}</div>`;
+    if (state.studyMode) applyStudyReveal(layer);
+  }
+
+  function subtitleInlineStyle(kind) {
+    const prefix = kind === 'original' ? 'original' : 'translation';
+    const size = Number(state.settings[`${prefix}FontSize`] || (kind === 'original' ? 28 : 22));
+    const weight = state.settings[`${prefix}Bold`] ? 800 : 400;
+    const decoration = state.settings[`${prefix}Underline`] ? 'underline' : 'none';
+    const italic = state.settings[`${prefix}Italic`] ? 'italic' : 'normal';
+    return `font-size:${Math.max(10, Math.min(72, size))}px;font-weight:${weight};text-decoration:${decoration};font-style:${italic}`;
+  }
+
+  function getDifficultyLabel(level) {
+    return ({A1:'Beginner',A2:'Elementary',B1:'Intermediate',B2:'Upper-Intermediate',C1:'Advanced',C2:'Proficient'})[level] || 'Learner';
+  }
+
+  function applyStudyReveal(layer) {
+    const translation = $('.cmj-translation-line', layer);
+    if (translation && state.settings.studyRevealTranslation !== true) translation.classList.add('cmj-study-hidden');
   }
 
   function renderWords(text, translated = false, sourceText = '') {
@@ -814,6 +878,90 @@
     const suffix = safeWord.slice(index);
     const suffixColor = match.color;
     return `${escapeHTML(base)}<span class="cmj-morphology" style="--cmj-morph:${escapeHTML(suffixColor)}" title="${escapeHTML(match.label)}">${escapeHTML(suffix)}</span>`;
+  }
+
+  function replayCurrentSentence() {
+    const video = getVideo();
+    const current = getCurrentCaption();
+    if (!video || !current) return showToast('No active sentence is available.');
+    const count = Math.max(1, Math.min(5, Number(state.settings.replayCount || 1)));
+    video.currentTime = Math.max(0, Number(current.start || 0));
+    video.playbackRate = Number(state.settings.playbackSpeed || 1);
+    let remaining = count;
+    const handler = () => {
+      const active = getCurrentCaption();
+      if (!active || active !== current) return;
+      remaining -= 1;
+      if (remaining > 0) video.currentTime = Math.max(0, Number(current.start || 0));
+      else video.removeEventListener('timeupdate', handler);
+    };
+    video.addEventListener('timeupdate', handler);
+    video.play().catch(() => {});
+    showToast(`Replaying sentence ${count}×.`);
+  }
+
+  function cyclePlaybackSpeed(button) {
+    const video = getVideo();
+    if (!video) return;
+    const speeds = [0.5, 0.75, 1, 1.25, 1.5];
+    const current = Number(video.playbackRate || 1);
+    const next = speeds[(speeds.indexOf(current) + 1) % speeds.length];
+    video.playbackRate = next;
+    state.settings.playbackSpeed = next;
+    chrome.storage.local.set({settings: state.settings});
+    if (button) button.textContent = `⏱ Speed ${next}×`;
+    showToast(`Playback speed: ${next}×`);
+  }
+
+  function toggleABReplay() {
+    const video = getVideo();
+    const current = getCurrentCaption();
+    if (!video || !current) return showToast('No active sentence is available.');
+    if (!state.abRange) {
+      const next = state.captions[state.activeIndex + 1];
+      state.abRange = { a: current.start, b: next ? next.start : current.start + Math.max(1, current.duration || 2) };
+      showToast(`A/B replay set: ${formatTime(state.abRange.a)} → ${formatTime(state.abRange.b)}. Click again to clear.`);
+      const loop = () => {
+        if (!state.abRange || !getVideo()) return;
+        if (video.currentTime >= state.abRange.b) video.currentTime = state.abRange.a;
+        if (state.abRange) requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    } else {
+      state.abRange = null;
+      showToast('A/B replay cleared.');
+    }
+  }
+
+  function toggleStudyMode() {
+    state.studyMode = !state.studyMode;
+    renderCurrentSubtitle();
+    showToast(state.studyMode ? 'Study Mode enabled. Translation is hidden until revealed.' : 'Study Mode disabled.');
+  }
+
+  function revealStudyTranslation() {
+    state.settings.studyRevealTranslation = true;
+    const line = $('.cmj-translation-line');
+    if (line) line.classList.remove('cmj-study-hidden');
+    showToast('Translation revealed.');
+  }
+
+  async function saveCurrentSentence() {
+    const current = getCurrentCaption();
+    if (!current) return showToast('No active sentence is available.');
+    const translation = state.translationCache[state.activeIndex] || await translateCurrent(true);
+    const stored = await chrome.storage.local.get('vocabulary');
+    const vocabulary = stored.vocabulary || [];
+    const timestamp = getVideo()?.currentTime || 0;
+    const item = {
+      id: crypto.randomUUID(), type:'sentence', word:'', sentence:current.text, translation:translation || '', sentenceTranslation:translation || '',
+      lemma:'', pos:'sentence', level:getSentenceLevel(current.text), levelLabel:CEFR[getSentenceLevel(current.text)] || 'Learner', stage:'New',
+      videoId:state.videoId, videoTitle:state.title, url:state.url, timestamp, source:'Sentence Mining',
+      tags:['YouTube','Sentence',getSentenceLevel(current.text)], createdAt:new Date().toISOString()
+    };
+    const duplicate = vocabulary.some(x => x.type === 'sentence' && x.videoId === state.videoId && x.sentence === current.text && Math.abs(Number(x.timestamp||0)-timestamp)<1.5);
+    if (!duplicate) { vocabulary.unshift(item); await chrome.storage.local.set({vocabulary}); }
+    showToast(duplicate ? 'This sentence is already saved.' : 'Sentence saved to Vocabulary.');
   }
 
   async function translateCurrent(silent = false) {
@@ -869,7 +1017,7 @@
     const info = analyzeWord(clean);
     clearTimeout(state.wordCardTimer);
     card.hidden = false;
-    card.innerHTML = `<button class="cmj-word-card-close" data-cmj-word-close aria-label="Close">×</button><strong>${escapeHTML(clean)}</strong><span>${info.posLabel} · ${info.cefr} · ${CEFR[info.cefr]}</span><span class="cmj-word-translation">Translating…</span><button data-cmj-save-word="${escapeHTML(clean)}">⭐ Save vocabulary</button>`;
+    card.innerHTML = `<button class="cmj-word-speak" data-cmj-word-speak aria-label="Pronounce">🔊</button><button class="cmj-word-card-close" data-cmj-word-close aria-label="Close">×</button><strong>${escapeHTML(clean)}</strong><span>${info.posLabel} · ${info.cefr} · ${CEFR[info.cefr]}</span><span class="cmj-word-translation">Translating…</span><button data-cmj-save-word="${escapeHTML(clean)}">⭐ Save vocabulary</button>`;
     state.wordCardTimer = setTimeout(() => { card.hidden = true; }, Number(state.settings.wordCardAutoCloseMs || 6000));
     safeRuntimeMessage({
       type: 'CMJ_TRANSLATE', text: clean,
@@ -934,6 +1082,18 @@
     return rules.filter(rule => rule.re.test(lower)).map(rule => ({ ...rule, suffix: lower.match(rule.re)?.[0] || '' }));
   }
 
+  function inferLemma(word) {
+    const lower = String(word || '').toLocaleLowerCase(state.settings.sourceLanguage === 'tr' ? 'tr' : undefined);
+    if (state.settings.sourceLanguage === 'tr') {
+      const rules = [/(iyor|ıyor|uyor|üyor)(um|ım|um|üm|sun|sın|sunuz|sünüz|uz|ız|uz|üz)?$/i, /(acak|ecek)(ım|im|um|üm)?$/i, /(miş|mış|muş|müş)(ti|tı|tu|tü|im|ım|um|üm)?$/i, /(di|dı|du|dü)(m|n|k)?$/i];
+      let base = lower;
+      for (const r of rules) { if (r.test(base)) { base = base.replace(r,''); break; } }
+      if (base.length > 2 && /[a-zçğıöşü]$/.test(base)) return base;
+      if (/(mak|mek)$/.test(lower)) return lower;
+    }
+    return lower;
+  }
+
   function getSentenceLevel(text) {
     const words = text.split(/\s+/).filter(Boolean).map(word => analyzeWord(word).cefr);
     const order = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -957,9 +1117,10 @@
 
     vocabulary.push({
       id: crypto.randomUUID(),
+      type: 'word',
       word,
       translation,
-      lemma: word.toLocaleLowerCase(),
+      lemma: info.lemma || word.toLocaleLowerCase(),
       pos: info.pos || 'sentence',
       level: info.cefr || getSentenceLevel(word),
       levelLabel: CEFR[info.cefr] || 'Learner',
@@ -1065,6 +1226,21 @@
     for (const [name, enabled] of Object.entries(classMap)) document.documentElement.classList.toggle(name, Boolean(enabled && state.focusMode));
   }
 
+  function showCaptionDiagnostics() {
+    const video = getVideo();
+    const message = [
+      `Video: ${state.videoId || 'not detected'}`,
+      `Player: ${video ? 'found' : 'not found'}`,
+      `Caption tracks: ${state.tracks.length}`,
+      `Timed cues: ${state.captions.length}`,
+      `Active cue: ${state.activeIndex >= 0 ? state.activeIndex + 1 : 'none'}`,
+      `Current time: ${video ? video.currentTime.toFixed(2) + 's' : '—'}`,
+      `Translation cache: ${Object.keys(state.translationCache).length}`,
+      `Bridge: ${state.captionDiagnostics || 'listening'}`
+    ].join('\n');
+    showToast(message);
+  }
+
   function openPanel(tab = 'transcript') {
     const panel = $('.cmj-panel');
     if (!panel) return;
@@ -1105,7 +1281,17 @@
 
     const dataKey = tab === 'vocabulary' ? 'vocabulary' : tab;
     const stored = await chrome.storage.local.get(dataKey);
-    const data = stored[dataKey] || [];
+    let data = stored[dataKey] || [];
+    if (tab === 'vocabulary') {
+      data = data.filter(item => (state.settings.libraryVocabularyFilter || 'all') === 'all' || (state.settings.libraryVocabularyFilter === 'word' ? (item.type || 'word') === 'word' : (item.type || 'word') === 'sentence'));
+      const cards = data.slice(0, 300).map(item => {
+        const title = item.videoTitle || item.title || 'Untitled video';
+        const type = (item.type || 'word') === 'sentence' ? 'Sentence' : 'Word';
+        return `<article class="cmj-card cmj-vocab-card"><span class="cmj-card-label">${type}</span><strong>${escapeHTML(item.word || item.sentence || '')}</strong><span>${escapeHTML(item.translation || item.sentenceTranslation || '')}</span><small>${escapeHTML(item.lemma ? 'Lemma: ' + item.lemma + ' · ' : '')}${escapeHTML(title)} · ${escapeHTML(item.level || '')}</small><div>${(item.tags || []).map(t => `<span class="cmj-tag">#${escapeHTML(t)}</span>`).join('')}</div></article>`;
+      }).join('');
+      body.innerHTML = `<div class="cmj-vocab-filter"><button data-cmj-vocab-filter="all">All</button><button data-cmj-vocab-filter="word">Word-to-Word</button><button data-cmj-vocab-filter="sentence">Sentence-to-Sentence</button></div>${data.length ? `<div class="cmj-vocab-grid">${cards}</div>` : '<p class="cmj-empty">Nothing saved here yet.</p>'}`;
+      return;
+    }
     body.innerHTML = data.length
       ? data.slice(0, 200).map(item => {
           const title = item.videoTitle || item.title || 'Untitled video';
