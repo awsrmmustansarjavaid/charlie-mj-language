@@ -1,32 +1,68 @@
-# Charlie MJ Language v4.0.0
+# Charlie MJ Language — v4.1.2 Learning Workspace
 
-![Charlie MJ Language v4.0.0](assets/charlie-mj-language-v4.0.0-thumbnail.png)
+Charlie MJ Language is a local-first Chrome extension for turning YouTube videos into a personal language-learning workspace.
+
+## v4.1.2 — Learning Workspace polish update
+
+- Complete Transcript + Word Learning + Sentence Learning
+- Shared subtitle/timeline synchronization
+- Word and sentence records linked to exact YouTube timestamps
+- Automatic History and Continue Learning
+- Resume Queue for multiple unfinished videos
+- Video Learning Record with progress, session count, playback speed, subtitle mode and study state
+- Learning Checkpoints
+- Collections that can contain the same video/item more than once across collections
+- Grid/List library layout with remembered preference
+- Videos, Transcripts, Word Learning, Sentence Learning, Vocabulary, Bookmarks, Watch Later, Notes, Captures, Favorites and Review/Weak Words
+- Smart Replay, A/B/Loop sentence controls and slow playback
+- Toolbar Manager: drag actions between visible toolbar and More Menu
+- Word + Sentence toolbar buttons
+- Single Dark/Light appearance toggle
+- Settings sidebar with categorized controls
+- Library export/import: JSON, TXT, CSV, SRT, VTT and Anki TSV
+- Local-first storage in Chrome `storage.local`
+
+### Learning flow
+
+**Watch → Understand → Capture → Learn → Organize → Review → Continue**
+
+### Install
+
+1. Download/extract the extension ZIP.
+2. Open Chrome → `chrome://extensions`.
+3. Enable **Developer mode**.
+4. Select **Load unpacked** and choose the extracted extension folder.
+5. Open a YouTube video.
+
+Your learning data stays in Chrome local storage unless you explicitly export/download it.
+
+
+
+![Charlie MJ Language](assets/charlie-mj-language-v4.0.0-thumbnail.png)
 
 > **Watch → Understand → Capture → Learn → Organize → Review → Export**
 
-Charlie MJ Language is a local-first Chrome extension for learning languages from YouTube. v4.0.0 adds independent subtitle typography, word-to-word and sentence-to-sentence learning modes, CEFR/difficulty display, sentence mining, replay/A-B/slow playback, Study Mode, and a grid-based vocabulary library with word/sentence filters and tags.
+Charlie MJ Language is a local-first Chrome extension for learning languages from YouTube. v4.1.2 keeps the v4.0 subtitle-learning system and adds a cleaner workspace, word-to-word and sentence-to-sentence learning modes, CEFR/difficulty display, sentence mining, replay/A-B/slow playback, Study Mode, and a grid-based vocabulary library with word/sentence filters and tags.
 
 ## Download
 
 <p align="center">
-  <a href="/downloads/charlie-mj-language-v4.0.0.zip">
+  <a href="/downloads/charlie-mj-language-v4.1.2.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
 
-**Release:** `v4.0.0` · **Chrome MV3** · **MIT License** · **No GitHub Actions required**
+**Release:** `v4.1.2` · **Chrome MV3** · **MIT License** · **No GitHub Actions required**
 
-### v4.0 highlights
+### v4.1.2 highlights
 
-- Word-to-word dual subtitles with source POS colors preserved on corresponding translation words
-- Sentence-to-sentence translation mode with CEFR A1–C2 and Beginner–Proficient difficulty labels
-- Separate original/translation text size, bold, underline and italic controls
-- Save Word and Save Sentence with timestamp, video URL/title, lemma, level and tags
-- Vocabulary library filters for **Word-to-Word** and **Sentence-to-Sentence** records in a responsive grid
-- Replay current sentence, A/B replay, 0.5×–1.5× playback, auto-pause and Study Mode
-- Transcript timestamp navigation, vocabulary mining, notes, bookmarks, Watch Later and exports
-- TXT, CSV, JSON, SRT, VTT and Anki-compatible export paths
-- Local-first learner data and configurable translation providers
+- Stateful toolbar buttons visibly show **ON** for active learning modes and return to normal when OFF.
+- Action buttons show a short completion state so Save, Bookmark, Capture and exports feel responsive.
+- Toolbar **Settings** now uses a reliable options-page fallback if Chrome does not open it directly.
+- Library navigation is divided into **Start, Content, Learning and Organize** sections, with custom collections separated into their own area.
+- Settings now use a professional category workspace: clicking **General, Toolbar, Subtitles & Timeline, Learning, Translation, Downloads, Focus, Appearance or Language Intelligence** shows only that category.
+- Save Settings changes to **✓ Saved** and displays a persistent success notification before returning to the normal button state.
+- Existing v4.1.0 Learning Library, Continue Learning, History, Collections, Checkpoints, Word Learning, Sentence Learning and export features remain intact.
 
 **Charlie MJ Language** is a Chrome Manifest V3 language-learning workspace built directly around YouTube. It combines dual subtitles, interactive vocabulary, transcript mining, translation, CEFR-style levels, grammar/POS highlighting, Focus Mode, timeline bookmarks, screenshots, Watch Later and local learning productivity tools.
 
@@ -86,7 +122,7 @@ The project is inspired by the capabilities of FunLingo and open-source language
 4. Click **Load unpacked**.
 5. Select the extracted `charlie-mj-language-final` directory.
 6. Open or refresh a YouTube video.
-7. Turn on YouTube **CC**.
+7. YouTube **CC** can remain off; Charlie MJ attempts to fetch caption tracks independently.
 8. The Charlie MJ learning toolbar appears in the player.
 
 If YouTube was already open while installing/reloading the extension, refresh the video once.
@@ -100,7 +136,7 @@ The YouTube three-dot menu is not a public extension API. Charlie MJ watches the
 ## Repository
 
 ```text
-charlie-mj-language-final/
+charlie-mj-language-v4.1.2/
 ├── assets/
 ├── icons/
 ├── docs/
@@ -163,4 +199,4 @@ MIT. Third-party services and third-party video content remain subject to their 
 
 ## Latest YouTube caption architecture
 
-See `docs/21-caption-engine-root-cause-v3.6.0.md` for the historical caption-engine root-cause fix; the v4.0.0 release keeps that acquisition pipeline and adds the final learning/display layer documented in `docs/22-final-release-v4.0.0.md`.
+See `docs/21-caption-engine-root-cause-v3.6.0.md` for the historical caption-engine root-cause fix; v4.1.2 keeps that acquisition pipeline and builds the Learning Workspace, Library, toolbar-state and settings UX on top of it.

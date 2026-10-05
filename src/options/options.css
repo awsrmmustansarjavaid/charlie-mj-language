@@ -8,3 +8,27 @@ section label { display:block; margin:10px 0; }
 section input[type="number"], section input[type="text"], section select { max-width:100%; }
 
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:680px){.two-col{grid-template-columns:1fr}}
+
+body{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0;max-width:1400px;margin:0 auto;min-height:100vh}
+.settings-nav{position:sticky;top:0;height:100vh;padding:24px 12px;border-right:1px solid rgba(255,255,255,.08);background:rgba(7,13,25,.78);backdrop-filter:blur(16px);overflow:auto}
+.settings-nav-title{font-weight:800;font-size:18px;margin-bottom:4px}.settings-nav>p{color:#8da2bd;font-size:11px;margin:0 0 15px}
+.settings-nav a{display:block;color:#aebed0;text-decoration:none;padding:8px 10px;border-radius:8px;font-size:12px;margin:2px 0}
+.settings-nav a:hover,.settings-nav a.active{background:rgba(56,189,248,.12);color:#e6f7ff}
+main{min-width:0}
+@media(max-width:800px){body{display:block}.settings-nav{position:sticky;top:0;height:auto;display:flex;gap:5px;overflow:auto;z-index:5}.settings-nav-title,.settings-nav>p{display:none}.settings-nav a{white-space:nowrap}}
+
+.toolbar-manager{display:grid;grid-template-columns:1fr 1fr;gap:12px}.drag-list{min-height:90px;margin-top:7px;padding:8px;border:1px dashed rgba(125,211,252,.18);border-radius:10px;background:rgba(255,255,255,.025)}.drag-item{padding:8px 10px;margin:5px 0;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.06);cursor:grab}.drag-item:active{cursor:grabbing}@media(max-width:700px){.toolbar-manager{grid-template-columns:1fr}}
+
+/* v4.1.1 — settings workspace: show one category at a time instead of a long page. */
+.settings-nav{width:230px}
+.settings-nav .settings-category{display:block;width:100%;border:0;background:transparent;color:#aebed0;text-align:left;padding:10px 11px;border-radius:10px;font-size:12px;margin:3px 0;cursor:pointer}
+.settings-nav .settings-category:hover{background:rgba(56,189,248,.08);color:#e6f7ff}
+.settings-nav .settings-category.active{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(37,99,235,.12));color:#fff;box-shadow:inset 0 0 0 1px rgba(56,189,248,.18)}
+.settings-nav .settings-category small{display:block;color:#7186a0;font-size:10px;margin-top:2px;padding-left:22px}
+main>section{display:none}
+main>section.settings-visible{display:block}
+main{max-width:980px;padding-bottom:110px}
+.settings-savebar{position:sticky;bottom:18px;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:20px;margin:20px 0 0;padding:13px 15px;border:1px solid rgba(56,189,248,.18);border-radius:14px;background:rgba(7,16,31,.92);backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.settings-savebar strong{display:block;font-size:13px}.settings-savebar span{color:#8ea4bd;font-size:11px}.settings-savebar #status{color:#67e8f9;margin-left:4px}.settings-savebar #save{min-width:132px;transition:.18s ease}.settings-savebar #save.saved{background:#15803d;box-shadow:0 0 0 1px rgba(134,239,172,.22),0 8px 25px rgba(34,197,94,.18)}
+.settings-savebar #save.saving{opacity:.7;pointer-events:none}
+@media(max-width:800px){.settings-savebar{bottom:8px;align-items:flex-start;flex-direction:column}.settings-savebar .actions{width:100%;justify-content:space-between}.settings-nav{width:auto}}

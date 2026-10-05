@@ -1,43 +1,38 @@
 <!doctype html>
-<!-- Charlie MJ Language Library: responsive local-first learning data manager. -->
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Charlie MJ Language Library</title>
-  <link rel="stylesheet" href="dashboard.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Charlie MJ Language — Learning Library</title><link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand"><span class="brand-icon">🌍</span><div><strong>Charlie MJ Language</strong><small>Personal language-learning library</small></div></div>
-    <div class="header-actions"><button id="openOptions">⚙ Settings</button><button id="refresh">↻ Refresh</button></div>
-  </header>
+<header class="app-header">
+  <div class="brand"><span class="brand-icon">🌍</span><div><strong>Charlie MJ Language</strong><small>Personal video language-learning workspace</small></div></div>
+  <div class="header-actions"><button id="viewToggle" title="Switch grid/list">▦ Grid</button><button id="openOptions">⚙ Settings</button><button id="refresh">↻ Refresh</button></div>
+</header>
+<main class="workspace">
+<section class="hero">
+  <div><p class="eyebrow">LEARNING LIBRARY · v4.1</p><h1>My Learning Library</h1><p>Continue videos, revisit exact sentences, organize collections, review vocabulary and keep every learning moment linked to its YouTube timeline.</p></div>
+  <div class="hero-actions"><button id="resumeTop" class="primary">▶ Continue Learning</button><button id="addPage" class="secondary">＋ New Collection</button></div>
+</section>
+<div class="library-layout">
+  <aside id="libraryNav" class="library-sidebar" aria-label="Library navigation"></aside>
+  <div class="library-content">
+<section id="overview" class="overview-panel" hidden></section>
+<section class="toolbar-card">
+  <div class="search-wrap"><span>⌕</span><input id="search" placeholder="Search videos, words, sentences, translations, notes, tags…" aria-label="Search library"></div>
+  <div class="filters" aria-label="Library filters"><select id="typeFilter"><option value="">All types</option><option value="word">Word Learning</option><option value="sentence">Sentence Learning</option><option value="video">Video</option><option value="checkpoint">Checkpoint</option></select><select id="levelFilter"><option value="">All levels</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select><input id="tagFilter" placeholder="Filter tag…"><select id="videoFilter"><option value="">All videos</option></select></div>
+  <div class="bulk-actions"><button id="copyPage">📋 Copy</button><button id="downloadPage">⬇ Download</button><button id="exportPage">⇩ Export</button><button id="importPage">⇧ Import</button><input id="importFile" type="file" accept=".json,.csv,.txt" hidden></div>
+</section>
+<section id="stats" class="stats-grid"></section>
+<section id="items" class="item-grid" aria-live="polite"></section>
+  </div>
+</div>
+</main>
 
-  <main class="workspace">
-    <section class="hero">
-      <div><p class="eyebrow">LOCAL LEARNING LIBRARY</p><h1>My Learning Library</h1><p>Manage Watch Later, Vocabulary, Bookmarks and your own custom collections.</p></div>
-      <button id="addPage" class="primary">＋ New Library Page</button>
-    </section>
-
-    <nav id="libraryNav" class="library-nav" aria-label="Library pages"></nav>
-
-    <section class="toolbar-card">
-      <div class="search-wrap"><span>⌕</span><input id="search" placeholder="Search title, word, translation, tag, video…" aria-label="Search library"></div>
-      <div class="filters"><select id="typeFilter"><option value="">All item types</option><option value="word">Word-to-Word</option><option value="sentence">Sentence-to-Sentence</option></select><select id="levelFilter"><option value="">All levels</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select><input id="tagFilter" placeholder="Filter tag…"><select id="videoFilter"><option value="">All videos</option></select></div>
-      <div class="bulk-actions"><button id="copyPage">📋 Copy</button><button id="downloadPage">⬇ Download</button><button id="exportPage">⇩ Export</button><button id="importPage">⇧ Import</button><input id="importFile" type="file" accept=".json,.csv,.txt" hidden></div>
-    </section>
-
-    <section id="stats" class="stats-grid"></section>
-    <section id="items" class="item-grid" aria-live="polite"></section>
-  </main>
-
-  <dialog id="pageDialog"><form method="dialog" id="pageForm"><button type="button" class="dialog-close" data-close>×</button><h2>Create library page</h2><p>Make a custom collection for a course, language, topic, or project.</p><label>Page name<input id="pageName" required maxlength="60" placeholder="e.g. Turkish B1 Course"></label><label>Tags<input id="pageTags" maxlength="160" placeholder="turkish, b1, course"></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="default">Create page</button></div></form></dialog>
-
-  <dialog id="exportDialog"><form method="dialog" id="exportForm"><button type="button" class="dialog-close" data-close>×</button><h2 id="exportTitle">Export library data</h2><p>Select exactly what you want to include.</p><div id="exportChoices"></div><label>Format<select id="exportFormat"><option value="json">JSON (recommended)</option><option value="txt">Readable TXT</option><option value="csv">CSV</option><option value="srt">SRT</option><option value="vtt">VTT</option><option value="anki">Anki TSV</option></select></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="export">Export selected</button></div></form></dialog>
-
-  <dialog id="pagePickerDialog"><form method="dialog" id="pagePickerForm"><button type="button" class="dialog-close" data-close>×</button><h2>Add to custom page</h2><p>Choose where this learning item should also appear.</p><label>Library page<select id="pagePickerSelect"></select></label><input id="pickerItemId" type="hidden"><input id="pickerSource" type="hidden"><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="add">Add item</button></div></form></dialog>
-
-  <dialog id="confirmDialog"><form method="dialog"><h2 id="confirmTitle">Delete page?</h2><p id="confirmText"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button id="confirmYes" class="danger" value="yes">Delete</button></div></form></dialog>
-  <script src="dashboard.js"></script>
-</body>
-</html>
+<dialog id="pageDialog"><form method="dialog" id="pageForm"><button type="button" class="dialog-close" data-close>×</button><h2>Create collection</h2><p>Create a reusable learning collection. A video or learning item can belong to more than one collection.</p><label>Collection name<input id="pageName" required maxlength="60" placeholder="e.g. Turkish A1 Listening"></label><label>Tags<input id="pageTags" maxlength="160" placeholder="turkish, a1, listening"></label><label>Description<textarea id="pageDescription" maxlength="300" placeholder="Learning goal…"></textarea></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="default">Create</button></div></form></dialog>
+<dialog id="exportDialog"><form method="dialog" id="exportForm"><button type="button" class="dialog-close" data-close>×</button><h2 id="exportTitle">Export library</h2><p>Select pages and a format.</p><div id="exportChoices"></div><label>Format<select id="exportFormat"><option value="json">JSON</option><option value="txt">Readable TXT</option><option value="csv">CSV</option><option value="srt">SRT</option><option value="vtt">VTT</option><option value="anki">Anki TSV</option></select></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="export">Export</button></div></form></dialog>
+<dialog id="pagePickerDialog"><form method="dialog" id="pagePickerForm"><button type="button" class="dialog-close" data-close>×</button><h2>Add to collection</h2><p>The same item can live in multiple collections.</p><label>Collection<select id="pagePickerSelect"></select></label><input id="pickerItemId" type="hidden"><input id="pickerSource" type="hidden"><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="add">Add</button></div></form></dialog>
+<dialog id="checkpointDialog"><form method="dialog" id="checkpointForm"><button type="button" class="dialog-close" data-close>×</button><h2>Add checkpoint</h2><label>Label<input id="checkpointLabel" maxlength="100" placeholder="Grammar lesson"></label><label>Timestamp (seconds)<input id="checkpointTime" type="number" min="0" step="0.1"></label><label>Video ID<input id="checkpointVideo" required></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="add">Save checkpoint</button></div></form></dialog>
+<dialog id="confirmDialog"><form method="dialog"><h2 id="confirmTitle">Delete collection?</h2><p id="confirmText"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button id="confirmYes" class="danger" value="yes">Delete</button></div></form></dialog>
+<script src="dashboard.js"></script>
+</body></html>

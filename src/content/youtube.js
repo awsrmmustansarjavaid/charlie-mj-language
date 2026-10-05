@@ -52,7 +52,11 @@
     captionDiagnostics: '',
     sentenceReplayCount: 1,
     abRange: null,
-    studyMode: false
+    studyMode: false,
+    lastProgressWrite: 0,
+    resumeAppliedFor: '',
+    sessionStartedAt: Date.now(),
+    sessionSeconds: 0
   };
 
   const DEFAULTS = {
@@ -154,6 +158,8 @@
     chrome.runtime.onMessage.addListener(onMessage);
     window.addEventListener('keydown', onShortcut, true);
     chrome.storage.onChanged.addListener(onSettingsChanged);
+    window.addEventListener('pagehide', () => { saveLearningProgress(true).catch(() => {}); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveLearningProgress(true).catch(() => {}); });
 
     installObservers();
     routeChanged();
@@ -213,6 +219,7 @@
       state.activeIndex = -1;
       state.lastCaptionKey = '';
       renderCurrentSubtitle();
+      saveTranscriptRecord().catch(() => {});
       renderPanelIfOpen();
       if (state.settings.autoTranslate) prefetchTranslations(0, Number(state.settings.subtitlePreloadTranslations || 2));
     } catch (_) {}
@@ -254,6 +261,10 @@
     state.lastCaptionKey = '';
     state.translationCache = {};
     state.nativeCaptionText = '';
+    state.lastProgressWrite = 0;
+    state.resumeAppliedFor = '';
+    state.sessionStartedAt = Date.now();
+    state.sessionSeconds = 0;
 
     applyFocusMode();
     showToast('Charlie MJ Language is fetching subtitles…');
@@ -261,6 +272,8 @@
       await bootstrapCaptionDiscovery();
     }
     readNativeCaptions();
+    await registerVideoHistory();
+    await resumeSavedLearningState();
   }
 
   function applyTheme() {
@@ -424,6 +437,7 @@
           state.captions = mergeCaptionSegments(parsed);
           renderCurrentSubtitle(); renderPanelIfOpen();
           showToast(`${state.captions.length} subtitle segments loaded.`);
+          saveTranscriptRecord().catch(() => {});
           return true;
         }
       }
@@ -606,6 +620,7 @@
     toolbar.addEventListener('pointerdown', begin, true);
     document.addEventListener('pointermove', move, true);
     document.addEventListener('pointerup', end, true);
+    updateToolbarButtonStates();
     toolbar.addEventListener('dblclick', async event => {
       if (event.target.closest('button')) return;
       state.settings.toolbarPosition = { leftPx: Math.max(10, window.innerWidth / 2 - 300), topPx: Math.max(10, window.innerHeight - 100), left: null, top: null, bottom: null };
@@ -650,28 +665,34 @@
   }
 
   function buildToolbarHTML() {
+    const frontDefault=['toggle','transcript','word','sentence','save','bookmark','capture','watch','focus','theme'];
+    const moreDefault=['translate','replay','loop','speed','ab','study','save-sentence','download-transcript','download-vocabulary','report','diagnostics','settings'];
+    const front=Array.isArray(state.settings.toolbarActionOrder)?state.settings.toolbarActionOrder:frontDefault;
+    const more=Array.isArray(state.settings.toolbarMoreActions)?state.settings.toolbarMoreActions:moreDefault;
+    const labels={
+      toggle:['🌍','CMJ','Enable or disable Charlie MJ subtitles'],
+      transcript:['📜','Transcript','Complete transcript'],
+      word:['🔤','Word','Word Learning'],
+      sentence:['📝','Sentence','Sentence Learning'],
+      save:['⭐','Save','Save current subtitle'],
+      bookmark:['🔖','Bookmark','Bookmark this timeline position'],
+      capture:['📸','Capture','Capture this timeline position'],
+      watch:['⏰','Watch Later','Add this video to Charlie MJ Watch Later'],
+      focus:['🎯','Focus','Reduce YouTube distractions'],
+      theme:['☼/☾','Theme','Switch appearance']
+    };
+    const moreLabels={
+      translate:['🌐','Translate current subtitle'],replay:['🔁','Replay current sentence'],loop:['🔁','Loop current sentence'],
+      speed:['⏱','Speed 1×'],ab:['','A/B Replay'],study:['🧠','Study Mode'],'save-sentence':['📝','Save Sentence'],
+      'download-transcript':['⬇','Complete transcript + translation'],'download-vocabulary':['📚','Custom vocabulary + translation'],
+      report:['📊','Video learning report'],diagnostics:['🧪','Caption engine status'],settings:['⚙','Extension settings']
+    };
+    const frontHTML=front.filter(a=>labels[a]).map(a=>`<button data-cmj-toolbar="${a}" aria-pressed="false" title="${labels[a][2]}">${labels[a][0]} <span>${labels[a][1]}</span></button>`).join('');
+    const moreHTML=more.filter(a=>moreLabels[a]).map(a=>`<button data-cmj-toolbar="${a}" aria-pressed="false">${moreLabels[a][0]} ${moreLabels[a][1]}</button>`).join('');
     return `<div class="cmj-toolbar" role="toolbar" aria-label="Charlie MJ Language">
-      <button data-cmj-toolbar="toggle" title="Enable or disable Charlie MJ subtitles">🌍 <span>CMJ</span></button>
-      <button data-cmj-toolbar="transcript" title="Complete transcript">📜 <span>Transcript</span></button>
-      <button data-cmj-toolbar="save" title="Save current subtitle">⭐ <span>Save</span></button>
-      <button data-cmj-toolbar="bookmark" title="Bookmark this timeline position">🔖 <span>Bookmark</span></button>
-      <button data-cmj-toolbar="capture" title="Capture this timeline position">📸 <span>Capture</span></button>
-      <button data-cmj-toolbar="watch" title="Add this video to Charlie MJ Watch Later">⏰ <span>Watch Later</span></button>
-      <button data-cmj-toolbar="focus" title="Reduce YouTube distractions">🎯 <span>Focus</span></button>
+      ${frontHTML}
       <button class="cmj-more-button" data-cmj-toolbar="more" title="More tools">⋮</button>
-      <div class="cmj-more-menu" hidden>
-        <button data-cmj-toolbar="translate">🌐 Translate current subtitle</button>
-        <button data-cmj-toolbar="replay">🔁 Replay current sentence</button>
-        <button data-cmj-toolbar="speed">⏱ Speed 1×</button>
-        <button data-cmj-toolbar="ab">A/B Replay</button>
-        <button data-cmj-toolbar="study">🧠 Study Mode</button>
-        <button data-cmj-toolbar="save-sentence">📝 Save Sentence</button>
-        <button data-cmj-toolbar="download-transcript">⬇ Complete transcript + translation</button>
-        <button data-cmj-toolbar="download-vocabulary">📚 Custom vocabulary + translation</button>
-        <button data-cmj-toolbar="report">📊 Video learning report</button>
-        <button data-cmj-toolbar="diagnostics">🧪 Caption engine status</button>
-        <button data-cmj-toolbar="settings">⚙ Extension settings</button>
-      </div>
+      <div class="cmj-more-menu" hidden>${moreHTML}</div>
     </div>`;
   }
 
@@ -689,28 +710,81 @@
     });
   }
 
+  async function toggleTheme() {
+    const current = state.settings.theme || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    state.settings.theme = next;
+    await chrome.storage.local.set({settings: state.settings});
+    applyTheme();
+    showToast(`Appearance: ${next}`);
+  }
+
+  function updateToolbarButtonStates() {
+    const toolbar = $('.cmj-toolbar');
+    if (!toolbar) return;
+    const active = new Set();
+    const subtitleLayer = $('.cmj-subtitle-layer');
+    if (subtitleLayer && !subtitleLayer.classList.contains('cmj-hidden')) active.add('toggle');
+    if (state.panelTab === 'transcript' && !$('.cmj-panel')?.hidden) active.add('transcript');
+    if (state.settings.subtitleDisplayMode === 'both' && state.panelTab === 'vocabulary') active.add('word');
+    if (state.settings.subtitleDisplayMode === 'sentence') active.add('sentence');
+    if (state.focusMode) active.add('focus');
+    if (state.studyMode) active.add('study');
+    if (state.abRange) active.add('ab');
+    if (state.settings.theme === 'dark') active.add('theme');
+    toolbar.querySelectorAll('[data-cmj-toolbar]').forEach(button => {
+      const action = button.dataset.cmjToolbar;
+      if (action === 'more') return;
+      const isActive = active.has(action);
+      button.classList.toggle('cmj-toolbar-active', isActive);
+      if (['toggle','transcript','word','sentence','focus','study','ab','theme'].includes(action)) button.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
+  function markToolbarAction(action) {
+    const button = $(`.cmj-toolbar [data-cmj-toolbar="${action}"]`);
+    if (!button || ['toggle','transcript','word','sentence','focus','study','ab','theme'].includes(action)) return;
+    button.classList.add('cmj-toolbar-action-complete');
+    clearTimeout(button.__cmjActionTimer);
+    button.__cmjActionTimer = setTimeout(() => button.classList.remove('cmj-toolbar-action-complete'), 900);
+  }
+
+  async function openExtensionSettings() {
+    try {
+      const result = await chrome.runtime.sendMessage({ type: 'CMJ_OPEN_OPTIONS' });
+      if (!result?.ok) showToast('Unable to open Extension Settings.');
+    } catch (_) {
+      showToast('Unable to open Extension Settings.');
+    }
+  }
+
   function onToolbarClick(event) {
     const button = event.target.closest('[data-cmj-toolbar]');
     if (!button) return;
     const action = button.dataset.cmjToolbar;
-    if (action === 'toggle') toggleSubtitleVisibility();
-    if (action === 'transcript') openPanel('transcript');
-    if (action === 'save') saveCurrentSubtitle();
-    if (action === 'bookmark') saveBookmark();
-    if (action === 'capture') captureFrame();
-    if (action === 'watch') addWatchLater();
-    if (action === 'focus') toggleFocusMode();
+    if (action === 'toggle') { toggleSubtitleVisibility(); markToolbarAction('toggle'); updateToolbarButtonStates(); }
+    if (action === 'transcript') { openPanel('transcript'); updateToolbarButtonStates(); }
+    if (action === 'word') { state.settings.subtitleDisplayMode='both'; chrome.storage.local.set({settings:state.settings}); openPanel('vocabulary'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
+    if (action === 'sentence') { state.settings.subtitleDisplayMode='sentence'; chrome.storage.local.set({settings:state.settings}); openPanel('transcript'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
+    if (action === 'theme') { toggleTheme(); updateToolbarButtonStates(); }
+    if (action === 'save') { saveCurrentSubtitle(); markToolbarAction('save'); }
+    if (action === 'bookmark') { saveBookmark(); markToolbarAction('bookmark'); }
+    if (action === 'capture') { captureFrame(); markToolbarAction('capture'); }
+    if (action === 'watch') { addWatchLater(); markToolbarAction('watch'); }
+    if (action === 'focus') { toggleFocusMode(); updateToolbarButtonStates(); }
     if (action === 'more') $('.cmj-more-menu', button.parentElement)?.toggleAttribute('hidden');
-    if (action === 'translate') translateCurrent(false);
-    if (action === 'replay') replayCurrentSentence();
-    if (action === 'speed') cyclePlaybackSpeed(button);
-    if (action === 'ab') toggleABReplay();
-    if (action === 'study') toggleStudyMode();
-    if (action === 'save-sentence') saveCurrentSentence();
-    if (action === 'download-transcript') downloadTranscript('both');
-    if (action === 'download-vocabulary') downloadVocabulary();
-    if (action === 'report') showLearningReport();
-    if (action === 'settings') chrome.runtime.openOptionsPage();
+    if (action === 'translate') { translateCurrent(false); markToolbarAction('translate'); }
+    if (action === 'replay') { replayCurrentSentence(); markToolbarAction('replay'); }
+    if (action === 'loop') { toggleABReplay(); updateToolbarButtonStates(); }
+    if (action === 'speed') { cyclePlaybackSpeed(button); markToolbarAction('speed'); }
+    if (action === 'ab') { toggleABReplay(); updateToolbarButtonStates(); }
+    if (action === 'study') { toggleStudyMode(); updateToolbarButtonStates(); }
+    if (action === 'save-sentence') { saveCurrentSentence(); markToolbarAction('save-sentence'); }
+    if (action === 'download-transcript') { downloadTranscript('both'); markToolbarAction('download-transcript'); }
+    if (action === 'download-vocabulary') { downloadVocabulary(); markToolbarAction('download-vocabulary'); }
+    if (action === 'report') { showLearningReport(); markToolbarAction('report'); }
+    if (action === 'diagnostics') { showToast(state.captionDiagnostics || 'Caption engine: listening for YouTube transcript data.'); markToolbarAction('diagnostics'); }
+    if (action === 'settings') { openExtensionSettings(); markToolbarAction('settings'); }
   }
 
   async function onRootClick(event) {
@@ -761,6 +835,7 @@
     if (!isWatchPage()) return;
     const video = getVideo();
     if (!video) return;
+    saveLearningProgress(false).catch(() => {});
     const current = getCurrentCaption();
     if (!current) {
       readNativeCaptions();
@@ -776,6 +851,96 @@
         prefetchTranslations(state.activeIndex + 1, Number(state.settings.subtitlePreloadTranslations || 2));
       }
     }
+  }
+
+
+  async function saveTranscriptRecord() {
+    if (!state.videoId || !state.captions.length) return;
+    const stored = await chrome.storage.local.get('transcripts');
+    const record = {
+      id: state.videoId, videoId: state.videoId, videoTitle: state.title, url: state.url,
+      thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(state.videoId)}/hqdefault.jpg`,
+      segments: state.captions.map((c,i)=>({id:`${state.videoId}:${i}`,start:c.start,duration:c.duration,text:c.text,translation:state.translationCache[i]||''})),
+      segmentCount: state.captions.length, updatedAt:new Date().toISOString(), source:'YouTube Transcript'
+    };
+    const list=[record,...(stored.transcripts||[]).filter(x=>x.videoId!==state.videoId)].slice(0,200);
+    await chrome.storage.local.set({transcripts:list});
+  }
+
+  async function registerVideoHistory() {
+    if (!state.videoId) return;
+    const stored = await chrome.storage.local.get(['history','videoProgress']);
+    const history = Array.isArray(stored.history) ? stored.history : [];
+    const existing = history.find(x => x.videoId === state.videoId);
+    const record = {
+      id: existing?.id || crypto.randomUUID(),
+      videoId: state.videoId, videoTitle: state.title, url: state.url,
+      thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(state.videoId)}/hqdefault.jpg`,
+      lastPosition: Number(existing?.lastPosition || 0),
+      watchPercentage: Number(existing?.watchPercentage || 0),
+      sessions: Number(existing?.sessions || 0) + 1,
+      lastWatchedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: existing?.status || 'in-progress',
+      type: 'video', source: 'YouTube History'
+    };
+    const nextHistory = [record, ...history.filter(x => x.videoId !== state.videoId)].slice(0, 500);
+    await chrome.storage.local.set({ history: nextHistory });
+  }
+
+  async function resumeSavedLearningState() {
+    if (!state.videoId || state.resumeAppliedFor === state.videoId) return;
+    const stored = await chrome.storage.local.get(['videoProgress']);
+    const record = (stored.videoProgress || []).find(x => x.videoId === state.videoId);
+    if (!record || Number(record.lastPosition) < 2) return;
+    const apply = () => {
+      const video = getVideo();
+      if (!video || state.resumeAppliedFor === state.videoId) return Boolean(video);
+      const target = Math.max(0, Number(record.lastPosition) || 0);
+      if (target > 0 && Math.abs(video.currentTime - target) > 2) video.currentTime = target;
+      if (record.playbackRate) video.playbackRate = Number(record.playbackRate);
+      state.resumeAppliedFor = state.videoId;
+      showToast(`Resumed at ${formatTime(target)} · ${Math.round(Number(record.watchPercentage || 0))}%`);
+      return true;
+    };
+    for (let i = 0; i < 20 && !apply(); i++) await wait(250);
+  }
+
+  async function saveLearningProgress(force = false) {
+    if (!state.videoId) return;
+    const now = Date.now();
+    if (!force && now - state.lastProgressWrite < 3000) return;
+    const video = getVideo();
+    if (!video || !Number.isFinite(video.currentTime)) return;
+    state.lastProgressWrite = now;
+    const duration = Number(video.duration) || 0;
+    const position = Number(video.currentTime) || 0;
+    const percentage = duration > 0 ? Math.min(100, position / duration * 100) : 0;
+    const stored = await chrome.storage.local.get(['videoProgress','history']);
+    const old = (stored.videoProgress || []).find(x => x.videoId === state.videoId);
+    const status = percentage >= 98 ? 'completed' : position > 1 ? 'in-progress' : 'not-started';
+    const progress = {
+      id: old?.id || crypto.randomUUID(), type:'video',
+      videoId: state.videoId, videoTitle: state.title, url: state.url,
+      thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(state.videoId)}/hqdefault.jpg`,
+      lastPosition: position, watchPercentage: percentage, duration,
+      lastSentence: state.activeIndex >= 0 ? state.activeIndex + 1 : null,
+      lastSentenceText: state.activeIndex >= 0 ? state.captions[state.activeIndex]?.text || '' : '',
+      learningMode: state.settings.subtitleDisplayMode || 'both',
+      studyMode: Boolean(state.studyMode),
+      playbackRate: Number(video.playbackRate || 1),
+      subtitleMode: state.settings.subtitleDisplayMode || 'both',
+      translationMode: state.settings.autoTranslate ? 'automatic' : 'on-demand',
+      sessionStartedAt: new Date(state.sessionStartedAt || now).toISOString(),
+      totalStudyTime: Number(old?.totalStudyTime || 0) + Math.max(0, (now - Number(state.sessionStartedAt || now)) / 1000 - Number(state.sessionSeconds || 0)),
+      updatedAt: new Date().toISOString(), lastSessionAt: new Date().toISOString(), status
+    };
+    state.sessionSeconds = Math.max(0, (now - Number(state.sessionStartedAt || now)) / 1000);
+    const progressList = [progress, ...(stored.videoProgress || []).filter(x => x.videoId !== state.videoId)].slice(0,500);
+    const historyOld = (stored.history || []).find(x => x.videoId === state.videoId) || {};
+    const historyRecord = {...historyOld, id: historyOld.id || crypto.randomUUID(), videoId: state.videoId, videoTitle: state.title, url: state.url, thumbnail: progress.thumbnail, lastPosition: position, watchPercentage: percentage, lastWatchedAt: new Date().toISOString(), updatedAt: new Date().toISOString(), status, type:'video'};
+    const history = [historyRecord, ...(stored.history || []).filter(x => x.videoId !== state.videoId)].slice(0,500);
+    await chrome.storage.local.set({videoProgress:progressList, history});
   }
 
   function getCurrentCaption() {
@@ -927,9 +1092,11 @@
         if (state.abRange) requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);
+      updateToolbarButtonStates();
     } else {
       state.abRange = null;
       showToast('A/B replay cleared.');
+      updateToolbarButtonStates();
     }
   }
 
@@ -937,6 +1104,7 @@
     state.studyMode = !state.studyMode;
     renderCurrentSubtitle();
     showToast(state.studyMode ? 'Study Mode enabled. Translation is hidden until revealed.' : 'Study Mode disabled.');
+    updateToolbarButtonStates();
   }
 
   function revealStudyTranslation() {
@@ -960,8 +1128,14 @@
       tags:['YouTube','Sentence',getSentenceLevel(current.text)], createdAt:new Date().toISOString()
     };
     const duplicate = vocabulary.some(x => x.type === 'sentence' && x.videoId === state.videoId && x.sentence === current.text && Math.abs(Number(x.timestamp||0)-timestamp)<1.5);
-    if (!duplicate) { vocabulary.unshift(item); await chrome.storage.local.set({vocabulary}); }
-    showToast(duplicate ? 'This sentence is already saved.' : 'Sentence saved to Vocabulary.');
+    if (!duplicate) {
+      vocabulary.unshift(item);
+      const storedSentence = await chrome.storage.local.get('sentenceLearning');
+      const sentenceLearning = storedSentence.sentenceLearning || [];
+      sentenceLearning.unshift({...item, source:'Sentence Learning'});
+      await chrome.storage.local.set({vocabulary, sentenceLearning:sentenceLearning.slice(0,5000)});
+    }
+    showToast(duplicate ? 'This sentence is already saved.' : 'Sentence saved to Sentence Learning + Vocabulary.');
   }
 
   async function translateCurrent(silent = false) {
@@ -981,6 +1155,7 @@
       });
       if (response?.ok && response.translation) {
         state.translationCache[state.activeIndex] = response.translation;
+        saveTranscriptRecord().catch(() => {});
         renderCurrentSubtitle();
         if (!silent) showToast('Translation ready.');
         return response.translation;
@@ -1136,6 +1311,13 @@
       encounterKey: `${state.videoId}:${word.toLocaleLowerCase()}`,
       createdAt: new Date().toISOString()
     });
+    const wordRecord = vocabulary[vocabulary.length - 1];
+    const wordStored = await chrome.storage.local.get('wordLearning');
+    const wordLearning = wordStored.wordLearning || [];
+    if (!wordLearning.some(item => item.videoId === state.videoId && item.word?.toLowerCase() === word.toLowerCase() && Math.abs((item.timestamp || 0) - (getVideo()?.currentTime || 0)) < 1.5)) {
+      wordLearning.unshift({...wordRecord, source:'Word Learning'});
+      await chrome.storage.local.set({wordLearning:wordLearning.slice(0,5000)});
+    }
     await chrome.storage.local.set({ vocabulary });
   }
 
@@ -1200,12 +1382,17 @@
       if (!result?.ok) return showToast('Screenshot could not be captured.');
     }
     await saveBookmark();
+    const storedCaptures = await chrome.storage.local.get('captures');
+    const captures = storedCaptures.captures || [];
+    captures.unshift({id:crypto.randomUUID(), videoId:state.videoId, videoTitle:state.title, url:state.url, timestamp, label:'Timeline capture', createdAt:new Date().toISOString(), source:'Screen Capture'});
+    await chrome.storage.local.set({captures:captures.slice(0,1000)});
     showToast(`Timeline capture saved at ${formatTime(timestamp)}.`);
   }
 
   function toggleSubtitleVisibility() {
     const layer = $('.cmj-subtitle-layer');
     if (layer) layer.classList.toggle('cmj-hidden');
+    updateToolbarButtonStates();
   }
 
   function toggleFocusMode() {
@@ -1214,6 +1401,7 @@
     chrome.storage.local.set({ settings: state.settings });
     applyFocusMode();
     showToast(state.focusMode ? 'Focus Mode enabled.' : 'Focus Mode disabled.');
+    updateToolbarButtonStates();
   }
 
   function applyFocusMode() {
@@ -1252,6 +1440,7 @@
   function closePanel() {
     const panel = $('.cmj-panel');
     if (panel) panel.hidden = true;
+    updateToolbarButtonStates();
   }
 
   async function renderPanel(tab) {

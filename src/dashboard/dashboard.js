@@ -1,360 +1,142 @@
-/**
- * Charlie MJ Language Library controller.
- *
- * The library is intentionally local-first. Every saved learning record keeps
- * its YouTube video identity so material from multiple videos never becomes
- * anonymous. Main collections support copy, download, export and import; user
- * collections are stored as separate local datasets and can be created/deleted.
- */
 (() => {
-  'use strict';
+'use strict';
+const BUILTIN=[
+ {id:'overview',name:'Overview',key:null,icon:'🏠',group:'Start'},
+ {id:'continue',name:'Continue Learning',key:'videoProgress',icon:'▶️',group:'Start'},
+ {id:'history',name:'History',key:'history',icon:'🕘',group:'Content'},
+ {id:'videos',name:'Videos',key:'history',icon:'🎬',group:'Content'},
+ {id:'transcripts',name:'Transcripts',key:'transcripts',icon:'📄',group:'Content'},
+ {id:'wordLearning',name:'Word Learning',key:'wordLearning',icon:'🔤',group:'Learning'},
+ {id:'sentenceLearning',name:'Sentence Learning',key:'sentenceLearning',icon:'📝',group:'Learning'},
+ {id:'vocabulary',name:'Vocabulary',key:'vocabulary',icon:'📚',group:'Learning'},
+ {id:'review',name:'Review / Weak Words',key:'vocabulary',icon:'🧠',group:'Learning'},
+ {id:'collections',name:'Collections',key:null,icon:'📁',collections:true,group:'Organize'},
+ {id:'bookmarks',name:'Bookmarks',key:'bookmarks',icon:'🔖',group:'Organize'},
+ {id:'watchLater',name:'Watch Later',key:'watchLater',icon:'⏰',group:'Organize'},
+ {id:'notes',name:'Notes',key:'notes',icon:'🗒️',group:'Organize'},
+ {id:'captures',name:'Captures',key:'captures',icon:'📸',group:'Organize'},
+ {id:'favorites',name:'Favorites',key:'favorites',icon:'⭐',group:'Organize'},
+ {id:'checkpoints',name:'Checkpoints',key:'checkpoints',icon:'📍',group:'Organize'}
+];
+let pages=[],current='overview',data=[],view='grid',pendingDelete=null;
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const safe=v=>String(v||'library').replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,' ').trim().slice(0,100)||'library';
+const fmt=s=>{let n=Math.max(0,Math.floor(Number(s)||0)),h=Math.floor(n/3600),m=Math.floor(n%3600/60),x=n%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`};
+const ts=(url,t)=>{try{if(t==null)return url;let u=new URL(url);u.searchParams.set('t',`${Math.floor(Number(t))}s`);return u.toString()}catch{return url}};
+const notify=m=>{let e=$('#libraryNotice');if(!e){e=document.createElement('div');e.id='libraryNotice';e.className='notice';document.body.appendChild(e)}e.textContent=m;clearTimeout(notify.t);notify.t=setTimeout(()=>e.remove(),3200)};
+init().catch(console.error);
 
-  const BUILTIN = [
-    { id: 'watchLater', name: 'Watch Later', key: 'watchLater' },
-    { id: 'vocabulary', name: 'Vocabulary', key: 'vocabulary' },
-    { id: 'bookmarks', name: 'Bookmarks', key: 'bookmarks' }
-  ];
-  let pages = [];
-  let current = 'watchLater';
-  let data = [];
-  let pendingDelete = null;
-
-  const $ = selector => document.querySelector(selector);
-  const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
-  const safeName = value => String(value || 'library').replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, ' ').trim().slice(0, 100) || 'library';
-
-  init().catch(error => console.error('Charlie MJ Library failed to start:', error));
-
-  async function init() {
-    $('#openOptions').onclick = () => chrome.runtime.openOptionsPage();
-    $('#refresh').onclick = load;
-    $('#addPage').onclick = () => { $('#pageName').value = ''; $('#pageTags').value = ''; $('#pageDialog').showModal(); };
-    $('#copyPage').onclick = copyCurrentPage;
-    $('#downloadPage').onclick = openDownloadDialog;
-    $('#exportPage').onclick = openExportDialog;
-    $('#importPage').onclick = () => $('#importFile').click();
-    $('#importFile').addEventListener('change', importCurrentPage);
-    $('#search').oninput = render;
-    $('#levelFilter').onchange = render;
-    $('#tagFilter').oninput = render;
-    $('#videoFilter').onchange = render;
-    $('#typeFilter').onchange = render;
-    $('#pageForm').addEventListener('submit', createPage);
-    $('#confirmYes').onclick = confirmDelete;
-    $('#pagePickerForm').addEventListener('submit', submitPagePicker);
-    $('#exportForm').addEventListener('submit', submitExport);
-    document.addEventListener('click', event => {
-      const tab = event.target.closest('[data-page-id]');
-      if (tab) { current = tab.dataset.pageId; load(); }
-      const del = event.target.closest('[data-delete-page]');
-      if (del) askDeletePage(del.dataset.deletePage);
-      const remove = event.target.closest('[data-remove-item]');
-      if (remove) removeItem(remove.dataset.removeItem, remove.dataset.itemId);
-      const add = event.target.closest('[data-add-custom]');
-      if (add) openPagePicker(add.dataset.itemId, add.dataset.itemSource);
-      const copy = event.target.closest('[data-copy-item]');
-      if (copy) copyItem(copy.dataset.copyItem);
-      if (event.target.matches('[data-close]')) event.target.closest('dialog')?.close();
-    });
-    await loadPages();
-    await load();
+async function init(){
+  const s=await chrome.storage.local.get('libraryView'); view=s.libraryView||'grid'; applyView();
+  $('#viewToggle').onclick=async()=>{view=view==='grid'?'list':'grid';await chrome.storage.local.set({libraryView:view});applyView();render()};
+  $('#openOptions').onclick=()=>chrome.runtime.openOptionsPage();$('#refresh').onclick=load;
+  $('#resumeTop').onclick=()=>{current='continue';load()};
+  $('#addPage').onclick=()=>{$('#pageName').value='';$('#pageTags').value='';$('#pageDescription').value='';$('#pageDialog').showModal()};
+  $('#copyPage').onclick=copyPage;$('#downloadPage').onclick=()=>openExport(true);$('#exportPage').onclick=()=>openExport(false);$('#importPage').onclick=()=>$('#importFile').click();
+  $('#importFile').onchange=importPage;['search','tagFilter'].forEach(id=>$('#'+id).oninput=render);['levelFilter','videoFilter','typeFilter'].forEach(id=>$('#'+id).onchange=render);
+  $('#pageForm').onsubmit=createPage;$('#exportForm').onsubmit=submitExport;$('#pagePickerForm').onsubmit=addToCollection;$('#checkpointForm').onsubmit=createCheckpoint;$('#confirmYes').onclick=confirmDelete;
+  document.addEventListener('click',onClick); await loadPages(); await load();
+}
+async function loadPages(){let s=await chrome.storage.local.get('libraryPages');pages=Array.isArray(s.libraryPages)?s.libraryPages:[];renderNav()}
+function allPages(){return [...BUILTIN,...pages.map(p=>({id:`custom:${p.id}`,name:p.name,key:`libraryPage_${p.id}`,custom:true,rawId:p.id,icon:'📁'}))]}
+function info(){return allPages().find(x=>x.id===current)||BUILTIN[0]}
+function renderNav(){
+ const groups=['Start','Content','Learning','Organize'];
+ const grouped=groups.map(group=>{
+   const items=allPages().filter(p=>p.group===group || (!p.group&&group==='Organize'));
+   if(!items.length)return '';
+   return `<section class="library-group"><h3>${group}</h3>${items.map(p=>`<div class="nav-wrap"><button class="library-tab ${p.id===current?'active':''}" data-page-id="${esc(p.id)}"><span class="nav-icon">${p.icon}</span><span>${esc(p.name)}</span><span class="nav-count" data-count-for="${esc(p.id)}"></span></button>${p.custom?`<button class="page-delete" title="Delete collection" data-delete-page="${esc(p.rawId)}">×</button>`:''}</div>`).join('')}</section>`;
+ }).join('');
+ const custom=pages.length?`<section class="library-group custom-group"><h3>My Collections</h3>${pages.map(p=>{const id=`custom:${p.id}`;return `<div class="nav-wrap"><button class="library-tab ${id===current?'active':''}" data-page-id="${esc(id)}"><span class="nav-icon">📁</span><span>${esc(p.name)}</span></button><button class="page-delete" title="Delete collection" data-delete-page="${esc(p.id)}">×</button></div>`}).join('')}</section>`:'';
+ $('#libraryNav').innerHTML=grouped+custom;
+}
+async function pageData(p){
+  if(!p.key)return[];
+  if(p.id==='review'){
+    const s=await chrome.storage.local.get('vocabulary'); const all=Array.isArray(s.vocabulary)?s.vocabulary:[]; const counts=new Map(); all.filter(x=>x.type==='word').forEach(x=>{const k=(x.lemma||x.word||'').toLowerCase();counts.set(k,(counts.get(k)||0)+1)}); return all.filter(x=>x.type==='word' && ((counts.get((x.lemma||x.word||'').toLowerCase())||0)>1 || !['mastered','known'].includes(String(x.stage||'').toLowerCase()))).slice(0,1000);
   }
-
-  async function loadPages() {
-    const stored = await chrome.storage.local.get('libraryPages');
-    pages = Array.isArray(stored.libraryPages) ? stored.libraryPages : [];
-    renderNav();
-  }
-
-  function allPages() { return [...BUILTIN, ...pages.map(p => ({ id: `custom:${p.id}`, name: p.name, key: `libraryPage_${p.id}`, custom: true, rawId: p.id }))]; }
-  function pageInfo(id = current) { return allPages().find(p => p.id === id) || BUILTIN[0]; }
-
-  function renderNav() {
-    $('#libraryNav').innerHTML = allPages().map(page => `
-      <div class="library-tab-wrap">
-        <button class="library-tab ${page.id === current ? 'active' : ''}" data-page-id="${escapeHTML(page.id)}">${escapeHTML(page.name)} <span class="count" data-count-for="${escapeHTML(page.id)}"></span></button>
-        ${page.custom ? `<button class="icon-btn page-delete" data-delete-page="${escapeHTML(page.rawId)}" title="Delete custom page">×</button>` : ''}
-      </div>`).join('');
-  }
-
-  async function getPageData(page) {
-    const stored = await chrome.storage.local.get(page.key);
-    return Array.isArray(stored[page.key]) ? stored[page.key] : [];
-  }
-
-  async function load() {
-    await loadPages();
-    const info = pageInfo();
-    data = await getPageData(info);
-    render();
-  }
-
-  function render() {
-    const info = pageInfo();
-    const query = $('#search').value.trim().toLowerCase();
-    const level = $('#levelFilter').value;
-    const tag = $('#tagFilter').value.trim().toLowerCase();
-    const videoId = $('#videoFilter').value;
-    const type = $('#typeFilter').value;
-    const filtered = data.filter(item => {
-      const haystack = JSON.stringify(item).toLowerCase();
-      const levels = String(item.level || '').toUpperCase();
-      const tags = (item.tags || []).map(String).join(' ').toLowerCase();
-      return (!query || haystack.includes(query)) && (!level || levels === level) && (!tag || tags.includes(tag)) && (!videoId || item.videoId === videoId) && (!type || (item.type || 'word') === type);
-    });
-
-    $('#levelFilter').disabled = !['vocabulary', 'bookmarks'].includes(info.key) && !info.custom;
-    $('#typeFilter').disabled = info.key !== 'vocabulary';
-    renderNav();
-    renderVideoFilter();
-    renderStats(filtered, info);
-    $('#items').innerHTML = filtered.length ? filtered.map(item => card(item, info)).join('') : `<div class="empty"><h3>No items here yet</h3><p>${escapeHTML(info.name)} is ready for your next learning session.</p></div>`;
-  }
-
-  function renderVideoFilter() {
-    const selected = $('#videoFilter').value;
-    const videos = new Map();
-    data.forEach(item => { if (item.videoId) videos.set(item.videoId, item.videoTitle || item.title || item.videoId); });
-    $('#videoFilter').innerHTML = `<option value="">All videos</option>${[...videos.entries()].map(([id,title]) => `<option value="${escapeHTML(id)}">${escapeHTML(title)}</option>`).join('')}`;
-    if ([...videos.keys()].includes(selected)) $('#videoFilter').value = selected;
-  }
-
-  function renderStats(items, info) {
-    const videos = new Set(items.map(x => x.videoId).filter(Boolean));
-    const tags = new Set(items.flatMap(x => x.tags || []).filter(Boolean));
-    const levels = new Set(items.map(x => x.level).filter(Boolean));
-    $('#stats').innerHTML = [
-      ['Items', items.length, info.name],
-      ['Videos', videos.size, 'linked YouTube videos'],
-      ['Tags', tags.size, 'active tags'],
-      ['Levels', levels.size, 'CEFR levels present']
-    ].map(([a,b,c]) => `<div class="stat"><strong>${b}</strong><span>${a} · ${escapeHTML(c)}</span></div>`).join('');
-    document.querySelectorAll('[data-count-for]').forEach(el => {
-      const page = pageInfo(el.dataset.countFor);
-      getPageData(page).then(items => { el.textContent = items.length ? `(${items.length})` : ''; }).catch(() => {});
-    });
-  }
-
-  function card(item, info) {
-    const title = item.videoTitle || item.title || item.word || item.label || 'Saved learning item';
-    const subtitle = item.word ? `${item.word}${item.translation ? ` — ${item.translation}` : ''}` : (item.subtitle || item.sentence || item.label || '');
-    const time = item.timestamp != null ? formatTime(item.timestamp) : '';
-    const tags = (item.tags || []).map(tag => `<span class="tag">#${escapeHTML(tag)}</span>`).join('');
-    const thumb = item.thumbnail || (item.videoId ? `https://i.ytimg.com/vi/${encodeURIComponent(item.videoId)}/hqdefault.jpg` : '');
-    const source = item.source || info.name;
-    return `<article class="item-card">
-      ${thumb ? `<img class="thumb" src="${escapeHTML(thumb)}" alt="Video thumbnail" loading="lazy">` : ''}
-      <div class="item-body"><h3 class="item-title">${item.url ? `<a href="${escapeHTML(withTimestamp(item.url, item.timestamp))}" target="_blank" rel="noopener">${escapeHTML(title)}</a>` : escapeHTML(title)}</h3>
-      <p class="item-meta"><strong>${escapeHTML(subtitle)}</strong></p>
-      <p class="item-context">${escapeHTML(source)}${time ? ` · ${time}` : ''}${item.pos ? ` · ${escapeHTML(item.pos)}` : ''}${item.level ? ` · ${escapeHTML(item.level)} ${escapeHTML(item.levelLabel || '')}` : ''}</p>
-      ${item.sentence ? `<p class="item-context">${escapeHTML(item.sentence)}</p>` : ''}
-      <div>${tags}</div>
-      <div class="item-actions"><button data-remove-item="${escapeHTML(info.id)}" data-item-id="${escapeHTML(item.id || '')}">🗑 Remove</button>${item.url ? `<button data-copy-item="${escapeHTML(item.id || '')}">📋 Copy</button>` : ''}${pages.length ? `<button data-add-custom="menu" data-item-id="${escapeHTML(item.id || '')}" data-item-source="${escapeHTML(info.key)}">＋ Add to page</button>` : ''}</div></div></article>`;
-  }
-
-  function withTimestamp(url, timestamp) {
-    if (!timestamp) return url;
-    try { const u = new URL(url); u.searchParams.set('t', `${Math.floor(timestamp)}s`); return u.toString(); } catch { return url; }
-  }
-
-  async function copyCurrentPage() {
-    const text = buildReadableText(data, pageInfo());
-    try { await navigator.clipboard.writeText(text); notify('Current library page copied.'); } catch { notify('Clipboard permission was blocked.'); }
-  }
-
-  async function downloadSelected(ids) {
-    const selected = ids.map(id => pageInfo(id));
-    const bundles = [];
-    for (const page of selected) bundles.push({ page, items: await getPageData(page) });
-    const text = buildReadableBundle(bundles);
-    const settings = await getSettings();
-    const first = safeName(selected.map(p => p.name).join('-'));
-    await downloadText(`${settings.downloadRoot}/Library/${first}.txt`, text, 'text/plain');
-    notify('Library download started in your Downloads folder.');
-  }
-
-  async function openExportDialog() {
-    const choices = allPages().map(page => `<label class="choice"><input type="checkbox" value="${escapeHTML(page.id)}" ${page.id === current ? 'checked' : ''}> ${escapeHTML(page.name)}</label>`).join('');
-    $('#exportChoices').innerHTML = choices;
-    $('#exportTitle').textContent = 'Export library data';
-    $('#exportFormat').disabled = false;
-    $('#exportDialog').showModal();
-  }
-
-  async function openDownloadDialog() {
-    const choices = allPages().map(page => `<label class="choice"><input type="checkbox" value="${escapeHTML(page.id)}" ${page.id === current ? 'checked' : ''}> ${escapeHTML(page.name)}</label>`).join('');
-    $('#exportChoices').innerHTML = choices;
-    $('#exportTitle').textContent = 'Download selected library pages';
-    $('#exportFormat').value = 'txt';
-    $('#exportFormat').disabled = true;
-    $('#exportDialog').showModal();
-  }
-
-  async function submitExport(event) {
-    event.preventDefault();
-    const ids = [...$('#exportChoices').querySelectorAll('input:checked')].map(input => input.value);
-    if (!ids.length) return notify('Select at least one library page.');
-    const bundles = [];
-    for (const id of ids) { const page = pageInfo(id); bundles.push({ page, items: await getPageData(page) }); }
-    const format = $('#exportFormat').value;
-    const settings = await getSettings();
-    const name = safeName(bundles.map(x => x.page.name).join('-'));
-    let payload = buildReadableBundle(bundles), mime = 'text/plain', ext = 'txt';
-    if (format === 'json') { payload = JSON.stringify({ program: 'Charlie MJ Language', exportedAt: new Date().toISOString(), pages: bundles.map(x => ({ id: x.page.id, name: x.page.name, items: x.items })) }, null, 2); mime = 'application/json'; ext = 'json'; }
-    if (format === 'csv') { payload = buildCSV(bundles.flatMap(x => x.items.map(item => ({ page: x.page.name, ...item })))); mime = 'text/csv'; ext = 'csv'; }
-    if (format === 'srt' || format === 'vtt') {
-      const source = bundles.flatMap(x => x.items).filter(item => item.sentence || item.subtitle);
-      const cueTime = seconds => { const ms = Math.max(0, Math.round((Number(seconds) || 0) * 1000)); const h = Math.floor(ms / 3600000); const m = Math.floor((ms % 3600000) / 60000); const sec = Math.floor((ms % 60000) / 1000); const milli = ms % 1000; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}${format === 'srt' ? ',' : '.'}${String(milli).padStart(3,'0')}`; };
-      const rows = source.map((item,i) => { const start = Number(item.timestamp) || 0; const end = start + Math.max(1, Number(item.duration) || 2); return `${format === 'srt' ? `${i+1}\n` : ''}${cueTime(start)} --> ${cueTime(end)}\n${item.sentence || item.subtitle || ''}${item.translation ? `\n${item.translation}` : ''}`; }).join('\n\n');
-      payload = format === 'vtt' ? `WEBVTT\n\n${rows}` : rows; mime = 'text/plain'; ext = format;
+  if(p.id==='notes'){
+    const s=await chrome.storage.local.get(['notesByVideo','history']);
+    const h=s.history||[], out=[];
+    for(const [videoId,notes] of Object.entries(s.notesByVideo||{})){
+      const v=h.find(x=>x.videoId===videoId)||{};
+      (Array.isArray(notes)?notes:[]).forEach((note,i)=>out.push({id:note.id||`${videoId}:note:${i}`,videoId,videoTitle:v.videoTitle||'YouTube Video',url:v.url||'',timestamp:note.timestamp||0,note:String(note.text||note.html||''),html:note.html||'',createdAt:note.createdAt||'',source:'Notes'}));
     }
-    if (format === 'anki') { payload = bundles.flatMap(x=>x.items).map(item=>`${String(item.word||item.sentence||'').replaceAll('\t',' ')}\t${String(item.translation||item.sentenceTranslation||'').replaceAll('\t',' ')}\t${String(item.sentence||'').replaceAll('\t',' ')}`).join('\n'); mime='text/tab-separated-values'; ext='txt'; }
-    await downloadText(`${settings.downloadRoot}/Exports/${name}.${ext}`, payload, mime);
-    $('#exportDialog').close(); notify('Selected library pages exported.');
+    return out;
   }
-
-  async function importCurrentPage(event) {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-    try {
-      const text = await file.text();
-      let imported;
-      if (file.name.toLowerCase().endsWith('.json')) {
-        const parsed = JSON.parse(text);
-        imported = Array.isArray(parsed) ? parsed : parsed.items || parsed.pages?.flatMap(page => page.items || []) || [];
-      } else imported = parseCSV(text);
-      const info = pageInfo();
-      const existing = await getPageData(info);
-      const merged = dedupe(existing.concat(imported));
-      await chrome.storage.local.set({ [info.key]: merged });
-      await load();
-      notify(`${imported.length} item(s) imported into ${info.name}.`);
-    } catch (error) { notify(`Import failed: ${error.message}`); }
-  }
-
-  async function createPage(event) {
-    event.preventDefault();
-    const name = $('#pageName').value.trim();
-    if (!name) return;
-    const page = { id: crypto.randomUUID(), name, tags: $('#pageTags').value.split(',').map(x => x.trim()).filter(Boolean), createdAt: new Date().toISOString() };
-    pages.push(page);
-    await chrome.storage.local.set({ libraryPages: pages, [`libraryPage_${page.id}`]: [] });
-    $('#pageDialog').close(); current = `custom:${page.id}`; await load(); notify(`Created ${name}.`);
-  }
-
-  function askDeletePage(id) {
-    const page = pages.find(p => p.id === id);
-    if (!page) return;
-    pendingDelete = page;
-    $('#confirmTitle').textContent = 'Delete custom library page?';
-    $('#confirmText').textContent = `Delete “${page.name}” and its saved items? This cannot be undone.`;
-    $('#confirmDialog').showModal();
-  }
-
-  async function confirmDelete(event) {
-    event.preventDefault();
-    if (!pendingDelete) return;
-    const id = pendingDelete.id;
-    pages = pages.filter(page => page.id !== id);
-    await chrome.storage.local.set({ libraryPages: pages });
-    await chrome.storage.local.remove(`libraryPage_${id}`);
-    current = 'watchLater'; pendingDelete = null; $('#confirmDialog').close(); await load(); notify('Custom library page deleted.');
-  }
-
-  function openPagePicker(itemId, sourceKey) {
-    if (!pages.length) return notify('Create a custom library page first.');
-    $('#pickerItemId').value = itemId || '';
-    $('#pickerSource').value = sourceKey || '';
-    $('#pagePickerSelect').innerHTML = pages.map(page => `<option value="${escapeHTML(page.id)}">${escapeHTML(page.name)}</option>`).join('');
-    $('#pagePickerDialog').showModal();
-  }
-
-  async function submitPagePicker(event) {
-    event.preventDefault();
-    const page = pages.find(item => item.id === $('#pagePickerSelect').value);
-    if (!page) return;
-    const sourceKey = $('#pickerSource').value;
-    const source = BUILTIN.find(x => x.key === sourceKey) || pages.map(x => ({ key: `libraryPage_${x.id}` })).find(x => x.key === sourceKey);
-    if (!source) return notify('Source library page was not found.');
-    const sourceItems = await getPageData(source);
-    const item = sourceItems.find(x => x.id === $('#pickerItemId').value);
-    if (!item) return notify('The learning item was not found.');
-    const key = `libraryPage_${page.id}`;
-    const target = await getPageData({ key });
-    if (!target.some(x => x.id === item.id)) target.unshift({ ...item, librarySource: page.name, copiedAt: new Date().toISOString() });
-    await chrome.storage.local.set({ [key]: target });
-    $('#pagePickerDialog').close();
-    notify(`Added to ${page.name}.`);
-  }
-
-  async function copyItem(itemId) {
-    const item = data.find(entry => entry.id === itemId);
-    if (!item) return;
-    try { await navigator.clipboard.writeText(buildReadableText([item], pageInfo())); notify('Item copied.'); } catch { notify('Clipboard permission was blocked.'); }
-  }
-
-  async function removeItem(pageId, itemId) {
-    const page = pageInfo(pageId);
-    if (!itemId) return notify('This record has no removable ID.');
-    const items = await getPageData(page);
-    await chrome.storage.local.set({ [page.key]: items.filter(item => item.id !== itemId) });
-    await load();
-  }
-
-  function buildReadableBundle(bundles) {
-    return bundles.map(bundle => buildReadableText(bundle.items, bundle.page)).join('\n\n' + '='.repeat(78) + '\n\n');
-  }
-
-  function buildReadableText(items, page) {
-    const lines = [`Charlie MJ Language`, `Library: ${page.name}`, `Exported: ${new Date().toLocaleString()}`, '', `Total items: ${items.length}`, ''];
-    const byVideo = groupByVideo(items);
-    for (const [videoId, videoItems] of byVideo) {
-      const first = videoItems[0];
-      lines.push(`VIDEO: ${first.videoTitle || first.title || videoId || 'Unlinked item'}`);
-      if (first.url) lines.push(`URL: ${first.url}`);
-      if (videoId) lines.push(`Video ID: ${videoId}`);
-      lines.push('');
-      videoItems.forEach((item, index) => {
-        const name = item.word || item.title || item.label || `Item ${index + 1}`;
-        lines.push(`• ${name}`);
-        if (item.translation) lines.push(`  Translation: ${item.translation}`);
-        if (item.sentence) lines.push(`  Sentence: ${item.sentence}`);
-        if (item.sentenceTranslation) lines.push(`  Sentence translation: ${item.sentenceTranslation}`);
-        if (item.subtitle) lines.push(`  Subtitle: ${item.subtitle}`);
-        if (item.timestamp != null) lines.push(`  Timestamp: ${formatTime(item.timestamp)}`);
-        if (item.level) lines.push(`  CEFR: ${item.level} — ${item.levelLabel || ''}`);
-        if (item.pos) lines.push(`  Part of speech: ${item.pos}`);
-        if (item.tags?.length) lines.push(`  Tags: ${item.tags.join(', ')}`);
-        lines.push('');
-      });
-    }
-    return lines.join('\n');
-  }
-
-  function groupByVideo(items) {
-    const map = new Map();
-    items.forEach(item => { const key = item.videoId || `unlinked:${item.id}`; if (!map.has(key)) map.set(key, []); map.get(key).push(item); });
-    return map;
-  }
-
-  function buildCSV(items) {
-    const keys = [...new Set(items.flatMap(item => Object.keys(item)))];
-    return [keys.join(','), ...items.map(item => keys.map(key => csv(Array.isArray(item[key]) ? item[key].join('|') : item[key])).join(','))].join('\n');
-  }
-
-  function parseCSV(text) {
-    const lines = text.split(/\r?\n/).filter(Boolean);
-    if (lines.length < 2) return [];
-    const headers = splitCSV(lines[0]);
-    return lines.slice(1).map(line => { const values = splitCSV(line); const item = {}; headers.forEach((h,i) => { item[h] = values[i] || ''; }); item.id = item.id || crypto.randomUUID(); item.tags = String(item.tags || '').split('|').map(x => x.trim()).filter(Boolean); if (item.timestamp) item.timestamp = Number(item.timestamp); return item; });
-  }
-  function splitCSV(line) { const out=[]; let cur='', quote=false; for(let i=0;i<line.length;i++){const c=line[i]; if(c==='"' && line[i+1]==='"'){cur+='"';i++;continue} if(c==='"'){quote=!quote;continue} if(c===','&&!quote){out.push(cur);cur='';continue} cur+=c} out.push(cur); return out; }
-  function dedupe(items) { const map = new Map(); items.forEach(item => map.set(item.id || `${item.videoId}:${item.word}:${item.timestamp}`, item)); return [...map.values()]; }
-  function csv(value) { return `"${String(value ?? '').replaceAll('"','""')}"`; }
-  function formatTime(seconds) { const total=Math.max(0,Math.floor(Number(seconds)||0)); const h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=total%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
-
-  async function getSettings() { const { settings={} } = await chrome.storage.local.get('settings'); return { downloadRoot: 'Charlie MJ Language', ...settings }; }
-  async function downloadText(filename, text, mime) { const url=URL.createObjectURL(new Blob([text],{type:`${mime};charset=utf-8`})); try { await chrome.downloads.download({ url, filename, saveAs:false }); } finally { setTimeout(()=>URL.revokeObjectURL(url),15000); } }
-  function notify(message) { let el=$('#libraryNotice'); if(!el){el=document.createElement('div');el.id='libraryNotice';el.style.cssText='position:fixed;right:18px;bottom:18px;z-index:99;padding:12px 15px;border:1px solid #ffffff18;border-radius:11px;background:#0b1425;color:#fff;box-shadow:0 15px 45px #0008';document.body.appendChild(el)} el.textContent=message; clearTimeout(notify.timer); notify.timer=setTimeout(()=>el.remove(),3000); }
+  let s=await chrome.storage.local.get(p.key);return Array.isArray(s[p.key])?s[p.key]:[]
+}
+async function load(){await loadPages();let p=info(); if(current==='overview'){data=[];renderOverview();return} if(current==='collections'){data=pages;renderCollections();return} data=await pageData(p);render()}
+function render(){
+ $('#overview').hidden=true;let p=info(),q=$('#search').value.trim().toLowerCase(),lv=$('#levelFilter').value,tag=$('#tagFilter').value.trim().toLowerCase(),vid=$('#videoFilter').value,typ=$('#typeFilter').value;
+ let filtered=data.filter(x=>{let hay=JSON.stringify(x).toLowerCase();let tags=(x.tags||[]).join(' ').toLowerCase();let itemType=x.type||x.kind||(p.id==='videos'||p.id==='continue'?'video':'');return(!q||hay.includes(q))&&(!lv||String(x.level||'').toUpperCase()===lv)&&(!tag||tags.includes(tag))&&(!vid||x.videoId===vid)&&(!typ||itemType===typ)});
+ $('#typeFilter').disabled=['overview','collections','history','continue','videos','checkpoints'].includes(p.id);
+ renderNav();renderVideoFilter();renderStats(filtered,p);
+ $('#items').className=`item-grid ${view==='list'?'list-view':''}`;
+ $('#items').innerHTML=filtered.length?filtered.map(x=>card(x,p)).join(''):`<div class="empty"><h3>Nothing saved here yet</h3><p>${esc(p.name)} will fill automatically as you learn.</p></div>`;
+}
+function renderVideoFilter(){let sel=$('#videoFilter').value,map=new Map();data.forEach(x=>{if(x.videoId)map.set(x.videoId,x.videoTitle||x.title||x.videoId)});$('#videoFilter').innerHTML='<option value="">All videos</option>'+[...map].map(([id,t])=>`<option value="${esc(id)}">${esc(t)}</option>`).join('');if(map.has(sel))$('#videoFilter').value=sel}
+function renderStats(items,p){let vids=new Set(items.map(x=>x.videoId).filter(Boolean)),tags=new Set(items.flatMap(x=>x.tags||[])),total=items.length;$('#stats').innerHTML=[['Items',total,p.name],['Videos',vids.size,'linked videos'],['Tags',tags.size,'active tags'],['Progress',p.id==='continue'?items.filter(x=>x.status!=='completed').length:'—','unfinished / status']].map(x=>`<div class="stat"><strong>${esc(x[1])}</strong><span>${esc(x[0])} · ${esc(x[2])}</span></div>`).join('')}
+function card(x,p){
+ let isVideo=['history','continue','videos'].includes(p.id),title=x.videoTitle||x.title||x.word||x.sentence||x.label||'Learning item',sub=x.word?`${x.word}${x.translation?' — '+x.translation:''}`:x.sentence||x.subtitle||x.label||'',time=x.timestamp!=null?fmt(x.timestamp):x.lastPosition!=null?fmt(x.lastPosition):'',thumb=x.thumbnail||(x.videoId?`https://i.ytimg.com/vi/${encodeURIComponent(x.videoId)}/hqdefault.jpg`:''),progress=Number(x.watchPercentage??x.progress??0),url=x.url?ts(x.url,x.timestamp??x.lastPosition):'';
+ let actions=`<button data-copy-item="${esc(x.id||x.videoId||'')}">📋 Copy</button>`;
+ if(p.custom)actions+=`<button data-add-custom="${esc(x.id||x.videoId||'')}" data-source="${esc(p.key)}">＋ Collection</button>`;
+ if(x.videoId)actions+=`<button data-checkpoint="${esc(x.videoId)}" data-time="${esc(x.timestamp??x.lastPosition??0)}">📍 Checkpoint</button>`;
+ if(x.url)actions+=`<button data-favorite="${esc(x.videoId||x.id||'')}">⭐ Favorite</button>`;
+ if(isVideo&&x.url)actions+=`<button data-resume="${esc(x.videoId)}">▶ Resume</button>`;
+ if(x.url)actions+=`<button data-open="${esc(url)}">Open</button>`;
+ if(p.key)actions+=`<button data-remove-item="${esc(x.id||'')}">🗑 Remove</button>`;
+ return `<article class="item-card ${x.status==='completed'?'completed':''}">
+ ${thumb?`<img class="thumb" src="${esc(thumb)}" alt="" loading="lazy">`:''}<div class="item-body"><div class="card-top"><span class="pill">${esc(p.name)}</span>${x.status?`<span class="status ${esc(x.status)}">${esc(x.status)}</span>`:''}</div>
+ <h3 class="item-title">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(title)}</a>`:esc(title)}</h3><p class="item-meta"><strong>${esc(sub)}</strong></p>
+ ${isVideo?`<div class="progress"><span style="width:${Math.max(0,Math.min(100,progress))}%"></span></div><p class="item-context">${Math.round(progress)}% · Last ${esc(time||'00:00:00')} · Sessions ${esc(x.sessions||1)}</p>`:''}
+ <p class="item-context">${esc(x.source||'Library')}${time?` · ${esc(time)}`:''}${x.pos?` · ${esc(x.pos)}`:''}${x.level?` · ${esc(x.level)}`:''}</p>${x.sentence&&x.word?`<p class="item-context">${esc(x.sentence)}</p>`:''}${x.note?`<p class="note-preview">${esc(x.note)}</p>`:''}<div class="tags">${(x.tags||[]).map(t=>`<span>#${esc(t)}</span>`).join('')}</div><div class="item-actions">${actions}</div></div></article>`;
+}
+function renderOverview(){
+ $('#overview').hidden=false;$('#items').innerHTML='';$('#stats').innerHTML='';
+ Promise.all([pageData({key:'videoProgress'}),pageData({key:'history'}),pageData({key:'vocabulary'}),pageData({key:'sentenceLearning'})]).then(([prog,hist,vocab,sent])=>{
+  let active=prog.filter(x=>x.status!=='completed').sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0)).slice(0,6),recent=hist.slice(0,6);
+  $('#overview').innerHTML=`<div class="overview-head"><div><p class="eyebrow">WELCOME BACK</p><h2>Continue your learning</h2><p>${active.length} unfinished videos · ${vocab.filter(x=>x.type!=='sentence').length} words · ${sent.length} saved sentences</p></div><div class="overview-metrics"><div><b>${vocab.length}</b><span>Vocabulary</span></div><div><b>${sent.length}</b><span>Sentences</span></div><div><b>${prog.filter(x=>x.status==='completed').length}</b><span>Completed</span></div></div></div>
+  <div class="section-title"><h3>▶ Resume Queue</h3><span>Saved automatically while you watch</span></div><div class="resume-grid">${active.length?active.map(x=>card(x,{id:'continue',name:'Continue Learning'})).join(''):'<div class="empty">No unfinished videos yet. Open a YouTube video to start.</div>'}</div>
+  <div class="section-title"><h3>🕘 Recent History</h3><span>Last watched videos</span></div><div class="resume-grid">${recent.length?recent.map(x=>card(x,{id:'history',name:'History'})).join(''):'<div class="empty">Your watch history will appear here.</div>'}</div>`;
+ }).catch(console.error)
+}
+function renderCollections(){ $('#overview').hidden=true;$('#stats').innerHTML=`<div class="stat"><strong>${pages.length}</strong><span>Collections</span></div>`;$('#items').className=`item-grid ${view==='list'?'list-view':''}`;$('#items').innerHTML=pages.length?pages.map(p=>`<article class="item-card collection-card"><div class="collection-icon">📁</div><div class="item-body"><div class="card-top"><span class="pill">Collection</span></div><h3 class="item-title">${esc(p.name)}</h3><p class="item-context">${esc(p.description||'Custom learning collection')} · ${(p.tags||[]).map(esc).join(', ')}</p><div class="item-actions"><button data-page-id="custom:${esc(p.id)}">Open</button><button data-delete-page="${esc(p.id)}">🗑 Delete</button></div></div></article>`).join(''):'<div class="empty"><h3>Create your first collection</h3><p>Courses, languages, shows, grammar topics or anything else you want to learn.</p></div>'}
+function onClick(e){
+ let n=e.target.closest('[data-page-id]');if(n){current=n.dataset.pageId;load();return}
+ let d=e.target.closest('[data-delete-page]');if(d){askDelete(d.dataset.deletePage);return}
+ let r=e.target.closest('[data-remove-item]');if(r){removeItem(r.dataset.removeItem);return}
+ let c=e.target.closest('[data-add-custom]');if(c){openPicker(c.dataset.addCustom,c.dataset.source);return}
+ let f=e.target.closest('[data-favorite]');if(f){toggleFavorite(f.dataset.favorite);return}
+ let cp=e.target.closest('[data-checkpoint]');if(cp){openCheckpoint(cp.dataset.checkpoint,cp.dataset.time);return}
+ let re=e.target.closest('[data-resume]');if(re){resumeVideo(re.dataset.resume);return}
+ let op=e.target.closest('[data-open]');if(op){chrome.tabs.create({url:op.dataset.open});return}
+ let ci=e.target.closest('[data-copy-item]');if(ci){copyItem(ci.dataset.copyItem);return}
+ if(e.target.matches('[data-close]'))e.target.closest('dialog')?.close();
+}
+async function resumeVideo(id){let s=await chrome.storage.local.get('videoProgress');let p=(s.videoProgress||[]).find(x=>x.videoId===id);if(p?.url)chrome.tabs.create({url:ts(p.url,p.lastPosition)});else notify('No resume URL saved.')}
+async function toggleFavorite(id){let s=await chrome.storage.local.get('favorites');let a=s.favorites||[];let found=a.find(x=>x.videoId===id);if(found)a=a.filter(x=>x.videoId!==id);else{let p=(await chrome.storage.local.get('history')).history||[];let x=p.find(v=>v.videoId===id);if(x)a.unshift({...x,id:crypto.randomUUID(),favorite:true})}await chrome.storage.local.set({favorites:a});notify(found?'Removed from Favorites.':'Added to Favorites.');await load()}
+function openCheckpoint(video,time){$('#checkpointVideo').value=video;$('#checkpointTime').value=Number(time)||0;$('#checkpointLabel').value='';$('#checkpointDialog').showModal()}
+async function createCheckpoint(e){e.preventDefault();let id=$('#checkpointVideo').value,time=Number($('#checkpointTime').value)||0,label=$('#checkpointLabel').value.trim()||'Learning checkpoint',h=(await chrome.storage.local.get('history')).history||[],v=h.find(x=>x.videoId===id)||{};let s=await chrome.storage.local.get('checkpoints'),a=s.checkpoints||[];a.unshift({id:crypto.randomUUID(),videoId:id,videoTitle:v.videoTitle||'YouTube Video',url:v.url||`https://www.youtube.com/watch?v=${id}`,timestamp:time,label,createdAt:new Date().toISOString(),type:'checkpoint'});await chrome.storage.local.set({checkpoints:a});$('#checkpointDialog').close();notify('Checkpoint saved.');if(current==='checkpoints')load()}
+async function loadSource(key){let s=await chrome.storage.local.get(key);return Array.isArray(s[key])?s[key]:[]}
+async function openPicker(id,source){if(!pages.length)return notify('Create a collection first.');$('#pickerItemId').value=id;$('#pickerSource').value=source;$('#pagePickerSelect').innerHTML=pages.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');$('#pagePickerDialog').showModal()}
+async function addToCollection(e){e.preventDefault();let page=pages.find(p=>p.id===$('#pagePickerSelect').value);if(!page)return;let source=$('#pickerSource').value,arr=await loadSource(source),item=arr.find(x=>(x.id||x.videoId)===$('#pickerItemId').value);if(!item){let prog=arr.find(x=>x.videoId===$('#pickerItemId').value);item=prog}if(!item)return notify('Item not found.');let key=`libraryPage_${page.id}`,target=await loadSource(key);if(!target.some(x=>x.id===item.id||x.videoId===item.videoId&&x.type===item.type))target.unshift({...item,collectionAddedAt:new Date().toISOString()});await chrome.storage.local.set({[key]:target});$('#pagePickerDialog').close();notify(`Added to ${page.name}.`)}
+async function removeItem(id){let p=info(),arr=await loadSource(p.key);await chrome.storage.local.set({[p.key]:arr.filter(x=>x.id!==id)});load()}
+async function copyItem(id){let x=data.find(a=>(a.id||a.videoId)===id);if(!x)return;navigator.clipboard.writeText(readable([x],info()));notify('Copied.')}
+async function copyPage(){navigator.clipboard.writeText(readable(data,info()));notify('Current library page copied.')}
+async function openExport(downloadOnly){let choices=allPages().map(p=>`<label class="choice"><input type="checkbox" value="${esc(p.id)}" ${p.id===current?'checked':''}>${p.icon} ${esc(p.name)}</label>`).join('');$('#exportChoices').innerHTML=choices;$('#exportTitle').textContent=downloadOnly?'Download selected library':'Export selected library';$('#exportFormat').disabled=downloadOnly;if(downloadOnly)$('#exportFormat').value='txt';$('#exportDialog').showModal()}
+async function submitExport(e){e.preventDefault();let ids=[...$('#exportChoices input:checked')].map(x=>x.value);if(!ids.length)return notify('Select at least one page.');let bundles=[];for(let id of ids){let p=infoBy(id);bundles.push({page:p,items:await pageData(p)})}let fmtType=$('#exportFormat').value,payload=JSON.stringify({program:'Charlie MJ Language',version:'4.1.0',exportedAt:new Date().toISOString(),pages:bundles},null,2),mime='application/json',ext='json';if(fmtType==='txt'){payload=bundles.map(b=>readable(b.items,b.page)).join('\\n\\n'+'='.repeat(80)+'\\n\\n');mime='text/plain';ext='txt'}if(fmtType==='csv'){payload=csv(bundles.flatMap(b=>b.items.map(x=>({page:b.page.name,...x}))));mime='text/csv';ext='csv'}if(fmtType==='anki'){payload=bundles.flatMap(b=>b.items).map(x=>`${String(x.word||x.sentence||'').replaceAll('\\t',' ')}\\t${String(x.translation||x.sentenceTranslation||'').replaceAll('\\t',' ')}\\t${String(x.sentence||'').replaceAll('\\t',' ')}`).join('\\n');mime='text/tab-separated-values';ext='txt'}if(['srt','vtt'].includes(fmtType)){let rows=bundles.flatMap(b=>b.items).filter(x=>x.sentence||x.subtitle).map((x,i)=>`${fmtType==='srt'?i+1+'\\n':''}${timecode(x.timestamp||0,fmtType)} --> ${timecode((x.timestamp||0)+(x.duration||2),fmtType)}\\n${x.sentence||x.subtitle||''}${x.translation||x.sentenceTranslation?'\\n'+(x.translation||x.sentenceTranslation):''}`).join('\\n\\n');payload=fmtType==='vtt'?'WEBVTT\\n\\n'+rows:rows;mime='text/plain';ext=fmtType}let set=(await chrome.storage.local.get('settings')).settings||{};await download(`${set.downloadRoot||'Charlie MJ Language'}/Exports/${safe(bundles.map(x=>x.page.name).join('-'))}.${ext}`,payload,mime);$('#exportDialog').close();notify('Export started.')}
+async function importPage(e){let f=e.target.files?.[0];e.target.value='';if(!f)return;try{let t=await f.text(),p=info(),parsed=f.name.toLowerCase().endsWith('.json')?JSON.parse(t):parseCSV(t),items=Array.isArray(parsed)?parsed:parsed.items||parsed.pages?.flatMap(x=>x.items||[])||[];let old=await pageData(p),map=new Map([...old,...items].map(x=>[x.id||crypto.randomUUID(),x]));await chrome.storage.local.set({[p.key]:[...map.values()]});await load();notify(`Imported ${items.length} item(s).`)}catch(err){notify('Import failed: '+err.message)}}
+async function createPage(e){e.preventDefault();let p={id:crypto.randomUUID(),name:$('#pageName').value.trim(),tags:$('#pageTags').value.split(',').map(x=>x.trim()).filter(Boolean),description:$('#pageDescription').value.trim(),createdAt:new Date().toISOString()};if(!p.name)return;pages.push(p);await chrome.storage.local.set({libraryPages:pages,[`libraryPage_${p.id}`]:[]});$('#pageDialog').close();current=`custom:${p.id}`;await load();notify(`Created ${p.name}.`)}
+function askDelete(id){pendingDelete=pages.find(p=>p.id===id);if(!pendingDelete)return;$('#confirmTitle').textContent='Delete collection?';$('#confirmText').textContent=`Delete “${pendingDelete.name}” and its items?`;$('#confirmDialog').showModal()}
+async function confirmDelete(e){e.preventDefault();if(!pendingDelete)return;pages=pages.filter(p=>p.id!==pendingDelete.id);await chrome.storage.local.set({libraryPages:pages});await chrome.storage.local.remove(`libraryPage_${pendingDelete.id}`);pendingDelete=null;current='collections';$('#confirmDialog').close();await load()}
+function infoBy(id){return allPages().find(p=>p.id===id)||BUILTIN[0]}
+function readable(items,p){let l=[`Charlie MJ Language`,`Library: ${p.name}`,`Exported: ${new Date().toLocaleString()}`,`Total items: ${items.length}`,''];items.forEach((x,i)=>{l.push(`• ${x.videoTitle||x.title||x.word||x.sentence||x.label||'Item '+(i+1)}`);if(x.word)l.push(`  Word: ${x.word}`,`  Translation: ${x.translation||''}`);if(x.sentence)l.push(`  Sentence: ${x.sentence}`,`  Sentence translation: ${x.sentenceTranslation||x.translation||''}`);if(x.timestamp!=null)l.push(`  Timestamp: ${fmt(x.timestamp)}`);if(x.lastPosition!=null)l.push(`  Last position: ${fmt(x.lastPosition)}`);if(x.url)l.push(`  URL: ${x.url}`);if(x.pos)l.push(`  POS: ${x.pos}`);if(x.lemma)l.push(`  Lemma: ${x.lemma}`);if(x.tags?.length)l.push(`  Tags: ${x.tags.join(', ')}`);l.push('')});return l.join('\\n')}
+function csv(items){let keys=[...new Set(items.flatMap(x=>Object.keys(x)))];return [keys.join(','),...items.map(x=>keys.map(k=>`"${String(Array.isArray(x[k])?x[k].join('|'):x[k]??'').replaceAll('"','""')}"`).join(','))].join('\\n')}
+function parseCSV(t){let lines=t.split(/\\r?\\n/).filter(Boolean);if(lines.length<2)return[];let h=split(lines[0]);return lines.slice(1).map(l=>{let v=split(l),x={};h.forEach((k,i)=>x[k]=v[i]||'');x.id=x.id||crypto.randomUUID();if(x.timestamp)x.timestamp=Number(x.timestamp);x.tags=String(x.tags||'').split('|').filter(Boolean);return x})}
+function split(l){let a=[],c='',q=false;for(let i=0;i<l.length;i++){let x=l[i];if(x==='"'&&l[i+1]==='"'){c+='"';i++;continue}if(x==='"'){q=!q;continue}if(x===','&&!q){a.push(c);c='';continue}c+=x}a.push(c);return a}
+function timecode(sec,type){let ms=Math.max(0,Math.round(Number(sec||0)*1000)),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000),z=ms%1000;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}${type==='srt'?',':'.'}${String(z).padStart(3,'0')}`}
+async function download(path,text,mime){let u=URL.createObjectURL(new Blob([text],{type:mime+';charset=utf-8'}));try{await chrome.downloads.download({url:u,filename:path,saveAs:false})}finally{setTimeout(()=>URL.revokeObjectURL(u),15000)}}
+function applyView(){$('#viewToggle').textContent=view==='grid'?'☷ List':'▦ Grid'}
 })();

@@ -29,3 +29,6 @@ This directory contains the detailed technical and product documentation for the
 
 
 - [22 — Final Release v4.0.0](22-final-release-v4.0.0.md)
+
+- [v4.1.1 Settings, Library and Toolbar Polish](24-settings-library-toolbar-polish-v4.1.1.md)
+- [25 — Final UX, Settings and Library Fix v4.1.2](25-final-ux-settings-library-fix-v4.1.2.md)

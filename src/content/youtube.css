@@ -255,3 +255,16 @@ body.cmj-toolbar-dragging * { cursor: grabbing !important; }
 .cmj-card-label,.cmj-tag{display:inline-block!important;width:max-content!important;padding:3px 7px;border-radius:999px;background:rgba(56,189,248,.12);color:#7dd3fc!important;font-size:10px!important;margin-right:4px}
 
 .cmj-word-speak{position:absolute;right:40px;top:7px;border:0!important;background:transparent!important;color:#7dd3fc!important;font-size:16px!important;padding:3px 6px!important;cursor:pointer}.cmj-level-A1{box-shadow:inset 0 0 0 1px rgba(74,222,128,.15)}.cmj-level-A2{box-shadow:inset 0 0 0 1px rgba(134,239,172,.15)}.cmj-level-B1{box-shadow:inset 0 0 0 1px rgba(125,211,252,.18)}.cmj-level-B2{box-shadow:inset 0 0 0 1px rgba(167,139,250,.18)}.cmj-level-C1{box-shadow:inset 0 0 0 1px rgba(251,146,60,.18)}.cmj-level-C2{box-shadow:inset 0 0 0 1px rgba(248,113,113,.2)}
+
+
+/* v4.1.1 — persistent ON state for mode buttons and a short completion state for actions. */
+.cmj-toolbar button.cmj-toolbar-active,
+.cmj-more-menu button.cmj-toolbar-active {
+  background: linear-gradient(135deg, rgba(14,165,233,.30), rgba(37,99,235,.24)) !important;
+  border-color: rgba(56,189,248,.65) !important;
+  color: #fff !important;
+  box-shadow: inset 0 0 0 1px rgba(125,211,252,.12), 0 0 18px rgba(14,165,233,.16);
+}
+.cmj-toolbar button.cmj-toolbar-active::after { content:' ON'; font-size:9px; letter-spacing:.05em; color:#7dd3fc; margin-left:3px; }
+.cmj-toolbar button.cmj-toolbar-action-complete,
+.cmj-more-menu button.cmj-toolbar-action-complete { background:rgba(34,197,94,.18) !important; border-color:rgba(74,222,128,.42) !important; }

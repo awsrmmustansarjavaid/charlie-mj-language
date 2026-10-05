@@ -42,6 +42,13 @@ chrome.commands.onCommand.addListener(async (command) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CMJ_OPEN_OPTIONS') {
+    chrome.runtime.openOptionsPage().then(() => sendResponse({ ok: true })).catch(async () => {
+      try { await chrome.tabs.create({ url: chrome.runtime.getURL('src/options/options.html') }); sendResponse({ ok: true }); }
+      catch (error) { sendResponse({ ok: false, error: error.message }); }
+    });
+    return true;
+  }
   if (message.type === 'CMJ_TRANSLATE') {
     translate(message.text, message.source, message.target, message.provider, message.libreUrl)
       .then(result => sendResponse({ ok: true, ...result }))
