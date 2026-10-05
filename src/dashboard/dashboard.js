@@ -81,7 +81,9 @@ function renderStats(items,p){let vids=new Set(items.map(x=>x.videoId).filter(Bo
 function card(x,p){
  let isVideo=['history','continue','videos'].includes(p.id),title=x.videoTitle||x.title||x.word||x.sentence||x.label||'Learning item',sub=x.word?`${x.word}${x.translation?' — '+x.translation:''}`:x.sentence||x.subtitle||x.label||'',time=x.timestamp!=null?fmt(x.timestamp):x.lastPosition!=null?fmt(x.lastPosition):'',thumb=x.thumbnail||(x.videoId?`https://i.ytimg.com/vi/${encodeURIComponent(x.videoId)}/hqdefault.jpg`:''),progress=Number(x.watchPercentage??x.progress??0),url=x.url?ts(x.url,x.timestamp??x.lastPosition):'';
  let actions=`<button data-copy-item="${esc(x.id||x.videoId||'')}">📋 Copy</button>`;
- if(p.custom)actions+=`<button data-add-custom="${esc(x.id||x.videoId||'')}" data-source="${esc(p.key)}">＋ Collection</button>`;
+ const itemId=x.id||x.videoId||'';
+ if(p.key)actions+=`<button data-add-custom="${esc(itemId)}" data-source="${esc(p.key)}" data-collection-mode="copy">＋ Add to Collection</button>`;
+ if(p.custom)actions+=`<button data-add-custom="${esc(itemId)}" data-source="${esc(p.key)}" data-collection-mode="move">↔ Move to Collection</button>`;
  if(x.videoId)actions+=`<button data-checkpoint="${esc(x.videoId)}" data-time="${esc(x.timestamp??x.lastPosition??0)}">📍 Checkpoint</button>`;
  if(x.url)actions+=`<button data-favorite="${esc(x.videoId||x.id||'')}">⭐ Favorite</button>`;
  if(isVideo&&x.url)actions+=`<button data-resume="${esc(x.videoId)}">▶ Resume</button>`;
@@ -107,7 +109,7 @@ function onClick(e){
  let n=e.target.closest('[data-page-id]');if(n){current=n.dataset.pageId;load();return}
  let d=e.target.closest('[data-delete-page]');if(d){askDelete(d.dataset.deletePage);return}
  let r=e.target.closest('[data-remove-item]');if(r){removeItem(r.dataset.removeItem);return}
- let c=e.target.closest('[data-add-custom]');if(c){openPicker(c.dataset.addCustom,c.dataset.source);return}
+ let c=e.target.closest('[data-add-custom]');if(c){openPicker(c.dataset.addCustom,c.dataset.source,c.dataset.collectionMode||'copy');return}
  let f=e.target.closest('[data-favorite]');if(f){toggleFavorite(f.dataset.favorite);return}
  let cp=e.target.closest('[data-checkpoint]');if(cp){openCheckpoint(cp.dataset.checkpoint,cp.dataset.time);return}
  let re=e.target.closest('[data-resume]');if(re){resumeVideo(re.dataset.resume);return}
@@ -120,8 +122,37 @@ async function toggleFavorite(id){let s=await chrome.storage.local.get('favorite
 function openCheckpoint(video,time){$('#checkpointVideo').value=video;$('#checkpointTime').value=Number(time)||0;$('#checkpointLabel').value='';$('#checkpointDialog').showModal()}
 async function createCheckpoint(e){e.preventDefault();let id=$('#checkpointVideo').value,time=Number($('#checkpointTime').value)||0,label=$('#checkpointLabel').value.trim()||'Learning checkpoint',h=(await chrome.storage.local.get('history')).history||[],v=h.find(x=>x.videoId===id)||{};let s=await chrome.storage.local.get('checkpoints'),a=s.checkpoints||[];a.unshift({id:crypto.randomUUID(),videoId:id,videoTitle:v.videoTitle||'YouTube Video',url:v.url||`https://www.youtube.com/watch?v=${id}`,timestamp:time,label,createdAt:new Date().toISOString(),type:'checkpoint'});await chrome.storage.local.set({checkpoints:a});$('#checkpointDialog').close();notify('Checkpoint saved.');if(current==='checkpoints')load()}
 async function loadSource(key){let s=await chrome.storage.local.get(key);return Array.isArray(s[key])?s[key]:[]}
-async function openPicker(id,source){if(!pages.length)return notify('Create a collection first.');$('#pickerItemId').value=id;$('#pickerSource').value=source;$('#pagePickerSelect').innerHTML=pages.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');$('#pagePickerDialog').showModal()}
-async function addToCollection(e){e.preventDefault();let page=pages.find(p=>p.id===$('#pagePickerSelect').value);if(!page)return;let source=$('#pickerSource').value,arr=await loadSource(source),item=arr.find(x=>(x.id||x.videoId)===$('#pickerItemId').value);if(!item){let prog=arr.find(x=>x.videoId===$('#pickerItemId').value);item=prog}if(!item)return notify('Item not found.');let key=`libraryPage_${page.id}`,target=await loadSource(key);if(!target.some(x=>x.id===item.id||x.videoId===item.videoId&&x.type===item.type))target.unshift({...item,collectionAddedAt:new Date().toISOString()});await chrome.storage.local.set({[key]:target});$('#pagePickerDialog').close();notify(`Added to ${page.name}.`)}
+async function openPicker(id,source,mode='copy'){
+ if(!pages.length)return notify('Create a collection first.');
+ const sourcePage=allPages().find(p=>p.key===source);
+ const available=pages.filter(p=>!sourcePage?.custom || p.id!==sourcePage.rawId);
+ if(!available.length)return notify(mode==='move'?'No other collection is available.':'Create another collection first.');
+ $('#pickerItemId').value=id;$('#pickerSource').value=source;$('#pickerMode').value=mode;
+ $('#pagePickerTitle').textContent=mode==='move'?'Move to collection':'Add to collection';
+ $('#pagePickerDescription').textContent=mode==='move'?'Remove this item from the current collection after it is added to the selected collection.':'Keep this item here and add a copy to the selected collection.';
+ $('#pagePickerSubmit').textContent=mode==='move'?'Move':'Add';
+ $('#pagePickerSelect').innerHTML=available.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+ $('#pagePickerDialog').showModal()
+}
+async function addToCollection(e){
+ e.preventDefault();
+ let page=pages.find(p=>p.id===$('#pagePickerSelect').value);if(!page)return;
+ let source=$('#pickerSource').value,mode=$('#pickerMode').value||'copy',id=$('#pickerItemId').value;
+ let arr=await loadSource(source),item=arr.find(x=>(x.id||x.videoId)===id);
+ if(!item && id) item=arr.find(x=>x.videoId===id);
+ if(!item)return notify('Item not found. Refresh the Library and try again.');
+ let key=`libraryPage_${page.id}`,target=await loadSource(key);
+ let exists=target.some(x=>(x.id&&item.id&&x.id===item.id)||(!item.id&&x.videoId===item.videoId&&x.type===item.type));
+ if(!exists)target.unshift({...item,collectionAddedAt:new Date().toISOString()});
+ let changes={[key]:target};
+ if(mode==='move' && source.startsWith('libraryPage_')){
+   changes[source]=arr.filter(x=>!((x.id&&item.id&&x.id===item.id)||(!item.id&&x.videoId===item.videoId&&x.type===item.type)));
+ }
+ await chrome.storage.local.set(changes);
+ $('#pagePickerDialog').close();
+ notify(mode==='move'?`Moved to ${page.name}.`:`Added to ${page.name}.`);
+ await load();
+}
 async function removeItem(id){let p=info(),arr=await loadSource(p.key);await chrome.storage.local.set({[p.key]:arr.filter(x=>x.id!==id)});load()}
 async function copyItem(id){let x=data.find(a=>(a.id||a.videoId)===id);if(!x)return;navigator.clipboard.writeText(readable([x],info()));notify('Copied.')}
 async function copyPage(){navigator.clipboard.writeText(readable(data,info()));notify('Current library page copied.')}
