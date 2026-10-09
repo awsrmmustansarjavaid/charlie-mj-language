@@ -32,3 +32,5 @@ This directory contains the detailed technical and product documentation for the
 
 - [v4.1.1 Settings, Library and Toolbar Polish](24-settings-library-toolbar-polish-v4.1.1.md)
 - [25 — Final UX, Settings and Library Fix v4.1.2](25-final-ux-settings-library-fix-v4.1.2.md)
+
+- [28 — Export Reliability + Translation Router v4.1.5](28-export-reliability-translation-router-v4.1.5.md)

@@ -39,6 +39,10 @@
     activeIndex: -1,
     lastCaptionKey: '',
     translationCache: {},
+    translationSourceCache: {},
+    youtubeTargetCaptionCache: {},
+    youtubeOriginalCaptions: [],
+    youtubeTranslationTracks: {},
     translating: false,
     settings: {},
     panelTab: 'transcript',
@@ -49,7 +53,6 @@
     notesSaveTimer: null,
     syncFrame: null,
     lastSyncAt: 0,
-    captionDiagnostics: '',
     sentenceReplayCount: 1,
     abRange: null,
     studyMode: false,
@@ -62,8 +65,25 @@
   const DEFAULTS = {
     sourceLanguage: 'tr',
     targetLanguage: 'en',
-    translationProvider: 'mymemory',
+    translationProvider: 'youtube-first',
+    translationProviderPriority: ['youtube-captions','google','microsoft','mymemory','libretranslate'],
+    enabledTranslationProviders: {google:false,microsoft:false,deepl:false,mymemory:false,libretranslate:false,argos:false},
+    translationApiKeys: {google:'',microsoft:'',deepl:''},
+    microsoftRegion: '',
     libreTranslateUrl: '',
+    argosUrl: '',
+    argosModels: [],
+    onlineOnly: false,
+    offlineOnly: false,
+    onlineOfflineFallback: true,
+    privacyMode: false,
+    translationCache: true,
+    verificationMode: false,
+    translationTimeoutMs: 5000,
+    translationRetries: 1,
+    maxTranslationLength: 2000,
+    dictionaryEnabled: true,
+    dictionaryEndpoint: 'https://api.dictionaryapi.dev/api/v2/entries',
     focusMode: true,
     posColors: true,
     boldPOS: true,
@@ -80,12 +100,28 @@
     captionFetchIntervalMs: 180,
     captionSyncIntervalMs: 40,
     captionSyncToleranceMs: 350,
-    toolbarRevealMode: 'always',
-    toolbarPosition: { leftPx: null, topPx: null, left: 50, top: null, bottom: 58 },
+    toolbarRevealMode: 'hover',
+    toolbarDefaultX: 50, toolbarDefaultY: 2, toolbarHeight: 45, toolbarHorizontalAnchor: 'center', toolbarVerticalAnchor: 'bottom', toolbarOffsetX: 0, toolbarOffsetY: 2, toolbarPositionMode: 'default', toolbarOverflowMode: 'auto',
+    toolbarPosition: { leftPx: null, topPx: null, left: null, top: null, bottom: 2 },
     toolbarHoverZonePx: 140,
     toolbarDragAnywhere: true,
     toolbarSnap: 'free',
-    toolbarAutoHideDelayMs: 1800,
+    toolbarAutoHideDelayMs: 15000,
+    toolbarScale: 1,
+    toolbarWidth: 905,
+    subtitleDefaultX: 50, subtitleDefaultY: 11, subtitleWidth: 760, subtitleWidthPercent: 60, subtitleHorizontalAnchor: 'center', subtitleVerticalAnchor: 'bottom', subtitleOffsetX: 0, subtitleOffsetY: 11, subtitleMoveHideDelayMs: 1800, subtitlePositionMode: 'bottom', subtitleUIFontSize: 28, subtitleMaxWidth: 1100, subtitleTextColor: '#ffffff', subtitleBackgroundColor: '#000000', subtitleOpacity: 65,
+    subtitleDragEnabled: true,
+    subtitlePosition: { leftPx: null, topPx: null, left: null, top: null, bottom: 11 },
+    successPopupPosition: 'subtitle-center', transcriptServiceEngine: 'legacy-youtube', captionTrackPreference: 'original-first', enableCaptionLanguageDiscovery: true,
+    transcriptDefaultX: 98, transcriptDefaultY: 12, transcriptUIWidth: 300, transcriptUIHeight: 545, transcriptHorizontalAnchor: 'right', transcriptPositionMode: 'default', transcriptVerticalAnchor: 'top', transcriptOffsetX: 2, transcriptOffsetY: 12, transcriptControlHideDelayMs: 15000, transcriptAutoHideDelayMs: 15000, transcriptHoverZonePx: 120,
+    transcriptWindowWidth: 300,
+    transcriptWindowHeight: 545,
+    transcriptWindowMinWidth: 220,
+    transcriptWindowMaxWidth: 1000,
+    transcriptWindowMinHeight: 220,
+    transcriptWindowMaxHeight: 900,
+    transcriptWindowPosition: { leftPx: null, topPx: null, right: 2, bottom: null, left: null, top: 12 },
+    transcriptPinned: false,
     theme: 'dark',
     subtitlePreloadTranslations: 2,
     subtitleDisplayMode: 'both',
@@ -97,11 +133,14 @@
     translationUnderline: false,
     originalItalic: false,
     translationItalic: false,
+    originalColor: '#ffffff',
+    translationColor: '#e2e8f0',
     sentenceShowLevel: true,
     sentenceDifficulty: 'auto',
     autoPauseAfterSubtitle: false,
     replayCount: 1,
     playbackSpeed: 1,
+    subtitleGrammarColorsEnabled: true, transcriptGrammarColorsEnabled: true,
     grammarColors: {
       noun: '#38bdf8', verb: '#fb7185', adjective: '#a78bfa', adverb: '#4ade80', pronoun: '#facc15',
       preposition: '#f472b6', conjunction: '#fb923c', determiner: '#818cf8', numeral: '#a3e635', particle: '#22d3ee',
@@ -141,20 +180,63 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  let contextInvalidToastShown = false;
+  function extensionContextAlive() {
+    try { return Boolean(chrome && chrome.runtime && chrome.runtime.id && chrome.storage && chrome.storage.local); }
+    catch (_) { return false; }
+  }
+  function isContextInvalidError(error) { return /extension context invalidated|context invalidated|message port closed/i.test(String(error?.message || error || '')); }
+  function reportContextError(error) {
+    if (!isContextInvalidError(error)) { console.warn('Charlie MJ action failed:', error); return; }
+    if (!contextInvalidToastShown) {
+      contextInvalidToastShown = true;
+      showToast('Extension was updated or reloaded. Refresh this YouTube page to reconnect Charlie MJ Language.');
+      console.warn('Charlie MJ: extension context invalidated; refresh the YouTube page after updating the extension.');
+    }
+  }
+  async function storageGet(keys) {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return {}; }
+    try { return await chrome.storage.local.get(keys); } catch (error) { reportContextError(error); return {}; }
+  }
+  async function storageSet(values) {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return false; }
+    try { await chrome.storage.local.set(values); return true; } catch (error) { reportContextError(error); return false; }
+  }
 
-  init().catch(error => console.warn('Charlie MJ Language initialisation failed:', error));
+  init().catch(error => { reportContextError(error); if (!isContextInvalidError(error)) console.warn('Charlie MJ Language initialisation failed:', error); });
 
   async function init() {
-    const stored = await chrome.storage.local.get('settings');
+    const stored = await storageGet('settings');
     state.settings = { ...DEFAULTS, ...(stored.settings || {}) };
     state.focusMode = Boolean(state.settings.focusMode);
     state.studyMode = Boolean(state.settings.studyModeDefault);
-    state.settings.toolbarPosition = { left: 50, top: null, bottom: 58, ...(state.settings.toolbarPosition || {}) };
+    const saved=stored.settings||{};
+    // One-time migration: older releases defaulted to 'always', which prevented the promised auto-hide.
+    if (!saved.toolbarRevealModeMigrationV432) {
+      if (!saved.toolbarRevealMode || saved.toolbarRevealMode === 'always') state.settings.toolbarRevealMode = 'hover';
+      state.settings.toolbarRevealModeMigrationV432 = true;
+      await storageSet({ settings: state.settings });
+    }
+    const oldToolbar=saved.toolbarPosition||{};
+    const oldSubtitle=saved.subtitlePosition||{};
+    const oldTranscript=saved.transcriptWindowPosition||{};
+    const toolbarHasPixelDrag=(saved.toolbarPositionMode==='custom') && (Number.isFinite(Number(oldToolbar.leftPx)) || Number.isFinite(Number(oldToolbar.topPx)));
+    const subtitleHasPixelDrag=(saved.subtitlePositionMode==='custom') && (Number.isFinite(Number(oldSubtitle.leftPx)) || Number.isFinite(Number(oldSubtitle.topPx)));
+    const transcriptHasPixelDrag=(saved.transcriptPositionMode==='custom') && (Number.isFinite(Number(oldTranscript.leftPx)) || Number.isFinite(Number(oldTranscript.topPx)));
+    state.settings.toolbarPositionMode = toolbarHasPixelDrag ? 'custom' : 'default';
+    state.settings.subtitlePositionMode = subtitleHasPixelDrag ? 'custom' : (saved.subtitlePositionMode || 'bottom');
+    state.settings.transcriptPositionMode = transcriptHasPixelDrag ? 'custom' : 'default';
+    state.settings.toolbarPosition = toolbarHasPixelDrag ? { ...DEFAULTS.toolbarPosition, ...oldToolbar } : { ...DEFAULTS.toolbarPosition };
+    state.settings.subtitlePosition = subtitleHasPixelDrag ? { ...DEFAULTS.subtitlePosition, ...oldSubtitle } : { ...DEFAULTS.subtitlePosition };
+    state.settings.transcriptWindowPosition = transcriptHasPixelDrag ? { ...DEFAULTS.transcriptWindowPosition, ...oldTranscript } : { ...DEFAULTS.transcriptWindowPosition };
+    state.settings.transcriptWindowWidth = Number(saved.transcriptWindowWidth||0)===520 ? 300 : Number(saved.transcriptWindowWidth||300);
+    state.settings.transcriptWindowHeight = Number(saved.transcriptWindowHeight||0)===680 ? 545 : Number(saved.transcriptWindowHeight||545);
+    state.settings.transcriptWindowMinWidth = Math.max(220,Number(saved.transcriptWindowMinWidth||220));
+    state.settings.transcriptWindowMinHeight = Math.max(220,Number(saved.transcriptWindowMinHeight||220));
 
     document.addEventListener(EVENT_NAME, onPlayerResponse);
     document.addEventListener(EVENT_NAME + '-data', onCaptionData);
     document.addEventListener(DATA_EVENT, onCaptionData);
-    document.addEventListener('cmj-youtube-caption-diagnostics', event => { state.captionDiagnostics = event.detail || ''; }, true);
     chrome.runtime.onMessage.addListener(onMessage);
     window.addEventListener('keydown', onShortcut, true);
     chrome.storage.onChanged.addListener(onSettingsChanged);
@@ -165,31 +247,44 @@
     routeChanged();
     setInterval(routeChanged, 1000);
     startSubtitleSyncLoop();
-    setInterval(injectYouTubeWatchLaterItem, 400);
+    setInterval(injectYouTubeWatchLaterItem, 1500);
   }
 
   function startSubtitleSyncLoop() {
     if (state.syncFrame) return;
     const tick = () => {
-      state.syncFrame = requestAnimationFrame(tick);
-      if (!isWatchPage()) return;
-      const now = performance.now();
-      const interval = Math.max(16, Number(state.settings.captionSyncIntervalMs || 40));
-      if (now - (state.lastSyncAt || 0) < interval) return;
-      state.lastSyncAt = now;
-      updatePlayback();
+      if (isWatchPage()) {
+        const now = performance.now();
+        const interval = Math.max(40, Number(state.settings.captionSyncIntervalMs || 80));
+        if (now - (state.lastSyncAt || 0) >= interval) {
+          state.lastSyncAt = now;
+          updatePlayback();
+        }
+      }
+      state.syncFrame = setTimeout(tick, Math.max(40, Number(state.settings.captionSyncIntervalMs || 80)));
     };
-    state.syncFrame = requestAnimationFrame(tick);
+    state.syncFrame = setTimeout(tick, 80);
   }
 
   /** React immediately when the learner changes display/download preferences. */
   async function onSettingsChanged(changes, area) {
     if (area !== 'local' || !changes.settings?.newValue) return;
-    state.settings = { ...DEFAULTS, ...changes.settings.newValue, toolbarPosition: { ...DEFAULTS.toolbarPosition, ...(changes.settings.newValue.toolbarPosition || {}) } };
+    const previous = state.settings;
+    state.settings = { ...DEFAULTS, ...changes.settings.newValue, toolbarPosition: { ...DEFAULTS.toolbarPosition, ...(changes.settings.newValue.toolbarPosition || {}) },
+      subtitlePosition: { ...DEFAULTS.subtitlePosition, ...(changes.settings.newValue.subtitlePosition || {}) },
+      transcriptWindowPosition: { ...DEFAULTS.transcriptWindowPosition, ...(changes.settings.newValue.transcriptWindowPosition || {}) } };
+    if (previous.sourceLanguage !== state.settings.sourceLanguage || previous.targetLanguage !== state.settings.targetLanguage) {
+      state.youtubeTranslationTracks = {};
+      state.translationCache = {};
+      await fetchYouTubeCaptionBundle();
+      prefetchTranslations(0, Number(state.settings.subtitlePreloadTranslations || 2)).catch(()=>{});
+    }
     state.focusMode = Boolean(state.settings.focusMode);
     ensureUI();
+    applySubtitlePosition($('.cmj-subtitle-layer'));
+    applyTranscriptWindow($('.cmj-panel'));
     const existingHost = document.getElementById(PLAYER_HOST_ID);
-    if (existingHost) { applyToolbarPosition(existingHost); applyToolbarRevealMode(document.querySelector('#movie_player'), existingHost); }
+    if (existingHost) { applyToolbarPosition(existingHost); applyToolbarRevealMode(document.querySelector('#movie_player'), existingHost); updateToolbarOverflow(existingHost); }
     applyFocusMode();
     renderCurrentSubtitle();
     applyTheme();
@@ -260,6 +355,10 @@
     state.activeIndex = -1;
     state.lastCaptionKey = '';
     state.translationCache = {};
+    state.translationSourceCache = {};
+    state.youtubeTargetCaptionCache = {};
+    state.youtubeOriginalCaptions = [];
+    state.youtubeTranslationTracks = {};
     state.nativeCaptionText = '';
     state.lastProgressWrite = 0;
     state.resumeAppliedFor = '';
@@ -303,8 +402,64 @@
    * YouTube exposes caption metadata before/around playback; we race the MAIN
    * world bridge, player API, initial response objects and page scripts.
    */
+
+  function requestBridgeCaptionBundle(){
+    return new Promise(resolve=>{
+      const requestId=crypto.randomUUID();
+      const timeout=setTimeout(()=>{document.removeEventListener('cmj-youtube-caption-bundle-data',onData,true);resolve({ok:false,error:'Bridge timeout'});},6500);
+      const onData=event=>{
+        try{
+          const payload=JSON.parse(event.detail||'{}');
+          if(payload.requestId!==requestId)return;
+          clearTimeout(timeout);document.removeEventListener('cmj-youtube-caption-bundle-data',onData,true);resolve(payload);
+        }catch(_){ }
+      };
+      document.addEventListener('cmj-youtube-caption-bundle-data',onData,true);
+      document.dispatchEvent(new CustomEvent('cmj-youtube-request-caption-bundle',{detail:{requestId,source:state.settings.sourceLanguage||'auto',target:state.settings.targetLanguage||'en'}}));
+    });
+  }
+
+  async function applyYouTubeBundleResult(result){
+    if(!result?.ok)return false;
+    if(Array.isArray(result.tracks)&&result.tracks.length)state.tracks=normaliseTracks(result.tracks);
+    if(Array.isArray(result.original)&&result.original.length){
+      state.youtubeOriginalCaptions=mergeCaptionSegments(result.original.map(x=>({...x,text:cleanText(x.text)})));
+      state.captions=state.youtubeOriginalCaptions.slice();
+    }
+    if(Array.isArray(result.translation)&&result.translation.length){
+      const key=String(state.settings.targetLanguage||'en').split('-')[0].toLowerCase();
+      state.youtubeTranslationTracks[key]=mergeCaptionSegments(result.translation.map(x=>({...x,text:cleanText(x.text)})));
+      state.translationSourceCache.__youtube=result.translationSource||'YouTube Auto-Translation';
+    }
+    if(state.captions.length){
+      state.activeIndex=-1;state.lastCaptionKey='';renderCurrentSubtitle();renderPanelIfOpen();saveTranscriptRecord().catch(()=>{});
+    }
+    return Boolean(state.captions.length);
+  }
+
+  async function fetchYouTubeCaptionBundle(){
+    const videoId=getVideoId();if(!videoId)return false;
+    try{
+      // Primary: execute inside the real YouTube page. This preserves the
+      // user's YouTube session/cookies and lets us reuse YouTube's own
+      // player/session context instead of making an anonymous extension fetch.
+      const bridge=await requestBridgeCaptionBundle();
+      if(await applyYouTubeBundleResult(bridge))return true;
+      // Secondary: service-worker InnerTube cascade. Kept as an independent
+      // fallback in case the MAIN-world page hooks are blocked by a player build.
+      const result=await chrome.runtime.sendMessage({type:'CMJ_YOUTUBE_CAPTIONS',videoId,source:state.settings.sourceLanguage||'auto',target:state.settings.targetLanguage||'en',mode:'bundle'});
+      if(await applyYouTubeBundleResult(result))return true;
+    }catch(error){}
+    return Boolean(state.captions.length);
+  }
+
   async function bootstrapCaptionDiscovery() {
     const started = performance.now();
+    // Always acquire the learner's ORIGINAL/source-language track separately
+    // from translation tracks. This prevents English target captions from
+    // replacing the original Turkish line.
+    const bundleOk = await fetchYouTubeCaptionBundle();
+    requestBridgeOriginalCaptions(state.settings.sourceLanguage || 'tr').catch(()=>{});
     const fastInterval = Math.max(80, Number(state.settings.captionFetchIntervalMs || 180));
     for (let attempt = 0; attempt < 16; attempt += 1) {
       if (state.tracks.length) break;
@@ -335,7 +490,10 @@
 
   function discoverCaptionTracksFromPlayer() {
     try {
-      const player = document.querySelector('#movie_player');
+      installSubtitleInteractions(root);
+    installTranscriptPanelInteractions(root);
+    applySubtitlePosition($('.cmj-subtitle-layer', root));
+    const player = document.querySelector('#movie_player');
       const response = player?.getPlayerResponse?.()
         || window.ytInitialPlayerResponse
         || window.ytplayer?.config?.args?.player_response
@@ -421,8 +579,8 @@
       || state.tracks[0];
     if (!preferred?.baseUrl) return false;
 
-    state.settings.sourceLanguage = preferred.languageCode || state.settings.sourceLanguage;
-    chrome.storage.local.set({ settings: state.settings }).catch(() => {});
+    // Keep the user's configured learning/source language stable. A caption
+    // track is data, not a reason to silently change the setting.
 
     // Legacy direct fetch remains only as a short, abortable fallback. This
     // prevents the old 8-10 second empty timedtext stall from blocking the UI.
@@ -449,44 +607,137 @@
   }
 
   function parseCaptionResponse(text) {
-    const result = [];
-    if (text.trim().startsWith('{')) {
-      try {
-        const json = JSON.parse(text);
-        for (const event of json.events || []) {
-          const value = (event.segs || []).map(segment => segment.utf8 || '').join('');
-          if (value.trim()) result.push({
-            start: (event.tStartMs || 0) / 1000,
-            duration: (event.dDurationMs || 0) / 1000,
-            text: cleanText(value)
-          });
-        }
-        return result;
-      } catch (error) {
-        console.warn('Charlie MJ JSON caption parsing failed:', error);
-      }
+    const result=[];const raw=String(text||'').trim();if(!raw)return result;
+    if(raw.startsWith('{')){
+      try{const json=JSON.parse(raw);for(const event of json.events||[]){const value=(event.segs||[]).map(segment=>segment.utf8||'').join('');if(value.trim())result.push({start:(event.tStartMs||0)/1000,duration:(event.dDurationMs||0)/1000,text:cleanText(value)});}return result;}catch(error){console.warn('Charlie MJ JSON caption parsing failed:',error);}
     }
-
-    const xml = new DOMParser().parseFromString(text, 'text/xml');
-    for (const node of [...xml.querySelectorAll('text')]) {
-      const value = cleanText(node.textContent || '');
-      if (value) result.push({
-        start: Number(node.getAttribute('start') || 0),
-        duration: Number(node.getAttribute('dur') || 0),
-        text: value
-      });
-    }
+    const decode=value=>String(value||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n))).replace(/&#x([0-9a-f]+);/gi,(_,n)=>String.fromCodePoint(parseInt(n,16)));
+    const re=/<text\b([^>]*)>([\s\S]*?)<\/text>/gi;let match;
+    while((match=re.exec(raw))){const attrs=match[1]||'';const body=decode(match[2].replace(/<[^>]+>/g,''));const value=cleanText(body);if(!value)continue;const attr=name=>{const pattern=`\\b${name}=(?:"([^"]*)"|'([^']*)')`;const m=attrs.match(new RegExp(pattern));return m?(m[1]??m[2]??''):''};result.push({start:Number(attr('start')||0),duration:Number(attr('dur')||0),text:value});}
     return result;
   }
 
-  function mergeCaptionSegments(segments) {
-    const result = [];
-    for (const segment of segments.sort((a, b) => a.start - b.start)) {
-      const previous = result[result.length - 1];
-      if (previous && Math.abs(previous.start - segment.start) < 0.12 && previous.text === segment.text) continue;
-      result.push(segment);
+
+  function requestBridgeYouTubeTranslation(targetLanguage){
+    return new Promise(resolve=>{
+      const requestId=crypto.randomUUID();
+      const timeout=setTimeout(()=>{document.removeEventListener('cmj-youtube-translated-caption-data',onData,true);resolve({captions:[],source:''})},3200);
+      const onData=event=>{
+        try{
+          const payload=JSON.parse(event.detail||'{}');
+          if(payload.requestId && payload.requestId!==requestId) return;
+          if(String(payload.targetLanguage||'')!==String(targetLanguage).split('-')[0]) return;
+          clearTimeout(timeout);document.removeEventListener('cmj-youtube-translated-caption-data',onData,true);resolve({captions:Array.isArray(payload.captions)?payload.captions:[],source:payload.source||'YouTube Auto-Translation'});
+        }catch(_){ }
+      };
+      document.addEventListener('cmj-youtube-translated-caption-data',onData,true);
+      document.dispatchEvent(new CustomEvent('cmj-youtube-request-translation',{detail:{requestId,targetLanguage,sourceLanguage:state.settings.sourceLanguage||'',mode:'translation'}}));
+    });
+  }
+
+  function requestBridgeOriginalCaptions(sourceLanguage){
+    return new Promise(resolve=>{
+      const timeout=setTimeout(()=>{document.removeEventListener(DATA_EVENT,onData,true);resolve(false)},3200);
+      const onData=event=>{
+        try{
+          const payload=JSON.parse(event.detail||'{}');
+          if(payload.mode!=='original') return;
+          if(sourceLanguage && payload.languageCode && String(payload.languageCode).split('-')[0]!==String(sourceLanguage).split('-')[0]) return;
+          clearTimeout(timeout);document.removeEventListener(DATA_EVENT,onData,true);
+          if(Array.isArray(payload.captions)&&payload.captions.length){
+            state.captions=mergeCaptionSegments(payload.captions.map(item=>({...item,text:cleanText(item.text)})));
+            state.activeIndex=-1; state.lastCaptionKey=''; renderCurrentSubtitle(); renderPanelIfOpen();
+            if(state.settings.autoTranslate) prefetchTranslations(0,Number(state.settings.subtitlePreloadTranslations||2));
+            resolve(true);
+          } else resolve(false);
+        }catch(_){ }
+      };
+      document.addEventListener(DATA_EVENT,onData,true);
+      document.dispatchEvent(new CustomEvent('cmj-youtube-request-translation',{detail:{requestId:'original-'+crypto.randomUUID(),targetLanguage:'',sourceLanguage,mode:'original'}}));
+    });
+  }
+
+  async function getYouTubeTargetSubtitle(caption){
+    const target=String(state.settings.targetLanguage||'en').toLowerCase();
+    const source=String(state.settings.sourceLanguage||'auto').toLowerCase();
+    if(!target || target==='auto' || (source!=='auto' && target===source)) return '';
+    const baseLang=target.split('-')[0];
+    const time=Number(caption?.start||0);
+    const matchAtTime=rows=>rows.find(x=>time>=x.start-0.6 && time<=x.start+Math.max(0.7,Number(x.duration||2)+0.6));
+    let rows=state.youtubeTranslationTracks[baseLang] || [];
+    if(!rows.length){
+      const ok=await fetchYouTubeCaptionBundle();
+      rows=state.youtubeTranslationTracks[baseLang] || [];
+      if(!ok && !rows.length) {
+        const bridge=await requestBridgeYouTubeTranslation(baseLang).catch(()=>null);
+        rows=bridge?.captions||[];
+      }
     }
-    return result;
+    const match=matchAtTime(rows);
+    if(match?.text){ state.translationSourceCache[state.activeIndex]=state.translationSourceCache.__youtube||'YouTube Auto-Translation'; return match.text; }
+    return '';
+  }
+
+  function mergeCaptionSegments(segments) {
+    const sorted = (Array.isArray(segments) ? segments : [])
+      .map(segment => ({
+        start: Math.max(0, Number(segment?.start || 0)),
+        duration: Math.max(0, Number(segment?.duration || 0)),
+        text: cleanText(segment?.text || '')
+      }))
+      .filter(segment => segment.text)
+      .sort((a, b) => a.start - b.start);
+
+    const deduped = [];
+    for (const segment of sorted) {
+      const previous = deduped[deduped.length - 1];
+      if (previous && Math.abs(previous.start - segment.start) < 0.12 && previous.text === segment.text) {
+        previous.duration = Math.max(previous.duration, segment.duration);
+        continue;
+      }
+      deduped.push(segment);
+    }
+    if (deduped.length < 2) return deduped;
+
+    // Some YouTube player builds expose the timed-text track as dense
+    // word/phrase cues instead of sentence-sized cues. The transcript is
+    // correct in that case, but rendering one cue at a time makes the
+    // learning subtitle appear to contain only half a sentence (or one word).
+    // Detect that shape conservatively and combine adjacent fragments until a
+    // natural pause/punctuation boundary. Normal sentence captions are left
+    // untouched.
+    const wordCounts = deduped.map(item => item.text.split(/\s+/).filter(Boolean).length);
+    const shortRatio = wordCounts.filter(count => count <= 3).length / wordCounts.length;
+    const medianDuration = [...deduped.map(item => item.duration).sort((a, b) => a - b)]
+      [Math.floor(deduped.length / 2)] || 0;
+    const dense = deduped.length >= 8 && shortRatio >= 0.62 && medianDuration <= 1.8;
+    if (!dense) return deduped;
+
+    const grouped = [];
+    let current = null;
+    const terminal = /[.!?。！？…]$/u;
+    const maxGap = 0.9;
+    const maxChars = 220;
+
+    for (const item of deduped) {
+      if (!current) {
+        current = { ...item };
+        continue;
+      }
+      const currentEnd = current.start + Math.max(current.duration, 0);
+      const gap = item.start - currentEnd;
+      const joined = `${current.text} ${item.text}`.replace(/\s+/g, ' ').trim();
+      const canJoin = gap <= maxGap && !terminal.test(current.text) && joined.length <= maxChars;
+      if (canJoin) {
+        current.text = joined;
+        current.duration = Math.max(current.duration, (item.start + item.duration) - current.start);
+      } else {
+        grouped.push(current);
+        current = { ...item };
+      }
+    }
+    if (current) grouped.push(current);
+    return grouped;
   }
 
   function cleanText(text) {
@@ -528,7 +779,18 @@
         <div class="cmj-subtitle-layer" aria-live="polite"></div>
         <div class="cmj-word-card" hidden></div>
         <aside class="cmj-panel" hidden>
-          <header class="cmj-panel-head"><strong>🌍 Charlie MJ Language</strong><button data-cmj-action="close">×</button></header>
+          <header class="cmj-panel-head">
+            <strong>🌍 Charlie MJ Language <small class="cmj-window-hint">Drag header · resize corner</small></strong>
+            <div class="cmj-panel-head-actions">
+              <button data-cmj-action="dock-left" title="Dock left">◀</button>
+              <button data-cmj-action="dock-right" title="Dock right">▶</button>
+              <button data-cmj-action="minimize" title="Minimize">—</button>
+              <button data-cmj-action="maximize" title="Maximize">□</button>
+              <button data-cmj-action="pin" title="Pin on top">📌</button>
+              <button data-cmj-action="reset-window" title="Reset transcript window">↺</button>
+              <button data-cmj-action="close" title="Close">×</button>
+            </div>
+          </header>
           <nav class="cmj-tabs">
             <button data-cmj-tab="transcript">Transcript</button>
             <button data-cmj-tab="vocabulary">Vocabulary</button>
@@ -537,17 +799,20 @@
             <button data-cmj-tab="notes">Notes</button>
           </nav>
           <div class="cmj-panel-body"></div>
+          <span class="cmj-resize cmj-resize-n"></span><span class="cmj-resize cmj-resize-ne"></span><span class="cmj-resize cmj-resize-e"></span><span class="cmj-resize cmj-resize-se"></span><span class="cmj-resize cmj-resize-s"></span><span class="cmj-resize cmj-resize-sw"></span><span class="cmj-resize cmj-resize-w"></span><span class="cmj-resize cmj-resize-nw"></span>
         </aside>
         <div class="cmj-toast" hidden></div>`;
       document.body.appendChild(root);
-      root.addEventListener('click', onRootClick);
+      root.addEventListener('click', event => { Promise.resolve(onRootClick(event)).catch(error => { reportContextError(error); if (!isContextInvalidError(error)) showToast('That action failed. Please try again.'); }); });
       root.addEventListener('input', onRootInput);
       installSubtitleHoverPause(root);
+      installSubtitleInteractions(root);
+      installTranscriptPanelInteractions(root);
     }
 
     const player = document.querySelector('#movie_player');
+    let playerHost = document.getElementById(PLAYER_HOST_ID);
     if (player) {
-      let playerHost = document.getElementById(PLAYER_HOST_ID);
       if (state.settings.showToolbarUnderVideo !== false) {
         if (!playerHost) {
           playerHost = document.createElement('div');
@@ -556,9 +821,11 @@
           playerHost.addEventListener('click', onToolbarClick);
           installToolbarInteractions(player, playerHost);
           document.body.appendChild(playerHost);
+          updateToolbarOverflow(playerHost);
         }
       } else if (playerHost) {
         playerHost.remove();
+        playerHost = null;
       }
       const video = getVideo();
       if (video && !video.dataset.cmjEndedHook) {
@@ -583,7 +850,154 @@
     }
 
     applyFocusMode();
+    applySubtitlePosition($('.cmj-subtitle-layer'));
+    applyTranscriptWindow($('.cmj-panel'));
+    if (playerHost) { applyToolbarPosition(playerHost); applyToolbarRevealMode(player, playerHost); updateToolbarOverflow(playerHost); }
     readNativeCaptions();
+  }
+
+  function installSubtitleInteractions(root) {
+    const layer = $('.cmj-subtitle-layer', root);
+    if (!layer || layer.dataset.cmjDragReady) return;
+    layer.dataset.cmjDragReady = '1';
+    let dragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+    const begin = event => {
+      if (state.settings.subtitleDragEnabled === false) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      if (event.target.closest('.cmj-word,button,a,input')) return;
+      const rect = layer.getBoundingClientRect();
+      dragging = true; startX = event.clientX; startY = event.clientY;
+      startLeft = rect.left; startTop = rect.top;
+      layer.classList.add('cmj-subtitle-dragging');
+      try { layer.setPointerCapture?.(event.pointerId); } catch (_) {}
+      event.preventDefault(); event.stopPropagation();
+    };
+    const move = event => {
+      if (!dragging) return;
+      const maxX = Math.max(0, window.innerWidth - layer.offsetWidth);
+      const maxY = Math.max(0, window.innerHeight - layer.offsetHeight);
+      const left = Math.max(0, Math.min(maxX, startLeft + event.clientX - startX));
+      const top = Math.max(0, Math.min(maxY, startTop + event.clientY - startY));
+      state.settings.subtitlePositionMode = 'custom';
+      state.settings.subtitlePosition = { leftPx: Math.round(left), topPx: Math.round(top), left: null, top: null, bottom: null };
+      applySubtitlePosition(layer);
+    };
+    const end = async () => {
+      if (!dragging) return;
+      dragging = false; layer.classList.remove('cmj-subtitle-dragging');
+      try { await storageSet({ settings: state.settings }); } catch (_) {}
+    };
+    layer.addEventListener('pointerdown', begin, true);
+    document.addEventListener('pointermove', move, true);
+    document.addEventListener('pointerup', end, true);
+  }
+
+  function applySubtitlePosition(layer) {
+    if (!layer) return;
+    const s = state.settings;
+    const pos = { leftPx: null, topPx: null, left: Number(s.subtitleDefaultX ?? 50), top: Number(s.subtitleDefaultY ?? 11), bottom: null, ...(s.subtitlePosition || {}) };
+    const custom = s.subtitlePositionMode === 'custom' && (Number.isFinite(Number(pos.leftPx)) || Number.isFinite(Number(pos.topPx)));
+    const mode = s.subtitlePositionMode || 'bottom';
+    layer.style.width = `min(${Math.max(20, Math.min(100, Number(s.subtitleWidthPercent ?? 60)))}vw, 96vw)`;
+    layer.style.maxWidth = `min(${Math.max(300, Number(s.subtitleMaxWidth || 1100))}px, 96vw)`;
+    layer.style.right = 'auto';
+    if (custom || mode === 'custom') {
+      layer.style.left = `${Number.isFinite(Number(pos.leftPx)) ? Number(pos.leftPx) : Number(pos.left ?? 50)}${Number.isFinite(Number(pos.leftPx)) ? 'px' : '%'}`;
+      layer.style.top = `${Number.isFinite(Number(pos.topPx)) ? Number(pos.topPx) : Number(pos.top ?? 11)}${Number.isFinite(Number(pos.topPx)) ? 'px' : '%'}`;
+      layer.style.bottom = 'auto'; layer.style.transform = 'none';
+    } else {
+      const h = s.subtitleHorizontalAnchor || 'center'; const v = s.subtitleVerticalAnchor || mode || 'bottom';
+      layer.style.right = 'auto';
+      if (h === 'left') { layer.style.left = `${Math.max(0, Number(s.subtitleOffsetX ?? 0))}%`; layer.style.transform = 'none'; }
+      else if (h === 'right') { layer.style.left = 'auto'; layer.style.right = `${Math.max(0, Number(s.subtitleOffsetX ?? 0))}%`; layer.style.transform = 'none'; }
+      else { layer.style.left = '50%'; layer.style.transform = 'translateX(-50%)'; }
+      if (v === 'top') { layer.style.top = `${Math.max(0, Number(s.subtitleOffsetY ?? 11))}%`; layer.style.bottom = 'auto'; }
+      else if (v === 'center') { layer.style.top = '50%'; layer.style.bottom = 'auto'; layer.style.transform = `${layer.style.transform ? layer.style.transform + ' ' : ''}translateY(-50%)`; }
+      else { layer.style.top = 'auto'; layer.style.bottom = `${Math.max(0, Number(s.subtitleOffsetY ?? 11))}%`; }
+    }
+    layer.style.setProperty('--cmj-subtitle-ui-font-size', `${Math.max(10, Math.min(72, Number(s.subtitleUIFontSize || 28)))}px`);
+    layer.style.setProperty('--cmj-subtitle-text-color', s.subtitleTextColor || '#ffffff');
+    layer.style.setProperty('--cmj-subtitle-bg', s.subtitleBackgroundColor || '#000000');
+    layer.style.setProperty('--cmj-subtitle-opacity', String(Math.max(0, Math.min(100, Number(s.subtitleOpacity ?? 65))) / 100));
+  }
+
+  function installTranscriptPanelInteractions(root) {
+    const panel = $('.cmj-panel', root); const head = $('.cmj-panel-head', panel);
+    if (!panel || !head || panel.dataset.cmjWindowReady) return; panel.dataset.cmjWindowReady='1'; applyTranscriptWindow(panel); installTranscriptControlAutoHide(panel);
+    let dragging=false, resizing=false, resizeDir='', startX=0,startY=0,startLeft=0,startTop=0,startW=0,startH=0;
+    const beginDrag=e=>{ if(e.button!==undefined&&e.button!==0)return; if(e.target.closest('button'))return; const r=panel.getBoundingClientRect(); dragging=true; startX=e.clientX;startY=e.clientY;startLeft=r.left;startTop=r.top;panel.classList.add('cmj-panel-dragging');e.preventDefault();e.stopPropagation(); };
+    const beginResize=e=>{ const h=e.target.closest('.cmj-resize'); if(!h)return; if(e.button!==undefined&&e.button!==0)return; const r=panel.getBoundingClientRect(); resizing=true;resizeDir=h.dataset.dir||h.className.split('cmj-resize-')[1]||'se';startX=e.clientX;startY=e.clientY;startLeft=r.left;startTop=r.top;startW=r.width;startH=r.height;panel.classList.add('cmj-panel-resizing');e.preventDefault();e.stopPropagation(); };
+    const move=e=>{
+      if(dragging){ state.settings.transcriptPositionMode='custom'; const maxX=Math.max(0,innerWidth-panel.offsetWidth),maxY=Math.max(0,innerHeight-panel.offsetHeight); const left=Math.max(0,Math.min(maxX,startLeft+e.clientX-startX)); const top=Math.max(0,Math.min(maxY,startTop+e.clientY-startY)); state.settings.transcriptWindowPosition={leftPx:Math.round(left),topPx:Math.round(top),left:null,top:null}; applyTranscriptWindow(panel); return; }
+      if(!resizing)return;
+      const minW=Math.max(220,Number(state.settings.transcriptWindowMinWidth||220)),maxW=Math.max(minW,Number(state.settings.transcriptWindowMaxWidth||1000)); const minH=Math.max(220,Number(state.settings.transcriptWindowMinHeight||220)),maxH=Math.max(minH,Number(state.settings.transcriptWindowMaxHeight||900));
+      let left=startLeft,top=startTop,w=startW,h=startH,dx=e.clientX-startX,dy=e.clientY-startY;
+      if(resizeDir.includes('e'))w=startW+dx; if(resizeDir.includes('w')){w=startW-dx;left=startLeft+dx;} if(resizeDir.includes('s'))h=startH+dy; if(resizeDir.includes('n')){h=startH-dy;top=startTop+dy;}
+      w=Math.max(minW,Math.min(maxW,w));h=Math.max(minH,Math.min(maxH,h)); if(resizeDir.includes('w'))left=startLeft+(startW-w); if(resizeDir.includes('n'))top=startTop+(startH-h);
+      left=Math.max(0,Math.min(Math.max(0,innerWidth-w),left)); top=Math.max(0,Math.min(Math.max(0,innerHeight-h),top));
+      state.settings.transcriptPositionMode='custom';state.settings.transcriptWindowWidth=Math.round(w);state.settings.transcriptWindowHeight=Math.round(h);state.settings.transcriptWindowPosition={leftPx:Math.round(left),topPx:Math.round(top),left:null,top:null}; applyTranscriptWindow(panel);
+    };
+    const end=async()=>{ if(!dragging&&!resizing)return; dragging=false;resizing=false;panel.classList.remove('cmj-panel-dragging','cmj-panel-resizing');try{await storageSet({settings:state.settings})}catch(_){} };
+    head.addEventListener('pointerdown',beginDrag,true); panel.addEventListener('pointerdown',beginResize,true); document.addEventListener('pointermove',move,true); document.addEventListener('pointerup',end,true);
+    panel.querySelectorAll('.cmj-resize').forEach(h=>{h.dataset.dir=h.className.split('cmj-resize-')[1]||'se';});
+  }
+
+  function installTranscriptControlAutoHide(panel) {
+    if (!panel || panel.dataset.cmjAutoHideReady) return;
+    panel.dataset.cmjAutoHideReady='1';
+    const actions=$('.cmj-panel-head-actions',panel);
+    let controlsTimer=null, windowTimer=null;
+    const delay=()=>Math.max(500,Math.min(30000,Number(state.settings.transcriptAutoHideDelayMs ?? state.settings.transcriptControlHideDelayMs ?? 15000)));
+    const reveal=()=>{
+      panel.classList.remove('cmj-panel-window-auto-hidden');
+      actions?.classList.remove('cmj-controls-auto-hidden');
+      clearTimeout(controlsTimer); clearTimeout(windowTimer);
+      controlsTimer=setTimeout(()=>{ if(!panel.matches(':hover')) actions?.classList.add('cmj-controls-auto-hidden'); },delay());
+      windowTimer=setTimeout(()=>{ if(!panel.matches(':hover')) panel.classList.add('cmj-panel-window-auto-hidden'); },delay());
+    };
+    panel.addEventListener('pointerenter',reveal,{passive:true});
+    panel.addEventListener('pointermove',reveal,{passive:true});
+    document.addEventListener('pointermove',event=>{
+      if(panel.hidden)return;
+      const r=panel.getBoundingClientRect(); const zone=Math.max(0,Number(state.settings.transcriptHoverZonePx ?? 120));
+      const near=event.clientX>=r.left-zone&&event.clientX<=r.right+zone&&event.clientY>=r.top-zone&&event.clientY<=r.bottom+zone;
+      if(near) reveal();
+      else if(!panel.matches(':hover')) {
+        clearTimeout(windowTimer); clearTimeout(controlsTimer);
+        windowTimer=setTimeout(()=>{ if(!panel.matches(':hover')) panel.classList.add('cmj-panel-window-auto-hidden'); },delay());
+        controlsTimer=setTimeout(()=>{ if(!panel.matches(':hover')) actions?.classList.add('cmj-controls-auto-hidden'); },delay());
+      }
+    },true);
+    reveal();
+  }
+
+
+  function applyTranscriptWindow(panel) {
+    if (!panel) return;
+    const s = state.settings;
+    const minW = Math.max(220, Number(s.transcriptWindowMinWidth || 220)); const maxW = Math.max(minW, Number(s.transcriptWindowMaxWidth || 1000));
+    const minH = Math.max(220, Number(s.transcriptWindowMinHeight || 220)); const maxH = Math.max(minH, Number(s.transcriptWindowMaxHeight || 900));
+    const width = Math.max(minW, Math.min(maxW, Number(s.transcriptWindowWidth || s.transcriptUIWidth || 300)));
+    const height = Math.max(minH, Math.min(maxH, Number(s.transcriptWindowHeight || s.transcriptUIHeight || 545)));
+    panel.style.minWidth = `${minW}px`; panel.style.maxWidth = `${maxW}px`; panel.style.minHeight = `${minH}px`; panel.style.maxHeight = `${maxH}px`; panel.style.width = `${width}px`; panel.style.height = `${height}px`;
+    panel.style.bottom = 'auto'; panel.style.right = 'auto';
+    const pos = { leftPx: null, topPx: null, right: null, left: null, top: null, ...(s.transcriptWindowPosition || {}) };
+    const custom = s.transcriptPositionMode === 'custom' && (Number.isFinite(Number(pos.leftPx)) || Number.isFinite(Number(pos.topPx)));
+    panel.style.transform = 'none';
+    if (custom) {
+      panel.style.left = `${Number(pos.leftPx ?? 0)}px`; panel.style.top = `${Number(pos.topPx ?? 0)}px`;
+    } else {
+      const h = s.transcriptHorizontalAnchor || 'right'; const v = s.transcriptVerticalAnchor || 'top';
+      if (h === 'left') { panel.style.left = `${Math.max(0, Number(s.transcriptOffsetX ?? 2))}%`; panel.style.right = 'auto'; }
+      else if (h === 'center') { panel.style.left = '50%'; panel.style.right = 'auto'; panel.style.transform = 'translateX(-50%)'; }
+      else { panel.style.left = 'auto'; panel.style.right = `${Math.max(0, Number(s.transcriptOffsetX ?? 2))}%`; }
+      if (v === 'top') { panel.style.top = `${Math.max(0, Number(s.transcriptOffsetY ?? 12))}%`; panel.style.bottom = 'auto'; }
+      else if (v === 'center') { panel.style.top = '50%'; panel.style.bottom = 'auto'; panel.style.transform = `${panel.style.transform !== 'none' ? panel.style.transform + ' ' : ''}translateY(-50%)`; }
+      else { panel.style.top = 'auto'; panel.style.bottom = `${Math.max(0, Number(s.transcriptOffsetY ?? 12))}%`; }
+    }
+    panel.classList.toggle('cmj-panel-pinned', s.transcriptPinned === true);
+    panel.classList.toggle('cmj-panel-maximized', s.transcriptWindowMaximized === true);
+    panel.classList.toggle('cmj-panel-minimized', s.transcriptWindowMinimized === true);
   }
 
   function installToolbarInteractions(player, host) {
@@ -608,6 +1022,7 @@
       const maxY = Math.max(0, window.innerHeight - host.offsetHeight);
       const left = Math.max(0, Math.min(maxX, startLeft + event.clientX - startX));
       const top = Math.max(0, Math.min(maxY, startTop + event.clientY - startY));
+      state.settings.toolbarPositionMode = 'custom';
       state.settings.toolbarPosition = { leftPx: Math.round(left), topPx: Math.round(top), left: null, top: null, bottom: null };
       applyToolbarPosition(host);
       updateToolbarRevealHotspot(host);
@@ -615,7 +1030,7 @@
     const end = async () => {
       if (!dragging) return;
       dragging = false; document.body.classList.remove('cmj-toolbar-dragging');
-      try { await chrome.storage.local.set({ settings: state.settings }); } catch (_) {}
+      try { await storageSet({ settings: state.settings }); } catch (_) {}
     };
     toolbar.addEventListener('pointerdown', begin, true);
     document.addEventListener('pointermove', move, true);
@@ -623,22 +1038,34 @@
     updateToolbarButtonStates();
     toolbar.addEventListener('dblclick', async event => {
       if (event.target.closest('button')) return;
-      state.settings.toolbarPosition = { leftPx: Math.max(10, window.innerWidth / 2 - 300), topPx: Math.max(10, window.innerHeight - 100), left: null, top: null, bottom: null };
+      state.settings.toolbarPositionMode = 'default'; state.settings.toolbarPosition = { leftPx: null, topPx: null, left: null, top: null, bottom: 2 };
       applyToolbarPosition(host);
-      await chrome.storage.local.set({ settings: state.settings });
+      await storageSet({ settings: state.settings });
     });
   }
 
   function applyToolbarPosition(host) {
-    const pos = { leftPx: null, topPx: null, left: 50, top: null, bottom: 58, ...(state.settings.toolbarPosition || {}) };
-    host.style.position = 'fixed';
-    host.style.transform = 'none';
-    if (Number.isFinite(Number(pos.leftPx)) && Number.isFinite(Number(pos.topPx))) {
-      host.style.left = `${Number(pos.leftPx)}px`; host.style.top = `${Number(pos.topPx)}px`; host.style.bottom = 'auto';
-    } else {
-      host.style.left = `${Number(pos.left)}%`; host.style.top = pos.top != null ? `${Number(pos.top)}%` : 'auto'; host.style.bottom = pos.top != null ? 'auto' : `${Number(pos.bottom || 58)}px`;
-      if (pos.top == null) host.style.transform = 'translateX(-50%)';
+    if (!host) return;
+    const s = state.settings;
+    const pos = { leftPx: null, topPx: null, left: null, top: null, bottom: null, ...(s.toolbarPosition || {}) };
+    const custom = s.toolbarPositionMode === 'custom' && (Number.isFinite(Number(pos.leftPx)) || Number.isFinite(Number(pos.topPx)));
+    host.style.position = 'fixed'; host.style.transform = 'none';
+    const toolbarWidth = Math.max(300, Math.min(1600, Number(s.toolbarWidth || 905)));
+    host.style.width = `min(96vw, ${toolbarWidth}px)`;
+    host.style.height = `${Math.max(30, Math.min(120, Number(s.toolbarHeight || 45)))}px`;
+    host.style.setProperty('--cmj-toolbar-scale', String(Math.max(0.7, Math.min(1.4, Number(s.toolbarScale || 1)))));
+    host.style.right = 'auto';
+    if (custom) {
+      host.style.left = `${Number(pos.leftPx ?? 0)}px`; host.style.top = `${Number(pos.topPx ?? 0)}px`; host.style.bottom = 'auto';
+      return;
     }
+    const h = s.toolbarHorizontalAnchor || 'center'; const v = s.toolbarVerticalAnchor || 'bottom';
+    if (h === 'left') { host.style.left = `${Math.max(0, Number(s.toolbarOffsetX ?? 0))}%`; host.style.transform = 'none'; }
+    else if (h === 'right') { host.style.left = 'auto'; host.style.right = `${Math.max(0, Number(s.toolbarOffsetX ?? 0))}%`; }
+    else { host.style.left = '50%'; host.style.transform = 'translateX(-50%)'; }
+    if (v === 'top') { host.style.top = `${Math.max(0, Number(s.toolbarOffsetY ?? 2))}%`; host.style.bottom = 'auto'; }
+    else if (v === 'center') { host.style.top = '50%'; host.style.bottom = 'auto'; host.style.transform = `${host.style.transform ? host.style.transform + ' ' : ''}translateY(-50%)`; }
+    else { host.style.top = 'auto'; host.style.bottom = `${Math.max(0, Number(s.toolbarOffsetY ?? 2))}%`; }
   }
 
   function updateToolbarRevealHotspot(host) {
@@ -648,25 +1075,60 @@
   }
 
   function applyToolbarRevealMode(player, host) {
-    const mode = state.settings.toolbarRevealMode || 'always';
     const toolbar = $('.cmj-toolbar', host);
     if (!toolbar) return;
-    toolbar.classList.toggle('cmj-toolbar-hover-mode', mode === 'hover');
+    const mode = state.settings.toolbarRevealMode || 'hover';
+    const hoverMode = ['hover','nearby','reveal-on-hover','reveal-on-hover-nearby'].includes(mode);
+    toolbar.classList.toggle('cmj-toolbar-hover-mode', hoverMode);
+    if (!['hover','nearby','reveal-on-hover','reveal-on-hover-nearby'].includes(mode)) {
+      host.dataset.cmjRevealMode = mode;
+      toolbar.classList.add('cmj-toolbar-revealed');
+      clearTimeout(host.__cmjHideTimer);
+      return;
+    }
     updateToolbarRevealHotspot(host);
-    if (host.dataset.cmjRevealReady) return;
+    if (host.dataset.cmjRevealReady) {
+      if (host.dataset.cmjRevealMode !== mode) {
+        host.dataset.cmjRevealMode = mode;
+        toolbar.classList.add('cmj-toolbar-revealed');
+        clearTimeout(host.__cmjHideTimer);
+        host.__cmjHideTimer = setTimeout(() => { if (!toolbar.matches(':hover')) toolbar.classList.remove('cmj-toolbar-revealed'); }, Math.max(500, Math.min(30000, Number(state.settings.toolbarAutoHideDelayMs ?? 15000))));
+      }
+      return;
+    }
     host.dataset.cmjRevealReady = '1';
-    document.addEventListener('mousemove', event => {
-      if ((state.settings.toolbarRevealMode || 'always') !== 'hover') return;
-      const rect = host.getBoundingClientRect();
-      const zone = Number(state.settings.toolbarHoverZonePx || 140);
-      const near = event.clientX >= rect.left - zone && event.clientX <= rect.right + zone && event.clientY >= rect.top - zone && event.clientY <= rect.bottom + zone;
-      toolbar.classList.toggle('cmj-toolbar-revealed', near);
+    host.dataset.cmjRevealMode = mode;
+    const delay = () => Math.max(500, Math.min(30000, Number(state.settings.toolbarAutoHideDelayMs ?? 15000)));
+    const hideIfAway = () => {
+      clearTimeout(host.__cmjHideTimer);
+      host.__cmjHideTimer = setTimeout(() => {
+        // Nearby pointer movement reveals the toolbar, but proximity alone must not keep it visible forever.
+        if (!toolbar.matches(':hover')) toolbar.classList.remove('cmj-toolbar-revealed');
+        else hideIfAway();
+      }, delay());
+    };
+    const reveal = event => {
+      if (event) { window.__cmjPointerX = event.clientX; window.__cmjPointerY = event.clientY; }
+      toolbar.classList.add('cmj-toolbar-revealed');
+      hideIfAway();
+    };
+    host.addEventListener('pointerenter', reveal, {passive:true});
+    host.addEventListener('pointermove', reveal, {passive:true});
+    document.addEventListener('pointermove', event => {
+      window.__cmjPointerX = event.clientX; window.__cmjPointerY = event.clientY;
+      const r = host.getBoundingClientRect();
+      const zone = Math.max(0, Number(state.settings.toolbarHoverZonePx ?? 140));
+      const near = event.clientX >= r.left-zone && event.clientX <= r.right+zone && event.clientY >= r.top-zone && event.clientY <= r.bottom+zone;
+      if (near) reveal(event);
+      else if (toolbar.classList.contains('cmj-toolbar-revealed')) hideIfAway();
     }, true);
+    // Reveal once on startup, then hide after the configured idle period.
+    reveal();
   }
 
   function buildToolbarHTML() {
     const frontDefault=['toggle','transcript','word','sentence','save','bookmark','capture','watch','focus','theme'];
-    const moreDefault=['translate','replay','loop','speed','ab','study','save-sentence','download-transcript','download-vocabulary','report','diagnostics','settings'];
+    const moreDefault=['translate','replay','loop','speed','ab','study','save-sentence','download-transcript','download-vocabulary','settings'];
     const front=Array.isArray(state.settings.toolbarActionOrder)?state.settings.toolbarActionOrder:frontDefault;
     const more=Array.isArray(state.settings.toolbarMoreActions)?state.settings.toolbarMoreActions:moreDefault;
     const labels={
@@ -685,7 +1147,7 @@
       translate:['🌐','Translate current subtitle'],replay:['🔁','Replay current sentence'],loop:['🔁','Loop current sentence'],
       speed:['⏱','Speed 1×'],ab:['','A/B Replay'],study:['🧠','Study Mode'],'save-sentence':['📝','Save Sentence'],
       'download-transcript':['⬇','Complete transcript + translation'],'download-vocabulary':['📚','Custom vocabulary + translation'],
-      report:['📊','Video learning report'],diagnostics:['🧪','Caption engine status'],settings:['⚙','Extension settings']
+      settings:['⚙','Extension settings']
     };
     const frontHTML=front.filter(a=>labels[a]).map(a=>`<button data-cmj-toolbar="${a}" aria-pressed="false" title="${labels[a][2]}">${labels[a][0]} <span>${labels[a][1]}</span></button>`).join('');
     const moreHTML=more.filter(a=>moreLabels[a]).map(a=>`<button data-cmj-toolbar="${a}" aria-pressed="false">${moreLabels[a][0]} ${moreLabels[a][1]}</button>`).join('');
@@ -694,6 +1156,16 @@
       <button class="cmj-more-button" data-cmj-toolbar="more" title="More tools">⋮</button>
       <div class="cmj-more-menu" hidden>${moreHTML}</div>
     </div>`;
+  }
+
+  function updateToolbarOverflow(host) {
+    const toolbar=$('.cmj-toolbar',host); if(!toolbar)return; const moreMenu=$('.cmj-more-menu',toolbar); const moreBtn=$('.cmj-more-button',toolbar); if(!moreMenu||!moreBtn)return;
+    toolbar.querySelectorAll('.cmj-overflow-clone').forEach(x=>x.remove());
+    toolbar.querySelectorAll('.cmj-toolbar-overflow').forEach(x=>x.classList.remove('cmj-toolbar-overflow'));
+    if((state.settings.toolbarOverflowMode||'auto')!=='auto'){moreBtn.hidden=false;return;}
+    const available=toolbar.clientWidth-56; let used=0; const front=[...toolbar.querySelectorAll('[data-cmj-toolbar]:not(.cmj-more-button)')].filter(b=>b.parentElement===toolbar);
+    const overflow=[]; for(const b of front){ b.hidden=false; used+=Math.max(72,b.getBoundingClientRect().width||90); if(used>available){ b.hidden=true; b.classList.add('cmj-toolbar-overflow'); const clone=b.cloneNode(true); clone.classList.add('cmj-overflow-clone'); clone.hidden=false; moreMenu.appendChild(clone); overflow.push(b); } }
+    moreBtn.hidden=overflow.length===0 && moreMenu.children.length===0;
   }
 
   function installSubtitleHoverPause(root) {
@@ -714,7 +1186,7 @@
     const current = state.settings.theme || 'dark';
     const next = current === 'dark' ? 'light' : 'dark';
     state.settings.theme = next;
-    await chrome.storage.local.set({settings: state.settings});
+    await storageSet({settings: state.settings});
     applyTheme();
     showToast(`Appearance: ${next}`);
   }
@@ -764,8 +1236,8 @@
     const action = button.dataset.cmjToolbar;
     if (action === 'toggle') { toggleSubtitleVisibility(); markToolbarAction('toggle'); updateToolbarButtonStates(); }
     if (action === 'transcript') { openPanel('transcript'); updateToolbarButtonStates(); }
-    if (action === 'word') { state.settings.subtitleDisplayMode='both'; chrome.storage.local.set({settings:state.settings}); openPanel('vocabulary'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
-    if (action === 'sentence') { state.settings.subtitleDisplayMode='sentence'; chrome.storage.local.set({settings:state.settings}); openPanel('transcript'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
+    if (action === 'word') { state.settings.subtitleDisplayMode='both'; storageSet({settings:state.settings}); openPanel('vocabulary'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
+    if (action === 'sentence') { state.settings.subtitleDisplayMode='sentence'; storageSet({settings:state.settings}); openPanel('transcript'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
     if (action === 'theme') { toggleTheme(); updateToolbarButtonStates(); }
     if (action === 'save') { saveCurrentSubtitle(); markToolbarAction('save'); }
     if (action === 'bookmark') { saveBookmark(); markToolbarAction('bookmark'); }
@@ -782,15 +1254,17 @@
     if (action === 'save-sentence') { saveCurrentSentence(); markToolbarAction('save-sentence'); }
     if (action === 'download-transcript') { downloadTranscript('both'); markToolbarAction('download-transcript'); }
     if (action === 'download-vocabulary') { downloadVocabulary(); markToolbarAction('download-vocabulary'); }
-    if (action === 'report') { showLearningReport(); markToolbarAction('report'); }
-    if (action === 'diagnostics') { showToast(state.captionDiagnostics || 'Caption engine: listening for YouTube transcript data.'); markToolbarAction('diagnostics'); }
     if (action === 'settings') { openExtensionSettings(); markToolbarAction('settings'); }
   }
 
   async function onRootClick(event) {
     if (event.target.closest('[data-cmj-sentence-translation]') && state.studyMode) { revealStudyTranslation(); return; }
+    const saveSentenceButton = event.target.closest('[data-cmj-save-current-sentence]');
+    if (saveSentenceButton) { await saveCurrentSentence(getCurrentCaption()?.text || '', getCurrentCaption()?.start ?? null); return; }
+    const line = event.target.closest('[data-cmj-line]');
+    if (line) { seek(Number(line.dataset.cmjLine)); return; }
     const sentence = event.target.closest('[data-cmj-sentence]');
-    if (sentence) { saveCurrentSentence(); return; }
+    if (sentence) { await saveCurrentSentence(sentence.textContent || '', getCurrentCaption()?.start ?? null); return; }
     const word = event.target.closest('.cmj-word');
     if (word) {
       showWordCard(word.dataset.word || '');
@@ -808,13 +1282,33 @@
     if (openUrl) { window.open(openUrl, '_blank', 'noopener,noreferrer'); return; }
 
     const action = event.target.closest('[data-cmj-action]')?.dataset.cmjAction;
-    if (action === 'close') closePanel();
+    if (action === 'minimize') { state.settings.transcriptWindowMinimized=true; state.settings.transcriptWindowMaximized=false; applyTranscriptWindow($('.cmj-panel')); storageSet({settings:state.settings}); return; }
+    if (action === 'maximize') { state.settings.transcriptWindowMaximized=!Boolean(state.settings.transcriptWindowMaximized); state.settings.transcriptWindowMinimized=false; applyTranscriptWindow($('.cmj-panel')); storageSet({settings:state.settings}); return; }
+    if (action === 'dock-left') { state.settings.transcriptWindowMinimized=false; state.settings.transcriptWindowMaximized=false; state.settings.transcriptWindowPosition={leftPx:12,topPx:70,left:null,top:null}; applyTranscriptWindow($('.cmj-panel')); storageSet({settings:state.settings}); return; }
+    if (action === 'dock-right') { state.settings.transcriptWindowMinimized=false; state.settings.transcriptWindowMaximized=false; state.settings.transcriptWindowPosition={leftPx:null,topPx:70,left:null,top:null,right:12}; applyTranscriptWindow($('.cmj-panel')); storageSet({settings:state.settings}); return; }
+    if (action === 'close') { closePanel(); return; }
+    if (action === 'pin') {
+      state.settings.transcriptPinned = !Boolean(state.settings.transcriptPinned);
+      applyTranscriptWindow($('.cmj-panel'));
+      await storageSet({ settings: state.settings });
+      showToast(state.settings.transcriptPinned ? 'Transcript window pinned on top.' : 'Transcript window unpinned.');
+      return;
+    }
+    if (action === 'reset-window') {
+      state.settings.transcriptPositionMode='default'; state.settings.transcriptDefaultX=98; state.settings.transcriptDefaultY=12; state.settings.transcriptUIWidth=300; state.settings.transcriptUIHeight=545; state.settings.transcriptHorizontalAnchor='right'; state.settings.transcriptVerticalAnchor='top'; state.settings.transcriptOffsetX=2; state.settings.transcriptOffsetY=12;
+      state.settings.transcriptWindowWidth = 300;
+      state.settings.transcriptWindowHeight = 545;
+      state.settings.transcriptWindowPosition = { leftPx: null, topPx: null, right: 2, left: null, top: 12 };
+      state.settings.transcriptWindowMaximized = false; state.settings.transcriptWindowMinimized = false;
+      state.settings.transcriptPinned = false;
+      applyTranscriptWindow($('.cmj-panel'));
+      await storageSet({ settings: state.settings });
+      showToast('Transcript window reset.');
+      return;
+    }
 
     const tab = event.target.closest('[data-cmj-tab]')?.dataset.cmjTab;
     if (tab) openPanel(tab);
-
-    const line = event.target.closest('[data-cmj-line]');
-    if (line) seek(Number(line.dataset.cmjLine));
 
     const exportButton = event.target.closest('[data-cmj-export]');
     if (exportButton) {
@@ -826,7 +1320,7 @@
     if (noteAction) { await handleNoteAction(noteAction, event.target.closest('[data-cmj-note-action]')); return; }
 
     const saveWord = event.target.closest('[data-cmj-save-word]');
-    if (saveWord) saveVocabulary(saveWord.dataset.cmjSaveWord, analyzeWord(saveWord.dataset.cmjSaveWord), $('.cmj-word-translation')?.textContent || '');
+    if (saveWord) { await saveVocabulary(saveWord.dataset.cmjSaveWord, analyzeWord(saveWord.dataset.cmjSaveWord), $('.cmj-word-translation')?.textContent || '', $('.cmj-word-translation-source')?.textContent?.replace(/^Translated by:\s*/i, '') || ''); return; }
   }
 
   function getVideo() { return document.querySelector('video'); }
@@ -856,7 +1350,7 @@
 
   async function saveTranscriptRecord() {
     if (!state.videoId || !state.captions.length) return;
-    const stored = await chrome.storage.local.get('transcripts');
+    const stored = await storageGet('transcripts');
     const record = {
       id: state.videoId, videoId: state.videoId, videoTitle: state.title, url: state.url,
       thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(state.videoId)}/hqdefault.jpg`,
@@ -864,12 +1358,12 @@
       segmentCount: state.captions.length, updatedAt:new Date().toISOString(), source:'YouTube Transcript'
     };
     const list=[record,...(stored.transcripts||[]).filter(x=>x.videoId!==state.videoId)].slice(0,200);
-    await chrome.storage.local.set({transcripts:list});
+    await storageSet({transcripts:list});
   }
 
   async function registerVideoHistory() {
     if (!state.videoId) return;
-    const stored = await chrome.storage.local.get(['history','videoProgress']);
+    const stored = await storageGet(['history','videoProgress']);
     const history = Array.isArray(stored.history) ? stored.history : [];
     const existing = history.find(x => x.videoId === state.videoId);
     const record = {
@@ -885,12 +1379,12 @@
       type: 'video', source: 'YouTube History'
     };
     const nextHistory = [record, ...history.filter(x => x.videoId !== state.videoId)].slice(0, 500);
-    await chrome.storage.local.set({ history: nextHistory });
+    await storageSet({ history: nextHistory });
   }
 
   async function resumeSavedLearningState() {
     if (!state.videoId || state.resumeAppliedFor === state.videoId) return;
-    const stored = await chrome.storage.local.get(['videoProgress']);
+    const stored = await storageGet(['videoProgress']);
     const record = (stored.videoProgress || []).find(x => x.videoId === state.videoId);
     if (!record || Number(record.lastPosition) < 2) return;
     const apply = () => {
@@ -916,7 +1410,7 @@
     const duration = Number(video.duration) || 0;
     const position = Number(video.currentTime) || 0;
     const percentage = duration > 0 ? Math.min(100, position / duration * 100) : 0;
-    const stored = await chrome.storage.local.get(['videoProgress','history']);
+    const stored = await storageGet(['videoProgress','history']);
     const old = (stored.videoProgress || []).find(x => x.videoId === state.videoId);
     const status = percentage >= 98 ? 'completed' : position > 1 ? 'in-progress' : 'not-started';
     const progress = {
@@ -940,7 +1434,7 @@
     const historyOld = (stored.history || []).find(x => x.videoId === state.videoId) || {};
     const historyRecord = {...historyOld, id: historyOld.id || crypto.randomUUID(), videoId: state.videoId, videoTitle: state.title, url: state.url, thumbnail: progress.thumbnail, lastPosition: position, watchPercentage: percentage, lastWatchedAt: new Date().toISOString(), updatedAt: new Date().toISOString(), status, type:'video'};
     const history = [historyRecord, ...(stored.history || []).filter(x => x.videoId !== state.videoId)].slice(0,500);
-    await chrome.storage.local.set({videoProgress:progressList, history});
+    await storageSet({videoProgress:progressList, history});
   }
 
   function getCurrentCaption() {
@@ -981,10 +1475,11 @@
     const originalStyle = subtitleInlineStyle('original');
     const translationStyle = subtitleInlineStyle('translation');
     const sentenceClass = state.studyMode ? ' cmj-study-active' : '';
-    const originalBlock = `<div class="cmj-original-line cmj-level-${level}${sentenceClass}" style="${originalStyle}">${mode === 'sentence' ? `<span class="cmj-sentence-text" data-cmj-sentence="1">${escapeHTML(cleanOriginal)}</span>` : original}</div>`;
+    const originalBlock = `<div class="cmj-original-line cmj-level-${level}${sentenceClass}" style="${originalStyle}">${mode === 'sentence' ? `<span class="cmj-sentence-text" data-cmj-sentence="1">${escapeHTML(cleanOriginal)}</span><button type="button" class="cmj-save-sentence-inline" data-cmj-save-current-sentence="1" title="Save this sentence to your Library">⭐ Save sentence</button>` : original}</div>`;
     const sentenceTranslation = translated ? escapeHTML(translated) : '<span class="cmj-translation-placeholder">Translation</span>';
     const translationBlock = `<div class="cmj-translation-line${sentenceClass}" style="${translationStyle}">${mode === 'sentence' ? `<span class="cmj-sentence-translation" data-cmj-sentence-translation="1">${sentenceTranslation}</span>` : translationHTML}</div>`;
-    layer.innerHTML = `${mode === 'translation' ? '' : originalBlock}${mode === 'original' ? '' : translationBlock}<div class="cmj-subtitle-meta">${formatTime(current.start)} · ${escapeHTML(level)} · ${escapeHTML(difficulty)}</div>`;
+    const providerLabel = translated ? formatTranslationProvider(state.translationSourceCache[state.activeIndex] || '') : 'Waiting for translation';
+    layer.innerHTML = `${mode === 'translation' ? '' : originalBlock}${mode === 'original' ? '' : translationBlock}<div class="cmj-subtitle-meta">${formatTime(current.start)} · ${escapeHTML(level)} · ${escapeHTML(difficulty)} · ${escapeHTML(translated ? `Translated by: ${providerLabel}` : providerLabel)}</div>`;
     if (state.studyMode) applyStudyReveal(layer);
   }
 
@@ -994,7 +1489,7 @@
     const weight = state.settings[`${prefix}Bold`] ? 800 : 400;
     const decoration = state.settings[`${prefix}Underline`] ? 'underline' : 'none';
     const italic = state.settings[`${prefix}Italic`] ? 'italic' : 'normal';
-    return `font-size:${Math.max(10, Math.min(72, size))}px;font-weight:${weight};text-decoration:${decoration};font-style:${italic}`;
+    return `font-size:${Math.max(10, Math.min(72, size))}px;font-weight:${weight};text-decoration:${decoration};font-style:${italic};color:${escapeHTML(kind === 'original' ? (state.settings.originalColor || '#ffffff') : (state.settings.translationColor || '#e2e8f0'))}`;
   }
 
   function getDifficultyLabel(level) {
@@ -1006,7 +1501,7 @@
     if (translation && state.settings.studyRevealTranslation !== true) translation.classList.add('cmj-study-hidden');
   }
 
-  function renderWords(text, translated = false, sourceText = '') {
+  function renderWords(text, translated = false, sourceText = '', context = 'subtitle') {
     const sourceTokens = sourceText ? tokenizeWords(sourceText) : [];
     let tokenIndex = 0;
     return stripYouTubeCaptionArtifacts(text).split(/(\s+)/).map(token => {
@@ -1017,7 +1512,8 @@
         ? (sourceTokens[Math.min(tokenIndex, sourceTokens.length - 1)] || {}).info || analyzeWord(word)
         : analyzeWord(word);
       tokenIndex += 1;
-      const style = state.settings.posColors ? `style="--cmj-pos:${escapeHTML(info.color)}"` : '';
+      const useColors = context === 'transcript' ? (state.settings.posColors !== false && state.settings.transcriptGrammarColorsEnabled !== false) : (state.settings.posColors !== false && state.settings.subtitleGrammarColorsEnabled !== false);
+      const style = useColors ? `style="--cmj-pos:${escapeHTML(info.color)}"` : '';
       const bold = state.settings.boldPOS ? ' cmj-pos-bold' : '';
       const morphology = translated ? '' : renderMorphology(word, info);
       const level = state.settings.showLevels ? `<small>${info.cefr}</small>` : '';
@@ -1073,7 +1569,7 @@
     const next = speeds[(speeds.indexOf(current) + 1) % speeds.length];
     video.playbackRate = next;
     state.settings.playbackSpeed = next;
-    chrome.storage.local.set({settings: state.settings});
+    storageSet({settings: state.settings});
     if (button) button.textContent = `⏱ Speed ${next}×`;
     showToast(`Playback speed: ${next}×`);
   }
@@ -1114,28 +1610,85 @@
     showToast('Translation revealed.');
   }
 
-  async function saveCurrentSentence() {
+  async function saveCurrentSentence(sentenceOverride = '', startOverride = null) {
     const current = getCurrentCaption();
-    if (!current) return showToast('No active sentence is available.');
-    const translation = state.translationCache[state.activeIndex] || await translateCurrent(true);
-    const stored = await chrome.storage.local.get('vocabulary');
-    const vocabulary = stored.vocabulary || [];
-    const timestamp = getVideo()?.currentTime || 0;
+    const sentenceText = String(sentenceOverride || current?.text || '').replace(/\s+/g, ' ').trim();
+    if (!sentenceText) { showToast('No active sentence is available. Play a subtitle or select a transcript line first.'); return false; }
+    const hasStartOverride = startOverride !== null && startOverride !== undefined && startOverride !== '';
+    const timestamp = hasStartOverride && Number.isFinite(Number(startOverride)) ? Math.max(0, Number(startOverride)) : Math.max(0, Number(current?.start ?? getVideo()?.currentTime ?? 0) || 0);
+    const videoId = state.videoId || getVideoId();
+    const level = getSentenceLevel(sentenceText);
     const item = {
-      id: crypto.randomUUID(), type:'sentence', word:'', sentence:current.text, translation:translation || '', sentenceTranslation:translation || '',
-      lemma:'', pos:'sentence', level:getSentenceLevel(current.text), levelLabel:CEFR[getSentenceLevel(current.text)] || 'Learner', stage:'New',
-      videoId:state.videoId, videoTitle:state.title, url:state.url, timestamp, source:'Sentence Mining',
-      tags:['YouTube','Sentence',getSentenceLevel(current.text)], createdAt:new Date().toISOString()
+      id: crypto.randomUUID(), type:'sentence', word:'', sentence:sentenceText, translation:'', sentenceTranslation:'',
+      words: sentenceText.split(/\s+/).filter(Boolean).map(word => ({ word, ...analyzeWord(word) })),
+      lemma:'', pos:'sentence', level, levelLabel:CEFR[level] || 'Learner', stage:'New',
+      difficulty: {A1:'Beginner',A2:'Beginner',B1:'Intermediate',B2:'Intermediate',C1:'Advanced',C2:'Advanced'}[level] || 'Beginner',
+      language: state.settings.sourceLanguage || 'tr', videoId, videoTitle:state.title || getTitle(), url:location.href, timestamp, source:'Sentence Mining',
+      translationProvider: current && Math.abs(Number(current.start || 0)-timestamp)<1.5 ? (state.translationSourceCache[state.activeIndex] || '') : '',
+      tags:['YouTube','Sentence',level], createdAt:new Date().toISOString()
     };
-    const duplicate = vocabulary.some(x => x.type === 'sentence' && x.videoId === state.videoId && x.sentence === current.text && Math.abs(Number(x.timestamp||0)-timestamp)<1.5);
-    if (!duplicate) {
-      vocabulary.unshift(item);
-      const storedSentence = await chrome.storage.local.get('sentenceLearning');
-      const sentenceLearning = storedSentence.sentenceLearning || [];
-      sentenceLearning.unshift({...item, source:'Sentence Learning'});
-      await chrome.storage.local.set({vocabulary, sentenceLearning:sentenceLearning.slice(0,5000)});
+    try {
+      const stored = await storageGet(['vocabulary','sentenceLearning']);
+      const vocabulary = Array.isArray(stored.vocabulary) ? stored.vocabulary : [];
+      const sentenceLearning = Array.isArray(stored.sentenceLearning) ? stored.sentenceLearning : [];
+      const same = x => x && x.type === 'sentence' && x.videoId === item.videoId && String(x.sentence || x.word || '').trim() === item.sentence && Math.abs(Number(x.timestamp||0)-timestamp)<1.5;
+      const existingVocab = vocabulary.find(same);
+      const existingLearning = sentenceLearning.find(same);
+      const translated = current && Math.abs(Number(current.start || 0)-timestamp)<1.5 ? (state.translationCache[state.activeIndex] || '') : '';
+      if (translated) { item.translation = translated; item.sentenceTranslation = translated; }
+      if (existingVocab || existingLearning) {
+        // Repair an older partial save so the item appears in both Library views.
+        const existing = existingVocab || existingLearning;
+        const merged = { ...item, ...existing, translation: existing.translation || translated, sentenceTranslation: existing.sentenceTranslation || translated };
+        if (!existingVocab) vocabulary.unshift({ ...merged });
+        if (!existingLearning) sentenceLearning.unshift({ ...merged, source:'Sentence Learning' });
+        if (!(await storageSet({ vocabulary:vocabulary.slice(0,5000), sentenceLearning:sentenceLearning.slice(0,5000) }))) throw new Error('Extension context invalidated; save did not persist.');
+        showToast('Sentence is saved in your Library.');
+        return true;
+      }
+      vocabulary.unshift({ ...item });
+      sentenceLearning.unshift({ ...item, source:'Sentence Learning' });
+      if (!(await storageSet({ vocabulary:vocabulary.slice(0,5000), sentenceLearning:sentenceLearning.slice(0,5000) }))) throw new Error('Extension context invalidated; save did not persist.');
+      showToast('Sentence saved to your Library.');
+      return true;
+    } catch (error) {
+      reportContextError(error);
+      console.error('Charlie MJ sentence save failed:', error);
+      showToast(isContextInvalidError(error) ? 'Refresh this YouTube page to reconnect the extension, then save again.' : 'Could not save sentence. Check extension storage permissions and try again.');
+      return false;
     }
-    showToast(duplicate ? 'This sentence is already saved.' : 'Sentence saved to Sentence Learning + Vocabulary.');
+  }
+
+
+
+  async function translateCaptionByPriority(caption) {
+    let priority = Array.isArray(state.settings.translationProviderPriority) && state.settings.translationProviderPriority.length
+      ? state.settings.translationProviderPriority.slice()
+      : ['youtube-captions','google','microsoft','mymemory','libretranslate'];
+    if(priority.includes('youtube-native') || priority.includes('youtube-auto')) priority=['youtube-captions',...priority.filter(x=>x!=='youtube-native'&&x!=='youtube-auto')];
+    if(!priority.includes('youtube-captions')) priority=['youtube-captions',...priority];
+    const enabled = state.settings.enabledTranslationProviders || {};
+    const errors=[];
+    for (const provider of priority) {
+      if (provider === 'youtube-captions') {
+        const value = await getYouTubeTargetSubtitle(caption);
+        if (value) return { translation:value, provider:state.translationSourceCache[state.activeIndex] || 'YouTube Auto-Translation' };
+        errors.push('YouTube captions unavailable');
+        continue;
+      }
+      if (enabled[provider] !== true) continue;
+      try {
+        const response = await safeRuntimeMessage({
+          type:'CMJ_TRANSLATE', text:caption.text,
+          source:state.settings.sourceLanguage||'auto',
+          target:state.settings.targetLanguage||'en',
+          provider, libreUrl:state.settings.libreTranslateUrl||'', settings:state.settings
+        });
+        if(response?.ok && response.translation) return {translation:response.translation,provider:response.provider||provider};
+        errors.push(`${provider}: ${response?.error||'unavailable'}`);
+      } catch(e){ errors.push(`${provider}: ${e.message||'unavailable'}`); }
+    }
+    return {translation:'',provider:'',error:errors.join(' • ')||'No translation provider is enabled.'};
   }
 
   async function translateCurrent(silent = false) {
@@ -1145,22 +1698,16 @@
 
     state.translating = true;
     try {
-      const response = await safeRuntimeMessage({
-        type: 'CMJ_TRANSLATE',
-        text: current.text,
-        source: state.settings.sourceLanguage || 'auto',
-        target: state.settings.targetLanguage || 'en',
-        provider: state.settings.translationProvider || 'mymemory',
-        libreUrl: state.settings.libreTranslateUrl || ''
-      });
-      if (response?.ok && response.translation) {
-        state.translationCache[state.activeIndex] = response.translation;
+      const result = await translateCaptionByPriority(current);
+      if(result.translation){
+        state.translationCache[state.activeIndex] = result.translation;
+        state.translationSourceCache[state.activeIndex] = formatTranslationProvider(result.provider || result.source || '');
         saveTranscriptRecord().catch(() => {});
         renderCurrentSubtitle();
-        if (!silent) showToast('Translation ready.');
-        return response.translation;
+        if(!silent) showToast(`Translation ready — ${result.provider}.`);
+        return result.translation;
       }
-      if (!silent) showToast(response?.error || 'Translation unavailable.');
+      if (!silent) showToast(result.error || 'Translation unavailable.');
     } finally {
       state.translating = false;
     }
@@ -1175,13 +1722,26 @@
       const caption = state.captions[i];
       jobs.push((async () => {
         try {
-          const response = await safeRuntimeMessage({ type: 'CMJ_TRANSLATE', text: caption.text, source: state.settings.sourceLanguage || 'auto', target: state.settings.targetLanguage || 'en', provider: state.settings.translationProvider || 'mymemory', libreUrl: state.settings.libreTranslateUrl || '' });
-          if (response?.ok && response.translation) state.translationCache[i] = response.translation;
+          const result = await translateCaptionByPriority(caption);
+          if(result.translation){ state.translationCache[i] = result.translation; state.translationSourceCache[i] = formatTranslationProvider(result.provider || result.source || ''); }
           if (i === state.activeIndex) renderCurrentSubtitle();
         } catch (_) {}
       })());
     }
     if (jobs.length) await Promise.allSettled(jobs);
+  }
+
+  function formatTranslationProvider(provider) {
+    const value = String(provider || '').trim();
+    const known = {
+      'youtube-native':'YouTube native captions', 'youtube native':'YouTube Native captions', 'youtube-captions':'YouTube captions',
+      'youtube-auto':'YouTube Auto-Translation', 'youtube auto-translation':'YouTube Auto-Translation', 'google':'Google Translate',
+      'microsoft':'Microsoft Translator', 'mymemory':'MyMemory',
+      'libretranslate':'LibreTranslate', 'deepl':'DeepL', 'argos':'Argos Translate',
+      'cache':'Cached translation (original provider unavailable)',
+      'translation-router':'Provider not reported', 'youtube-first':'Provider not reported'
+    };
+    return known[value.toLowerCase()] || (value ? value.replaceAll('-', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Provider not reported');
   }
 
   function showWordCard(word) {
@@ -1192,15 +1752,30 @@
     const info = analyzeWord(clean);
     clearTimeout(state.wordCardTimer);
     card.hidden = false;
-    card.innerHTML = `<button class="cmj-word-speak" data-cmj-word-speak aria-label="Pronounce">🔊</button><button class="cmj-word-card-close" data-cmj-word-close aria-label="Close">×</button><strong>${escapeHTML(clean)}</strong><span>${info.posLabel} · ${info.cefr} · ${CEFR[info.cefr]}</span><span class="cmj-word-translation">Translating…</span><button data-cmj-save-word="${escapeHTML(clean)}">⭐ Save vocabulary</button>`;
+    card.innerHTML = `<button class="cmj-word-speak" data-cmj-word-speak aria-label="Pronounce">🔊</button><button class="cmj-word-card-close" data-cmj-word-close aria-label="Close">×</button><strong>${escapeHTML(clean)}</strong><span>${info.posLabel} · ${info.cefr} · ${CEFR[info.cefr]}</span><span class="cmj-word-translation">Translation: loading…</span><small class="cmj-word-translation-source">Translated by: checking…</small><span class="cmj-word-dictionary">Dictionary: looking up…</span><small class="cmj-word-dictionary-source">Dictionary source: checking…</small><button data-cmj-save-word="${escapeHTML(clean)}">⭐ Save vocabulary</button>`;
     state.wordCardTimer = setTimeout(() => { card.hidden = true; }, Number(state.settings.wordCardAutoCloseMs || 6000));
     safeRuntimeMessage({
       type: 'CMJ_TRANSLATE', text: clean,
       source: state.settings.sourceLanguage || 'auto', target: state.settings.targetLanguage || 'en',
-      provider: state.settings.translationProvider || 'mymemory', libreUrl: state.settings.libreTranslateUrl || ''
+      provider: 'youtube-first', libreUrl: state.settings.libreTranslateUrl || '',
+      settings: state.settings
     }).then(response => {
       const target = $('.cmj-word-translation');
-      if (target) target.textContent = response?.ok ? response.translation : 'Translation unavailable';
+      const source = $('.cmj-word-translation-source');
+      if (target) target.textContent = response?.ok ? `Translation: ${response.translation}` : 'Translation: unavailable';
+      if (source) source.textContent = `Translated by: ${response?.ok ? formatTranslationProvider(response.provider || response.source || '') : (response?.provider || 'no translation returned')}`;
+    });
+    safeRuntimeMessage({
+      type:'CMJ_DICTIONARY', text:clean,
+      source:state.settings.sourceLanguage || 'en', target:state.settings.targetLanguage || 'en',
+      settings:state.settings
+    }).then(response=>{
+      const target=$('.cmj-word-dictionary');
+      const entry=response?.entries?.[0];
+      const meaning=entry?.meanings?.[0]?.definitions?.[0]?.definition||'No dictionary definition available.';
+      const pronunciation=entry?.phonetic||entry?.phonetics?.find(x=>x.text)?.text||'';
+      if(target)target.textContent=`Dictionary: ${meaning}${pronunciation?` · Pronunciation: ${pronunciation}`:''}`;
+      const source=$('.cmj-word-dictionary-source'); if(source) source.textContent=`Dictionary source: ${response?.source || entry?.source || response?.provider || 'Dictionary API'}`;
     });
   }
 
@@ -1277,52 +1852,68 @@
 
   async function saveCurrentSubtitle() {
     const current = getCurrentCaption();
-    if (!current) return showToast('No active subtitle is available. Turn on CC.');
-    const translation = state.translationCache[state.activeIndex] || await translateCurrent(true);
-    const words = current.text.split(/\s+/).filter(Boolean).map(word => ({ word, ...analyzeWord(word) }));
-    await saveVocabulary(current.text, { sentence: true, words }, translation || '');
-    showToast('Sentence saved to your vocabulary library.');
+    if (!current) { showToast('No active YouTube subtitle is available yet.'); return false; }
+    return saveCurrentSentence(current.text, current.start);
   }
 
-  async function saveVocabulary(word, info, translation) {
-    const stored = await chrome.storage.local.get('vocabulary');
-    const vocabulary = stored.vocabulary || [];
-    const exists = vocabulary.some(item => item.word?.toLowerCase() === word.toLowerCase() && item.videoId === state.videoId && Math.abs((item.timestamp || 0) - (getVideo()?.currentTime || 0)) < 1.5);
-    if (exists) return;
-
-    vocabulary.push({
-      id: crypto.randomUUID(),
-      type: 'word',
-      word,
-      translation,
-      lemma: info.lemma || word.toLocaleLowerCase(),
-      pos: info.pos || 'sentence',
-      level: info.cefr || getSentenceLevel(word),
-      levelLabel: CEFR[info.cefr] || 'Learner',
-      stage: 'New',
-      sentence: getCurrentCaption()?.text || word,
-      sentenceTranslation: state.translationCache[state.activeIndex] || '',
-      videoId: state.videoId,
-      videoTitle: state.title,
-      url: state.url,
-      timestamp: getVideo()?.currentTime || 0,
-      source: 'Vocabulary',
-      tags: ['YouTube', state.settings.sourceLanguage || 'language'],
-      encounterKey: `${state.videoId}:${word.toLocaleLowerCase()}`,
-      createdAt: new Date().toISOString()
-    });
-    const wordRecord = vocabulary[vocabulary.length - 1];
-    const wordStored = await chrome.storage.local.get('wordLearning');
-    const wordLearning = wordStored.wordLearning || [];
-    if (!wordLearning.some(item => item.videoId === state.videoId && item.word?.toLowerCase() === word.toLowerCase() && Math.abs((item.timestamp || 0) - (getVideo()?.currentTime || 0)) < 1.5)) {
-      wordLearning.unshift({...wordRecord, source:'Word Learning'});
-      await chrome.storage.local.set({wordLearning:wordLearning.slice(0,5000)});
+  async function saveVocabulary(word, info, translation, translationProviderOverride = '') {
+    const cleanWord = String(word || '').trim();
+    if (!cleanWord) { showToast('Nothing to save. Select a word first.'); return false; }
+    try {
+      const stored = await storageGet(['vocabulary','wordLearning']);
+      const vocabulary = Array.isArray(stored.vocabulary) ? stored.vocabulary : [];
+      const timestamp = Number(getCurrentCaption()?.start ?? getVideo()?.currentTime ?? 0) || 0;
+      const existing = vocabulary.find(item => item && (item.word || '').toLocaleLowerCase() === cleanWord.toLocaleLowerCase() && item.videoId === state.videoId && Math.abs(Number(item.timestamp || 0)-timestamp)<1.5);
+      if (existing) { showToast(`“${cleanWord}” is already saved in your Library.`); return true; }
+      const record = {
+        id: crypto.randomUUID(), type:'word', word:cleanWord, translation:String(translation || '').replace(/^Translation:\s*/i,''),
+        translationProvider: translationProviderOverride || state.translationSourceCache[state.activeIndex] || '',
+        lemma: info.lemma || inferLemma(cleanWord), pos: info.pos || 'sentence', level: info.cefr || getSentenceLevel(cleanWord),
+        levelLabel: CEFR[info.cefr] || 'Learner', stage:'New', sentence:getCurrentCaption()?.text || cleanWord,
+        sentenceTranslation: state.translationCache[state.activeIndex] || '', words:Array.isArray(info.words) ? info.words : [],
+        difficulty: {A1:'Beginner',A2:'Beginner',B1:'Intermediate',B2:'Intermediate',C1:'Advanced',C2:'Advanced'}[info.cefr || 'A1'] || 'Beginner',
+        language: state.settings.sourceLanguage || 'tr', videoId:state.videoId, videoTitle:state.title, url:state.url, timestamp,
+        source:'Vocabulary', tags:['YouTube',state.settings.sourceLanguage || 'language'], encounterKey:`${state.videoId}:${cleanWord.toLocaleLowerCase()}`, createdAt:new Date().toISOString()
+      };
+      vocabulary.unshift(record);
+      // Write the main Library record first so an optional secondary list can never block saving.
+      if (!(await storageSet({ vocabulary:vocabulary.slice(0,5000) }))) throw new Error('Extension context invalidated; save did not persist.');
+      const wordLearning = Array.isArray(stored.wordLearning) ? stored.wordLearning : [];
+      if (!wordLearning.some(item => item && item.videoId === state.videoId && (item.word || '').toLocaleLowerCase() === cleanWord.toLocaleLowerCase() && Math.abs(Number(item.timestamp || 0)-timestamp)<1.5)) {
+        wordLearning.unshift({ ...record, source:'Word Learning' });
+        await storageSet({ wordLearning:wordLearning.slice(0,5000) });
+      }
+      showToast(`“${cleanWord}” saved to your Library.`);
+      enrichVocabularyDictionary(record).catch(error => reportContextError(error));
+      return true;
+    } catch (error) {
+      reportContextError(error);
+      console.error('Charlie MJ vocabulary save failed:', error);
+      showToast(isContextInvalidError(error) ? 'Refresh this YouTube page to reconnect the extension, then save again.' : 'Could not save vocabulary. Please try again.');
+      return false;
     }
-    await chrome.storage.local.set({ vocabulary });
+  }
+
+
+  async function enrichVocabularyDictionary(record){
+    if(!record?.word || record.type!=='word' || state.settings.dictionaryEnabled===false) return;
+    try{
+      const response=await safeRuntimeMessage({type:'CMJ_DICTIONARY',text:record.word,source:state.settings.sourceLanguage||'en',target:state.settings.targetLanguage||'en',settings:state.settings});
+      if(!response?.ok) return;
+      const next=await storageGet('vocabulary');
+      const list=next.vocabulary||[];
+      const idx=list.findIndex(x=>x.id===record.id);
+      if(idx<0)return;
+      list[idx].dictionary=response.dictionary||null;
+      list[idx].dictionarySource=response.source||'Wiktionary';
+      list[idx].dictionarySourceUrl=response.sourceUrl||'';
+      list[idx].referenceLinks=response.referenceLinks||[];
+      await storageSet({vocabulary:list});
+    }catch(_){ }
   }
 
   async function saveBookmark() {
-    const stored = await chrome.storage.local.get('bookmarks');
+    const stored = await storageGet('bookmarks');
     const bookmarks = stored.bookmarks || [];
     const timestamp = getVideo()?.currentTime || 0;
     bookmarks.unshift({
@@ -1332,7 +1923,7 @@
       label: 'Learning moment', tags: ['YouTube', getSentenceLevel(getCurrentCaption()?.text || '')],
       createdAt: new Date().toISOString()
     });
-    await chrome.storage.local.set({ bookmarks });
+    await storageSet({ bookmarks });
     showToast('Timeline bookmark saved.');
   }
 
@@ -1340,7 +1931,7 @@
     const url = explicitUrl || state.url || location.href;
     const videoId = extractVideoId(url) || state.videoId;
     if (!videoId) return showToast('Open a YouTube video first.');
-    const stored = await chrome.storage.local.get('watchLater');
+    const stored = await storageGet('watchLater');
     const list = stored.watchLater || [];
     if (!list.some(item => item.videoId === videoId)) {
       list.unshift({
@@ -1349,7 +1940,7 @@
         thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`, source: 'Watch Later',
         level: 'Not assessed', tags: ['Watch Later'], progress: 0, addedAt: new Date().toISOString()
       });
-      await chrome.storage.local.set({ watchLater: list });
+      await storageSet({ watchLater: list });
       showToast('Added to Charlie MJ Watch Later.');
     } else showToast('This video is already in Watch Later.');
   }
@@ -1382,10 +1973,10 @@
       if (!result?.ok) return showToast('Screenshot could not be captured.');
     }
     await saveBookmark();
-    const storedCaptures = await chrome.storage.local.get('captures');
+    const storedCaptures = await storageGet('captures');
     const captures = storedCaptures.captures || [];
     captures.unshift({id:crypto.randomUUID(), videoId:state.videoId, videoTitle:state.title, url:state.url, timestamp, label:'Timeline capture', createdAt:new Date().toISOString(), source:'Screen Capture'});
-    await chrome.storage.local.set({captures:captures.slice(0,1000)});
+    await storageSet({captures:captures.slice(0,1000)});
     showToast(`Timeline capture saved at ${formatTime(timestamp)}.`);
   }
 
@@ -1398,7 +1989,7 @@
   function toggleFocusMode() {
     state.focusMode = !state.focusMode;
     state.settings.focusMode = state.focusMode;
-    chrome.storage.local.set({ settings: state.settings });
+    storageSet({ settings: state.settings });
     applyFocusMode();
     showToast(state.focusMode ? 'Focus Mode enabled.' : 'Focus Mode disabled.');
     updateToolbarButtonStates();
@@ -1414,27 +2005,13 @@
     for (const [name, enabled] of Object.entries(classMap)) document.documentElement.classList.toggle(name, Boolean(enabled && state.focusMode));
   }
 
-  function showCaptionDiagnostics() {
-    const video = getVideo();
-    const message = [
-      `Video: ${state.videoId || 'not detected'}`,
-      `Player: ${video ? 'found' : 'not found'}`,
-      `Caption tracks: ${state.tracks.length}`,
-      `Timed cues: ${state.captions.length}`,
-      `Active cue: ${state.activeIndex >= 0 ? state.activeIndex + 1 : 'none'}`,
-      `Current time: ${video ? video.currentTime.toFixed(2) + 's' : '—'}`,
-      `Translation cache: ${Object.keys(state.translationCache).length}`,
-      `Bridge: ${state.captionDiagnostics || 'listening'}`
-    ].join('\n');
-    showToast(message);
-  }
-
   function openPanel(tab = 'transcript') {
     const panel = $('.cmj-panel');
     if (!panel) return;
     panel.hidden = false;
+    panel.classList.remove('cmj-panel-window-auto-hidden');
     state.panelTab = tab;
-    renderPanel(tab).catch(error => console.warn('Charlie MJ panel error:', error));
+    renderPanel(tab).catch(error => { reportContextError(error); if (!isContextInvalidError(error)) console.warn('Charlie MJ panel error:', error); });
   }
 
   function closePanel() {
@@ -1457,7 +2034,12 @@
         <button data-cmj-export="vtt">VTT</button>
       </div>
       <div class="cmj-panel-note">${state.captions.length ? `${state.captions.length} subtitle segments · ${escapeHTML(state.title)}` : 'Waiting for YouTube captions…'}</div>
-      <div class="cmj-transcript-list">${state.captions.map((caption, index) => `<button class="cmj-line" data-cmj-line="${index}"><time>${formatTime(caption.start)}</time><span>${escapeHTML(caption.text)}</span><small>${escapeHTML(state.translationCache[index] || '')}</small></button>`).join('')}</div>`;
+      <div class="cmj-transcript-list">${state.captions.map((caption, index) => {
+        const sourceHtml = state.settings.transcriptGrammarColorsEnabled !== false ? renderWords(caption.text, false, '', 'transcript') : escapeHTML(caption.text);
+        const translated = state.translationCache[index] || '';
+        const translationHtml = translated ? (state.settings.transcriptGrammarColorsEnabled !== false ? renderWords(translated, true, caption.text, 'transcript') : escapeHTML(translated)) : '';
+        return `<button class="cmj-line" data-cmj-line="${index}"><time>${formatTime(caption.start)}</time><span class="cmj-transcript-original">${sourceHtml}</span><small class="cmj-transcript-translation">${translationHtml}</small></button>`;
+      }).join('')}</div>`;
       return;
     }
 
@@ -1469,14 +2051,14 @@
     }
 
     const dataKey = tab === 'vocabulary' ? 'vocabulary' : tab;
-    const stored = await chrome.storage.local.get(dataKey);
+    const stored = await storageGet(dataKey);
     let data = stored[dataKey] || [];
     if (tab === 'vocabulary') {
       data = data.filter(item => (state.settings.libraryVocabularyFilter || 'all') === 'all' || (state.settings.libraryVocabularyFilter === 'word' ? (item.type || 'word') === 'word' : (item.type || 'word') === 'sentence'));
       const cards = data.slice(0, 300).map(item => {
         const title = item.videoTitle || item.title || 'Untitled video';
         const type = (item.type || 'word') === 'sentence' ? 'Sentence' : 'Word';
-        return `<article class="cmj-card cmj-vocab-card"><span class="cmj-card-label">${type}</span><strong>${escapeHTML(item.word || item.sentence || '')}</strong><span>${escapeHTML(item.translation || item.sentenceTranslation || '')}</span><small>${escapeHTML(item.lemma ? 'Lemma: ' + item.lemma + ' · ' : '')}${escapeHTML(title)} · ${escapeHTML(item.level || '')}</small><div>${(item.tags || []).map(t => `<span class="cmj-tag">#${escapeHTML(t)}</span>`).join('')}</div></article>`;
+        return `<article class="cmj-card cmj-vocab-card"><span class="cmj-card-label">${type}</span><strong>${escapeHTML(item.word || item.sentence || '')}</strong><span>${escapeHTML(item.translation || item.sentenceTranslation || '')}</span>${item.translationProvider ? `<small class="cmj-saved-translation-provider">Translated by: ${escapeHTML(formatTranslationProvider(item.translationProvider))}</small>` : ''}<small>${escapeHTML(item.lemma ? 'Lemma: ' + item.lemma + ' · ' : '')}${escapeHTML(title)} · ${escapeHTML(item.level || '')}</small><div>${(item.tags || []).map(t => `<span class="cmj-tag">#${escapeHTML(t)}</span>`).join('')}</div></article>`;
       }).join('');
       body.innerHTML = `<div class="cmj-vocab-filter"><button data-cmj-vocab-filter="all">All</button><button data-cmj-vocab-filter="word">Word-to-Word</button><button data-cmj-vocab-filter="sentence">Sentence-to-Sentence</button></div>${data.length ? `<div class="cmj-vocab-grid">${cards}</div>` : '<p class="cmj-empty">Nothing saved here yet.</p>'}`;
       return;
@@ -1491,15 +2073,15 @@
   }
 
   async function getVideoNotes() {
-    const stored = await chrome.storage.local.get('notesByVideo');
+    const stored = await storageGet('notesByVideo');
     return stored.notesByVideo?.[state.videoId] || [];
   }
 
   async function saveVideoNotes(notes) {
-    const stored = await chrome.storage.local.get('notesByVideo');
+    const stored = await storageGet('notesByVideo');
     const all = stored.notesByVideo || {};
     all[state.videoId] = notes;
-    await chrome.storage.local.set({ notesByVideo: all });
+    await storageSet({ notesByVideo: all });
   }
 
   function onRootInput(event) {
@@ -1537,11 +2119,11 @@
 
   function renderPanelIfOpen() {
     if (!$('.cmj-panel') || $('.cmj-panel').hidden) return;
-    renderPanel(state.panelTab).catch(() => {});
+    renderPanel(state.panelTab).catch(error => reportContextError(error));
   }
 
   async function downloadTranscript(mode = 'both') {
-    if (!state.captions.length) return showToast('No transcript is loaded. Turn on CC and reload the video.');
+    if (!state.captions.length) return showToast('No YouTube subtitle/transcript data is available yet. Try refreshing the video page.');
     showToast('Preparing complete transcript with translations…');
 
     for (let index = 0; index < state.captions.length; index += 1) {
@@ -1550,9 +2132,9 @@
         const result = await safeRuntimeMessage({
           type: 'CMJ_TRANSLATE', text: state.captions[index].text,
           source: state.settings.sourceLanguage || 'auto', target: state.settings.targetLanguage || 'en',
-          provider: state.settings.translationProvider || 'mymemory', libreUrl: state.settings.libreTranslateUrl || ''
+          provider: 'youtube-first', libreUrl: state.settings.libreTranslateUrl || '', settings: state.settings
         });
-        if (result?.ok) state.translationCache[index] = result.translation;
+        if (result?.ok) { state.translationCache[index] = result.translation; state.translationSourceCache[index] = formatTranslationProvider(result.provider || result.source || ''); }
       } catch (error) {
         console.warn('Transcript translation failed:', error);
       }
@@ -1592,7 +2174,7 @@
   }
 
   async function downloadVocabulary() {
-    const stored = await chrome.storage.local.get('vocabulary');
+    const stored = await storageGet('vocabulary');
     const items = (stored.vocabulary || []).filter(item => item.videoId === state.videoId);
     const rows = ['word,translation,level,levelLabel,pos,sentence,video,timestamp,tags'];
     for (const item of items) rows.push([item.word, item.translation, item.level, item.levelLabel, item.pos, item.sentence, item.videoTitle, item.timestamp, (item.tags || []).join('|')].map(csv).join(','));
@@ -1602,7 +2184,7 @@
   }
 
   async function getCurrentVideoLearningData() {
-    const stored = await chrome.storage.local.get(['vocabulary','bookmarks','notesByVideo']);
+    const stored = await storageGet(['vocabulary','bookmarks','notesByVideo']);
     return {
       vocabulary: (stored.vocabulary || []).filter(item => item.videoId === state.videoId),
       bookmarks: (stored.bookmarks || []).filter(item => item.videoId === state.videoId),
@@ -1630,12 +2212,6 @@
   async function copyCompleteTranscript() {
     await navigator.clipboard.writeText(await buildCompleteTranscriptText());
     showToast('Complete transcript copied.');
-  }
-
-  async function showLearningReport() {
-    const stored = await chrome.storage.local.get('vocabulary');
-    const videoWords = (stored.vocabulary || []).filter(item => item.videoId === state.videoId);
-    showToast(`Learning report: ${state.captions.length} subtitle segments · ${videoWords.length} saved vocabulary items.`);
   }
 
   function injectYouTubeWatchLaterItem() {
@@ -1674,23 +2250,38 @@
       // The native player is a reliable last-resort live subtitle signal. If a
       // caption track was not available yet, create a single live segment so
       // word translation still works instead of leaving the extension blank.
+      const video = getVideo();
+      const now = Number(video?.currentTime || 0);
       if (!state.captions.length) {
-        const video = getVideo();
-        state.captions = [{ start: video?.currentTime || 0, duration: 2, text }];
-        state.activeIndex = 0;
-        renderCurrentSubtitle();
+        state.captions = [{ start: Math.max(0, now - 0.05), duration: 2, text }];
+      } else {
+        const last = state.captions[state.captions.length - 1];
+        if (!last || last.text !== text || Math.abs(Number(last.start || 0) - now) > 1.2) {
+          state.captions = mergeCaptionSegments([...state.captions, { start: Math.max(0, now - 0.05), duration: 2, text }]);
+        }
       }
+      state.activeIndex = state.captions.length - 1;
+      renderCurrentSubtitle();
+      if (state.settings.autoTranslate) translateCurrent(true).catch(() => {});
     }
   }
 
-  function seek(index) {
+  async function seek(index) {
     const caption = state.captions[index];
     const video = getVideo();
-    if (caption && video) {
-      video.currentTime = caption.start;
-      video.play().catch(() => {});
-      closePanel();
-    }
+    if (!caption || !video) return showToast('Video is not ready for transcript seeking yet.');
+    const target = Math.max(0, Number(caption.start || 0));
+    try {
+      if (video.readyState < 1) await new Promise(resolve => { const done=()=>{video.removeEventListener('loadedmetadata',done);resolve();}; video.addEventListener('loadedmetadata',done,{once:true}); setTimeout(resolve,1200); });
+      video.pause();
+      video.currentTime = target;
+      state.activeIndex = index;
+      state.lastCaptionKey = '';
+      renderCurrentSubtitle();
+      const playResult = video.play();
+      if (playResult?.catch) await playResult.catch(() => {});
+      showToast(`Playing transcript at ${formatTime(target)}.`);
+    } catch (_) { showToast('Could not seek to this transcript line.'); }
   }
 
   function onShortcut(event) {
@@ -1715,9 +2306,11 @@
 
   async function safeRuntimeMessage(message) {
     try {
+      if (!extensionContextAlive()) throw new Error('Extension context invalidated. Refresh this YouTube page.');
       return await chrome.runtime.sendMessage(message);
     } catch (error) {
-      console.warn('Charlie MJ runtime message failed:', error);
+      reportContextError(error);
+      if (!isContextInvalidError(error)) console.warn('Charlie MJ runtime message failed:', error);
       return { ok: false, error: error.message || 'Extension background unavailable.' };
     }
   }
@@ -1726,6 +2319,15 @@
     const toast = $('.cmj-toast');
     if (!toast) return;
     toast.textContent = message;
+    toast.classList.remove('cmj-toast-subtitle-center','cmj-toast-bottom-right','cmj-toast-bottom-left');
+    const position = ['subtitle-center','bottom-right','bottom-left'].includes(state.settings.successPopupPosition) ? state.settings.successPopupPosition : 'subtitle-center';
+    toast.classList.add(`cmj-toast-${position}`);
+    toast.style.top = ''; toast.style.bottom = '';
+    if (position === 'subtitle-center') {
+      const subtitle = $('.cmj-subtitle-layer');
+      const rect = subtitle?.getBoundingClientRect?.();
+      if (rect && rect.width > 0 && rect.height > 0) { toast.style.top = `${Math.min(window.innerHeight - 60, Math.max(8, rect.bottom + 12))}px`; toast.style.bottom = 'auto'; }
+    }
     toast.hidden = false;
     clearTimeout(showToast.timer);
     showToast.timer = setTimeout(() => { toast.hidden = true; }, 3200);

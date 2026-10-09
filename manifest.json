@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Charlie MJ Language",
   "short_name": "Charlie MJ",
-  "version": "4.1.3",
-  "description": "Charlie MJ Language: a local-first YouTube language-learning workspace with organized Library navigation, stateful toolbar controls, categorized settings, complete preference restoration, reliable saved preferences and collection copy/move controls.",
+  "version": "4.3.3",
+  "description": "Lightweight YouTube-first language learning with configurable success notifications and a modular, backward-compatible transcript service configuration.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",
@@ -15,9 +15,15 @@
     "tabs"
   ],
   "host_permissions": [
-    "https://*.youtube.com/*",
     "https://*.googlevideo.com/*",
-    "https://api.mymemory.translated.net/*"
+    "https://*.wiktionary.org/*",
+    "https://*.youtube.com/*",
+    "https://api-free.deepl.com/*",
+    "https://api.cognitive.microsofttranslator.com/*",
+    "https://api.deepl.com/*",
+    "https://api.dictionaryapi.dev/*",
+    "https://api.mymemory.translated.net/*",
+    "https://translation.googleapis.com/*"
   ],
   "background": {
     "service_worker": "src/background/service-worker.js",
@@ -94,7 +100,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "icons/*"
+        "icons/*",
+        "transcript-service.config.json"
       ],
       "matches": [
         "https://*.youtube.com/*"

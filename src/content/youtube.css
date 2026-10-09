@@ -36,6 +36,8 @@
 
 .cmj-toolbar {
   position: relative;
+  transform: scale(var(--cmj-toolbar-scale, 1));
+  transform-origin: center bottom;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,6 +89,7 @@
 
 .cmj-subtitle-layer {
   position: fixed;
+  cursor: move;
   left: 50%;
   bottom: 105px;
   transform: translateX(-50%);
@@ -99,6 +102,8 @@
 }
 
 .cmj-subtitle-layer.cmj-hidden { display: none; }
+.cmj-subtitle-layer.cmj-subtitle-dragging { cursor: grabbing; user-select: none; }
+.cmj-subtitle-layer.cmj-subtitle-dragging .cmj-word { pointer-events: none; }
 .cmj-original-line,
 .cmj-translation-line {
   display: table;
@@ -149,6 +154,11 @@
 
 .cmj-panel {
   position: fixed;
+  resize: both;
+  min-width: 320px;
+  min-height: 280px;
+  max-width: 1000px;
+  max-height: 900px;
   right: 18px;
   top: 70px;
   bottom: 18px;
@@ -160,11 +170,18 @@
   background: var(--cmj-panel);
   box-shadow: 0 25px 90px rgba(0,0,0,.7);
 }
-.cmj-panel-head { display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid rgba(255,255,255,.09); }
+.cmj-panel-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,.09); cursor:move; user-select:none; }
+.cmj-panel-head strong { display:flex; align-items:center; gap:8px; min-width:0; }
+.cmj-window-hint { color:#94a3b8; font-size:9px; font-weight:500; }
+.cmj-panel-head-actions { display:flex; gap:3px; flex:0 0 auto; }
+.cmj-panel-head-actions button { border:0; border-radius:7px; background:rgba(255,255,255,.06); color:#fff; font-size:16px; cursor:pointer; padding:4px 7px; }
+.cmj-panel-head-actions button:hover { background:rgba(56,189,248,.16); }
+.cmj-panel-pinned { z-index:2147483646 !important; box-shadow:0 28px 100px rgba(56,189,248,.24),0 25px 90px rgba(0,0,0,.75); }
+.cmj-panel-pinned .cmj-panel-head-actions button[data-cmj-action="pin"] { background:rgba(56,189,248,.22); }
 .cmj-panel-head button { border:0; background:transparent; color:#fff; font-size:25px; cursor:pointer; }
 .cmj-tabs { display:flex; gap:4px; padding:8px; border-bottom:1px solid rgba(255,255,255,.09); overflow:auto; }
 .cmj-tabs button { flex:0 0 auto; border:0; border-radius:8px; padding:8px 10px; color:#fff; background:rgba(255,255,255,.07); cursor:pointer; }
-.cmj-panel-body { height:calc(100% - 108px); overflow:auto; padding:10px; }
+.cmj-panel-body { height:calc(100% - 104px); overflow:auto; padding:10px; min-height:0; }
 .cmj-panel-note { color:var(--cmj-muted); font-size:12px; margin-bottom:8px; }
 .cmj-export-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
 .cmj-line { display:grid; grid-template-columns:70px 1fr; gap:9px; width:100%; border:0; border-radius:10px; margin:4px 0; padding:10px; text-align:left; background:rgba(255,255,255,.055); color:#fff; cursor:pointer; }
@@ -206,7 +223,7 @@ html.cmj-focus-mode ytd-rich-shelf-renderer { opacity:.06 !important; }
 }
 
 @media (max-width: 600px) {
-  .cmj-panel { left:8px; right:8px; width:auto; top:45px; bottom:8px; }
+  .cmj-panel { width:min(92vw, 1000px); }
   .cmj-word-card { right:8px; bottom:95px; width:235px; }
   .cmj-original-line { font-size:18px; }
   .cmj-translation-line { font-size:15px; }
@@ -268,3 +285,27 @@ body.cmj-toolbar-dragging * { cursor: grabbing !important; }
 .cmj-toolbar button.cmj-toolbar-active::after { content:' ON'; font-size:9px; letter-spacing:.05em; color:#7dd3fc; margin-left:3px; }
 .cmj-toolbar button.cmj-toolbar-action-complete,
 .cmj-more-menu button.cmj-toolbar-action-complete { background:rgba(34,197,94,.18) !important; border-color:rgba(74,222,128,.42) !important; }
+
+#cmj-language-root .cmj-resize{position:absolute;z-index:10;display:block}.cmj-resize-n,.cmj-resize-s{left:10px;right:10px;height:8px}.cmj-resize-n{top:-4px;cursor:n-resize}.cmj-resize-s{bottom:-4px;cursor:s-resize}.cmj-resize-e,.cmj-resize-w{top:10px;bottom:10px;width:8px}.cmj-resize-e{right:-4px;cursor:e-resize}.cmj-resize-w{left:-4px;cursor:w-resize}.cmj-resize-ne,.cmj-resize-nw,.cmj-resize-se,.cmj-resize-sw{width:14px;height:14px}.cmj-resize-ne{right:-5px;top:-5px;cursor:ne-resize}.cmj-resize-nw{left:-5px;top:-5px;cursor:nw-resize}.cmj-resize-se{right:-5px;bottom:-5px;cursor:se-resize}.cmj-resize-sw{left:-5px;bottom:-5px;cursor:sw-resize}.cmj-panel-resizing{user-select:none}.cmj-panel-maximized{left:12px!important;top:12px!important;width:calc(100vw - 24px)!important;height:calc(100vh - 24px)!important;max-width:none!important;max-height:none!important}.cmj-panel-minimized{height:52px!important;min-height:52px!important;max-height:52px!important}.cmj-panel-minimized .cmj-tabs,.cmj-panel-minimized .cmj-panel-body,.cmj-panel-minimized .cmj-resize{display:none!important}
+#cmj-language-root .cmj-subtitle-layer{color:var(--cmj-subtitle-text-color,#fff);background:color-mix(in srgb,var(--cmj-subtitle-bg,#000) calc(var(--cmj-subtitle-opacity,.65)*100%),transparent)}
+#cmj-language-root .cmj-original-line,#cmj-language-root .cmj-translation-line{font-size:var(--cmj-subtitle-ui-font-size,28px)}
+.cmj-panel-head-actions.cmj-controls-auto-hidden{opacity:0;pointer-events:none;transition:opacity .2s ease}.cmj-panel-head:hover .cmj-panel-head-actions{opacity:1;pointer-events:auto}
+
+.cmj-transcript-original .cmj-word,.cmj-transcript-translation .cmj-word{font-size:inherit;}
+.cmj-transcript-original{line-height:1.5;}
+.cmj-transcript-translation{line-height:1.45;}
+
+/* Delayed hover reveal for transcript window (v4.3.1 targeted fix). */
+.cmj-panel.cmj-panel-window-auto-hidden{opacity:.04!important;pointer-events:none!important;transition:opacity .2s ease}
+.cmj-panel:not(.cmj-panel-window-auto-hidden){transition:opacity .2s ease}
+.cmj-word-translation-source,.cmj-word-dictionary-source{display:block;color:#94a3b8;font-size:11px;line-height:1.4;margin-top:2px}
+
+/* Explicit sentence-saving control; visible only in sentence subtitle mode. */
+.cmj-save-sentence-inline{display:inline-flex;align-items:center;gap:5px;margin:7px 0 0 8px;padding:5px 9px;border:1px solid rgba(148,163,184,.45);border-radius:8px;background:rgba(15,23,42,.92);color:#fff;font:600 12px/1.2 system-ui,sans-serif;cursor:pointer;pointer-events:auto;vertical-align:middle}.cmj-save-sentence-inline:hover{background:rgba(30,64,175,.95);border-color:#60a5fa}
+
+.cmj-saved-translation-provider{display:block;color:#94a3b8;font-size:11px;margin-top:2px}
+
+/* Configurable location for all Charlie MJ toast/status notifications. */
+.cmj-toast.cmj-toast-subtitle-center { left:50%; right:auto; bottom:25px; top:auto; transform:translateX(-50%); }
+.cmj-toast.cmj-toast-bottom-right { left:auto; right:24px; bottom:24px; top:auto; transform:none; }
+.cmj-toast.cmj-toast-bottom-left { left:24px; right:auto; bottom:24px; top:auto; transform:none; }
