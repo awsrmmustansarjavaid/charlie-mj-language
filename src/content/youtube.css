@@ -106,12 +106,15 @@
 .cmj-subtitle-layer.cmj-subtitle-dragging .cmj-word { pointer-events: none; }
 .cmj-original-line,
 .cmj-translation-line {
-  display: table;
+  display: block;
+  width: fit-content;
   max-width: 100%;
   margin: 5px auto 0;
   padding: 7px 14px;
   border-radius: 9px;
   background: rgba(0, 0, 0, .62);
+  box-sizing: border-box;
+  overflow: hidden;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -154,7 +157,7 @@
 
 .cmj-panel {
   position: fixed;
-  resize: both;
+  resize: none; /* Custom edge handles provide predictable two-axis resizing. */
   min-width: 320px;
   min-height: 280px;
   max-width: 1000px;
@@ -165,23 +168,26 @@
   width: min(520px, calc(100vw - 36px));
   z-index: 2147483005;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   border: 1px solid rgba(96,165,250,.3);
   border-radius: 18px;
   background: var(--cmj-panel);
   box-shadow: 0 25px 90px rgba(0,0,0,.7);
 }
-.cmj-panel-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,.09); cursor:move; user-select:none; }
-.cmj-panel-head strong { display:flex; align-items:center; gap:8px; min-width:0; }
+.cmj-panel-head { display:flex; flex:0 0 auto; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 8px; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.12); cursor:move; user-select:none; min-width:0; box-sizing:border-box; }
+.cmj-panel-head strong { display:flex; flex:1 1 100px; align-items:center; flex-wrap:wrap; gap:4px 7px; min-width:0; overflow-wrap:anywhere; line-height:1.25; font-size:13px; }
 .cmj-window-hint { color:#94a3b8; font-size:9px; font-weight:500; }
-.cmj-panel-head-actions { display:flex; gap:3px; flex:0 0 auto; }
-.cmj-panel-head-actions button { border:0; border-radius:7px; background:rgba(255,255,255,.06); color:#fff; font-size:16px; cursor:pointer; padding:4px 7px; }
+.cmj-panel-head-actions { display:flex; flex:1 1 auto; flex-wrap:wrap; justify-content:flex-end; gap:3px; min-width:0; }
+.cmj-panel-head-actions button { border:0; border-radius:7px; background:rgba(255,255,255,.06); color:#fff; font-size:14px; line-height:1.2; cursor:pointer; padding:4px 5px; min-width:24px; }
 .cmj-panel-head-actions button:hover { background:rgba(56,189,248,.16); }
 .cmj-panel-pinned { z-index:2147483646 !important; box-shadow:0 28px 100px rgba(56,189,248,.24),0 25px 90px rgba(0,0,0,.75); }
 .cmj-panel-pinned .cmj-panel-head-actions button[data-cmj-action="pin"] { background:rgba(56,189,248,.22); }
 .cmj-panel-head button { border:0; background:transparent; color:#fff; font-size:25px; cursor:pointer; }
-.cmj-tabs { display:flex; gap:4px; padding:8px; border-bottom:1px solid rgba(255,255,255,.09); overflow:auto; }
+.cmj-tabs { display:flex; flex:0 0 auto; gap:4px; padding:8px; border-bottom:1px solid rgba(255,255,255,.09); overflow:auto; min-width:0; box-sizing:border-box; }
 .cmj-tabs button { flex:0 0 auto; border:0; border-radius:8px; padding:8px 10px; color:#fff; background:rgba(255,255,255,.07); cursor:pointer; }
-.cmj-panel-body { height:calc(100% - 104px); overflow:auto; padding:10px; min-height:0; }
+.cmj-panel-body { flex:1 1 auto; height:auto; min-height:0; min-width:0; overflow:auto; padding:10px; box-sizing:border-box; }
 .cmj-panel-note { color:var(--cmj-muted); font-size:12px; margin-bottom:8px; }
 .cmj-export-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
 .cmj-line { display:grid; grid-template-columns:70px 1fr; gap:9px; width:100%; border:0; border-radius:10px; margin:4px 0; padding:10px; text-align:left; background:rgba(255,255,255,.055); color:#fff; cursor:pointer; }
@@ -286,9 +292,9 @@ body.cmj-toolbar-dragging * { cursor: grabbing !important; }
 .cmj-toolbar button.cmj-toolbar-action-complete,
 .cmj-more-menu button.cmj-toolbar-action-complete { background:rgba(34,197,94,.18) !important; border-color:rgba(74,222,128,.42) !important; }
 
-#cmj-language-root .cmj-resize{position:absolute;z-index:10;display:block}.cmj-resize-n,.cmj-resize-s{left:10px;right:10px;height:8px}.cmj-resize-n{top:-4px;cursor:n-resize}.cmj-resize-s{bottom:-4px;cursor:s-resize}.cmj-resize-e,.cmj-resize-w{top:10px;bottom:10px;width:8px}.cmj-resize-e{right:-4px;cursor:e-resize}.cmj-resize-w{left:-4px;cursor:w-resize}.cmj-resize-ne,.cmj-resize-nw,.cmj-resize-se,.cmj-resize-sw{width:14px;height:14px}.cmj-resize-ne{right:-5px;top:-5px;cursor:ne-resize}.cmj-resize-nw{left:-5px;top:-5px;cursor:nw-resize}.cmj-resize-se{right:-5px;bottom:-5px;cursor:se-resize}.cmj-resize-sw{left:-5px;bottom:-5px;cursor:sw-resize}.cmj-panel-resizing{user-select:none}.cmj-panel-maximized{left:12px!important;top:12px!important;width:calc(100vw - 24px)!important;height:calc(100vh - 24px)!important;max-width:none!important;max-height:none!important}.cmj-panel-minimized{height:52px!important;min-height:52px!important;max-height:52px!important}.cmj-panel-minimized .cmj-tabs,.cmj-panel-minimized .cmj-panel-body,.cmj-panel-minimized .cmj-resize{display:none!important}
-#cmj-language-root .cmj-subtitle-layer{color:var(--cmj-subtitle-text-color,#fff);background:color-mix(in srgb,var(--cmj-subtitle-bg,#000) calc(var(--cmj-subtitle-opacity,.65)*100%),transparent)}
-#cmj-language-root .cmj-original-line,#cmj-language-root .cmj-translation-line{font-size:var(--cmj-subtitle-ui-font-size,28px)}
+#cmj-language-root .cmj-resize{position:absolute;z-index:10;display:block;touch-action:none}.cmj-resize-n,.cmj-resize-s{left:14px;right:14px;height:8px}.cmj-resize-n{top:0;cursor:n-resize}.cmj-resize-s{bottom:0;cursor:s-resize}.cmj-resize-e,.cmj-resize-w{top:14px;bottom:14px;width:8px}.cmj-resize-e{right:0;cursor:e-resize}.cmj-resize-w{left:0;cursor:w-resize}.cmj-resize-ne,.cmj-resize-nw,.cmj-resize-se,.cmj-resize-sw{width:14px;height:14px}.cmj-resize-ne{right:0;top:0;cursor:ne-resize}.cmj-resize-nw{left:0;top:0;cursor:nw-resize}.cmj-resize-se{right:0;bottom:0;cursor:se-resize}.cmj-resize-sw{left:0;bottom:0;cursor:sw-resize}.cmj-panel-resizing{user-select:none}.cmj-panel-maximized{left:12px!important;top:12px!important;width:calc(100vw - 24px)!important;height:calc(100vh - 24px)!important;max-width:none!important;max-height:none!important}.cmj-panel-minimized{height:52px!important;min-height:52px!important;max-height:52px!important}.cmj-panel-minimized .cmj-tabs,.cmj-panel-minimized .cmj-panel-body,.cmj-panel-minimized .cmj-resize{display:none!important}
+#cmj-language-root .cmj-subtitle-layer{color:var(--cmj-subtitle-text-color,#fff)}
+
 .cmj-panel-head-actions.cmj-controls-auto-hidden{opacity:0;pointer-events:none;transition:opacity .2s ease}.cmj-panel-head:hover .cmj-panel-head-actions{opacity:1;pointer-events:auto}
 
 .cmj-transcript-original .cmj-word,.cmj-transcript-translation .cmj-word{font-size:inherit;}
@@ -309,3 +315,24 @@ body.cmj-toolbar-dragging * { cursor: grabbing !important; }
 .cmj-toast.cmj-toast-subtitle-center { left:50%; right:auto; bottom:25px; top:auto; transform:translateX(-50%); }
 .cmj-toast.cmj-toast-bottom-right { left:auto; right:24px; bottom:24px; top:auto; transform:none; }
 .cmj-toast.cmj-toast-bottom-left { left:24px; right:auto; bottom:24px; top:auto; transform:none; }
+
+
+/* v4.3.4: live transcript highlighting is isolated from subtitle fetching/rendering. */
+.cmj-transcript-list .cmj-line-live-active {
+  position: relative;
+  z-index: 1;
+  transition: background-color var(--cmj-live-highlight-transition, 150ms) ease, color var(--cmj-live-highlight-transition, 150ms) ease, box-shadow var(--cmj-live-highlight-transition, 150ms) ease;
+  color: var(--cmj-live-highlight-text-color, inherit);
+  background-color: var(--cmj-live-highlight-bg, rgba(139,92,246,.25));
+}
+.cmj-transcript-list .cmj-line-live-active.cmj-live-style-rounded { border-radius: 14px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cmj-live-highlight-color, #8B5CF6) 55%, transparent); }
+.cmj-transcript-list .cmj-line-live-active.cmj-live-style-underline { background: transparent; text-decoration: underline 2px var(--cmj-live-highlight-color, #8B5CF6); text-underline-offset: 4px; }
+.cmj-transcript-list .cmj-line-live-active.cmj-live-style-accent { background: transparent; box-shadow: inset 4px 0 0 var(--cmj-live-highlight-color, #8B5CF6); }
+.cmj-transcript-list .cmj-line-live-active.cmj-live-style-text { background: transparent; color: var(--cmj-live-highlight-color, #8B5CF6); }
+.cmj-transcript-list.cmj-live-highlight-disabled .cmj-line-live-active { background: rgba(255,255,255,.055); box-shadow: none; text-decoration: none; }
+
+/* Active speech marker: appears only beside the sentence currently aligned to the video. */
+.cmj-transcript-list .cmj-live-speaking-icon { display:inline-flex; width:17px; height:17px; margin:0 6px 0 0; vertical-align:-3px; align-items:center; justify-content:center; color:var(--cmj-live-highlight-color, #8B5CF6); opacity:0; visibility:hidden; flex:0 0 17px; }
+.cmj-transcript-list .cmj-live-speaking-icon svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.cmj-transcript-list .cmj-live-speaking-icon[data-live-visible="true"] { opacity:1; visibility:visible; }
+.cmj-transcript-list.cmj-live-highlight-disabled .cmj-live-speaking-icon { opacity:0; visibility:hidden; }

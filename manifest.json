@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Charlie MJ Language",
   "short_name": "Charlie MJ",
-  "version": "4.3.3",
-  "description": "Lightweight YouTube-first language learning with configurable success notifications and a modular, backward-compatible transcript service configuration.",
+  "version": "4.4.1",
+  "description": "Multilingual YouTube language learning with fast transcripts, subtitles, translation, vocabulary, and a redesigned settings workspace.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",

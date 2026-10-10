@@ -59,7 +59,8 @@
     lastProgressWrite: 0,
     resumeAppliedFor: '',
     sessionStartedAt: Date.now(),
-    sessionSeconds: 0
+    sessionSeconds: 0,
+    liveHighlightLastIndex: -2, liveHighlightLastAutoScrollAt: 0, liveHighlightManualScrollUntil: 0, liveHighlightProgrammaticScroll: false, liveHighlightScrollBound: false
   };
 
   const DEFAULTS = {
@@ -106,14 +107,15 @@
     toolbarHoverZonePx: 140,
     toolbarDragAnywhere: true,
     toolbarSnap: 'free',
-    toolbarAutoHideDelayMs: 15000,
+    toolbarAutoHideEnabled: true, toolbarAutoHideDelayMs: 15000,
     toolbarScale: 1,
     toolbarWidth: 905,
-    subtitleDefaultX: 50, subtitleDefaultY: 11, subtitleWidth: 760, subtitleWidthPercent: 60, subtitleHorizontalAnchor: 'center', subtitleVerticalAnchor: 'bottom', subtitleOffsetX: 0, subtitleOffsetY: 11, subtitleMoveHideDelayMs: 1800, subtitlePositionMode: 'bottom', subtitleUIFontSize: 28, subtitleMaxWidth: 1100, subtitleTextColor: '#ffffff', subtitleBackgroundColor: '#000000', subtitleOpacity: 65,
+    subtitleDefaultX: 50, subtitleDefaultY: 11, subtitleWidth: 760, subtitleWidthPercent: 60, subtitleHorizontalAnchor: 'center', subtitleVerticalAnchor: 'bottom', subtitleOffsetX: 0, subtitleOffsetY: 11, subtitleMoveHideDelayMs: 1800, subtitlePositionMode: 'bottom', subtitleUIFontSize: 28, subtitleMaxWidth: 1100, subtitleMaxHeight: 300, subtitleTextColor: '#ffffff', subtitleBackgroundColor: '#000000', subtitleOpacity: 65,
     subtitleDragEnabled: true,
     subtitlePosition: { leftPx: null, topPx: null, left: null, top: null, bottom: 11 },
     successPopupPosition: 'subtitle-center', transcriptServiceEngine: 'legacy-youtube', captionTrackPreference: 'original-first', enableCaptionLanguageDiscovery: true,
-    transcriptDefaultX: 98, transcriptDefaultY: 12, transcriptUIWidth: 300, transcriptUIHeight: 545, transcriptHorizontalAnchor: 'right', transcriptPositionMode: 'default', transcriptVerticalAnchor: 'top', transcriptOffsetX: 2, transcriptOffsetY: 12, transcriptControlHideDelayMs: 15000, transcriptAutoHideDelayMs: 15000, transcriptHoverZonePx: 120,
+    liveTranscriptHighlightEnabled: true, liveTranscriptHighlightStyle: 'soft-background', liveTranscriptHighlightColor: '#8B5CF6', liveTranscriptHighlightOpacity: 25, liveTranscriptHighlightTextColor: '#FFFFFF', liveTranscriptInheritTextColor: true, liveTranscriptSyncMode: 'active-subtitle', liveTranscriptAutoScroll: true, liveTranscriptScrollPosition: 'center', liveTranscriptTransitionMs: 150, liveTranscriptFollowWhilePaused: true, liveTranscriptRespectManualScroll: true,
+    transcriptDefaultX: 98, transcriptDefaultY: 12, transcriptUIWidth: 300, transcriptUIHeight: 545, transcriptHorizontalAnchor: 'right', transcriptPositionMode: 'default', transcriptVerticalAnchor: 'top', transcriptOffsetX: 2, transcriptOffsetY: 12, transcriptControlHideDelayMs: 15000, transcriptAutoHideEnabled: true, transcriptAutoHideDelayMs: 15000, transcriptHoverZonePx: 120,
     transcriptWindowWidth: 300,
     transcriptWindowHeight: 545,
     transcriptWindowMinWidth: 220,
@@ -127,6 +129,9 @@
     subtitleDisplayMode: 'both',
     originalFontSize: 28,
     translationFontSize: 22,
+    originalLineSpacing: '1.0', translationLineSpacing: '1.0',
+    originalBoxWidthMode: 'auto', originalBoxWidthCustom: 640, originalBoxHeightMode: 'auto', originalBoxHeightCustom: 180, originalMaxWidth: 900, originalMaxHeight: 180, originalMaxLines: 2, originalCustomMaxLines: 2, originalTextWrapping: true, originalBoxPadding: 7, originalBackgroundOpacity: 62, originalCornerRadius: 9,
+    translationBoxWidthMode: 'auto', translationBoxWidthCustom: 640, translationBoxHeightMode: 'auto', translationBoxHeightCustom: 180, translationMaxWidth: 900, translationMaxHeight: 180, translationMaxLines: 2, translationCustomMaxLines: 2, translationTextWrapping: true, translationBoxPadding: 7, translationBackgroundOpacity: 52, translationCornerRadius: 9,
     originalBold: true,
     translationBold: false,
     originalUnderline: false,
@@ -181,17 +186,24 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
   let contextInvalidToastShown = false;
+  let contextInvalidated = false;
   function extensionContextAlive() {
-    try { return Boolean(chrome && chrome.runtime && chrome.runtime.id && chrome.storage && chrome.storage.local); }
-    catch (_) { return false; }
+    if (contextInvalidated) return false;
+    try {
+      const alive = Boolean(chrome && chrome.runtime && chrome.runtime.id && chrome.storage && chrome.storage.local);
+      if (!alive) contextInvalidated = true;
+      return alive;
+    } catch (_) { contextInvalidated = true; return false; }
   }
   function isContextInvalidError(error) { return /extension context invalidated|context invalidated|message port closed/i.test(String(error?.message || error || '')); }
   function reportContextError(error) {
     if (!isContextInvalidError(error)) { console.warn('Charlie MJ action failed:', error); return; }
+    contextInvalidated = true;
     if (!contextInvalidToastShown) {
       contextInvalidToastShown = true;
-      showToast('Extension was updated or reloaded. Refresh this YouTube page to reconnect Charlie MJ Language.');
-      console.warn('Charlie MJ: extension context invalidated; refresh the YouTube page after updating the extension.');
+      // The old content-script world cannot reconnect to a reloaded extension.
+      // Keep this as a user-facing notice, not a console error/stack trace.
+      try { showToast('Charlie MJ was reloaded or updated. Refresh this YouTube page to reconnect it.'); } catch (_) {}
     }
   }
   async function storageGet(keys) {
@@ -207,10 +219,24 @@
 
   async function init() {
     const stored = await storageGet('settings');
+    // Do not attach listeners or start timers from an already-invalid content script.
+    if (!extensionContextAlive()) return;
     state.settings = { ...DEFAULTS, ...(stored.settings || {}) };
     state.focusMode = Boolean(state.settings.focusMode);
     state.studyMode = Boolean(state.settings.studyModeDefault);
     const saved=stored.settings||{};
+    // Migrate the former pixel-based line spacing to unitless multipliers.
+    let lineSpacingMigrated=false;
+    for (const [key,fontKey,legacyDefault] of [['originalLineSpacing','originalFontSize',36],['translationLineSpacing','translationFontSize',28]]) {
+      const value=Number(saved[key]);
+      if (Number.isFinite(value) && value>4) {
+        const fontSize=Math.max(1,Number(state.settings[fontKey])||22);
+        const multiplier=value===legacyDefault?1:Math.max(0.8,Math.min(3,Math.round((value/fontSize)*10)/10));
+        state.settings[key]=multiplier;
+        lineSpacingMigrated=true;
+      }
+    }
+    if(lineSpacingMigrated) await storageSet({settings:state.settings});
     // One-time migration: older releases defaulted to 'always', which prevented the promised auto-hide.
     if (!saved.toolbarRevealModeMigrationV432) {
       if (!saved.toolbarRevealMode || saved.toolbarRevealMode === 'always') state.settings.toolbarRevealMode = 'hover';
@@ -238,6 +264,22 @@
     document.addEventListener(EVENT_NAME + '-data', onCaptionData);
     document.addEventListener(DATA_EVENT, onCaptionData);
     chrome.runtime.onMessage.addListener(onMessage);
+    // Isolate the Notes contenteditable from YouTube and extension keyboard shortcuts.
+    // We do not cancel normal key defaults, so native typing/editing remains intact.
+    const isolateNotesKeyboard = event => {
+      if (!event.target?.closest?.('.cmj-note-editor')) return;
+      if (event.type === 'keydown' && (event.ctrlKey || event.metaKey || event.altKey)) {
+        const key = String(event.key || '').toLowerCase();
+        const nativeEditingKeys = ['a','c','v','x','z','y','b','i','u'];
+        if ((event.ctrlKey || event.metaKey) && !event.altKey && nativeEditingKeys.includes(key)) {
+          // Preserve common text-editor shortcuts such as Select All, Copy, Paste, Undo and Bold.
+        } else {
+          event.preventDefault();
+        }
+      }
+      event.stopImmediatePropagation();
+    };
+    for (const type of ['keydown','keypress','keyup']) window.addEventListener(type, isolateNotesKeyboard, true);
     window.addEventListener('keydown', onShortcut, true);
     chrome.storage.onChanged.addListener(onSettingsChanged);
     window.addEventListener('pagehide', () => { saveLearningProgress(true).catch(() => {}); });
@@ -253,13 +295,21 @@
   function startSubtitleSyncLoop() {
     if (state.syncFrame) return;
     const tick = () => {
-      if (isWatchPage()) {
-        const now = performance.now();
-        const interval = Math.max(40, Number(state.settings.captionSyncIntervalMs || 80));
-        if (now - (state.lastSyncAt || 0) >= interval) {
-          state.lastSyncAt = now;
-          updatePlayback();
+      // Keep playback/UI synchronization independent of extension storage APIs.
+      // Chrome can invalidate chrome.runtime after an extension update while this
+      // already-injected script still has enough page data to keep subtitles moving.
+      // Do not terminate this loop merely because persistence is unavailable.
+      try {
+        if (isWatchPage()) {
+          const now = performance.now();
+          const interval = Math.max(40, Number(state.settings.captionSyncIntervalMs || 80));
+          if (now - (state.lastSyncAt || 0) >= interval) {
+            state.lastSyncAt = now;
+            updatePlayback();
+          }
         }
+      } catch (error) {
+        if (!isContextInvalidError(error)) console.warn('Charlie MJ playback sync failed:', error);
       }
       state.syncFrame = setTimeout(tick, Math.max(40, Number(state.settings.captionSyncIntervalMs || 80)));
     };
@@ -282,12 +332,15 @@
     state.focusMode = Boolean(state.settings.focusMode);
     ensureUI();
     applySubtitlePosition($('.cmj-subtitle-layer'));
-    applyTranscriptWindow($('.cmj-panel'));
+    const livePanel = $('.cmj-panel');
+    applyTranscriptWindow(livePanel);
+    if (state.settings.transcriptAutoHideEnabled === false && livePanel) { livePanel.classList.remove('cmj-panel-window-auto-hidden'); $('.cmj-panel-head-actions', livePanel)?.classList.remove('cmj-controls-auto-hidden'); }
     const existingHost = document.getElementById(PLAYER_HOST_ID);
     if (existingHost) { applyToolbarPosition(existingHost); applyToolbarRevealMode(document.querySelector('#movie_player'), existingHost); updateToolbarOverflow(existingHost); }
     applyFocusMode();
     renderCurrentSubtitle();
     applyTheme();
+    updateLiveTranscriptHighlight(state.activeIndex, getVideo(), true);
   }
 
   /** Observe YouTube's SPA DOM and player changes. */
@@ -780,7 +833,7 @@
         <div class="cmj-word-card" hidden></div>
         <aside class="cmj-panel" hidden>
           <header class="cmj-panel-head">
-            <strong>🌍 Charlie MJ Language <small class="cmj-window-hint">Drag header · resize corner</small></strong>
+            <strong>🌍 Charlie MJ Language <small class="cmj-window-hint">Drag header · resize edges for width/height</small></strong>
             <div class="cmj-panel-head-actions">
               <button data-cmj-action="dock-left" title="Dock left">◀</button>
               <button data-cmj-action="dock-right" title="Dock right">▶</button>
@@ -899,7 +952,8 @@
     const custom = s.subtitlePositionMode === 'custom' && (Number.isFinite(Number(pos.leftPx)) || Number.isFinite(Number(pos.topPx)));
     const mode = s.subtitlePositionMode || 'bottom';
     layer.style.width = `min(${Math.max(20, Math.min(100, Number(s.subtitleWidthPercent ?? 60)))}vw, 96vw)`;
-    layer.style.maxWidth = `min(${Math.max(300, Number(s.subtitleMaxWidth || 1100))}px, 96vw)`;
+    layer.style.maxWidth = `min(${Math.max(200, Number(s.subtitleMaxWidth || 1100))}px, 96vw)`;
+    layer.style.maxHeight = `min(${Math.max(40, Number(s.subtitleMaxHeight || 300))}px, 90vh)`;
     layer.style.right = 'auto';
     if (custom || mode === 'custom') {
       layer.style.left = `${Number.isFinite(Number(pos.leftPx)) ? Number(pos.leftPx) : Number(pos.left ?? 50)}${Number.isFinite(Number(pos.leftPx)) ? 'px' : '%'}`;
@@ -915,7 +969,6 @@
       else if (v === 'center') { layer.style.top = '50%'; layer.style.bottom = 'auto'; layer.style.transform = `${layer.style.transform ? layer.style.transform + ' ' : ''}translateY(-50%)`; }
       else { layer.style.top = 'auto'; layer.style.bottom = `${Math.max(0, Number(s.subtitleOffsetY ?? 11))}%`; }
     }
-    layer.style.setProperty('--cmj-subtitle-ui-font-size', `${Math.max(10, Math.min(72, Number(s.subtitleUIFontSize || 28)))}px`);
     layer.style.setProperty('--cmj-subtitle-text-color', s.subtitleTextColor || '#ffffff');
     layer.style.setProperty('--cmj-subtitle-bg', s.subtitleBackgroundColor || '#000000');
     layer.style.setProperty('--cmj-subtitle-opacity', String(Math.max(0, Math.min(100, Number(s.subtitleOpacity ?? 65))) / 100));
@@ -952,8 +1005,9 @@
       panel.classList.remove('cmj-panel-window-auto-hidden');
       actions?.classList.remove('cmj-controls-auto-hidden');
       clearTimeout(controlsTimer); clearTimeout(windowTimer);
-      controlsTimer=setTimeout(()=>{ if(!panel.matches(':hover')) actions?.classList.add('cmj-controls-auto-hidden'); },delay());
-      windowTimer=setTimeout(()=>{ if(!panel.matches(':hover')) panel.classList.add('cmj-panel-window-auto-hidden'); },delay());
+      if (state.settings.transcriptAutoHideEnabled === false) return;
+      controlsTimer=setTimeout(()=>{ if(state.settings.transcriptAutoHideEnabled !== false && !panel.matches(':hover')) actions?.classList.add('cmj-controls-auto-hidden'); },delay());
+      windowTimer=setTimeout(()=>{ if(state.settings.transcriptAutoHideEnabled !== false && !panel.matches(':hover')) panel.classList.add('cmj-panel-window-auto-hidden'); },delay());
     };
     panel.addEventListener('pointerenter',reveal,{passive:true});
     panel.addEventListener('pointermove',reveal,{passive:true});
@@ -961,6 +1015,7 @@
       if(panel.hidden)return;
       const r=panel.getBoundingClientRect(); const zone=Math.max(0,Number(state.settings.transcriptHoverZonePx ?? 120));
       const near=event.clientX>=r.left-zone&&event.clientX<=r.right+zone&&event.clientY>=r.top-zone&&event.clientY<=r.bottom+zone;
+      if (state.settings.transcriptAutoHideEnabled === false) { panel.classList.remove('cmj-panel-window-auto-hidden'); actions?.classList.remove('cmj-controls-auto-hidden'); return; }
       if(near) reveal();
       else if(!panel.matches(':hover')) {
         clearTimeout(windowTimer); clearTimeout(controlsTimer);
@@ -998,6 +1053,18 @@
     panel.classList.toggle('cmj-panel-pinned', s.transcriptPinned === true);
     panel.classList.toggle('cmj-panel-maximized', s.transcriptWindowMaximized === true);
     panel.classList.toggle('cmj-panel-minimized', s.transcriptWindowMinimized === true);
+    // Keep the complete header/window inside the visible viewport after browser resize.
+    const viewportWidth = Math.max(220, window.innerWidth - 12);
+    const viewportHeight = Math.max(220, window.innerHeight - 12);
+    if (!panel.classList.contains('cmj-panel-maximized')) {
+      if (panel.offsetWidth > viewportWidth) panel.style.width = `${viewportWidth}px`;
+      if (panel.offsetHeight > viewportHeight) panel.style.height = `${viewportHeight}px`;
+      const rect = panel.getBoundingClientRect();
+      if (rect.left < 0) panel.style.left = '6px';
+      else if (rect.right > window.innerWidth) { panel.style.left = `${Math.max(6, window.innerWidth - panel.offsetWidth - 6)}px`; panel.style.right = 'auto'; }
+      if (rect.top < 0) panel.style.top = '6px';
+      else if (rect.bottom > window.innerHeight) panel.style.top = `${Math.max(6, window.innerHeight - panel.offsetHeight - 6)}px`;
+    }
   }
 
   function installToolbarInteractions(player, host) {
@@ -1077,7 +1144,7 @@
   function applyToolbarRevealMode(player, host) {
     const toolbar = $('.cmj-toolbar', host);
     if (!toolbar) return;
-    const mode = state.settings.toolbarRevealMode || 'hover';
+    const mode = state.settings.toolbarAutoHideEnabled === false ? 'always' : (state.settings.toolbarRevealMode || 'hover');
     const hoverMode = ['hover','nearby','reveal-on-hover','reveal-on-hover-nearby'].includes(mode);
     toolbar.classList.toggle('cmj-toolbar-hover-mode', hoverMode);
     if (!['hover','nearby','reveal-on-hover','reveal-on-hover-nearby'].includes(mode)) {
@@ -1240,7 +1307,7 @@
     if (action === 'sentence') { state.settings.subtitleDisplayMode='sentence'; storageSet({settings:state.settings}); openPanel('transcript'); renderCurrentSubtitle(); updateToolbarButtonStates(); }
     if (action === 'theme') { toggleTheme(); updateToolbarButtonStates(); }
     if (action === 'save') { saveCurrentSubtitle(); markToolbarAction('save'); }
-    if (action === 'bookmark') { saveBookmark(); markToolbarAction('bookmark'); }
+    if (action === 'bookmark') { saveBookmark().then(saved => { if (saved) markToolbarAction('bookmark'); }).catch(error => { reportContextError(error); showToast('Bookmark could not be saved. Please try again.'); }); }
     if (action === 'capture') { captureFrame(); markToolbarAction('capture'); }
     if (action === 'watch') { addWatchLater(); markToolbarAction('watch'); }
     if (action === 'focus') { toggleFocusMode(); updateToolbarButtonStates(); }
@@ -1331,6 +1398,15 @@
     if (!video) return;
     saveLearningProgress(false).catch(() => {});
     const current = getCurrentCaption();
+    // Both sync modes must use the same validated timestamped cue index so
+    // the source subtitle and its translation stay highlighted as one row.
+    let liveIndex = current ? state.activeIndex : -1;
+    if (state.settings.liveTranscriptSyncMode === 'playback-position' && state.captions.length) {
+      const t = Number(video.currentTime || 0); let lo = 0, hi = state.captions.length - 1, candidate = -1;
+      while (lo <= hi) { const mid = (lo + hi) >> 1; if (Number(state.captions[mid].start || 0) <= t) { candidate = mid; lo = mid + 1; } else hi = mid - 1; }
+      if (candidate >= 0) { const item = state.captions[candidate], next = state.captions[candidate + 1]; const end = item.start + Math.max(item.duration || 0, next ? next.start - item.start : 0.001); liveIndex = t <= end + Math.max(0, Number(state.settings.captionSyncToleranceMs || 350)) / 1000 || candidate === state.captions.length - 1 ? candidate : -1; } else liveIndex = -1;
+    }
+    updateLiveTranscriptHighlight(liveIndex, video);
     if (!current) {
       readNativeCaptions();
       return;
@@ -1401,6 +1477,9 @@
   }
 
   async function saveLearningProgress(force = false) {
+    // pagehide/visibilitychange can fire after Chrome has invalidated this script
+    // (for example, when the extension is reloaded). Exit before attempting storage.
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return; }
     if (!state.videoId) return;
     const now = Date.now();
     if (!force && now - state.lastProgressWrite < 3000) return;
@@ -1450,11 +1529,22 @@
     if (candidate >= 0) {
       const item = state.captions[candidate];
       const next = state.captions[candidate + 1];
-      const end = item.start + Math.max(item.duration || 0, next ? next.start - item.start : 0.001);
-      const tolerance = Math.max(0, Number(state.settings.captionSyncToleranceMs || 350)) / 1000;
-      if (time <= end + tolerance || candidate === state.captions.length - 1) state.activeIndex = candidate;
+      // A cue is active only inside its own timed interval (ending at the next
+      // cue when durations are absent/overlap). Never keep a stale previous
+      // index when playback has moved beyond the cue.
+      const nextStart = next ? Number(next.start) : Number.POSITIVE_INFINITY;
+      const durationEnd = Number(item.start) + Math.max(0.001, Number(item.duration || 0));
+      // Prefer the next cue's start as the boundary: caption tracks sometimes
+      // report short/inexact durations even though the subtitle stays visible.
+      const end = next ? nextStart : durationEnd;
+      const tolerance = Math.max(0, Number(state.settings.captionSyncToleranceMs ?? 180)) / 1000;
+      if (time <= end + tolerance || candidate === state.captions.length - 1) {
+        state.activeIndex = candidate;
+        return item;
+      }
     }
-    return state.activeIndex >= 0 ? state.captions[state.activeIndex] : null;
+    state.activeIndex = -1;
+    return null;
   }
 
   function renderCurrentSubtitle() {
@@ -1486,10 +1576,36 @@
   function subtitleInlineStyle(kind) {
     const prefix = kind === 'original' ? 'original' : 'translation';
     const size = Number(state.settings[`${prefix}FontSize`] || (kind === 'original' ? 28 : 22));
+    const lineSpacing = Math.max(0.8, Math.min(3, Number(state.settings[`${prefix}LineSpacing`] ?? 1) || 1));
     const weight = state.settings[`${prefix}Bold`] ? 800 : 400;
     const decoration = state.settings[`${prefix}Underline`] ? 'underline' : 'none';
     const italic = state.settings[`${prefix}Italic`] ? 'italic' : 'normal';
-    return `font-size:${Math.max(10, Math.min(72, size))}px;font-weight:${weight};text-decoration:${decoration};font-style:${italic};color:${escapeHTML(kind === 'original' ? (state.settings.originalColor || '#ffffff') : (state.settings.translationColor || '#e2e8f0'))}`;
+    const color = kind === 'original' ? (state.settings.originalColor || '#ffffff') : (state.settings.translationColor || '#e2e8f0');
+    const box = subtitleBoxStyle(kind);
+    return `font-size:${Math.max(10, Math.min(72, size))}px;line-height:${lineSpacing};font-weight:${weight};text-decoration:${decoration};font-style:${italic};color:${escapeHTML(color)};${box}`;
+  }
+
+  function subtitleBoxStyle(kind) {
+    const s = state.settings;
+    const widthMode = s[`${kind}BoxWidthMode`] || 'auto';
+    const heightMode = s[`${kind}BoxHeightMode`] || 'auto';
+    const widths = { small: 280, medium: 480, large: 720 };
+    const heights = { small: 60, medium: 100, large: 160 };
+    const width = widthMode === 'custom' ? Number(s[`${kind}BoxWidthCustom`] || 640) : widths[widthMode];
+    const height = heightMode === 'custom' ? Number(s[`${kind}BoxHeightCustom`] || 180) : heights[heightMode];
+    const maxWidth = Math.max(80, Math.min(1800, Number(s[`${kind}MaxWidth`] || 900)));
+    const maxHeight = Math.max(30, Math.min(900, Number(s[`${kind}MaxHeight`] || 180)));
+    const lineValue = s[`${kind}MaxLines`] ?? 2;
+    const maxLines = lineValue === 'unlimited' ? 0 : lineValue === 'custom' ? Number(s[`${kind}CustomMaxLines`] || 2) : Number(lineValue || 2);
+    const wrapping = s[`${kind}TextWrapping`] !== false;
+    const padding = Math.max(0, Math.min(60, Number(s[`${kind}BoxPadding`] ?? 7)));
+    const opacity = Math.max(0, Math.min(100, Number(s[`${kind}BackgroundOpacity`] ?? (kind === 'original' ? 62 : 52)))) / 100;
+    const radius = Math.max(0, Math.min(60, Number(s[`${kind}CornerRadius`] ?? 9)));
+    const widthCss = width ? `width:min(${Math.max(80, Math.min(1800, width))}px,96vw);` : 'width:fit-content;';
+    const heightCss = height ? `height:${Math.max(30, Math.min(900, height))}px;` : 'height:auto;';
+    const clampCss = maxLines > 0 ? `display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:${Math.max(1,Math.min(30,maxLines))};` : 'display:block;';
+    const background = escapeHTML(s.subtitleBackgroundColor || '#000000');
+    return `${widthCss}${heightCss}max-width:min(${maxWidth}px,96vw);max-height:min(${maxHeight}px,80vh);box-sizing:border-box;overflow:hidden;${clampCss}white-space:${wrapping ? 'normal' : 'nowrap'};overflow-wrap:${wrapping ? 'anywhere' : 'normal'};padding:${padding}px;background:color-mix(in srgb, ${background} ${opacity * 100}%, transparent);border-radius:${radius}px;`;
   }
 
   function getDifficultyLabel(level) {
@@ -1859,6 +1975,11 @@
   async function saveVocabulary(word, info, translation, translationProviderOverride = '') {
     const cleanWord = String(word || '').trim();
     if (!cleanWord) { showToast('Nothing to save. Select a word first.'); return false; }
+    if (!extensionContextAlive()) {
+      reportContextError(new Error('Extension context invalidated.'));
+      showToast('Refresh this YouTube page before saving vocabulary.');
+      return false;
+    }
     try {
       const stored = await storageGet(['vocabulary','wordLearning']);
       const vocabulary = Array.isArray(stored.vocabulary) ? stored.vocabulary : [];
@@ -1888,7 +2009,7 @@
       return true;
     } catch (error) {
       reportContextError(error);
-      console.error('Charlie MJ vocabulary save failed:', error);
+      if (!isContextInvalidError(error)) console.error('Charlie MJ vocabulary save failed:', error);
       showToast(isContextInvalidError(error) ? 'Refresh this YouTube page to reconnect the extension, then save again.' : 'Could not save vocabulary. Please try again.');
       return false;
     }
@@ -1913,36 +2034,60 @@
   }
 
   async function saveBookmark() {
-    const stored = await storageGet('bookmarks');
-    const bookmarks = stored.bookmarks || [];
-    const timestamp = getVideo()?.currentTime || 0;
-    bookmarks.unshift({
-      id: crypto.randomUUID(), title: state.title, videoTitle: state.title, url: state.url, videoId: state.videoId,
-      thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(state.videoId)}/hqdefault.jpg`, source: 'Bookmarks',
-      timestamp, subtitle: getCurrentCaption()?.text || '', translation: state.translationCache[state.activeIndex] || '',
-      label: 'Learning moment', tags: ['YouTube', getSentenceLevel(getCurrentCaption()?.text || '')],
-      createdAt: new Date().toISOString()
-    });
-    await storageSet({ bookmarks });
-    showToast('Timeline bookmark saved.');
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return false; }
+    const videoId = state.videoId || getVideoId();
+    if (!videoId) { showToast('Open a YouTube video before bookmarking.'); return false; }
+    try {
+      const stored = await chrome.storage.local.get('bookmarks');
+      if (!extensionContextAlive()) return false;
+      const bookmarks = Array.isArray(stored.bookmarks) ? stored.bookmarks : [];
+      const timestamp = Number(getVideo()?.currentTime || 0);
+      // Repeated clicks at the same moment should not create duplicate entries.
+      const duplicate = bookmarks.find(x => x && x.videoId === videoId && Math.abs(Number(x.timestamp || 0) - timestamp) < 1.25);
+      if (duplicate) { showToast('This timeline moment is already bookmarked.'); return true; }
+      const item = {
+        id: crypto.randomUUID(), type: 'bookmark', title: state.title || getTitle(), videoTitle: state.title || getTitle(),
+        url: state.url || location.href, videoId,
+        thumbnail: `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`, source: 'Bookmarks',
+        timestamp, subtitle: getCurrentCaption()?.text || '', translation: state.translationCache[state.activeIndex] || '',
+        label: 'Learning moment', tags: ['YouTube', getSentenceLevel(getCurrentCaption()?.text || '')],
+        createdAt: new Date().toISOString()
+      };
+      const next = [item, ...bookmarks].slice(0, 5000);
+      await chrome.storage.local.set({ bookmarks: next });
+      // Read back the exact record before showing a success message.
+      const verify = await chrome.storage.local.get('bookmarks');
+      const persisted = Array.isArray(verify.bookmarks) && verify.bookmarks.some(x => x && x.id === item.id && x.videoId === videoId);
+      if (!persisted) throw new Error('Bookmark write could not be verified.');
+      showToast('Timeline bookmark saved to Bookmarks Library.');
+      return true;
+    } catch (error) {
+      reportContextError(error);
+      if (!isContextInvalidError(error)) console.error('Charlie MJ bookmark save failed:', error);
+      showToast(isContextInvalidError(error) ? 'Refresh this YouTube page to reconnect the extension, then bookmark again.' : 'Bookmark could not be saved. Please try again.');
+      return false;
+    }
   }
 
   async function addWatchLater(explicitUrl = '', explicitTitle = '') {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return false; }
     const url = explicitUrl || state.url || location.href;
-    const videoId = extractVideoId(url) || state.videoId;
-    if (!videoId) return showToast('Open a YouTube video first.');
+    const videoId = extractVideoId(url) || state.videoId || getVideoId();
+    if (!videoId) { showToast('Open a YouTube video first.'); return false; }
     const stored = await storageGet('watchLater');
-    const list = stored.watchLater || [];
-    if (!list.some(item => item.videoId === videoId)) {
-      list.unshift({
-        id: crypto.randomUUID(), videoId, title: explicitTitle || state.title || getTitle(),
-        url: `https://www.youtube.com/watch?v=${videoId}`,
-        thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`, source: 'Watch Later',
-        level: 'Not assessed', tags: ['Watch Later'], progress: 0, addedAt: new Date().toISOString()
-      });
-      await storageSet({ watchLater: list });
-      showToast('Added to Charlie MJ Watch Later.');
-    } else showToast('This video is already in Watch Later.');
+    if (!extensionContextAlive()) return false;
+    const list = Array.isArray(stored.watchLater) ? stored.watchLater : [];
+    if (list.some(item => item.videoId === videoId)) { showToast('This video is already in Watch Later.'); return true; }
+    list.unshift({
+      id: crypto.randomUUID(), videoId, title: explicitTitle || state.title || getTitle(),
+      url: `https://www.youtube.com/watch?v=${videoId}`,
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`, source: 'Watch Later',
+      level: 'Not assessed', tags: ['Watch Later'], progress: 0, addedAt: new Date().toISOString()
+    });
+    const saved = await storageSet({ watchLater: list.slice(0, 5000) });
+    if (!saved) { showToast('Watch Later could not save this video. Refresh YouTube and try again.'); return false; }
+    showToast('Added to Charlie MJ Watch Later.');
+    return true;
   }
 
   function extractVideoId(url) {
@@ -2038,14 +2183,21 @@
         const sourceHtml = state.settings.transcriptGrammarColorsEnabled !== false ? renderWords(caption.text, false, '', 'transcript') : escapeHTML(caption.text);
         const translated = state.translationCache[index] || '';
         const translationHtml = translated ? (state.settings.transcriptGrammarColorsEnabled !== false ? renderWords(translated, true, caption.text, 'transcript') : escapeHTML(translated)) : '';
-        return `<button class="cmj-line" data-cmj-line="${index}"><time>${formatTime(caption.start)}</time><span class="cmj-transcript-original">${sourceHtml}</span><small class="cmj-transcript-translation">${translationHtml}</small></button>`;
+        const isLive = state.settings.liveTranscriptHighlightEnabled !== false && index === state.activeIndex;
+        return `<button class="cmj-line${isLive ? ' cmj-line-live-active' : ''}" data-cmj-line="${index}" aria-current="${isLive ? 'true' : 'false'}"><time>${formatTime(caption.start)}</time><span class="cmj-transcript-original"><span class="cmj-live-speaking-icon"${isLive ? ' data-live-visible="true"' : ''} role="img" aria-label="Currently speaking" title="Currently speaking"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span>${sourceHtml}</span><small class="cmj-transcript-translation">${translationHtml}</small></button>`;
       }).join('')}</div>`;
+      bindLiveTranscriptScroll(body.querySelector('.cmj-transcript-list'));
+      updateLiveTranscriptHighlight(state.activeIndex, getVideo(), true);
       return;
     }
 
     if (tab === 'notes') {
       const notes = await getVideoNotes();
       body.innerHTML = `<div class="cmj-notes-toolbar"><button data-cmj-note-action="add">＋ Text box</button><button data-cmj-note-action="bold"><b>B</b></button><button data-cmj-note-action="size-up">A＋</button><button data-cmj-note-action="size-down">A−</button><button data-cmj-note-action="bullet">• List</button><button data-cmj-note-action="save">💾 Save</button></div><p class="cmj-panel-note">Notes are saved locally and linked to <strong>${escapeHTML(state.title)}</strong>.</p><div class="cmj-notes-list">${notes.map((note,index)=>`<article class="cmj-note-box" data-note-id="${escapeHTML(note.id)}"><div class="cmj-note-head"><span>Note ${index+1}</span><button data-cmj-note-action="delete" data-note-id="${escapeHTML(note.id)}">🗑</button></div><div class="cmj-note-editor" contenteditable="true" data-note-editor="${escapeHTML(note.id)}">${note.html || ''}</div></article>`).join('')}</div>`;
+      $$('.cmj-note-editor', body).forEach(editor => editor.addEventListener('keydown', event => {
+        // Fallback for target-level listeners; never cancel native typing/editing.
+        event.stopImmediatePropagation();
+      }, true));
       if (!notes.length) body.querySelector('.cmj-notes-list').innerHTML = '<p class="cmj-empty">No notes yet. Add a text box to start.</p>';
       return;
     }
@@ -2073,15 +2225,22 @@
   }
 
   async function getVideoNotes() {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return []; }
     const stored = await storageGet('notesByVideo');
-    return stored.notesByVideo?.[state.videoId] || [];
+    if (!extensionContextAlive()) return [];
+    return Array.isArray(stored.notesByVideo?.[state.videoId]) ? stored.notesByVideo[state.videoId] : [];
   }
 
   async function saveVideoNotes(notes) {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return false; }
+    if (!state.videoId) { showToast('Notes cannot be saved until the YouTube video is identified.'); return false; }
     const stored = await storageGet('notesByVideo');
-    const all = stored.notesByVideo || {};
+    if (!extensionContextAlive()) return false;
+    const all = stored.notesByVideo && typeof stored.notesByVideo === 'object' ? { ...stored.notesByVideo } : {};
     all[state.videoId] = notes;
-    await storageSet({ notesByVideo: all });
+    const saved = await storageSet({ notesByVideo: all });
+    if (!saved) showToast('Note changes were not saved. Refresh YouTube and try again.');
+    return saved;
   }
 
   function onRootInput(event) {
@@ -2099,22 +2258,103 @@
   }
 
   async function handleNoteAction(action, button) {
+    if (!extensionContextAlive()) { reportContextError(new Error('Extension context invalidated.')); return; }
     let notes = await getVideoNotes();
+    if (!extensionContextAlive()) return;
     if (action === 'add') {
-      notes.push({ id: crypto.randomUUID(), html: '<p>Write your note here…</p>', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
-      await saveVideoNotes(notes); renderPanel('notes'); return;
+      const newNote = { id: crypto.randomUUID(), html: '<p><br></p>', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      notes.push(newNote);
+      if (await saveVideoNotes(notes)) {
+        await renderPanel('notes');
+        const editor = $(`[data-note-editor="${newNote.id}"]`);
+        if (editor) { editor.focus(); const range = document.createRange(); range.selectNodeContents(editor); range.collapse(false); const selection = window.getSelection(); selection?.removeAllRanges(); selection?.addRange(range); }
+      }
+      return;
     }
     if (action === 'delete') {
       const id = button?.dataset.noteId;
-      notes = notes.filter(note => note.id !== id); await saveVideoNotes(notes); renderPanel('notes'); return;
+      notes = notes.filter(note => note.id !== id);
+      if (await saveVideoNotes(notes)) await renderPanel('notes');
+      return;
     }
     if (action === 'save') {
       $$('.cmj-note-editor').forEach(editor => { const note = notes.find(item => item.id === editor.dataset.noteEditor); if (note) { note.html = editor.innerHTML; note.updatedAt = new Date().toISOString(); } });
-      await saveVideoNotes(notes); showToast('Notes saved for this video.'); return;
+      if (await saveVideoNotes(notes)) showToast('Notes saved for this video.');
+      return;
     }
     if (['bold','size-up','size-down','bullet'].includes(action)) {
       document.execCommand(action === 'bold' ? 'bold' : action === 'bullet' ? 'insertUnorderedList' : 'fontSize', false, action === 'size-up' ? '5' : action === 'size-down' ? '2' : undefined);
     }
+  }
+
+  function bindLiveTranscriptScroll(list) {
+    if (!list || list.dataset.cmjLiveScrollBound === 'true') return;
+    list.dataset.cmjLiveScrollBound = 'true';
+    const markManualScroll = () => {
+      if (state.liveHighlightProgrammaticScroll || state.settings.liveTranscriptRespectManualScroll === false) return;
+      state.liveHighlightManualScrollUntil = Date.now() + 4000;
+    };
+    list.addEventListener('wheel', markManualScroll, { passive: true });
+    list.addEventListener('touchmove', markManualScroll, { passive: true });
+    list.addEventListener('pointerdown', markManualScroll, { passive: true });
+    list.addEventListener('scroll', () => {
+      if (!state.liveHighlightProgrammaticScroll && state.settings.liveTranscriptRespectManualScroll !== false) {
+        state.liveHighlightManualScrollUntil = Date.now() + 4000;
+      }
+    }, { passive: true });
+  }
+
+  function updateLiveTranscriptHighlight(index, video, forceScroll = false) {
+    const settings = state.settings || {};
+    const list = $('.cmj-transcript-list');
+    if (!list) return;
+    const enabled = settings.liveTranscriptHighlightEnabled !== false;
+    list.classList.toggle('cmj-live-highlight-disabled', !enabled);
+    const safeIndex = Number.isInteger(index) ? index : -1;
+    const changed = safeIndex !== state.liveHighlightLastIndex;
+    if (changed) state.liveHighlightLastIndex = safeIndex;
+    // Update only the previous/current row when the timestamp changes; never rebuild transcript HTML per tick.
+    if (!enabled) {
+      list.querySelectorAll('.cmj-line-live-active').forEach(row => { row.classList.remove('cmj-line-live-active'); row.setAttribute('aria-current', 'false'); });
+      list.querySelectorAll('.cmj-live-speaking-icon').forEach(icon => icon.removeAttribute('data-live-visible'));
+      return;
+    }
+    if (changed || forceScroll) {
+      list.querySelectorAll('.cmj-line-live-active').forEach(row => { row.classList.remove('cmj-line-live-active'); row.setAttribute('aria-current', 'false'); });
+      list.querySelectorAll('.cmj-live-speaking-icon').forEach(icon => icon.removeAttribute('data-live-visible'));
+      const nextActive = safeIndex >= 0 ? list.querySelector(`[data-cmj-line="${safeIndex}"]`) : null;
+      if (nextActive) {
+        nextActive.classList.add('cmj-line-live-active'); nextActive.setAttribute('aria-current', 'true');
+        nextActive.querySelector('.cmj-live-speaking-icon')?.setAttribute('data-live-visible', 'true');
+      }
+    }
+    if (safeIndex < 0) return;
+    const active = list.querySelector(`[data-cmj-line="${safeIndex}"]`);
+    if (!active) return; // transcript is not currently rendered or has no matching timestamp row
+    const color = /^#[0-9a-f]{6}$/i.test(settings.liveTranscriptHighlightColor || '') ? settings.liveTranscriptHighlightColor : '#8B5CF6';
+    const opacity = Math.max(0, Math.min(100, Number(settings.liveTranscriptHighlightOpacity ?? 25))) / 100;
+    const textColor = settings.liveTranscriptInheritTextColor !== false ? 'inherit' : (/^#[0-9a-f]{6}$/i.test(settings.liveTranscriptHighlightTextColor || '') ? settings.liveTranscriptHighlightTextColor : 'inherit');
+    const rgb = color.match(/[0-9a-f]{2}/gi).map(part => parseInt(part, 16));
+    active.style.setProperty('--cmj-live-highlight-color', color);
+    active.style.setProperty('--cmj-live-highlight-bg', `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`);
+    active.style.setProperty('--cmj-live-highlight-text-color', textColor);
+    active.style.setProperty('--cmj-live-highlight-transition', `${Math.max(0, Math.min(500, Number(settings.liveTranscriptTransitionMs ?? 150)))}ms`);
+    active.classList.remove('cmj-live-style-soft-background','cmj-live-style-rounded','cmj-live-style-underline','cmj-live-style-accent','cmj-live-style-text');
+    const styleMap = {'soft-background':'soft-background','rounded-background':'rounded','underline':'underline','left-accent':'accent','text-color':'text'};
+    active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
+    const shouldScroll = settings.liveTranscriptAutoScroll !== false && (changed || forceScroll);
+    if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
+    if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
+    if (!forceScroll && Date.now() - state.liveHighlightLastAutoScrollAt < 250) return;
+    state.liveHighlightLastAutoScrollAt = Date.now();
+    state.liveHighlightProgrammaticScroll = true;
+    const position = settings.liveTranscriptScrollPosition || 'center';
+    try {
+      if (position === 'top') list.scrollTo({ top: Math.max(0, active.offsetTop - 8), behavior: 'smooth' });
+      else if (position === 'bottom') list.scrollTo({ top: Math.max(0, active.offsetTop - list.clientHeight + active.offsetHeight + 8), behavior: 'smooth' });
+      else active.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    } catch (_) { active.scrollIntoView(false); }
+    setTimeout(() => { state.liveHighlightProgrammaticScroll = false; }, 180);
   }
 
   function renderPanelIfOpen() {
@@ -2252,17 +2492,15 @@
       // word translation still works instead of leaving the extension blank.
       const video = getVideo();
       const now = Number(video?.currentTime || 0);
+      // Native player captions are a fallback only when no timestamped track
+      // was fetched. Appending live DOM captions to an existing transcript
+      // creates duplicate/out-of-order rows and makes highlighting jump ahead.
       if (!state.captions.length) {
         state.captions = [{ start: Math.max(0, now - 0.05), duration: 2, text }];
-      } else {
-        const last = state.captions[state.captions.length - 1];
-        if (!last || last.text !== text || Math.abs(Number(last.start || 0) - now) > 1.2) {
-          state.captions = mergeCaptionSegments([...state.captions, { start: Math.max(0, now - 0.05), duration: 2, text }]);
-        }
+        state.activeIndex = 0;
+        renderCurrentSubtitle();
+        if (state.settings.autoTranslate) translateCurrent(true).catch(() => {});
       }
-      state.activeIndex = state.captions.length - 1;
-      renderCurrentSubtitle();
-      if (state.settings.autoTranslate) translateCurrent(true).catch(() => {});
     }
   }
 
@@ -2285,6 +2523,7 @@
   }
 
   function onShortcut(event) {
+    if (event.target?.closest?.('.cmj-note-editor')) return;
     if (!event.altKey || !event.shiftKey) return;
     if (event.code === 'KeyF') { event.preventDefault(); toggleFocusMode(); }
     if (event.code === 'KeyS') { event.preventDefault(); saveCurrentSubtitle(); }
