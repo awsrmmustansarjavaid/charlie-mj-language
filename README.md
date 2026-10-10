@@ -2,7 +2,7 @@
 
 **A lightweight, local-first Chrome extension for learning languages through YouTube.**
 
-![Charlie MJ Language v4.1.3](assets/charlie-mj-language-v4.0.0-thumbnail.png)
+![Charlie MJ Language v4.1.3](assets/charlie-mj-language-main-thumbnail.png)
 
 Charlie MJ Language brings subtitles, transcript study, vocabulary, sentence saving, translation, dictionary lookups, and learning-library tools into the YouTube viewing experience.
 
@@ -13,6 +13,8 @@ Charlie MJ Language brings subtitles, transcript study, vocabulary, sentence sav
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
+
+![Charlie MJ Language v4.1.3](assets/charlie-mj-language-youtube-video-thumbnail.png)
 
 - **Version:** `4.4.1-beta`
 - **Platform:** Chrome Extension — Manifest V3
