@@ -51,7 +51,7 @@ The systems are designed to work independently. Basic transcript functionality d
 - **Platform:** Chrome Extension — Manifest V3
 - **Minimum Chrome version:** 114
 - **License:** MIT
-- **Repository:** https://github.com/awsrmmustansarjavaid/charlie-mj-language
+- **Repository:** [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
 
 ### Learning flow
 
