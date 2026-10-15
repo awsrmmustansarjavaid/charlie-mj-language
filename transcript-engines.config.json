@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "defaultEngine": "legacy-youtube",
+  "backwardCompatible": true,
+  "engines": [
+    {
+      "id": "legacy-youtube",
+      "enabled": true,
+      "default": true,
+      "implementation": "src/content/youtube.js#fetchYouTubeCaptionBundle"
+    },
+    {
+      "id": "native-transcript",
+      "enabled": true,
+      "default": false,
+      "implementation": "src/additional/transcript-engine-manager.js"
+    },
+    {
+      "id": "auto-generated",
+      "enabled": true,
+      "default": false,
+      "implementation": "src/additional/transcript-engine-manager.js"
+    },
+    {
+      "id": "youtube-auto-translation",
+      "enabled": true,
+      "default": false,
+      "implementation": "src/additional/transcript-engine-manager.js"
+    }
+  ]
+}

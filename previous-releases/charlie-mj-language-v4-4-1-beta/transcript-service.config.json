@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "defaultEngine": "legacy-youtube",
+  "backwardCompatible": true,
+  "engines": [
+    {
+      "id": "legacy-youtube",
+      "label": "Current fast YouTube engine",
+      "enabled": true,
+      "default": true,
+      "capabilities": [
+        "original-manual-captions",
+        "auto-generated-captions",
+        "caption-language-discovery-when-exposed-by-youtube"
+      ],
+      "implementation": "src/content/youtube.js#fetchYouTubeCaptionBundle"
+    }
+  ],
+  "trackPreferenceOptions": [
+    "original-first",
+    "manual-first",
+    "auto-first"
+  ],
+  "notes": "Configuration contract for future transcript providers. Existing fetch implementation remains authoritative; do not switch engine IDs until a provider adapter is implemented and tested."
+}

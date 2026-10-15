@@ -1,8 +1,71 @@
+import { fetchYouTubeMetadata } from '../additional/youtube-metadata-service.js';
+import { alignTranscripts } from '../additional/alignment.js';
+import { listTranscriptEngines } from '../additional/transcript-engine-manager.js';
+import { saveFavorite, updateFavorite, removeFavorite, listFavorites, exportFavorites, importFavorites, getCategories, setCategories, getCollections, setCollections, favoritesToTxt } from '../additional/favorites-service.js';
+
 /**
  * Charlie MJ Language - Manifest V3 service worker.
  * Responsible for context menus, commands, translation requests, downloads and
  * lightweight background coordination. No GitHub Actions or remote code is used.
  */
+
+
+chrome.alarms.create('cmj-favorites-refresh', {periodInMinutes: 60});
+chrome.alarms.onAlarm.addListener(async alarm => {
+  if (alarm.name !== 'cmj-favorites-refresh') return;
+  try {
+    const settingsStore = await chrome.storage.local.get(['cmjAdditionalSettings','cmjPerformance']);
+    const settings = settingsStore.cmjAdditionalSettings || {}; const performance=settingsStore.cmjPerformance || {};
+    if(performance.backgroundTasks!==true || performance.services?.metadataRefresh==='sleep') return;
+    if (settings.thumbnailRefresh === false) return;
+    const intervalMs = Math.max(24, Number(settings.metadataRefreshHours) || Number(settings.thumbnailRefreshHours) || 168) * 3600000;
+    const [channels, playlists] = await Promise.all([
+      chrome.storage.local.get('cmjFavChannels'),
+      chrome.storage.local.get('cmjFavPlaylists')
+    ]);
+    const refreshList = async (key, type) => {
+      const list = Array.isArray((type==='channel'?channels:playlists)[key]) ? (type==='channel'?channels:playlists)[key] : [];
+      const out = [];
+      for (const item of list.slice(0, 50)) {
+        if (Date.now() - new Date(item.metadataLastChecked || item.thumbnail?.lastChecked || 0).getTime() < intervalMs) { out.push(item); continue; }
+        try {
+          const meta = await fetchYouTubeMetadata(item.url, type);
+          out.push(await updateFavorite(type, {
+            ...item,
+            ...meta,
+            category:item.category, tags:item.tags, notes:item.notes, isPinned:item.isPinned,
+            thumbnail:{...(item.thumbnail||{}),url:meta.thumbnail||item.thumbnail?.url||'',lastChecked:new Date().toISOString(),lastUpdated:(meta.thumbnail && meta.thumbnail!==item.thumbnail?.url)?new Date().toISOString():(item.thumbnail?.lastUpdated||'')}
+          }));
+        } catch { out.push({...item,metadataLastChecked:new Date().toISOString()}); }
+      }
+      await chrome.storage.local.set({[key]:out});
+    };
+    await refreshList('cmjFavChannels','channel');
+    await refreshList('cmjFavPlaylists','playlist');
+    // Optional scheduled GitHub pull: wake only at the alarm, never poll.
+    try {
+      const syncStore=await chrome.storage.local.get(['cmjDataSync','cmjPerformance']);
+      const sync=syncStore.cmjDataSync||{}; const perf2=syncStore.cmjPerformance||{};
+      const intervalMs=Math.max(1,Number(sync.intervalHours)||24)*3600000;
+      if(sync.scheduled===true && sync.githubUrl && Date.now()-Number(sync.lastSync||0)>=intervalMs && perf2.services?.githubSync!=='sleep'){
+        const cfg=await githubConfig(sync);
+        const dirs=await githubTree(cfg.base,sync);
+        // Scheduled mode is intentionally conservative: pull/merge only.
+        for(const dir of dirs.filter(x=>x.type==='dir'&&['channels','playlists','categories'].includes(x.name))){
+          const files=await githubTree(`${cfg.base}/${dir.name}`,sync);
+          for(const f of files.filter(x=>x.type==='file'&&x.name.endsWith('.json'))){
+            try{const payload=await (await fetch(f.download_url,{headers:{Accept:'application/vnd.github.raw+json'}})).json();
+              if(dir.name==='channels'&&Array.isArray(payload)){const cur=await listFavorites('channel');const merged=[...cur];for(const x of payload){const id=x.channelId||x.id;if(id&&!merged.some(y=>(y.channelId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavChannels:merged});}
+              if(dir.name==='playlists'&&Array.isArray(payload)){const cur=await listFavorites('playlist');const merged=[...cur];for(const x of payload){const id=x.playlistId||x.id;if(id&&!merged.some(y=>(y.playlistId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavPlaylists:merged});}
+              if(dir.name==='categories'&&Array.isArray(payload))await setCategories(payload);
+            }catch(_){}
+          }
+        }
+        await chrome.storage.local.set({cmjDataSync:{...sync,lastSync:Date.now()}});
+      }
+    } catch (error) { console.warn('Charlie MJ scheduled GitHub sync skipped.', error); }
+  } catch (error) { console.warn('Charlie MJ favorites refresh skipped.', error); }
+});
 
 const MENU_ROOT = 'cmj-root';
 const MENU_WATCH = 'cmj-watch-later';
@@ -41,7 +104,126 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'save-current-vocabulary') await sendToTab(tab.id, { type: 'CMJ_SAVE_CURRENT' });
 });
 
+let categoryKnowledgePromise=null;
+async function loadCategoryKnowledge(){
+  if(categoryKnowledgePromise) return categoryKnowledgePromise;
+  categoryKnowledgePromise=(async()=>{
+    const base=chrome.runtime.getURL('data/category-knowledge/');
+    const get=async(name,fallback)=>{try{const r=await fetch(base+name,{cache:'no-store'});if(!r.ok)return fallback;return await r.json()}catch(_){return fallback}};
+    const [keywords,learning,youtube,rules]=await Promise.all([
+      get('category-keywords.json',{}),get('learning-categories.json',{categories:[]}),get('youtube-categories.json',{guideCategories:[],channelTopicCategories:[]}),get('category-rules.json',{rules:[]})
+    ]);
+    return {keywords,learning,youtube,rules};
+  })();
+  return categoryKnowledgePromise;
+}
+async function suggestCategory(meta={}, options={}){
+  const stored=await chrome.storage.local.get(['cmjFavCategories','cmjExtensionIntelligence','cmjCategoryLearning']);
+  const intelligence={enabled:true,autoCategory:true,suggestExisting:true,suggestNew:true,minConfidence:.72,preferExisting:true,autoApplyHighConfidence:false,askBeforeCreating:true,learnAccepted:true,learnRejected:true,...(stored.cmjExtensionIntelligence||{})};
+  if(intelligence.enabled===false || intelligence.autoCategory===false) return {name:'Uncategorized',confidence:0,reason:'disabled'};
+  const existing=Array.isArray(stored.cmjFavCategories)?stored.cmjFavCategories:[];
+  const knowledge=await loadCategoryKnowledge();
+  const text=[meta.name,meta.title,meta.description,meta.owner,meta.handle,...(meta.tags||[]),...(meta.keywords||[])].filter(Boolean).join(' ').toLowerCase();
+  const scores=new Map();
+  const addScore=(name,score,source)=>{if(!name||!score)return;scores.set(name,{score:(scores.get(name)?.score||0)+score,source:scores.get(name)?.source||source});};
+  for(const [name,words] of Object.entries(knowledge.keywords||{})){
+    for(const word of Array.isArray(words)?words:[]){const w=String(word).toLowerCase().trim();if(w&&text.includes(w))addScore(name,1,'json-keywords');}
+  }
+  for(const name of (knowledge.learning?.categories||[])){
+    const terms=String(name).toLowerCase().split(/[^a-z0-9\u0600-\u06ff]+/).filter(x=>x.length>2);
+    for(const t of terms)if(text.includes(t))addScore(name,.75,'learning-categories');
+  }
+  // Keep the additive legacy rules as a fallback/compatibility layer.
+  const legacy=[['English Learning',['english','ielts','toefl','grammar','vocabulary','listening','speaking','pronunciation']],['Programming',['programming','javascript','python','typescript','java','coding','developer','software','github']],['AI & Machine Learning',['artificial intelligence','machine learning','deep learning','llm','ollama','neural network']],['DevOps & Cloud',['devops','docker','kubernetes','aws','azure','gcp','terraform','linux','cloud']],['Science & Technology',['science','technology','physics','chemistry','biology','research']],['History & Culture',['history','historical','culture','civilization','documentary']],['Health & Fitness',['health','fitness','workout','nutrition','exercise']],['Music Learning',['music theory','guitar','piano','singing','music lesson']],['Travel',['travel','tourism','destination','trip','vlog']],['Gaming',['gaming','gameplay','esports','walkthrough','minecraft','roblox']],['Urdu Learning',['urdu','اردو']],['Turkish Learning',['turkish','türkçe','turkce']],['Arabic Learning',['arabic','عربي','العربية']]];
+  for(const [name,words] of legacy)for(const word of words)if(text.includes(word))addScore(name,.75,'legacy-rules');
+  for(const c of existing){
+    const name=String(c.name||'').trim();if(!name)continue;
+    const terms=name.toLowerCase().split(/[^a-z0-9\u0600-\u06ff]+/).filter(x=>x.length>2);
+    let score=0;for(const t of terms)if(text.includes(t))score+=1;
+    if(score)addScore(name,score*2,'existing-category');
+  }
+  const ranked=[...scores.entries()].sort((a,b)=>b[1].score-a[1].score);
+  if(!ranked.length)return {name:'Uncategorized',confidence:0,reason:'no-match',suggestedName:''};
+  const top=ranked[0],second=ranked[1]?.[1]?.score||0;
+  const confidence=Math.min(.99,Math.max(.5,top[1].score/(top[1].score+Math.max(0,second)+1)));
+  const existingMatch=existing.find(c=>String(c.name).toLowerCase()===String(top[0]).toLowerCase());
+  if(existingMatch && intelligence.preferExisting && intelligence.suggestExisting!==false)return {name:existingMatch.name,confidence:Math.max(confidence,.8),source:'existing-category',suggestNew:false};
+  if(confidence>=Number(intelligence.minConfidence||.72))return {name:top[0],confidence,source:top[1].source||'knowledge-base',suggestNew:!existingMatch&&intelligence.suggestNew};
+  return {name:'Uncategorized',confidence,source:'insufficient-confidence',suggestedName:intelligence.suggestNew?top[0]:''};
+}
+
+function extractObjectAfterMarker(text,marker){const i=String(text||'').indexOf(marker);if(i<0)return null;const start=String(text).indexOf('{',i);if(start<0)return null;let depth=0,q=false,e=false;for(let p=start;p<text.length;p++){const c=text[p];if(q){if(e)e=false;else if(c==='\\')e=true;else if(c==='"')q=false;continue}if(c==='"'){q=true;continue}if(c==='{')depth++;else if(c==='}'&&!--depth){try{return JSON.parse(text.slice(start,p+1))}catch{return null}}}return null}
+async function youtubeSuggestions(query,type='channel'){
+  const q=String(query||'').trim();if(!q)throw new Error('Suggestion search text is required.');
+  const html=await (await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,{credentials:'include',cache:'no-store',headers:{accept:'text/html,application/xhtml+xml'}})).text();
+  const data=extractObjectAfterMarker(html,'ytInitialData');const out=[];const seen=new Set();
+  const walk=(node)=>{if(!node||typeof node!=='object')return;const c=node.channelRenderer;const p=node.playlistRenderer;if(type==='channel'&&c?.channelId){const item={type:'channel',id:c.channelId,name:c.title?.simpleText||c.title?.runs?.map(x=>x.text).join('')||'',url:`https://www.youtube.com/channel/${c.channelId}`,thumbnail:c.thumbnail?.thumbnails?.slice(-1)[0]?.url||''};if(!seen.has(item.id)){seen.add(item.id);out.push(item)}}if(type==='playlist'&&p?.playlistId){const item={type:'playlist',id:p.playlistId,name:p.title?.simpleText||p.title?.runs?.map(x=>x.text).join('')||'',url:`https://www.youtube.com/playlist?list=${p.playlistId}`,thumbnail:p.thumbnails?.slice(-1)[0]?.url||''};if(!seen.has(item.id)){seen.add(item.id);out.push(item)}}for(const v of Object.values(node))if(v&&typeof v==='object')walk(v)};walk(data);return out.slice(0,30);
+}
+function localDatabaseSnapshot(){return Promise.all([chrome.storage.local.get('cmjFavChannels'),chrome.storage.local.get('cmjFavPlaylists'),chrome.storage.local.get('cmjFavCategories'),chrome.storage.local.get('cmjFavCollections'),chrome.storage.local.get('cmjYoutubeSuggestions')]).then(([c,p,k,g,s])=>{const channels=Array.isArray(c.cmjFavChannels)?c.cmjFavChannels:[],playlists=Array.isArray(p.cmjFavPlaylists)?p.cmjFavPlaylists:[],categories=Array.isArray(k.cmjFavCategories)?k.cmjFavCategories:[],groups=Array.isArray(g.cmjFavCollections)?g.cmjFavCollections:[],suggestions=s.cmjYoutubeSuggestions||{channels:[],playlists:[]};const byCat=(arr)=>{const m={};for(const x of arr){const n=String(x.category||'Uncategorized').trim()||'Uncategorized';(m[n] ||= []).push(x)}return m};return {channels,playlists,categories,groups,suggestions,files:{channels:byCat(channels),playlists:byCat(playlists),categories:{'all.json':categories},suggestions:{'channels.json':suggestions.channels||[],'playlists.json':suggestions.playlists||[]}}}})}
+function jsonDataUrl(value){const bytes=new TextEncoder().encode(JSON.stringify(value,null,2));let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return 'data:application/json;base64,'+btoa(binary)}
+async function githubConfig(settings){const m=String(settings.githubUrl||'').match(/github\.com\/([^/]+)\/([^/#]+?)(?:\.git)?$/);if(!m)throw new Error('Enter a GitHub repository URL such as https://github.com/owner/repo.');return {owner:m[1],repo:m[2],branch:settings.branch||'main',base:String(settings.databasePath||'database').replace(/^\/+|\/+$/g,''),token:String(settings.token||'').trim()}}
+async function githubRequest(path,settings,init={}){const cfg=await githubConfig(settings);const headers={'Accept':'application/vnd.github+json',...(cfg.token?{Authorization:`Bearer ${cfg.token}`}:{}) ,...(init.headers||{})};const url=`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path.replace(/^\/+/, '')}`;const r=await fetch(url,{...init,headers});if(!r.ok)throw new Error(`GitHub HTTP ${r.status}`);return r.json()}
+async function githubTree(path,settings){const data=await githubRequest(path,settings);return Array.isArray(data)?data:[]}
+async function prepareDatabaseBackup(){const snap=await localDatabaseSnapshot();const files=[];for(const [type,groups] of Object.entries(snap.files)){if(type==='suggestions'){for(const [name,data] of Object.entries(groups)){files.push({name:`database/suggestions/${name}`,data})}continue}for(const [name,data] of Object.entries(groups)){const safe=name.replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()||'uncategorized';files.push({name:`database/${type}/${safe}.json`,data})}}files.push({name:'database/indexes/channel-index.json',data:snap.channels.map(x=>({id:x.channelId||x.id,name:x.name||x.title,category:x.category||''}))});files.push({name:'database/indexes/playlist-index.json',data:snap.playlists.map(x=>({id:x.playlistId||x.id,name:x.name||x.title,category:x.category||''}))});files.push({name:'database/indexes/category-index.json',data:snap.categories.map(x=>({id:x.id,name:x.name}))});for(const file of files){await chrome.downloads.download({url:jsonDataUrl(file.data),filename:file.name,saveAs:false})}return files.length}
+
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CMJ_LIST_TRANSCRIPT_ENGINES') {
+    sendResponse({ok:true,engines:listTranscriptEngines()});
+    return false;
+  }
+  if (message.type === 'CMJ_ALIGN_TRANSCRIPTS') {
+    try { const aligned=alignTranscripts(Array.isArray(message.original)?message.original:[],Array.isArray(message.translation)?message.translation:[]); sendResponse({ok:true,aligned}); } catch(error) { sendResponse({ok:false,error:error.message}); }
+    return false;
+  }
+  if (message.type === 'CMJ_DUAL_TRANSCRIPT') {
+    (async()=>{
+      const extra=(await chrome.storage.local.get('cmjAdditionalSettings')).cmjAdditionalSettings || {};
+      if(extra.dualTranscript===false) throw new Error('Dual Transcript Service is disabled in Additional Services settings.');
+      const result=await youtubeCaptions(message.videoId,message.source||'auto',message.target||'en','bundle');
+      const aligned=alignTranscripts(result.original,result.translation);
+      sendResponse({...result,ok:true,aligned});
+    })().catch(error=>sendResponse({ok:false,error:error.message}));
+    return true;
+  }
+  if (message.type === 'CMJ_FAVORITES') {
+    (async()=>{
+      const action=message.action, type=message.itemType;
+      let result;
+      if(action==='list') result=await listFavorites(type);
+      else if(action==='save') result=await saveFavorite(type,message.record||{});
+      else if(action==='update') result=await updateFavorite(type,message.record||{});
+      else if(action==='remove') result=await removeFavorite(type,message.id);
+      else if(action==='export') result=await exportFavorites();
+      else if(action==='import') result=await importFavorites(message.data,message.mode||'merge');
+      else if(action==='categories') result=await getCategories();
+      else if(action==='setCategories') result=await setCategories(message.data);
+      else if(action==='collections') result=await getCollections();
+      else if(action==='setCollections') result=await setCollections(message.data);
+      else if(action==='txt'){const d=await exportFavorites();result={text:favoritesToTxt(d)};}
+      else if(action==='refreshMetadata'){const r=await fetchYouTubeMetadata(message.url,type);result=await updateFavorite(type,{...message.record,...r});}
+      else if(action==='add'){const url=String(message.url||'').trim();if(!url)throw new Error('YouTube URL is required.');const r=await fetchYouTubeMetadata(url,type);const suggestion=await suggestCategory(r);const explicit=String(message.record?.category||'').trim();const category=explicit||(suggestion.source==='existing-category'?suggestion.name:'Uncategorized');result=await saveFavorite(type,{...message.record,...r,category,categorySuggestion:suggestion});if(!explicit&&suggestion.name!=='Uncategorized'&&suggestion.confidence>=0.72&&suggestion.source==='existing-category'){result.categorySuggestion=suggestion;}}
+      else throw new Error('Unknown favorites action.');
+      sendResponse({ok:true,result});
+    })().catch(error=>sendResponse({ok:false,error:error.message}));
+    return true;
+  }
+  if (message.type === 'CMJ_YOUTUBE_SUGGESTIONS') {
+    (async()=>{const type=message.itemType==='playlist'?'playlist':'channel';const result=await youtubeSuggestions(message.query||'',type);const store=(await chrome.storage.local.get('cmjYoutubeSuggestions')).cmjYoutubeSuggestions||{channels:[],playlists:[]};store[type==='channel'?'channels':'playlists']=result.map(x=>({...x,suggestedAt:new Date().toISOString()}));await chrome.storage.local.set({cmjYoutubeSuggestions:store});sendResponse({ok:true,result});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
+  }
+  if (message.type === 'CMJ_DATABASE_SNAPSHOT') { localDatabaseSnapshot().then(s=>{const files=[];for(const [type,groups] of Object.entries(s.files)){if(type==='suggestions'){for(const [name,data] of Object.entries(groups))files.push({path:`suggestions/${name}`,data});continue}for(const [name,data] of Object.entries(groups)){const safe=name.replace(/[^a-z0-9_-]+/gi,'-').toLowerCase()||'uncategorized';files.push({path:`${type}/${safe}.json`,data})}}files.push({path:'indexes/channel-index.json',data:s.channels.map(x=>({id:x.channelId||x.id,name:x.name||x.title,category:x.category||''}))});files.push({path:'indexes/playlist-index.json',data:s.playlists.map(x=>({id:x.playlistId||x.id,name:x.name||x.title,category:x.category||''}))});files.push({path:'indexes/category-index.json',data:s.categories.map(x=>({id:x.id,name:x.name}))});sendResponse({ok:true,files})}).catch(e=>sendResponse({ok:false,error:e.message}));return true;}
+  if (message.type === 'CMJ_DATA_SYNC_HEALTH') {
+    (async()=>{const cfg=await githubConfig(message.settings||{});const repo=await githubRequest('',message.settings||{});sendResponse({ok:true,message:`GitHub connected: ${repo.full_name||cfg.owner+'/'+cfg.repo} (${cfg.branch})`});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
+  }
+  if (message.type === 'CMJ_DATA_SYNC_COMPARE') {
+    (async()=>{const cfg=await githubConfig(message.settings||{});const local=await localDatabaseSnapshot();const root=await githubTree(cfg.base,message.settings||{});const names=root.filter(x=>x.type==='dir').map(x=>x.name);const githubCounts={directories:names};sendResponse({ok:true,summary:{local:{channels:local.channels.length,playlists:local.playlists.length,categories:local.categories.length},github:{databaseDirectories:names},status:'Review file-level differences before overwrite.'}});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
+  }
+  if (message.type === 'CMJ_DATA_SYNC_PULL') {
+    (async()=>{const cfg=await githubConfig(message.settings||{});const dirs=await githubTree(cfg.base,message.settings||{});let count=0;for(const dir of dirs.filter(x=>x.type==='dir'&&['channels','playlists','categories','suggestions','indexes'].includes(x.name))){const files=await githubTree(`${cfg.base}/${dir.name}`,message.settings||{});for(const f of files.filter(x=>x.type==='file'&&x.name.endsWith('.json'))){const payload=await (await fetch(f.download_url,{headers:{Accept:'application/vnd.github.raw+json'}})).json();if(dir.name==='channels'){const current=await listFavorites('channel');const merged=[...current];for(const x of (Array.isArray(payload)?payload:[])){const id=x.channelId||x.id;if(id&&!merged.some(y=>(y.channelId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavChannels:merged})}else if(dir.name==='playlists'){const current=await listFavorites('playlist');const merged=[...current];for(const x of (Array.isArray(payload)?payload:[])){const id=x.playlistId||x.id;if(id&&!merged.some(y=>(y.playlistId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavPlaylists:merged})}else if(dir.name==='categories'&&Array.isArray(payload)){await setCategories(payload)}count++}}sendResponse({ok:true,files:count});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
+  }
+  if (message.type === 'CMJ_DATA_SYNC_BACKUP') {
+    prepareDatabaseBackup().then(files=>sendResponse({ok:true,files})).catch(e=>sendResponse({ok:false,error:e.message}));return true;
+  }
   if (message.type === 'CMJ_OPEN_OPTIONS') {
     chrome.runtime.openOptionsPage().then(() => sendResponse({ ok: true })).catch(async () => {
       try { await chrome.tabs.create({ url: chrome.runtime.getURL('src/options/options.html') }); sendResponse({ ok: true }); }
@@ -119,33 +301,34 @@ function youtubeCaptionText(text){
   while((m=re.exec(raw))){ const a=m[1]||''; const body=decode(m[2].replace(/<[^>]+>/g,'' )).replace(/\s+/g,' ').trim(); if(!body)continue; const attr=n=>{const q=a.match(new RegExp('\\b'+n+'=(?:\"([^\"]*)\"|\'([^\']*)\')'));return q?(q[1]??q[2]??''):''}; out.push({start:Number(attr('start')||0),duration:Number(attr('dur')||0),text:body}); }
   return out;
 }
-async function youtubePlayer(videoId, client){
-  const contexts={
-    ANDROID:{clientName:'ANDROID',clientVersion:'20.10.38',androidSdkVersion:35,hl:'en',gl:'US'},
-    IOS:{clientName:'IOS',clientVersion:'20.10.38',deviceMake:'Apple',deviceModel:'iPhone16,2',osName:'iOS',osVersion:'18.5',hl:'en',gl:'US'},
-    TVHTML5:{clientName:'TVHTML5',clientVersion:'7.20260325.18.00',hl:'en',gl:'US'},
-    WEB:{clientName:'WEB',clientVersion:'2.20261006.01.00',hl:'en',gl:'US'}
-  };
-  const response=await fetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false',{method:'POST',credentials:'include',cache:'no-store',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({context:{client:contexts[client]},videoId})});
-  if(!response.ok) throw new Error(`YouTube player HTTP ${response.status}`);
-  return response.json();
+
+
+async function youtubeWatchPageCaptions(videoId,source='auto',target='en'){
+  const html=await (await fetch(`https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&hl=en`,{credentials:'include',cache:'no-store',headers:{accept:'text/html,application/xhtml+xml'}})).text();
+  const response=extractObjectAfterMarker(html,'ytInitialPlayerResponse');
+  const tracks=response?.captions?.playerCaptionsTracklistRenderer?.captionTracks||[];
+  if(!tracks.length) throw new Error('Watch page did not expose caption tracks.');
+  const cleanTracks=tracks.map(t=>({baseUrl:String(t.baseUrl||'').replace(/\\u0026/g,'&'),languageCode:t.languageCode||'',name:t.name?.simpleText||'',kind:t.kind||'',isTranslatable:t.isTranslatable!==false})).filter(t=>t.baseUrl);
+  const lang=x=>String(x||'').split('-')[0].toLowerCase(),src=lang(source),tgt=lang(target),find=l=>cleanTracks.find(t=>lang(t.languageCode)===l&&t.kind!=='asr')||cleanTracks.find(t=>lang(t.languageCode)===l);
+  const sourceTrack=(src&&src!=='auto'?find(src):null)||cleanTracks.find(t=>t.kind==='asr')||cleanTracks[0], native=find(tgt);
+  const fetchTrack=async(track,auto)=>{if(!track?.baseUrl)return[];const u=new URL(track.baseUrl);u.searchParams.set('fmt','json3');if(auto&&tgt)u.searchParams.set('tlang',tgt);const r=await withTimeout(fetch(u.toString(),{credentials:'include',cache:'no-store',headers:{accept:'application/json,text/plain,*/*'}}),4500);if(!r.ok)throw new Error(`Caption HTTP ${r.status}`);return youtubeCaptionText(await r.text())};
+  let original=[],translation=[],translationSource='';try{original=await fetchTrack(sourceTrack,false)}catch(e){} if(native&&lang(native.languageCode)!==lang(sourceTrack.languageCode)){try{translation=await fetchTrack(native,false);translationSource='YouTube Native'}catch(e){}} if(!translation.length&&sourceTrack&&tgt&&tgt!==lang(sourceTrack.languageCode)){try{translation=await fetchTrack(sourceTrack,true);if(translation.length)translationSource='YouTube Auto-Translation'}catch(e){}}
+  if(!original.length&&!translation.length)throw new Error('YouTube caption tracks were found but could not be read.');return {ok:true,videoId,tracks:cleanTracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceTrack?.languageCode||src,targetLanguage:tgt,method:'watch-page'};
 }
+
 async function youtubeCaptions(videoId, source='auto', target='en', mode='bundle'){
   const id=String(videoId||'').trim(); if(!id) throw new Error('Missing YouTube video ID.');
-  let player=null, last='';
-  for(const client of ['ANDROID','IOS','TVHTML5','WEB']){
-    try{ player=await withTimeout(youtubePlayer(id,client),4500); const status=player?.playabilityStatus?.status; if(status && status!=='OK' && !player?.captions) throw new Error(player?.playabilityStatus?.reason||status); const tracks=player?.captions?.playerCaptionsTracklistRenderer?.captionTracks||[]; if(tracks.length){ last=''; const cleanTracks=tracks.map(t=>({baseUrl:String(t.baseUrl||'').replace(/\\u0026/g,'&'),languageCode:t.languageCode||'',name:t.name?.simpleText||'',kind:t.kind||'',isTranslatable:t.isTranslatable!==false})).filter(t=>t.baseUrl); const lang=x=>String(x||'').split('-')[0].toLowerCase(); const src=lang(source); const tgt=lang(target); const find=(l)=>cleanTracks.find(t=>lang(t.languageCode)===l && t.kind!=='asr')||cleanTracks.find(t=>lang(t.languageCode)===l);
-      const sourceTrack=(src&&src!=='auto'?find(src):null)||cleanTracks.find(t=>t.kind==='asr')||cleanTracks[0];
-      const nativeTarget=find(tgt);
-      async function fetchTrack(track, auto){ if(!track?.baseUrl) return []; const u=new URL(track.baseUrl); u.searchParams.set('fmt','json3'); if(auto && tgt) u.searchParams.set('tlang',tgt); const r=await withTimeout(fetch(u.toString(),{credentials:'include',cache:'no-store',headers:{accept:'application/json,text/plain,*/*'}}),3500); if(!r.ok) throw new Error(`Caption HTTP ${r.status}`); return youtubeCaptionText(await r.text()); }
-      let original=[]; let translation=[]; let translationSource='';
-      try{ original=await fetchTrack(sourceTrack,false); }catch(e){ last=e.message; }
-      if(nativeTarget && (!sourceTrack || lang(nativeTarget.languageCode)!==lang(sourceTrack.languageCode))){ try{ translation=await fetchTrack(nativeTarget,false); translationSource='YouTube Native'; }catch(e){last=e.message;} }
-      if(!translation && sourceTrack){ try{ translation=await fetchTrack(sourceTrack,true); if(translation.length) translationSource='YouTube Auto-Translation'; }catch(e){last=e.message;} }
-      if(original.length || translation.length) return {ok:true,videoId:id,tracks:cleanTracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceTrack?.languageCode||src,targetLanguage:tgt};
-    }}catch(e){ last=e.message; }
-  }
-  throw new Error(last||'YouTube did not expose caption data for this video.');
+  let last='';
+  // The active YouTube page bridge is the primary/authoritative route.
+  // Background player recreation was removed because it can trigger YouTube
+  // player HTTP 403 and is unnecessary when the user is already on the video.
+  try {
+    const page=await youtubeWatchPageCaptions(id,source,target);
+    if(page.original?.length||page.translation?.length) return page;
+  } catch(error) { last=error.message; }
+  throw new Error(/403/i.test(last)
+    ? 'YouTube caption access was rejected outside the active page session. Reload the YouTube video and open Dual Transcript again; the extension no longer creates a background player request.'
+    : (last||'YouTube did not expose caption data for this video.'));
 }
 
 async function withTimeout(promise, ms){

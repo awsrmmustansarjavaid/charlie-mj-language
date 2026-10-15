@@ -1,3 +1,7 @@
+# v5.0.0 Additive Upgrade
+
+This package keeps the existing Charlie MJ Language system intact and adds optional Dual Transcript Engines, Ollama Local AI, and a YouTube Favorites workspace. The untouched reference copy is preserved under `original-working-version/`. See `docs/31-v5.0.0-additive-upgrade.md`.
+
 # Charlie MJ Language — v4.4.1 Beta
 
 **A lightweight, local-first Chrome extension for learning languages through YouTube.**
@@ -272,3 +276,7 @@ JavaScript syntax, manifest JSON, HTML ID uniqueness, and ZIP integrity were che
 
 JavaScript syntax, manifest JSON, required settings IDs, duplicate HTML IDs, and ZIP integrity were checked. The uploaded screenshots were inspected and the toolbar control groups were rearranged to eliminate the highlighted empty cells. Live Chrome/YouTube testing is still required to verify native contenteditable keyboard behavior and the final layout at different window widths.
 
+
+## v5.0.0 final complete additive update
+
+Version remains **5.0.0**. This package adds the finalized category intelligence, YouTube library suggestions, Data Sync, Performance/service lifecycle controls, Additional Learning window settings, split database/index structure, and the Dual Transcript active-page 403 fix without removing the existing extension systems. See `docs/33-v5.0.0-final-complete-update.md`.

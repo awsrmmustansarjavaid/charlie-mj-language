@@ -115,6 +115,8 @@ $('#transcript').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OP
 $('#watch').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_ADD_WATCH_LATER' }));
 
 $('#settings').addEventListener('click', () => chrome.runtime.openOptionsPage());
+document.getElementById('favorites')?.addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/favorites/favorites.html') }));
+
 $('#library').addEventListener('click', () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/dashboard/dashboard.html') });
 });

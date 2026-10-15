@@ -94,3 +94,8 @@ main>section>.component-card .check{min-width:0}
 .line-spacing-custom{margin-top:7px}
 .line-spacing-custom.is-condition-hidden{display:none!important}
 @media(max-width:600px){.toolbar-settings-card>.two-col{grid-template-columns:minmax(0,1fr)}}
+
+/* Additive settings sections use the same individual-tab/page behavior as legacy settings. */
+.additional-settings-section{display:none!important;margin-top:0!important}.additional-settings-section.settings-visible{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:12px 16px}.additional-settings-section.settings-visible>.component-card{grid-column:1/-1;align-self:start;min-width:0;margin:0;padding:16px}@media(max-width:900px){.additional-settings-section.settings-visible{grid-template-columns:minmax(0,1fr)}}@media(max-width:600px){.additional-settings-section.settings-visible{grid-template-columns:minmax(0,1fr)}}
+
+.additional-settings-section{display:none}.additional-settings-section.settings-visible{display:block}.additional-settings-section .component-card{border:1px solid #334155;border-radius:14px;padding:16px;background:#0b1424}.additional-settings-section .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.additional-settings-section .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.additional-settings-section .note{color:#94a3b8;font-size:12px;line-height:1.5}@media(max-width:800px){.additional-settings-section .two-col{grid-template-columns:1fr}}

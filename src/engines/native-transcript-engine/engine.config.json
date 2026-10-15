@@ -1,0 +1,6 @@
+{
+  "id": "native-transcript",
+  "enabled": true,
+  "default": false,
+  "implementation": "nativeTranscriptEngine.js"
+}

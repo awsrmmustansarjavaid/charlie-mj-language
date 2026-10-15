@@ -7,7 +7,7 @@
 <body>
 <header class="app-header">
   <div class="brand"><span class="brand-icon">🌍</span><div><strong>Charlie MJ Language</strong><small>Personal video language-learning workspace</small></div></div>
-  <div class="header-actions"><button id="viewToggle" title="Switch grid/list">▦ Grid</button><button id="openOptions">⚙ Settings</button><button id="refresh">↻ Refresh</button></div>
+  <div class="header-actions"><button id="youtubeFavorites" title="Favorite YouTube channels and playlists">⭐ YouTube Favorites</button><button id="viewToggle" title="Switch grid/list">▦ Grid</button><button id="openOptions">⚙ Settings</button><button id="refresh">↻ Refresh</button></div>
 </header>
 <main class="workspace">
 <section class="hero">
@@ -35,5 +35,5 @@
 <dialog id="checkpointDialog"><form method="dialog" id="checkpointForm"><button type="button" class="dialog-close" data-close>×</button><h2>Add checkpoint</h2><label>Label<input id="checkpointLabel" maxlength="100" placeholder="Grammar lesson"></label><label>Timestamp (seconds)<input id="checkpointTime" type="number" min="0" step="0.1"></label><label>Video ID<input id="checkpointVideo" required></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary" value="add">Save checkpoint</button></div></form></dialog>
 <dialog id="detailsDialog" class="details-dialog"><form method="dialog"><button type="button" class="dialog-close" data-close>×</button><h2 id="detailsTitle">Learning Card</h2><div id="detailsBody"></div><div class="dialog-actions"><button type="button" data-close>Close</button></div></form></dialog>
 <dialog id="confirmDialog"><form method="dialog"><h2 id="confirmTitle">Delete collection?</h2><p id="confirmText"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button id="confirmYes" class="danger" value="yes">Delete</button></div></form></dialog>
-<script src="dashboard.js"></script>
+<script src="dashboard.js"></script><script src="../additional/dashboard-link.js"></script>
 </body></html>

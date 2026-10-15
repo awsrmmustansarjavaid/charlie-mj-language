@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "storage": {
+    "channels": "cmjFavChannels",
+    "playlists": "cmjFavPlaylists",
+    "categories": "cmjFavCategories",
+    "collections": "cmjFavCollections"
+  },
+  "jsonBackup": true
+}
