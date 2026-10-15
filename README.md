@@ -1,282 +1,970 @@
-# v5.0.0 Additive Upgrade
-
-This package keeps the existing Charlie MJ Language system intact and adds optional Dual Transcript Engines, Ollama Local AI, and a YouTube Favorites workspace. The untouched reference copy is preserved under `original-working-version/`. See `docs/31-v5.0.0-additive-upgrade.md`.
-
-# Charlie MJ Language — v4.4.1 Beta
+# Charlie MJ Language — v5.0.0
 
 **A lightweight, local-first Chrome extension for learning languages through YouTube.**
 
 ![Charlie MJ Language v4.1.3](assets/charlie-mj-language-main-thumbnail.png)
 
-Charlie MJ Language brings subtitles, transcript study, vocabulary, sentence saving, translation, dictionary lookups, and learning-library tools into the YouTube viewing experience.
+Charlie MJ Language keeps the original fast YouTube transcript workflow as its core engine and adds optional learning, transcript, library, category, synchronization, and performance systems around it.
+
+> **Core rule:** the original transcript-fetching functionality is preserved. New services are additive and must not replace, rewrite, or become dependencies of the original transcript engine.
 
 ## Download
 
 <p align="center">
-  <a href="/downloads/charlie-mj-language-v4.4.1-beta-final-fixes.zip">
+  <a href="/downloads/charliemj-language-v5.0.0-final-core-restored.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
 
-![Charlie MJ Language v4.1.3](assets/charlie-mj-language-youtube-video-thumbnail.png)
+---
 
-- **Version:** `4.4.1-beta`
+## Overview
+
+Charlie MJ Language brings together:
+
+- YouTube subtitles and the complete timestamped transcript
+- Fast automatic transcript fetching
+- Click-to-seek transcript timeline navigation
+- Transcript scrolling and synchronization with video playback
+- Original and translated subtitles
+- Optional Dual Transcript functionality
+- Vocabulary and sentence learning
+- Notes, bookmarks, Watch Later, and learning-library tools
+- Favorite YouTube Channels and Playlists
+- Learning Groups
+- Categories and category intelligence
+- YouTube metadata and thumbnail support
+- YouTube suggestions
+- Data import/export and synchronization tools
+- Optional Local AI/Ollama learning services
+- Additional Learning window controls
+- Performance and service-lifecycle controls
+- Customizable toolbar, transcript window, subtitles, and learning UI
+
+The systems are designed to work independently. Basic transcript functionality does not depend on Dual Transcript, Local AI, metadata services, or other optional services.
+
+---
+
+## Version and Platform
+
+- **Version:** `5.0.0`
 - **Platform:** Chrome Extension — Manifest V3
 - **Minimum Chrome version:** 114
 - **License:** MIT
-- **Project:** [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
+- **Repository:** https://github.com/awsrmmustansarjavaid/charlie-mj-language
 
-> **Learning flow:** Watch → Understand → Capture → Organize → Review → Continue
+### Learning flow
 
-## What's new in v4.4.1 Beta
+**Watch → Fetch → Understand → Capture → Organize → Review → Continue**
 
-- **Transcript header visibility:** the header wraps responsively so the title and window controls remain fully visible at narrow widths. The transcript panel uses a flex layout so the header and tabs stay intact while the transcript body scrolls.
-- **Two-axis resizing:** use the transcript panel's top/bottom edges to change height and left/right edges to change width; corner handles resize both dimensions. Custom handles remain inside the panel boundary so they are not clipped.
-- **Viewport protection:** after resizing the browser or panel, the transcript window is constrained to the visible viewport where possible. Existing drag, dock, minimize, maximize, pin, auto-hide, and saved-size behavior is retained.
+---
 
-## What's new in v4.3.8 Beta
+# Critical Core Functionality
 
-- **Verified save feedback:** Watch Later, timeline bookmarks, and Note Lab now show success only after `chrome.storage.local.set()` succeeds.
-- **Watch Later reliability:** validates the video ID, normalizes the stored list, and checks the write result before showing confirmation.
-- **Timeline bookmarks:** validates the current video and confirms persistence before reporting that the bookmark was saved.
-- **Note Lab text boxes:** creates an editable note, persists it before rerendering, focuses the new editor, and reports failed saves instead of silently losing the note. Delete, manual save, and autosave use the same checked storage path.
-- **Context invalidation:** storage-dependent actions fail safely and ask for a YouTube page refresh rather than displaying false success. Chrome does not allow an invalidated content script to reconnect to a reloaded extension.
+## Fast Complete YouTube Transcript
 
-- **Graceful extension-context invalidation:** progress-save callbacks now exit before storage access when Chrome has invalidated the old content script. The extension avoids repeated console warnings and shows one refresh notice. Refreshing the YouTube tab remains required after updating/reloading the extension.
+The original transcript system is the primary and authoritative transcript engine.
 
-### Configurable success notification position
+The v5.0.0 upgrade **does not replace or rewrite the original transcript-fetching implementation**.
 
-The **Settings → UI Components → Success notifications** section lets you choose where save-success and status notifications appear:
+The default engine remains:
 
-- **Center Below Subtitles** — default
-- **Bottom Right**
-- **Bottom Left**
+```text
+legacy-youtube
+```
 
-This setting changes notification placement without replacing the subtitle, transcript, or library workflows.
+The core transcript workflow is:
 
-### Real-time transcript highlighting (new in v4.3.8 Beta)
+1. Open a YouTube video.
+2. The extension detects the video.
+3. The original transcript engine fetches the available complete caption track.
+4. The complete timestamped transcript becomes available in the transcript window.
+5. The user can freely scroll through the transcript.
+6. Transcript rows remain associated with their timestamps.
+7. Clicking a transcript row seeks the YouTube video to that timestamp.
+8. Playback and transcript position remain synchronized where supported.
+9. Existing subtitle, translation, vocabulary, sentence, notes, and learning workflows continue to use the transcript.
 
-The **Settings → UI Components → Live Transcript Highlighting** panel synchronizes the active transcript row to the video's caption timeline without replacing the transcript-fetching engine.
+### Core preservation requirement
 
-- Enable or disable live highlighting independently.
-- Choose soft transparent background, rounded background, underline, left accent bar, or text-color-only styles.
-- Customize highlight color (`#8B5CF6` by default), background opacity (25% by default), and active text color or inherit the transcript color.
-- Show a speaker icon beside the currently spoken sentence; it moves with the active highlight.
-- Synchronize from the active subtitle or the video playback position.
-- Optionally auto-scroll the active row near the center, top, or bottom of the transcript window.
-- Respect manual scrolling by temporarily pausing auto-scroll; keep the current sentence highlighted while paused.
-- Set the transition duration (150 ms by default), preview the style in Settings, copy the preview settings, or reset the appearance.
+New services must never:
 
-The feature uses the existing timestamped caption segments and updates the active row's classes instead of rebuilding the transcript on every playback tick. The original subtitle and its translation are highlighted together because they share one transcript row. The active row is selected from the current playback time, and stale indices are cleared when a cue is no longer active. Native on-screen captions are used only as a fallback when no timestamped transcript is available; they are no longer appended to an existing transcript, preventing duplicate/out-of-order rows that could make the highlight jump to a different sentence. The speaker icon is a visual marker only. It does not alter transcript text, copy/selection behavior, or the caption-fetching engine. Synchronization quality depends on the timestamp accuracy supplied by YouTube.
+- replace `legacy-youtube`
+- rewrite its fetching algorithm merely to support another service
+- delay the original transcript while waiting for Dual Transcript
+- require Local AI for transcript fetching
+- create a second YouTube player
+- continuously intercept YouTube traffic for basic transcript operation
+- remove transcript scrolling or timeline seeking
+- remove existing transcript-learning functionality
 
-### Modular transcript Service Engine
+The original transcript remains the reference source for additional transcript comparison.
 
-- Added a dedicated **Service Engine** section in Settings.
-- Added `transcript-service.config.json` as a separate configuration contract for transcript services.
-- Kept the existing fast YouTube transcript-fetching engine as the default: `legacy-youtube`.
-- Added configurable caption-track preferences: original/manual first, manual/original first, or auto-generated first.
-- Supports discovery of caption languages when YouTube exposes them for a video.
-- Preserves backward compatibility; the existing fetch implementation remains authoritative while future providers can be added through adapters.
+---
 
-**Important:** The configuration prepares the architecture for additional providers; it does not mean that every future transcript provider is already implemented. Available tracks and languages depend on YouTube and the individual video.
+# Performance and Lightweight Architecture
 
-### UI and learning workflow
+v5.0.0 is designed so that optional services do not make normal YouTube playback heavy.
 
-- Adjustable YouTube learning toolbar, including position, size, scale, button arrangement, and hover-reveal behavior.
-- Resizable, draggable transcript window with positioning, pinning, and window controls.
-- Adjustable subtitle appearance, including size, color, and text formatting.
-- Real-time transcript sentence highlighting with custom styles, playback synchronization, and optional auto-scroll.
-- Word and sentence learning actions linked to YouTube video context and timestamps where available.
-- Translation and dictionary information, including provider/source labels when returned by the service.
-- Vocabulary and sentence saving, notes, bookmarks, and learning-library workflows.
-- Local-first settings and learning data using Chrome storage.
+## Startup principle
 
-> **Beta note:** v4.3.8 includes the verified-save fixes and retains Live Transcript Highlighting and a caption timing correction and a context-safe playback loop intended to prevent the highlight from freezing when Chrome invalidates the old extension context. The updated code has been checked with static validation and package-level checks in this environment; a live Chrome/YouTube playback regression test has not been performed here. If Chrome reports “extension context invalidated” immediately after updating/reloading the extension, refresh the open YouTube tab so Chrome can inject the new content script; the playback/highlighting loop now continues using already-loaded page data, while storage-dependent actions show a refresh notice and avoid repeated error stack traces. Refresh the YouTube tab after updating to restore storage and saving.
+The extension should load only what is required for normal operation:
 
-## Core features
+- core extension logic
+- existing transcript functionality
+- required settings
+- lightweight UI
+- small indexes/cache metadata
 
-### YouTube subtitles and transcript
+Heavy or optional services remain dormant until needed.
 
-- Fetches YouTube caption tracks independently of the native CC display when available.
-- Displays original and translated subtitles.
-- Provides a timestamped transcript and subtitle/timeline synchronization.
-- Supports available manual/original and auto-generated caption tracks.
-- Supports available caption-language discovery where YouTube exposes track metadata.
-- Includes transcript and learning-data export tools.
+## Service lifecycle
 
-### Word and sentence learning
+Optional services follow an event-driven lifecycle:
 
-- Interactive word lookup and translation.
-- Dictionary and translation source details when provided by the selected service.
-- Part-of-speech highlighting and visual formatting.
-- Vocabulary capture and sentence saving.
-- Video-linked learning records and timestamp context where available.
-- Sentence replay, looping, A/B replay, and playback-speed learning controls where available in the interface.
+```text
+IDLE
+  ↓
+ACTIVE
+  ↓
+INACTIVE
+  ↓
+SLEEPING
+  ↓
+WAKE
+  ↓
+ACTIVE
+```
 
-### Learning library and productivity
+Enabled does **not** mean continuously running.
 
-- Vocabulary, sentence learning, bookmarks, notes, Watch Later, and related saved learning items.
-- Search and filtering tools for supported library views.
-- Import/export tools for supported formats, including common transcript and learning-data formats.
-- Local-first storage: data remains in Chrome local storage unless you explicitly export or download it.
-- Focus Mode and toolbar controls to support a less distracting learning workflow.
+## Performance controls
 
-### Customization
+The Performance settings provide controls for:
 
-- Success notification position settings.
-- Toolbar visibility, position, size, and reveal settings.
-- Transcript window position, dimensions, and controls.
-- Subtitle display and learning-interface appearance settings.
-- Transcript Service Engine configuration kept separate from the UI settings.
+- lightweight startup
+- on-demand service activation
+- service sleep timeout
+- resource-intensive service enable/disable
+- lazy loading
+- caching
+- background-task controls
+- event-driven operation
+- reduced unnecessary polling
+- reduced unnecessary YouTube requests
 
-*Feature availability can depend on the current YouTube page, available caption tracks, browser permissions, and the external service response.*
+The goal is for normal YouTube playback and the original fast transcript path to remain the priority.
 
-## Installation
+---
 
-1. Download or clone the repository and extract it if you downloaded a ZIP.
-2. Open Chrome and visit `chrome://extensions`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select the extracted extension folder containing `manifest.json`.
-6. Open or refresh a YouTube video.
+# Dual Transcript
 
-If YouTube was already open when you installed or reloaded the extension, refresh that tab once.
+Dual Transcript is an **additional** transcript system.
 
-## Settings
+It does not replace the original transcript engine.
 
-Open the extension's Settings page to configure the interface and learning behavior.
+## Available transcript sources
 
-- **UI Components:** Set success notification position and adjust toolbar/transcript UI controls.
-- **Service Engine:** Choose the available transcript engine, set caption-track preference, and enable caption-language discovery when exposed by YouTube.
-- **Subtitle & timeline engine:** Configure subtitle fetching and synchronization options.
-- **Appearance:** Choose the learning-interface theme where supported.
+Where YouTube provides them, Dual Transcript can work with:
 
-The current default transcript engine is `legacy-youtube`. Keep this setting unless you are testing a provider that has been explicitly implemented and validated.
+- native/original captions
+- native target-language captions
+- auto-generated captions
+- YouTube auto-translated captions
+- supported translation providers as fallback
 
-## Transcript service configuration
+## Dual Transcript capabilities
 
-The root-level `transcript-service.config.json` defines the configuration contract for transcript engines. It currently identifies `legacy-youtube` as the default and records supported capabilities and track-preference options.
+- discover available caption tracks
+- fetch additional tracks
+- display two transcript languages
+- synchronize timestamps
+- compare corresponding sentences
+- sentence alignment
+- word/phrase alignment where reliable
+- translation comparison
+- alignment confidence
+- preserve additional transcript data separately
 
-The current implementation remains in `src/content/youtube.js` (`fetchYouTubeCaptionBundle`). Future providers should be added as separate adapters and integrated without replacing the stable default path until compatibility and regression tests pass.
+The original transcript remains the reference for comparison.
 
-Do not treat a listed capability as a guarantee that YouTube provides a track for every video. Caption availability is controlled by YouTube and the video owner/source.
+## Lightweight behavior
 
-## Project structure
+Dual Transcript is designed to activate when requested rather than continuously processing YouTube traffic.
+
+It must not interfere with normal YouTube player loading or create a second player session.
+
+---
+
+# Local AI Learning
+
+Local AI/Ollama is an **optional service**.
+
+It is not required for the original transcript engine.
+
+When enabled and available, it can support learning workflows such as:
+
+- word explanations
+- vocabulary analysis
+- sentence explanations
+- context-aware translation
+- literal and natural translation
+- alternative translations
+- translation verification
+- grammar explanations
+- pronunciation/romanization information where supported
+- part-of-speech information
+- synonyms and related vocabulary
+- example sentences
+- vocabulary extraction
+- transcript sentence analysis
+- learning exercises
+- flashcard generation
+- quiz generation
+- sentence simplification
+- formal/informal alternatives
+- Anki-oriented export workflows
+
+Ollama runs locally and is contacted only when an AI operation is requested.
+
+### AI safety/performance rule
+
+Local AI must never become a dependency for:
+
+- opening YouTube
+- playing YouTube videos
+- fetching the original transcript
+- scrolling the transcript
+- transcript timeline seeking
+- basic subtitles
+- normal extension startup
+
+---
+
+# YouTube Learning Interface
+
+## Learning toolbar
+
+The YouTube learning toolbar supports configurable:
+
+- position
+- size
+- scale
+- button arrangement
+- hover/reveal behavior
+- visibility
+- auto-hide behavior
+
+The toolbar remains integrated with the extension's YouTube learning workflow.
+
+## Transcript window
+
+The transcript window supports:
+
+- dragging
+- resizing width
+- resizing height
+- corner resizing
+- minimize
+- maximize
+- pin
+- close
+- restore
+- saved position
+- saved dimensions
+- viewport protection
+- scrolling
+- transcript tabs
+- synchronized playback
+
+## Additional Learning window
+
+The Additional Learning window follows the same window-management model as transcript windows:
+
+- resize width
+- resize height
+- minimize
+- maximize
+- pin
+- close
+- restore
+- remember position
+- remember size
+
+---
+
+# Live Transcript Highlighting
+
+Live Transcript Highlighting synchronizes the active transcript row with playback.
+
+Features include:
+
+- enable/disable
+- transparent highlight
+- rounded background
+- underline
+- left accent
+- text-color highlighting
+- custom highlight color
+- background opacity
+- active text color
+- speaker indicator
+- playback synchronization
+- subtitle synchronization
+- optional automatic transcript scrolling
+- center/top/bottom auto-scroll positioning
+- manual-scroll protection
+- transition-duration control
+- preview
+- reset
+
+The feature operates on existing timestamped transcript segments and does not replace the transcript-fetching engine.
+
+---
+
+# Subtitles and Translation
+
+The extension supports:
+
+- original subtitles
+- translated subtitles
+- subtitle appearance controls
+- independent subtitle layout controls
+- width and height controls
+- maximum line controls
+- wrapping
+- padding
+- corner radius
+- opacity
+- typography
+- line spacing
+- translation display
+- timestamp synchronization
+
+Native on-screen captions may be used as a fallback when timestamped transcript information is unavailable.
+
+---
+
+# Word and Sentence Learning
+
+Learning tools include:
+
+- interactive word lookup
+- translation
+- dictionary information
+- provider/source information where available
+- part-of-speech highlighting
+- vocabulary capture
+- sentence saving
+- timestamp-linked learning records
+- sentence replay
+- looping
+- A/B replay
+- playback-speed learning controls
+- notes
+- bookmarks
+
+---
+
+# My Learning Library
+
+The local learning library supports:
+
+- vocabulary
+- saved sentences
+- bookmarks
+- notes
+- Watch Later
+- learning records
+- search
+- filtering
+- import/export
+- local-first storage
+
+Existing learning data should remain independent from optional services.
+
+---
+
+# YouTube Favorites Library
+
+The Favorites workspace supports:
+
+## Favorite Channels
+
+Save and manage YouTube channels using stable Channel IDs.
+
+## Favorite Playlists
+
+Save and manage playlists using stable Playlist IDs.
+
+## Learning Groups
+
+The collection system is presented as **Learning Groups**.
+
+Learning Groups support:
+
+- View
+- Edit
+- Remove
+- resource management
+- category association
+- learning organization
+
+## Channel and Playlist cards
+
+Cards can include:
+
+- View Detail
+- View/Open
+- Edit
+- Remove
+- item count
+- description
+- type/source
+- pinned status
+
+Inside a collection/detail view, individual resources can also be managed.
+
+## Saving resources
+
+When saving a YouTube channel or playlist, the user can select a category.
+
+Duplicate detection uses stable YouTube IDs rather than names.
+
+Therefore:
+
+- the same ID is treated as the same resource
+- different IDs may have the same display name
+- names are not used as the primary identity
+
+---
+
+# Categories
+
+The library includes a dedicated **Category** area alongside:
+
+- Favorite Channels
+- Favorite Playlists
+- Learning Groups
+
+Categories can organize:
+
+- channels
+- playlists
+- learning resources
+
+## Category cards
+
+Category cards can show:
+
+- category name
+- description
+- item count
+- source/type
+- pinned status
+- View
+- Open
+- Edit
+- Remove
+
+## Category detail
+
+A category detail view provides access to the channels and playlists assigned to that category, with resource-level actions.
+
+---
+
+# Extension Intelligence
+
+The **Extension Intelligence** settings provide optional category assistance.
+
+Capabilities include:
+
+- master enable/disable
+- automatic category detection
+- existing-category suggestions
+- new-category suggestions
+- minimum confidence
+- prefer existing categories
+- automatic application of high-confidence suggestions
+- confirmation before creating categories
+- learning from accepted suggestions
+- learning from rejected suggestions
+
+Potential information sources include:
+
+- YouTube metadata
+- title
+- description
+- tags/keywords
+- existing local categories
+- category knowledge data
+
+### Important rule
+
+The extension must not silently create a new category when a suggestion has not been confirmed by the user.
+
+---
+
+# Category Knowledge
+
+The category knowledge directory is organized separately from the extension UI:
+
+```text
+data/
+└── category-knowledge/
+    ├── youtube-categories.json
+    ├── learning-categories.json
+    ├── category-keywords.json
+    └── category-rules.json
+```
+
+Official YouTube categories remain distinct from extension-specific learning categories.
+
+---
+
+# YouTube Suggestions
+
+The Suggestions workspace separates recommendations from Favorites.
+
+It supports:
+
+- Suggested Channels
+- Suggested Playlists
+
+Each result clearly identifies its type:
+
+```text
+CHANNEL
+PLAYLIST
+```
+
+Supported actions include:
+
+- View
+- Open
+- Save to Favorites
+- Add Category
+- Add Learning Group
+- Ignore
+
+Suggestions are not automatically treated as Favorites.
+
+---
+
+# Metadata and Thumbnails
+
+The Favorites/library system can obtain YouTube metadata and thumbnails when available.
+
+Metadata can include:
+
+- title
+- description
+- channel information
+- playlist information
+- thumbnail
+- stable YouTube ID
+- source URL
+
+Refresh operations must not overwrite user-owned:
+
+- notes
+- tags
+- categories
+- learning data
+
+Metadata refresh should be rate-limited, cached, and performed only when needed.
+
+---
+
+# Data Sync
+
+The **Data Sync** system provides tools for maintaining local data and optional GitHub-backed backups/synchronization.
+
+Supported concepts include:
+
+- local database
+- GitHub repository synchronization
+- health check
+- Pull from GitHub
+- Local vs GitHub comparison
+- Prepare Backup for GitHub
+- import
+- export
+- scheduled synchronization
+- separate JSON data files
+- indexes for fast lookup
+
+Stable IDs remain the primary identity:
+
+```text
+Channel ID
+Playlist ID
+```
+
+## Important browser limitation
+
+A normal Chrome extension cannot silently write to arbitrary local filesystem paths.
+
+Supported approaches require an appropriate browser permission/API such as:
+
+- user-selected File System Access locations
+- a Native Messaging helper
+- browser download/import flows
+- GitHub API/repository synchronization
+
+The extension must not claim unrestricted access to arbitrary folders.
+
+---
+
+# Import and Export
+
+JSON is the primary structured backup format.
+
+Export can include:
+
+- saved channels
+- saved playlists
+- categories
+- Learning Groups
+- notes
+- tags
+- metadata
+- stable IDs
+
+Import supports:
+
+- JSON validation
+- duplicate detection
+- merge
+- replace where explicitly selected
+- preservation of existing records during merge
+- invalid/skipped-record reporting
+- backup restoration
+
+TXT exports can provide a readable list containing:
+
+- channel/playlist name
+- URL
+- category
+- tags
+- notes
+- date added
+
+---
+
+# Settings
+
+The existing settings remain part of the extension.
+
+New settings are organized into dedicated sections/tabs rather than replacing previous settings.
+
+Important settings areas include:
+
+- UI Components
+- Subtitle and Timeline
+- Appearance
+- Service Engine
+- Dual Transcript
+- Local AI
+- Favorites
+- Categories
+- Extension Intelligence
+- Data Sync
+- YouTube Suggestions
+- Performance
+- Additional Learning Window
+
+Settings should remain backward-compatible with existing stored values.
+
+---
+
+# UI Design
+
+The settings workspace uses a grid-oriented layout.
+
+The interface is designed around:
+
+- responsive two-column desktop settings
+- single-column narrow layouts
+- grouped controls
+- consistent cards
+- accessible switches
+- clear navigation
+- readable spacing
+- live previews where appropriate
+- unsaved-change indication
+- preserved setting IDs and storage keys where possible
+
+Existing functionality should not be removed merely to redesign the interface.
+
+---
+
+# Notifications and Save Reliability
+
+Save operations should report success only after the underlying storage operation succeeds.
+
+This applies to areas such as:
+
+- Watch Later
+- bookmarks
+- notes
+- vocabulary
+- sentences
+- library records
+- settings
+
+If Chrome invalidates an extension content-script context after an extension reload/update, storage-dependent operations should fail safely and request a page refresh rather than falsely reporting success.
+
+---
+
+# Privacy and Storage
+
+Charlie MJ Language is local-first.
+
+Local settings and learning records are stored using Chrome extension storage and/or appropriate local extension storage mechanisms.
+
+Some optional features may contact external services when the user requests them, such as:
+
+- translation providers
+- dictionary providers
+- GitHub synchronization
+- Ollama on the user's own computer
+
+External service use should occur only for the relevant feature and should not be required for basic transcript functionality.
+
+Users should review the privacy policies and terms of any external provider they choose to use.
+
+---
+
+# Installation
+
+1. Download or clone this repository.
+2. Extract the ZIP if necessary.
+3. Open Chrome.
+4. Visit:
+
+```text
+chrome://extensions/
+```
+
+5. Enable **Developer mode**.
+6. Click **Load unpacked**.
+7. Select the extension directory containing `manifest.json`.
+8. Open or refresh a YouTube video.
+
+If YouTube was already open when the extension was installed or reloaded, refresh the YouTube tab once.
+
+---
+
+# Recommended First-Run Configuration
+
+For the lightest normal YouTube experience:
+
+1. Keep the original `legacy-youtube` transcript engine enabled.
+2. Keep the original transcript workflow as the default.
+3. Leave Dual Transcript inactive until needed.
+4. Leave Local AI inactive until needed.
+5. Use Performance settings to configure service sleep/on-demand behavior.
+6. Enable metadata refresh only when needed.
+7. Use category intelligence only if automatic category assistance is desired.
+8. Configure Data Sync separately from normal transcript operation.
+
+This keeps the critical path focused on:
+
+```text
+YouTube
+  ↓
+Original Transcript Engine
+  ↓
+Complete Transcript
+  ↓
+Scroll / Timeline / Learning
+```
+
+---
+
+# Project Structure
 
 ```text
 charlie-mj-language/
-├── assets/                         # Extension images and assets
-├── docs/                            # Project and implementation documentation
-├── icons/                           # Extension icons
+│
+├── assets/
+├── data/
+│   └── category-knowledge/
+│       ├── youtube-categories.json
+│       ├── learning-categories.json
+│       ├── category-keywords.json
+│       └── category-rules.json
+│
+├── docs/
+├── icons/
+│
 ├── src/
-│   ├── background/                  # Background service worker
-│   ├── content/                     # YouTube integration and page scripts
-│   ├── dashboard/                   # Learning library/dashboard
-│   ├── lib/                         # Shared utilities
-│   ├── options/                     # Settings interface and logic
-│   └── popup/                       # Extension popup
-├── transcript-service.config.json   # Modular transcript service configuration
-├── manifest.json                    # Chrome Extension Manifest V3
+│   ├── background/
+│   ├── content/
+│   │   ├── youtube.js
+│   │   └── youtube-page-bridge.js
+│   ├── dashboard/
+│   ├── favorites/
+│   ├── lib/
+│   ├── options/
+│   └── popup/
+│
+├── transcript-service.config.json
+├── manifest.json
 ├── LICENSE
 └── README.md
 ```
 
-## Privacy and storage
+The exact source tree may evolve as new independent services are added. The important architectural rule is that the original transcript implementation remains isolated and authoritative.
 
-Charlie MJ Language uses Chrome extension storage for local settings and learning records. Some features contact external services, such as translation or dictionary providers, to perform the requested lookup. Review the relevant provider's terms and privacy policy when using those services. Exported files are saved through the browser's download flow.
+---
 
-## Development and testing
+# Architecture Principles
 
-- JavaScript, HTML, and CSS for a Chrome Manifest V3 extension.
-- Uses Chrome extension APIs for storage, downloads, context menus, scripting, and related browser integration.
-- YouTube integration depends on page/player behavior that can change over time.
-- Test on real YouTube videos with different caption-track configurations before releasing changes.
+v5.0.0 follows these principles:
 
-### Recommended regression checks
+### 1. Preserve the core
 
-After changing UI settings or transcript services, verify:
+The original fast complete-transcript engine is not replaced.
 
-1. The existing default transcript engine still fetches available captions.
-2. Original/manual and auto-generated tracks are handled according to the selected preference when available.
-3. Subtitle display and timeline synchronization continue to work.
-4. Vocabulary and sentence saving still work and saved items appear in the library.
-5. Library search, editing, import, and export remain functional.
-6. Success notifications appear in the selected position.
-7. Toolbar and transcript window controls remain usable at different sizes and positions.
+### 2. Add, don't remove
 
-## Compatibility and roadmap
+New functionality is additive.
 
-The modular service configuration is designed to make future transcript providers possible. New providers should be introduced incrementally behind a separate adapter, with the current fast YouTube engine retained as the fallback/default until a replacement has passed regression testing.
+### 3. Independent services
 
-Potential future improvements include additional caption-provider adapters and expanded provider diagnostics. These are roadmap ideas, not claims that those services are already available in this release.
+Dual Transcript, Local AI, Favorites, Categories, Data Sync, Intelligence, and other services operate independently.
 
-## License
+### 4. No unnecessary continuous work
 
-This project is distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+Optional services should sleep when inactive.
 
+### 5. Event-driven operation
 
-## v4.3.8 Beta — bookmark persistence and independent auto-hide
+Prefer events and explicit user actions over aggressive polling.
 
-- Toolbar bookmarks are now written and read back for persistence verification before a success notification appears. Duplicate clicks at the same video timestamp are handled safely, and failed writes show an error instead of a false success.
-- Added independent auto-hide enable/disable settings for the Toolbar and Transcript Window.
-- Each window has its own persistent 5, 10, 15, or 30 second hide delay. Disabling one does not disable or hide the other.
-- Settings are stored in `chrome.storage.local` and applied by the YouTube content script.
+### 6. Stable identities
 
+Use YouTube Channel IDs and Playlist IDs instead of names as primary identifiers.
 
-## v4.3.9 Beta — transcript layout and resizing
+### 7. Safe storage
 
-- Improved responsive transcript header layout to prevent title and action controls from being clipped.
-- Added/secured visible top and bottom resize edges for transcript height, preserving left and right width resizing and corner-based two-axis resizing.
-- Reworked panel internals to use a flex column so header/tabs stay visible while transcript content scrolls.
-- Kept resize handles inside the clipped panel boundary and added viewport-fit safeguards.
-- Regression checks performed in this package: JavaScript syntax validation, manifest JSON validation, and archive integrity. Live Chrome/YouTube interaction testing is still recommended.
+Do not silently erase existing user data.
 
+### 8. Backward compatibility
 
-## v4.4.0 Beta — independent subtitle and translation layout
+Existing settings, storage, transcript workflows, and learning records should remain usable.
 
-- **Notes keyboard isolation:** Typing in Notes editors no longer bubbles keyboard events to YouTube/page shortcuts. Native text editing remains intact; extension shortcuts continue working outside the Notes editor.
-- **Independent original and translation boxes:** Each subtitle layer supports Auto/Small/Medium/Large/Custom width and height, independent maximum width and height, maximum lines (default 2), custom line limits, text wrapping, padding, background opacity, and corner radius.
-- **Live settings previews and reset:** Original and translation box settings each have a live preview and a dedicated reset button.
-- **Typography line spacing:** Original and translation subtitle line spacing can be adjusted independently in pixels, separately from font size.
-- **Settings organization:** Maximum width/height, maximum lines/custom maximum lines, and padding/corner radius are grouped in two-column rows. The redundant subtitle font-size control was removed from the UL Subtitles settings; font size remains in Appearance.
-- **Backward compatibility:** Existing stored preferences and the current caption/transcript engine remain intact. New settings use defaults when absent.
+### 9. No second YouTube player
 
-### Validation notes
+Additional transcript services must not recreate the YouTube player.
 
-JavaScript syntax, manifest JSON, and ZIP integrity were checked. Please perform final manual testing in Chrome on YouTube for the exact visual layout and key handling across different videos, window sizes, and subtitle languages.
+### 10. Original transcript remains authoritative
 
+Additional transcript sources are compared against the original rather than replacing it.
 
-## v4.4.1 Beta — modern settings workspace
+---
 
-- **Grid layout correction:** compact component cards now share two-column rows on desktop instead of each automatically consuming the entire settings section. Cards containing complex toolbar controls or large interactive previews retain full width where appropriate.
-- **More useful horizontal space:** ordinary controls continue to use paired columns; grouped position, offset, dimensions, color, and behavior settings can be scanned side by side. Nested two-column controls keep their full card width so inputs remain readable.
-- **Responsive behavior:** component cards stack when the available width is too narrow, and all settings collapse to a single column on small screens. Hover and focus effects remain subtle and separate from active navigation states.
-- **Functionality preserved:** this is a CSS/layout-only correction. Existing setting IDs, storage keys, defaults, conditional controls, event handlers, and save behavior were not changed by this correction.
+# Regression Testing
 
-- Redesigned the settings page with a consistent dark professional visual system, clearer hierarchy, rounded section cards, subtle hover/focus states, and improved spacing.
-- Improved responsive layout: two-column settings on desktop, compact three-column color controls where space allows, and single-column controls on narrow screens. Existing tab/category navigation remains in place and becomes a horizontally scrollable category bar on smaller screens.
-- Standardized checkbox controls into accessible ON/OFF-style switches and unified input, select, color-picker, button, and save-bar styling.
-- Added conditional visibility for custom width/height and custom maximum-line fields, plus auto-hide delay controls only when the relevant auto-hide option is enabled. Hidden controls retain their values; no settings IDs or storage keys were renamed.
-- Added an unsaved-changes indicator while preserving the existing Save Settings workflow.
-- This release focuses on settings-page presentation and usability. Existing stored settings, defaults, event handlers, extension behavior, and features are retained.
+Before releasing a build, verify at minimum:
 
-### Validation notes
+## Core transcript
 
-JavaScript syntax, manifest JSON, HTML ID uniqueness, and ZIP integrity were checked for this layout-correction package. The layout rules were reviewed for desktop two-column cards and responsive stacking. Live Chrome/YouTube visual regression testing has not been performed in this environment; verify all tabs, save operations, and layouts at desktop and mobile widths before distributing the beta.
+- YouTube video loads normally.
+- YouTube playback starts without extension-induced buffering.
+- Original transcript automatically appears.
+- Complete transcript is fetched.
+- Transcript can scroll to the end.
+- Transcript timestamps remain available.
+- Clicking a transcript row seeks the video.
+- Playback and transcript remain synchronized.
+- Original subtitles still work.
+- Translation still works.
 
-## v4.4.1 Beta — line spacing, toolbar grid and Notes keyboard fixes
+## Additional transcript
 
-- **Unitless line spacing:** replaced the old pixel-based line-spacing inputs in Original subtitle typography and Translation subtitle typography with a multiplier selector: `1.0`, `1.2`, `1.5`, `1.8`, `2.0`, plus Custom (`0.8`–`3.0`). The default is `1.0`; line height now scales with the selected font size.
-- **Legacy setting migration:** old pixel values are converted to unitless multipliers on YouTube startup. The previous defaults (36 px original and 28 px translation) migrate to `1.0`; non-default legacy values are converted relative to the configured font size.
-- **Toolbar settings grid:** reorganized the toolbar controls into intentional pairs, including horizontal/vertical position, horizontal/vertical offset, toolbar scale/width, height/hover zone, reveal mode/auto-hide, and hide delay/overflow behavior. This removes empty half-rows caused by groups containing an odd number of controls. The toolbar drag-and-drop manager remains full width.
-- **Notes keyboard isolation:** added capture-phase keyboard isolation for the Notes contenteditable so YouTube and extension keyboard handlers do not receive keystrokes while a note is being edited. Normal typing, Space, Enter, Shift/Caps Lock, and common text-editing shortcuts retain their native behavior. Outside Notes editors, existing shortcuts continue to work.
-- **Compatibility:** kept the package at version `4.4.1`, retained existing setting IDs and storage keys, and preserved all other features and save behavior.
+- Dual Transcript remains inactive when not requested.
+- Activating Dual Transcript does not recreate the YouTube player.
+- Additional tracks load when available.
+- Original transcript remains unchanged.
+- Sentence/timestamp alignment works where supported.
 
-### Validation notes
+## Local AI
 
-JavaScript syntax, manifest JSON, required settings IDs, duplicate HTML IDs, and ZIP integrity were checked. The uploaded screenshots were inspected and the toolbar control groups were rearranged to eliminate the highlighted empty cells. Live Chrome/YouTube testing is still required to verify native contenteditable keyboard behavior and the final layout at different window widths.
+- AI can be disabled.
+- Disabling AI does not affect the transcript.
+- AI requests occur only when an AI feature is used.
+- Failure to connect to Ollama does not break YouTube.
 
+## Library
 
-## v5.0.0 final complete additive update
+- Channels can be saved.
+- Playlists can be saved.
+- Stable IDs prevent duplicate records.
+- Same-name resources with different IDs remain separate.
+- Categories can be assigned.
+- Learning Groups support view/edit/remove.
+- Metadata and thumbnails can refresh without overwriting user data.
 
-Version remains **5.0.0**. This package adds the finalized category intelligence, YouTube library suggestions, Data Sync, Performance/service lifecycle controls, Additional Learning window settings, split database/index structure, and the Dual Transcript active-page 403 fix without removing the existing extension systems. See `docs/33-v5.0.0-final-complete-update.md`.
+## Performance
+
+- Extension startup remains lightweight.
+- YouTube playback remains responsive.
+- Optional services remain idle until required.
+- No unnecessary continuous network traffic is generated.
+- Service sleep/wake behavior works as configured.
+
+## Settings
+
+- Existing settings remain available.
+- New settings appear in their intended sections/tabs.
+- Settings persist after Chrome restart.
+- Grid layout remains usable at different widths.
+
+---
+
+# Known Platform Considerations
+
+YouTube can change its player, caption endpoints, page structure, and internal APIs without notice.
+
+Caption availability varies by video and may depend on:
+
+- available language tracks
+- manual captions
+- auto-generated captions
+- auto-translation availability
+- YouTube changes
+- video-owner settings
+
+Therefore, no extension can guarantee a particular caption language for every YouTube video.
+
+Live Chrome/YouTube regression testing should be performed before distributing a production build.
+
+---
+
+# Development Guidelines
+
+When modifying this project:
+
+- Do not rewrite the original transcript-fetching engine to add a new feature.
+- Do not remove existing settings to make room for new settings.
+- Do not make Local AI a transcript dependency.
+- Do not make Dual Transcript a transcript dependency.
+- Do not create a second YouTube player.
+- Do not introduce continuous high-frequency YouTube polling.
+- Do not overwrite user notes, tags, categories, or learning data during metadata refresh.
+- Do not silently erase existing records during import.
+- Preserve stable IDs.
+- Keep optional services lazy-loaded/on-demand.
+- Validate JavaScript and JSON before packaging.
+- Test the extension on real YouTube videos before release.
+
+---
+
+# License
+
+This project is distributed under the MIT License.
+
+See [`LICENSE`](LICENSE) for details.
