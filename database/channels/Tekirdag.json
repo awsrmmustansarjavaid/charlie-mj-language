@@ -1,0 +1,29 @@
+[
+  {
+    "category": "Tekirdag",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCeMez5oMgp-hrunHReJ4G1g",
+    "dateAdded": "2026-10-16T13:35:23.533Z",
+    "description": "Şarköy'den Manzaralar",
+    "handle": "@sarkoydenmanzaralar",
+    "id": "channel_sarkoydenmanzaralar_github_test",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-16T13:35:23.533Z",
+    "name": "Şarköy'den Manzaralar - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "",
+    "thumbnailChecked": "2026-10-16T13:35:23.533Z",
+    "updatedAt": "2026-10-16T13:35:23.533Z",
+    "url": "https://www.youtube.com/@sarkoydenmanzaralar",
+    "videoCount": ""
+  }
+]
