@@ -8,14 +8,14 @@ Version remains **5.0.0**. Existing systems are retained; new systems are additi
 - Existing-category-first Extension Intelligence with confidence controls.
 - Category knowledge base under `data/category-knowledge/`.
 - Separate YouTube Suggestions tab for CHANNEL and PLAYLIST suggestions.
-- Services settings for Dual Transcript, Local AI and optional services.
+- Services settings for legacy optional transcript comparison (removed in maintenance build), Local AI and optional services.
 - Performance settings with Lightweight/Balanced/Performance profiles and service lifecycle controls.
 - Data Sync settings for local database folder permission and GitHub repository health/compare/pull/backup.
 - Portable database layout under `database/` with category files, suggestions and small indexes.
 - Additional Learning Window settings inside UI Components.
 - Original thumbnail metadata preservation and stable channel/playlist identity fields.
 - Duplicate detection based on stable Channel ID / Playlist ID when available.
-- Dual Transcript fallback hardened so the extension no longer depends on the WEB player request path that commonly returns HTTP 403.
+- legacy optional transcript comparison (removed in maintenance build) fallback hardened so the extension no longer depends on the WEB player request path that commonly returns HTTP 403.
 
 ## Performance model
 

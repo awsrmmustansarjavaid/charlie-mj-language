@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Charlie MJ Language",
   "short_name": "Charlie MJ",
-  "version": "5.0.0",
-  "description": "Multilingual YouTube language learning with the original Charlie MJ engine plus optional dual transcripts, local Ollama learning, and YouTube favorites.",
+  "version": "1.0.0",
+  "description": "Multilingual YouTube language learning with the original fast Charlie MJ transcript engine, learning tools, YouTube favorites, category intelligence and optional services.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",
@@ -59,11 +59,34 @@
         "https://m.youtube.com/*"
       ],
       "js": [
-        "src/content/youtube.js",
-        "src/additional/additional-content.js"
+        "src/dual-transcript/dualTranscriptBridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "src/content/youtube.js"
       ],
       "css": [
         "src/content/youtube.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "src/dual-transcript/dualTranscript.js"
+      ],
+      "css": [
+        "src/dual-transcript/dualTranscript.css"
       ],
       "run_at": "document_idle"
     },

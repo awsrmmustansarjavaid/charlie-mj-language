@@ -1,0 +1,83 @@
+[
+  {
+    "category": "Türk dizisi",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "",
+    "dateAdded": "2026-10-16T12:18:43.496Z",
+    "description": "",
+    "handle": "",
+    "id": "playlist_a4aac650-0132-4c2c-8cc0-5f11dc6da693",
+    "kind": "playlist",
+    "metadataLastChecked": "2026-10-16T12:18:43.494Z",
+    "name": "The Promise | Season 3 | Full Episodes",
+    "notes": "",
+    "owner": "",
+    "playlistId": "PLPCnlCQsUQxk",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://i.ytimg.com/vi/dFqXcT_WCg4/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&amp;rs=AOn4CLDgXWOy_IqxHUNn_lJgae_3C3eK4w&amp;days_since_epoch=20742",
+    "thumbnailChecked": "2026-10-16T12:18:43.494Z",
+    "updatedAt": "2026-10-16T12:18:43.496Z",
+    "url": "https://www.youtube.com/playlist?list=PLPCnlCQsUQxk",
+    "videoCount": ""
+  },
+  {
+    "category": "Türk dizisi",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "",
+    "dateAdded": "2026-10-16T12:18:29.462Z",
+    "description": "",
+    "handle": "",
+    "id": "playlist_3ff0ce38-5bef-4e1b-94bd-3b92e0ed1521",
+    "kind": "playlist",
+    "metadataLastChecked": "2026-10-16T12:18:29.461Z",
+    "name": "The Promise | Season 2 | Full Episodes",
+    "notes": "",
+    "owner": "",
+    "playlistId": "PLWLuY3ONMDqY",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://i.ytimg.com/vi/XBP-cBkFLs4/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&amp;rs=AOn4CLA62yW2Aqi3U5kbovcMsgv1KSw66Q&amp;days_since_epoch=20742",
+    "thumbnailChecked": "2026-10-16T12:18:29.461Z",
+    "updatedAt": "2026-10-16T12:18:29.462Z",
+    "url": "https://www.youtube.com/playlist?list=PLWLuY3ONMDqY",
+    "videoCount": ""
+  },
+  {
+    "category": "Türk dizisi",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "",
+    "dateAdded": "2026-10-16T12:18:12.394Z",
+    "description": "",
+    "handle": "",
+    "id": "playlist_bb4edde4-638d-42cd-a4ee-dff27423268a",
+    "kind": "playlist",
+    "metadataLastChecked": "2026-10-16T12:18:12.387Z",
+    "name": "The Promise | Season 1 | Full Episode",
+    "notes": "",
+    "owner": "",
+    "playlistId": "PLY17ExrMuOio",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://i.ytimg.com/vi/oNOiCpgO5fM/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&amp;rs=AOn4CLB1RlmPKOlHqtKXMilZSzDL5deaMA&amp;days_since_epoch=20742",
+    "thumbnailChecked": "2026-10-16T12:18:12.387Z",
+    "updatedAt": "2026-10-16T12:18:12.394Z",
+    "url": "https://www.youtube.com/playlist?list=PLY17ExrMuOio",
+    "videoCount": ""
+  }
+]

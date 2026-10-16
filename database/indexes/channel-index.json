@@ -1,52 +1,337 @@
 [
   {
+    "id": "UCEXWwqJ-yCxIqm0yVBpeZ_A",
+    "name": "Yukardanbak - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCTr_Ep9s_21NqR68B-gWjCQ",
+    "name": "tvDEN - YouTube",
+    "category": "Aydin"
+  },
+  {
+    "id": "UC8yAGBJTY1Tb4SAHOInyjmg",
+    "name": "Sevdam Karadeniz - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCp-R8qxpL23tk63EmirNTXA",
+    "name": "Emre Zeybek - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCTSheLUZCapLmw4rA6uxe0Q",
+    "name": "MuratCA - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCB67zocIbaTNGfSPqnWT3Pw",
+    "name": "Türkan Atay - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCLBtMc9ItcLF7bV0Uy4iYBA",
+    "name": "Hercai Urdu - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCkiTW2sYyHz7iyzthh_pJOg",
+    "name": "Melek ile Serhat - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCFWx76gM3u3UqjumVoblgdg",
+    "name": "Sadik Dogramaci - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UC0ILbQ5wVd1JLSIuwRcnyPQ",
+    "name": "Ayhan Özkan - YouTube",
+    "category": "Aydin"
+  },
+  {
+    "id": "UCLt0gBrLa0s4DXdcVLtFsMw",
+    "name": "Köyde İkinci Bahar - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCUsS3JE8nwh1mS_pPPOdzpw",
+    "name": "StarTV Diziler Arşiv - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCVHAkYfWElFL_ALC6Mrdx_A",
+    "name": "Deniz Sarı - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCukOz2G577aqx1A4v-XszDg",
+    "name": "İNCİ SÖZLÜK - YouTube",
+    "category": "Turkish Academic Education"
+  },
+  {
+    "id": "UCnZ88Ydl4dNXF_CqJ3rQvUQ",
+    "name": "Learn Turkish - Türkçe Öğren - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCltvhCtTt8pcxCV9_VGqj5A",
+    "name": "Şen Dostlar - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCk4zlm1IUUPSiKQ_gpXCDfA",
+    "name": "ENEN Çocuklar TV - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCO9grwXjVxZRiGWxQTqttOw",
+    "name": "Renkli Okul - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCH4wkiHgzdpNdbHHrdWWygw",
+    "name": "PIKTES Projesi Kurumsal Sayfası - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCeU8IeKEriV9B4MCbTA8JPA",
+    "name": "Güncel Türkçe - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCzQ2vC0tQ0B0NJrfX4P3hzA",
+    "name": "KidsAndFun Turkish - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UC7MWeL4KYubNGG7uF8z1PNg",
+    "name": "Türkçe Hocam Pınar Gençer - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCnF2_QkzWWwfcT1gxiQ8FpQ",
+    "name": "Learn Turkish with Hamza - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCJE4R8Q-w43WUCiuNtVeKEA",
+    "name": "Önder Çangal - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCUulrH3oLPu41NhMNPubYxQ",
+    "name": "Teacher Ali Yılmaz - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UC_c9BKdZSfMwavx2FH4cWsA",
+    "name": "Yunus Emre Enstitüsü - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCCV6_uZw5FKzxOPF0cXlJXQ",
+    "name": "Hello Askim - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCqcBu0YyEJH4vfKR--97cng",
+    "name": "Easy Languages - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCrWNnSA7hwQfA-8Vb8MrtNA",
+    "name": "Learn Turkish Lab - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCttN8JqTHpBG3-ptTzWt-AQ",
+    "name": "Learn Turkish Fast - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UC9YC_UWPNVjF8wuEp9TJB1g",
+    "name": "Everyday Turkish - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UC4krgMwD9p1d3w8W1iszcEA",
+    "name": "Learn Turk Dili - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCkFMKS4zg0a-1Wa1AHVigAA",
+    "name": "Turkish Journey - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCqOcjhyS2YTZPc50ymIjk4g",
+    "name": "Nisan Kumru - YouTube",
+    "category": "Turkish Academic Education"
+  },
+  {
+    "id": "UCwVIj-OqEjXNqKpItChRrMQ",
+    "name": "Turkish Food Travel - YouTube",
+    "category": "Turkish Chef Vloger"
+  },
+  {
+    "id": "UCJl9A3DpUn41ZLxZ_cpwf2Q",
+    "name": "Learn Turkish by Listening - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCi84OY-MeN5sVgKlJDRy4fA",
+    "name": "Reşat Ören - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCBA7ckCAkmAzDMmTJbZQeog",
+    "name": "Turkish Language Academy - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCim6nY9V0W6MLk11J92XZ2Q",
+    "name": "Turkish With Aman - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCPMDnwnFw8dmKxm0JzjwMJA",
+    "name": "Turkishle - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCozEA3jZWG9HHKNPHyPqvXQ",
+    "name": "Learn Turkish with Turkishaholic - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UC-HOzxLZiH6MhGU5csLgINA",
+    "name": "Learn Turkish with TurkishClass101.com - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCgSwF-uWZiGeEwBvT6_wtyw",
+    "name": "Legacy Urdu - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCkx37unniAvQXqh1xz3idug",
+    "name": "Bir Şehir Gezgini - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCXlQLGwZnn0EMghqOF3FvuA",
+    "name": "OnurlaGEZ - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCvKQ-lYr6NvT5KZnHW-_lxw",
+    "name": "Gezginle Keşfet - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCqJscfpEGKmDZUCEO8muxdg",
+    "name": "ismihan Ergun - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UC3FAo2dy-aHrHq8mc3LRfCQ",
+    "name": "İKİMİZ Bİ DÜNYA - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCRSpxWGi-MAEENlPw0SLH4Q",
+    "name": "Hülya Yollarda - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCk6YiXhDuMiLHWvO1MLS0Ug",
+    "name": "Küçük Kadınlar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCw7sdo-O09liH_PZLhM5Mmg",
+    "name": "Şilan Yılmaz - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCGMghpDmBAqhz2p7eLHX-eg",
+    "name": "NTV - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC9TDTjbOjFB9jADmPhSAPsw",
+    "name": "NTV Seyahat - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCPc4wkYjZzfGv25-OibDDPQ",
+    "name": "Legacy - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCGJ6vdk9wjrPoU0NqrFNKew",
+    "name": "Tunahan Örs - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCOmyXijZ2ge07A4zBim4aQw",
+    "name": "OrtayaKarisik - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCcThpNwjjtb87flNNhW-yfA",
+    "name": "Renkli Çekim - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UC4Wn1uLmw9MliyMWsMVX2iQ",
+    "name": "MuhsinAtak - YouTube",
+    "category": "Turk Biker Vloger"
+  },
+  {
     "id": "channel_78b8fccb-16dc-4416-994d-0c70bfe715dc",
     "name": "Gurme Gözlük - YouTube",
-    "category": "Tourist"
+    "category": "Turkish vlogers"
   },
   {
     "id": "channel_ef761cb1-2c13-45e8-8098-e55f565d9ebc",
     "name": "MEDENİYET İZLERİ - YouTube",
-    "category": "Tourist"
+    "category": "Turkiye Seyahat"
   },
   {
     "id": "channel_669eec86-e052-4c33-a02f-592704d5c22b",
     "name": "Gezi Rotası - YouTube",
-    "category": ""
+    "category": "Turkiye Seyahat"
   },
   {
     "id": "channel_eac616f9-c2df-4145-bbb6-e0bef14e36ea",
     "name": "Ender mutfakta - YouTube",
-    "category": ""
+    "category": "Turkish vlogers"
   },
   {
     "id": "channel_91756be3-01c9-4a9f-b14e-d53546bb84e7",
     "name": "Duygu Dilek - YouTube",
-    "category": ""
+    "category": "Aydin"
   },
   {
     "id": "channel_dd386619-a2fa-4300-9d0c-d9e088a24ff5",
     "name": "gezilesiyer - YouTube",
-    "category": ""
+    "category": "Turkiye Seyahat"
   },
   {
     "id": "channel_2fe9050a-1ca3-4d30-9084-d7f3eab1a3e2",
     "name": "Limonografi - YouTube",
-    "category": ""
+    "category": "Turkish vlogers"
   },
   {
     "id": "channel_345763d7-8f99-4984-8c68-9d4b90ac7039",
     "name": "Ajans Aydın - YouTube",
-    "category": ""
-  },
-  {
-    "id": "channel_206f281a-01d7-414c-a96a-f14902e29fad",
-    "name": "MuhsinAtak - YouTube",
-    "category": ""
+    "category": "Aydin"
   },
   {
     "id": "channel_54a79dd3-27cd-4ae0-a32f-5a91dbbeebb9",
     "name": "The Promise Official - YouTube",
-    "category": ""
+    "category": "Türk dizisi"
   }
 ]

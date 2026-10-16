@@ -1,23 +1,40 @@
-# Charlie MJ Language — v5.0.0
+# Charlie MJ Language — v1.0.0 Stable Beta
 
-**A lightweight, local-first Chrome extension for learning languages through YouTube.**
+> A lightweight, local-first Chrome extension for learning languages through YouTube.
 
-![Charlie MJ Language v4.1.3](assets/charlie-mj-language-main-thumbnail.png)
+![Charlie MJ Language v1.0.0 Stable Beta](assets/charlie-mj-language-main-thumbnail.png)
 
-Charlie MJ Language keeps the original fast YouTube transcript workflow as its core engine and adds optional learning, transcript, library, category, synchronization, and performance systems around it.
-
-> **Core rule:** the original transcript-fetching functionality is preserved. New services are additive and must not replace, rewrite, or become dependencies of the original transcript engine.
+Charlie MJ Language keeps the original fast YouTube transcript workflow as its core engine and adds optional learning, transcript, library, category, synchronization, performance, and Dual Transcript systems around it.
 
 ## Download
 
 <p align="center">
-  <a href="/downloads/charliemj-language-v5.0.0-final-core-restored.zip">
+  <a href="/downloads/charliemj-language-v1.0.0-stable-beta-final.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
 
----
+## Table of Contents
 
+- [Overview](#overview)
+- [Version and Platform](#version-and-platform)
+- [Critical Core Functionality](#critical-core-functionality)
+- [Performance and Lightweight Architecture](#performance-and-lightweight-architecture)
+- [Dual Transcript](#dual-transcript--additional-system)
+- [Transcript Window](#transcript-window--additional-restore-behavior)
+- [Library and Notes](#library-notes--add-note)
+- [Local AI Learning](#local-ai-learning)
+- [YouTube Learning Interface](#youtube-learning-interface)
+- [My Learning Library](#my-learning-library)
+- [Categories](#categories)
+- [Data Sync](#data-sync)
+- [Settings](#settings)
+- [Installation](#installation)
+- [Recommended First-Run Configuration](#recommended-first-run-configuration)
+- [Troubleshooting](#troubleshooting)
+- [Development Guidelines](#development-guidelines)
+- [Regression Testing](#regression-testing)
+- [License](#license)
 ## Overview
 
 Charlie MJ Language brings together:
@@ -27,7 +44,6 @@ Charlie MJ Language brings together:
 - Click-to-seek transcript timeline navigation
 - Transcript scrolling and synchronization with video playback
 - Original and translated subtitles
-- Optional Dual Transcript functionality
 - Vocabulary and sentence learning
 - Notes, bookmarks, Watch Later, and learning-library tools
 - Favorite YouTube Channels and Playlists
@@ -47,28 +63,21 @@ The systems are designed to work independently. Basic transcript functionality d
 
 ## Version and Platform
 
-- **Version:** `5.0.0`
+- **Version:** `1.0.0 Stable Beta`
 - **Platform:** Chrome Extension — Manifest V3
 - **Minimum Chrome version:** 114
 - **License:** MIT
-- **Repository:** [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
+- **Repository:**  [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
 
-### Learning flow
+## Critical Core Functionality
 
-**Watch → Fetch → Understand → Capture → Organize → Review → Continue**
-
----
-
-# Critical Core Functionality
-
-## Fast Complete YouTube Transcript
+### Fast Complete YouTube Transcript
 
 The original transcript system is the primary and authoritative transcript engine.
 
-The v5.0.0 upgrade **does not replace or rewrite the original transcript-fetching implementation**.
+The v1.0.0 Stable Beta release **does not replace or rewrite the original transcript-fetching implementation**.
 
 The default engine remains:
-
 ```text
 legacy-youtube
 ```
@@ -102,11 +111,11 @@ The original transcript remains the reference source for additional transcript c
 
 ---
 
-# Performance and Lightweight Architecture
+## Performance and Lightweight Architecture
 
-v5.0.0 is designed so that optional services do not make normal YouTube playback heavy.
+v1.0.0 Stable Beta is designed so that optional services do not make normal YouTube playback heavy.
 
-## Startup principle
+### Startup principle
 
 The extension should load only what is required for normal operation:
 
@@ -118,27 +127,36 @@ The extension should load only what is required for normal operation:
 
 Heavy or optional services remain dormant until needed.
 
-## Service lifecycle
+### Service lifecycle
 
 Optional services follow an event-driven lifecycle:
-
 ```text
 IDLE
-  ↓
+
+  ↓
+
 ACTIVE
-  ↓
+
+  ↓
+
 INACTIVE
-  ↓
+
+  ↓
+
 SLEEPING
-  ↓
+
+  ↓
+
 WAKE
-  ↓
+
+  ↓
+
 ACTIVE
 ```
 
 Enabled does **not** mean continuously running.
 
-## Performance controls
+### Performance controls
 
 The Performance settings provide controls for:
 
@@ -157,47 +175,152 @@ The goal is for normal YouTube playback and the original fast transcript path to
 
 ---
 
-# Dual Transcript
+## Additional Transcript Services
 
-Dual Transcript is an **additional** transcript system.
+The original `legacy-youtube` transcript system remains the primary and authoritative transcript path.
 
-It does not replace the original transcript engine.
+Dual Transcript is an **additional, independent transcript system**. It does not replace, rewrite, delay, or become a dependency of the original transcript engine.
 
-## Available transcript sources
+The original transcript remains the reference source for:
 
-Where YouTube provides them, Dual Transcript can work with:
+- complete timestamped transcript fetching
+- transcript scrolling
+- timeline seeking
+- playback synchronization
+- subtitles and translation
+- vocabulary and sentence learning
 
-- native/original captions
-- native target-language captions
-- auto-generated captions
-- YouTube auto-translated captions
-- supported translation providers as fallback
-
-## Dual Transcript capabilities
-
-- discover available caption tracks
-- fetch additional tracks
-- display two transcript languages
-- synchronize timestamps
-- compare corresponding sentences
-- sentence alignment
-- word/phrase alignment where reliable
-- translation comparison
-- alignment confidence
-- preserve additional transcript data separately
-
-The original transcript remains the reference for comparison.
-
-## Lightweight behavior
-
-Dual Transcript is designed to activate when requested rather than continuously processing YouTube traffic.
-
-It must not interfere with normal YouTube player loading or create a second player session.
+No second YouTube player is created.
 
 ---
 
-# Local AI Learning
+## Dual Transcript — Additional System
 
+Dual Transcript is an optional additional transcript system. It does not replace or rewrite the original transcript engine.
+
+### Entry points
+
+Dual Transcript can be opened from:
+
+- the additional **Dual Transcript** button in the YouTube learning toolbar
+- the additional **Dual Transcript** tab inside the existing Transcript window
+
+### Fetching
+
+The system works directly with YouTube caption information and YouTube-native translation. Its workflow is:
+```text
+YouTube video
+    ↓
+YouTube player/caption information
+    ↓
+Real timed-text request/session detection
+    ↓
+Original caption track
+    ↓
+YouTube-native translated track
+    ↓
+Cue parsing and alignment
+    ↓
+Sentence merging
+    ↓
+YouTube timeline synchronization
+    ↓
+Dual Transcript UI
+```
+
+The original transcript engine remains independent.
+
+### Dual Transcript features
+
+- Original subtitle/transcript
+- YouTube-native auto-translated subtitle/transcript
+- Target-language selection
+- Complete timestamped cues
+- Cue alignment
+- Sentence merging
+- Timeline synchronization
+- Current-sentence tracking
+- Search
+- Refresh
+- Local caching
+- Translation availability status
+- Original subtitle color
+- Translated subtitle color
+- Synchronized speaker icon
+- Speaker replay/seek behavior
+- Dedicated Dual Transcript settings
+- Toolbar access
+- Transcript-window tab
+- Save supported words to the existing library
+- Save supported sentences to the existing library
+
+### Dual Transcript colors
+
+The dedicated **Dual Transcript** settings area provides independent colors for:
+
+- Original subtitle
+- Translated subtitle
+
+These colors affect the Dual Transcript display and do not replace the existing general subtitle styling.
+
+### Current sentence and speaker icon
+
+The optional speaker icon follows the sentence currently synchronized with the YouTube video's playback position.
+
+Dual Transcript settings provide controls for:
+
+- speaker indicator enable/disable
+- speaker icon color
+- speaker icon size
+- current-sentence synchronization
+
+The speaker action can seek/replay the associated sentence where supported.
+
+### Dual Transcript settings
+
+A separate **Dual Transcript** settings tab/section contains its own controls rather than replacing previous settings.
+
+### Dual Transcript independence
+
+If Dual Transcript cannot obtain a translated track, the original transcript workflow remains available. Translation availability depends on YouTube and the video's available caption tracks.
+
+---
+
+## Transcript Window — Additional Restore Behavior
+
+The existing Transcript window keeps its normal drag, resize, minimize, maximize, pin, close, restore, scrolling, and tab behavior.
+
+When the Transcript window is minimized, an additional hover-based restore/maximize control can appear when the mouse is moved near the minimized window. This provides a visible way to restore the window without replacing the existing window-management system.
+
+---
+
+## Library Notes — Add Note
+
+The **Notes** area of My Learning Library includes an additional **Add Note** action.
+
+A note can contain information such as:
+
+- title
+- note text
+- YouTube URL where applicable
+- timestamp where applicable
+
+Notes remain local learning records and must not be silently overwritten by metadata refresh or optional services.
+
+---
+
+### Data Sync — Default GitHub Repository
+
+The GitHub Repository URL field defaults to:
+```text
+https://github.com/awsrmmustansarjavaid/charlie-mj-language
+```
+
+The URL remains editable by the user.
+
+---
+
+## Local AI Learning
 Local AI/Ollama is an **optional service**.
 
 It is not required for the original transcript engine.
@@ -241,9 +364,9 @@ Local AI must never become a dependency for:
 
 ---
 
-# YouTube Learning Interface
+## YouTube Learning Interface
 
-## Learning toolbar
+### Learning toolbar
 
 The YouTube learning toolbar supports configurable:
 
@@ -257,7 +380,7 @@ The YouTube learning toolbar supports configurable:
 
 The toolbar remains integrated with the extension's YouTube learning workflow.
 
-## Transcript window
+### Transcript window
 
 The transcript window supports:
 
@@ -277,7 +400,7 @@ The transcript window supports:
 - transcript tabs
 - synchronized playback
 
-## Additional Learning window
+### Additional Learning window
 
 The Additional Learning window follows the same window-management model as transcript windows:
 
@@ -293,7 +416,7 @@ The Additional Learning window follows the same window-management model as trans
 
 ---
 
-# Live Transcript Highlighting
+## Live Transcript Highlighting
 
 Live Transcript Highlighting synchronizes the active transcript row with playback.
 
@@ -322,7 +445,7 @@ The feature operates on existing timestamped transcript segments and does not re
 
 ---
 
-# Subtitles and Translation
+## Subtitles and Translation
 
 The extension supports:
 
@@ -345,7 +468,7 @@ Native on-screen captions may be used as a fallback when timestamped transcript 
 
 ---
 
-# Word and Sentence Learning
+## Word and Sentence Learning
 
 Learning tools include:
 
@@ -366,7 +489,7 @@ Learning tools include:
 
 ---
 
-# My Learning Library
+## My Learning Library
 
 The local learning library supports:
 
@@ -385,7 +508,7 @@ Existing learning data should remain independent from optional services.
 
 ---
 
-# YouTube Favorites Library
+## YouTube Favorites Library
 
 The Favorites workspace supports:
 
@@ -439,7 +562,7 @@ Therefore:
 
 ---
 
-# Categories
+## Categories
 
 The library includes a dedicated **Category** area alongside:
 
@@ -473,7 +596,7 @@ A category detail view provides access to the channels and playlists assigned to
 
 ---
 
-# Extension Intelligence
+## Extension Intelligence
 
 The **Extension Intelligence** settings provide optional category assistance.
 
@@ -505,24 +628,28 @@ The extension must not silently create a new category when a suggestion has not 
 
 ---
 
-# Category Knowledge
+## Category Knowledge
 
 The category knowledge directory is organized separately from the extension UI:
-
 ```text
 data/
+
 └── category-knowledge/
-    ├── youtube-categories.json
-    ├── learning-categories.json
-    ├── category-keywords.json
-    └── category-rules.json
+
+    ├── youtube-categories.json
+
+    ├── learning-categories.json
+
+    ├── category-keywords.json
+
+    └── category-rules.json
 ```
 
 Official YouTube categories remain distinct from extension-specific learning categories.
 
 ---
 
-# YouTube Suggestions
+## YouTube Suggestions
 
 The Suggestions workspace separates recommendations from Favorites.
 
@@ -532,9 +659,9 @@ It supports:
 - Suggested Playlists
 
 Each result clearly identifies its type:
-
 ```text
 CHANNEL
+
 PLAYLIST
 ```
 
@@ -551,7 +678,7 @@ Suggestions are not automatically treated as Favorites.
 
 ---
 
-# Metadata and Thumbnails
+## Metadata and Thumbnails
 
 The Favorites/library system can obtain YouTube metadata and thumbnails when available.
 
@@ -576,32 +703,54 @@ Metadata refresh should be rate-limited, cached, and performed only when needed.
 
 ---
 
-# Data Sync
+## Data Sync
 
-The **Data Sync** system provides tools for maintaining local data and optional GitHub-backed backups/synchronization.
+The ****Data Sync**** system provides one clear workspace for maintaining local data and optional GitHub-backed backups/synchronization.
 
-Supported concepts include:
+The Data Sync workspace is intentionally presented as a ****single Data Sync section**** so the user is not confused by repeated sections for the same feature.
 
-- local database
-- GitHub repository synchronization
-- health check
+Supported actions include:
+
+- local database status
+- GitHub database status
+- total local record count
+- total GitHub record count
+- per-resource counts for channels, playlists, and categories
+- Choose Local Folder
+- Validate Local
+- Health Check
+- Compare Local ↔ GitHub
 - Pull from GitHub
-- Local vs GitHub comparison
-- Prepare Backup for GitHub
-- import
-- export
+- Prepare ZIP Backup
 - scheduled synchronization
 - separate JSON data files
 - indexes for fast lookup
 
-Stable IDs remain the primary identity:
+**### Compare Local ↔ GitHub**
 
+The comparison result is displayed as a structured result view rather than raw JSON. It should clearly separate:
+
+- Local totals
+- GitHub totals
+- matching records
+- local-only records
+- GitHub-only records
+- changed/different records
+- database directories/files involved
+- recommended next action
+
+**### ZIP backup**
+
+****Prepare ZIP Backup**** creates one downloadable ZIP archive containing the structured database JSON files and indexes. It does not download the backup as a single loose JSON file.
+
+Stable IDs remain the primary identity:
 ```text
 Channel ID
+
 Playlist ID
 ```
 
-## Important browser limitation
+**### Important browser limitation**
 
 A normal Chrome extension cannot silently write to arbitrary local filesystem paths.
 
@@ -616,7 +765,7 @@ The extension must not claim unrestricted access to arbitrary folders.
 
 ---
 
-# Import and Export
+**# Import and Export**
 
 JSON is the primary structured backup format.
 
@@ -652,7 +801,7 @@ TXT exports can provide a readable list containing:
 
 ---
 
-# Settings
+### Settings
 
 The existing settings remain part of the extension.
 
@@ -664,7 +813,6 @@ Important settings areas include:
 - Subtitle and Timeline
 - Appearance
 - Service Engine
-- Dual Transcript
 - Local AI
 - Favorites
 - Categories
@@ -678,7 +826,7 @@ Settings should remain backward-compatible with existing stored values.
 
 ---
 
-# UI Design
+## UI Design
 
 The settings workspace uses a grid-oriented layout.
 
@@ -699,7 +847,7 @@ Existing functionality should not be removed merely to redesign the interface.
 
 ---
 
-# Notifications and Save Reliability
+## Notifications and Save Reliability
 
 Save operations should report success only after the underlying storage operation succeeds.
 
@@ -717,7 +865,7 @@ If Chrome invalidates an extension content-script context after an extension rel
 
 ---
 
-# Privacy and Storage
+## Privacy and Storage
 
 Charlie MJ Language is local-first.
 
@@ -736,13 +884,12 @@ Users should review the privacy policies and terms of any external provider they
 
 ---
 
-# Installation
+## Installation
 
 1. Download or clone this repository.
 2. Extract the ZIP if necessary.
 3. Open Chrome.
 4. Visit:
-
 ```text
 chrome://extensions/
 ```
@@ -756,7 +903,7 @@ If YouTube was already open when the extension was installed or reloaded, refres
 
 ---
 
-# Recommended First-Run Configuration
+## Recommended First-Run Configuration
 
 For the lightest normal YouTube experience:
 
@@ -770,49 +917,80 @@ For the lightest normal YouTube experience:
 8. Configure Data Sync separately from normal transcript operation.
 
 This keeps the critical path focused on:
-
 ```text
 YouTube
-  ↓
+
+  ↓
+
 Original Transcript Engine
-  ↓
+
+  ↓
+
 Complete Transcript
-  ↓
+
+  ↓
+
 Scroll / Timeline / Learning
 ```
 
 ---
 
-# Project Structure
-
+## Project Structure
 ```text
 charlie-mj-language/
+
 │
+
 ├── assets/
+
 ├── data/
-│   └── category-knowledge/
-│       ├── youtube-categories.json
-│       ├── learning-categories.json
-│       ├── category-keywords.json
-│       └── category-rules.json
+
+│   └── category-knowledge/
+
+│       ├── youtube-categories.json
+
+│       ├── learning-categories.json
+
+│       ├── category-keywords.json
+
+│       └── category-rules.json
+
 │
+
 ├── docs/
+
 ├── icons/
+
 │
+
 ├── src/
-│   ├── background/
-│   ├── content/
-│   │   ├── youtube.js
-│   │   └── youtube-page-bridge.js
-│   ├── dashboard/
-│   ├── favorites/
-│   ├── lib/
-│   ├── options/
-│   └── popup/
+
+│   ├── background/
+
+│   ├── content/
+
+│   │   ├── youtube.js
+
+│   │   └── youtube-page-bridge.js
+
+│   ├── dashboard/
+
+│   ├── favorites/
+
+│   ├── lib/
+
+│   ├── options/
+
+│   └── popup/
+
 │
+
 ├── transcript-service.config.json
+
 ├── manifest.json
+
 ├── LICENSE
+
 └── README.md
 ```
 
@@ -820,7 +998,21 @@ The exact source tree may evolve as new independent services are added. The impo
 
 ---
 
-# Architecture Principles
+## Architecture Principles
+
+## Strict additive-only development rule
+
+For this project, existing working systems and features are treated as **untouchable unless the user explicitly requests a change**.
+
+When adding functionality:
+
+- add new code as an independent subsystem where practical
+- do not remove an existing feature to make room for a new feature
+- do not replace a working implementation simply because a new implementation is available
+- do not change unrelated existing behavior
+- keep existing settings and storage compatible
+- test the original feature before and after every new integration
+- treat a regression in an existing working feature as a release blocker
 
 v5.0.0 follows these principles:
 
@@ -866,11 +1058,11 @@ Additional transcript sources are compared against the original rather than repl
 
 ---
 
-# Regression Testing
+## Regression Testing
 
 Before releasing a build, verify at minimum:
 
-## Core transcript
+### Core transcript
 
 - YouTube video loads normally.
 - YouTube playback starts without extension-induced buffering.
@@ -883,22 +1075,21 @@ Before releasing a build, verify at minimum:
 - Original subtitles still work.
 - Translation still works.
 
-## Additional transcript
+### Additional transcript services
 
-- Dual Transcript remains inactive when not requested.
-- Activating Dual Transcript does not recreate the YouTube player.
-- Additional tracks load when available.
-- Original transcript remains unchanged.
-- Sentence/timestamp alignment works where supported.
+- No Dual Transcript / Dual Fetch service is loaded.
+- The original transcript engine remains unchanged.
+- Additional optional services cannot delay or replace the original transcript.
+- No second YouTube player is created.
 
-## Local AI
+**## Local AI**
 
 - AI can be disabled.
 - Disabling AI does not affect the transcript.
 - AI requests occur only when an AI feature is used.
 - Failure to connect to Ollama does not break YouTube.
 
-## Library
+### Library
 
 - Channels can be saved.
 - Playlists can be saved.
@@ -908,7 +1099,7 @@ Before releasing a build, verify at minimum:
 - Learning Groups support view/edit/remove.
 - Metadata and thumbnails can refresh without overwriting user data.
 
-## Performance
+### Performance
 
 - Extension startup remains lightweight.
 - YouTube playback remains responsive.
@@ -916,7 +1107,7 @@ Before releasing a build, verify at minimum:
 - No unnecessary continuous network traffic is generated.
 - Service sleep/wake behavior works as configured.
 
-## Settings
+### Settings
 
 - Existing settings remain available.
 - New settings appear in their intended sections/tabs.
@@ -925,7 +1116,7 @@ Before releasing a build, verify at minimum:
 
 ---
 
-# Known Platform Considerations
+## Known Platform Considerations
 
 YouTube can change its player, caption endpoints, page structure, and internal APIs without notice.
 
@@ -944,14 +1135,13 @@ Live Chrome/YouTube regression testing should be performed before distributing a
 
 ---
 
-# Development Guidelines
+## Development Guidelines
 
 When modifying this project:
 
 - Do not rewrite the original transcript-fetching engine to add a new feature.
 - Do not remove existing settings to make room for new settings.
 - Do not make Local AI a transcript dependency.
-- Do not make Dual Transcript a transcript dependency.
 - Do not create a second YouTube player.
 - Do not introduce continuous high-frequency YouTube polling.
 - Do not overwrite user notes, tags, categories, or learning data during metadata refresh.
@@ -963,7 +1153,7 @@ When modifying this project:
 
 ---
 
-# License
+## License
 
 This project is distributed under the MIT License.
 

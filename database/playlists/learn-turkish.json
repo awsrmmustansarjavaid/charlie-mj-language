@@ -1,0 +1,62 @@
+[
+  {
+    "category": "Learn Turkish",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "",
+    "collectionIds": [],
+    "dateAdded": "2026-10-16T11:11:23.493Z",
+    "description": "",
+    "handle": "",
+    "id": "playlist_de3382f1-4409-4589-8ae9-bbde4cb02154",
+    "isPinned": false,
+    "kind": "playlist",
+    "metadataLastChecked": "2026-10-16T11:11:23.480Z",
+    "name": "1000 Turkish Phrases for Everyone",
+    "notes": "1000 Turkish Phrases for Everyone",
+    "owner": "",
+    "playlistId": "PLZP44vWcKKfa4hTLlpTs3Gz2uLM5jJNcK",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://i.ytimg.com/vi/Z04mGzQDp8A/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&amp;rs=AOn4CLCP84HeoD1AzQBBcYIM6JIyMbix1w&amp;days_since_epoch=20742",
+    "thumbnailChecked": "2026-10-16T11:11:23.480Z",
+    "title": "1000 Turkish Phrases for Everyone",
+    "updatedAt": "2026-10-16T12:11:16.321Z",
+    "url": "https://www.youtube.com/playlist?list=PLZP44vWcKKfa4hTLlpTs3Gz2uLM5jJNcK",
+    "videoCount": ""
+  },
+  {
+    "category": "Learn Turkish",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "",
+    "collectionIds": [],
+    "dateAdded": "2026-10-16T11:05:33.538Z",
+    "description": "",
+    "handle": "",
+    "id": "playlist_d375dc28-1c80-4f73-8bfe-0bd77ca04985",
+    "isPinned": false,
+    "kind": "playlist",
+    "metadataLastChecked": "2026-10-16T11:05:33.531Z",
+    "name": "Turkish Grammar Videos",
+    "notes": "Turkish Grammar Videos",
+    "owner": "FC LangMedia",
+    "playlistId": "PLBv6B6E0IuHitPVg94ehaWMgOD2KFMpAs",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://i.ytimg.com/vi/vhfCuYtnR2I/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&amp;rs=AOn4CLArn56__wz-cHeHBBmPUR6NLmoqUg&amp;days_since_epoch=20742",
+    "thumbnailChecked": "2026-10-16T11:05:33.531Z",
+    "title": "Turkish Grammar Videos",
+    "updatedAt": "2026-10-16T12:12:44.069Z",
+    "url": "https://www.youtube.com/playlist?list=PLBv6B6E0IuHitPVg94ehaWMgOD2KFMpAs",
+    "videoCount": ""
+  }
+]

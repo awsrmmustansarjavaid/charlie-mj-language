@@ -35,7 +35,7 @@ async function init(){
   $('#addPage').onclick=()=>{$('#pageName').value='';$('#pageTags').value='';$('#pageDescription').value='';$('#pageDialog').showModal()};
   $('#copyPage').onclick=copyPage;$('#downloadPage').onclick=()=>openExport(true);$('#exportPage').onclick=()=>openExport(false);$('#importPage').onclick=()=>$('#importFile').click();
   $('#importFile').onchange=importPage;['search','tagFilter'].forEach(id=>$('#'+id).oninput=render);['levelFilter','videoFilter','typeFilter'].forEach(id=>$('#'+id).onchange=render);
-  $('#pageForm').onsubmit=createPage;$('#exportForm').onsubmit=submitExport;$('#pagePickerForm').onsubmit=addToCollection;$('#checkpointForm').onsubmit=createCheckpoint;$('#confirmYes').onclick=confirmDelete;
+  $('#pageForm').onsubmit=createPage;$('#noteForm').onsubmit=createLibraryNote;$('#exportForm').onsubmit=submitExport;$('#pagePickerForm').onsubmit=addToCollection;$('#checkpointForm').onsubmit=createCheckpoint;$('#confirmYes').onclick=confirmDelete;
   document.addEventListener('click',onClick); await loadPages(); await load();
 }
 async function loadPages(){let s=await chrome.storage.local.get('libraryPages');pages=Array.isArray(s.libraryPages)?s.libraryPages:[];renderNav()}
@@ -61,7 +61,7 @@ async function pageData(p){
     const h=s.history||[], out=[];
     for(const [videoId,notes] of Object.entries(s.notesByVideo||{})){
       const v=h.find(x=>x.videoId===videoId)||{};
-      (Array.isArray(notes)?notes:[]).forEach((note,i)=>out.push({id:note.id||`${videoId}:note:${i}`,videoId,videoTitle:v.videoTitle||'YouTube Video',url:v.url||'',timestamp:note.timestamp||0,note:String(note.text||note.html||''),html:note.html||'',createdAt:note.createdAt||'',source:'Notes'}));
+      (Array.isArray(notes)?notes:[]).forEach((note,i)=>out.push({id:note.id||`${videoId}:note:${i}`,videoId,videoTitle:videoId==='__library__'?(note.title||'Library Note'):(v.videoTitle||note.title||'YouTube Video'),title:note.title||'',url:note.url||v.url||'',timestamp:note.timestamp||0,note:String(note.text||note.html||''),html:note.html||'',createdAt:note.createdAt||'',source:note.source||'Notes'}));
     }
     return out;
   }
@@ -72,6 +72,7 @@ function render(){
  $('#overview').hidden=true;let p=info(),q=$('#search').value.trim().toLowerCase(),lv=$('#levelFilter').value,tag=$('#tagFilter').value.trim().toLowerCase(),vid=$('#videoFilter').value,typ=$('#typeFilter').value;
  let filtered=data.filter(x=>{let hay=JSON.stringify(x).toLowerCase();let tags=(x.tags||[]).join(' ').toLowerCase();let itemType=x.type||x.kind||(p.id==='videos'||p.id==='continue'?'video':'');return(!q||hay.includes(q))&&(!lv||String(x.level||'').toUpperCase()===lv)&&(!tag||tags.includes(tag))&&(!vid||x.videoId===vid)&&(!typ||itemType===typ)});
  $('#typeFilter').disabled=['overview','collections','history','continue','videos','checkpoints'].includes(p.id);
+ if(p.id==='notes'){ const host=$('.toolbar-card .bulk-actions'); if(host && !host.querySelector('[data-add-library-note]')){ const b=document.createElement('button'); b.type='button'; b.dataset.addLibraryNote='1'; b.className='primary'; b.textContent='＋ Add Note'; host.insertBefore(b, host.firstChild); } } else { $('.toolbar-card .bulk-actions [data-add-library-note]')?.remove(); }
  renderNav();renderVideoFilter();renderStats(filtered,p);
  $('#items').className=`item-grid ${view==='list'?'list-view':''}`;
  $('#items').innerHTML=filtered.length?filtered.map(x=>card(x,p)).join(''):`<div class="empty"><h3>Nothing saved here yet</h3><p>${esc(p.name)} will fill automatically as you learn.</p></div>`;
@@ -112,6 +113,7 @@ function renderOverview(){
 }
 function renderCollections(){ $('#overview').hidden=true;$('#stats').innerHTML=`<div class="stat"><strong>${pages.length}</strong><span>Collections</span></div>`;$('#items').className=`item-grid ${view==='list'?'list-view':''}`;$('#items').innerHTML=pages.length?pages.map(p=>`<article class="item-card collection-card"><div class="collection-icon">📁</div><div class="item-body"><div class="card-top"><span class="pill">Collection</span></div><h3 class="item-title">${esc(p.name)}</h3><p class="item-context">${esc(p.description||'Custom learning collection')} · ${(p.tags||[]).map(esc).join(', ')}</p><div class="item-actions"><button data-page-id="custom:${esc(p.id)}">Open</button><button data-delete-page="${esc(p.id)}">🗑 Delete</button></div></div></article>`).join(''):'<div class="empty"><h3>Create your first collection</h3><p>Courses, languages, shows, grammar topics or anything else you want to learn.</p></div>'}
 function onClick(e){
+ if(e.target.closest('[data-add-library-note]')){openLibraryNote();return}
  let n=e.target.closest('[data-page-id]');if(n){current=n.dataset.pageId;load();return}
  let d=e.target.closest('[data-delete-page]');if(d){askDelete(d.dataset.deletePage);return}
  let r=e.target.closest('[data-remove-item]');if(r){removeItem(r.dataset.removeItem);return}
@@ -129,6 +131,27 @@ function onClick(e){
 }
 async function resumeVideo(id){let s=await chrome.storage.local.get('videoProgress');let p=(s.videoProgress||[]).find(x=>x.videoId===id);if(p?.url)chrome.tabs.create({url:ts(p.url,p.lastPosition)});else notify('No resume URL saved.')}
 async function toggleFavorite(id,json){let s=await chrome.storage.local.get('favorites');let a=Array.isArray(s.favorites)?s.favorites:[];let found=a.find(x=>(x.id&&x.id===id)||(x.videoId&&x.videoId===id));if(found){a=a.filter(x=>!((x.id&&x.id===id)||(x.videoId&&x.videoId===id)))}else{let x=data.find(v=>(v.id&&v.id===id)||(v.videoId&&v.videoId===id));if(!x&&json){try{x=JSON.parse(json)}catch{}}if(x)a.unshift({...x,favorite:true,favoritedAt:new Date().toISOString()})}await chrome.storage.local.set({favorites:a});notify(found?'Removed from Favorites.':'Added to Favorites.');await load()}
+function openLibraryNote(){
+  $('#noteTitle').value=''; $('#noteText').value=''; $('#noteUrl').value=''; $('#noteTimestamp').value='0'; $('#noteDialog').showModal();
+}
+async function createLibraryNote(e){
+  e.preventDefault();
+  const title=$('#noteTitle').value.trim()||'Library Note';
+  const text=$('#noteText').value.trim();
+  if(!text){notify('Write a note first.');return}
+  const url=$('#noteUrl').value.trim();
+  const timestamp=Math.max(0,Number($('#noteTimestamp').value)||0);
+  let videoId='__library__';
+  try{ if(url){ const u=new URL(url); videoId=u.searchParams.get('v')||(/\/shorts\/([^/?]+)/.exec(u.pathname)||[])[1]||'__library__'; } }catch(_){ }
+  const keyVideoId=videoId;
+  const stored=await chrome.storage.local.get('notesByVideo');
+  const all=stored.notesByVideo&&typeof stored.notesByVideo==='object'?{...stored.notesByVideo}:{};
+  const list=Array.isArray(all[keyVideoId])?[...all[keyVideoId]]:[];
+  list.unshift({id:crypto.randomUUID(),title,html:`<p>${esc(text).replace(/\n/g,'<br>')}</p>`,text,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),url,timestamp,source:'Library Note',videoId:keyVideoId});
+  all[keyVideoId]=list;
+  await chrome.storage.local.set({notesByVideo:all});
+  $('#noteDialog').close(); notify('Note added to your Library.'); if(current==='notes') await load();
+}
 function openCheckpoint(video,time){$('#checkpointVideo').value=video;$('#checkpointTime').value=Number(time)||0;$('#checkpointLabel').value='';$('#checkpointDialog').showModal()}
 async function createCheckpoint(e){e.preventDefault();let id=$('#checkpointVideo').value,time=Number($('#checkpointTime').value)||0,label=$('#checkpointLabel').value.trim()||'Learning checkpoint',h=(await chrome.storage.local.get('history')).history||[],v=h.find(x=>x.videoId===id)||{};let s=await chrome.storage.local.get('checkpoints'),a=s.checkpoints||[];a.unshift({id:crypto.randomUUID(),videoId:id,videoTitle:v.videoTitle||'YouTube Video',url:v.url||`https://www.youtube.com/watch?v=${id}`,timestamp:time,label,createdAt:new Date().toISOString(),type:'checkpoint'});await chrome.storage.local.set({checkpoints:a});$('#checkpointDialog').close();notify('Checkpoint saved.');if(current==='checkpoints')load()}
 async function loadSource(key){let s=await chrome.storage.local.get(key);return Array.isArray(s[key])?s[key]:[]}
