@@ -2287,7 +2287,91 @@
     }
   }
 
+  // ============================================================
+// ADDITIONAL: Manual Transcript Scrolling Support
+// Keeps existing timeline sync + auto-scroll functionality.
+// Manual scrolling temporarily takes control of the scroll
+// position without disabling subtitle synchronization.
+// ============================================================
+
+function enableAdditionalManualTranscriptScroll(list) {
+  if (!list || list.dataset.cmjManualScrollEnabled === '1') return;
+
+  list.dataset.cmjManualScrollEnabled = '1';
+
+  const state = {
+    manual: false,
+    lastUserScroll: 0,
+    resumeDelay: 5000
+  };
+
+  list.__cmjManualScrollState = state;
+
+  const markManualScroll = () => {
+    state.manual = true;
+    state.lastUserScroll = Date.now();
+
+    // Do NOT change the current subtitle.
+    // Do NOT stop YouTube timeline synchronization.
+    // Only prevent automatic repositioning of the scroll.
+    list.dataset.cmjManualScrolling = '1';
+  };
+
+  const finishManualScroll = () => {
+    state.lastUserScroll = Date.now();
+  };
+
+  list.addEventListener(
+    'wheel',
+    markManualScroll,
+    { passive: true }
+  );
+
+  list.addEventListener(
+    'touchmove',
+    markManualScroll,
+    { passive: true }
+  );
+
+  list.addEventListener(
+    'pointerdown',
+    markManualScroll,
+    { passive: true }
+  );
+
+  list.addEventListener(
+    'scroll',
+    finishManualScroll,
+    { passive: true }
+  );
+
+  // Allow the existing auto-follow system to resume after
+  // the user has stopped manually scrolling.
+  const checkResume = () => {
+    if (
+      state.manual &&
+      Date.now() - state.lastUserScroll >= state.resumeDelay
+    ) {
+      state.manual = false;
+      list.dataset.cmjManualScrolling = '0';
+    }
+
+    requestAnimationFrame(checkResume);
+  };
+
+  requestAnimationFrame(checkResume);
+}
+
+function isAdditionalManualTranscriptScrolling(list) {
+  return !!(
+    list &&
+    list.__cmjManualScrollState &&
+    list.__cmjManualScrollState.manual
+  );
+}
+
   function bindLiveTranscriptScroll(list) {
+    enableAdditionalManualTranscriptScroll(list);
     if (!list || list.dataset.cmjLiveScrollBound === 'true') return;
     list.dataset.cmjLiveScrollBound = 'true';
     const markManualScroll = () => {
@@ -2342,7 +2426,8 @@
     active.classList.remove('cmj-live-style-soft-background','cmj-live-style-rounded','cmj-live-style-underline','cmj-live-style-accent','cmj-live-style-text');
     const styleMap = {'soft-background':'soft-background','rounded-background':'rounded','underline':'underline','left-accent':'accent','text-color':'text'};
     active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
-    const shouldScroll = settings.liveTranscriptAutoScroll !== false && (changed || forceScroll);
+    const manualScrolling = isAdditionalManualTranscriptScrolling(list);
+    const shouldScroll = settings.liveTranscriptAutoScroll !== false && !manualScrolling && (changed || forceScroll);
     if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
     if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
     if (!forceScroll && Date.now() - state.liveHighlightLastAutoScrollAt < 250) return;

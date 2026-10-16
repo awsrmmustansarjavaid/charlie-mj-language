@@ -2,6 +2,33 @@
   {
     "category": "Aydin",
     "categorySuggestion": {
+      "confidence": 0.8,
+      "name": "Aydin",
+      "source": "existing-category",
+      "suggestNew": false
+    },
+    "channelId": "UCYT-ywSiWtPK_lf-dM-Kp9A",
+    "dateAdded": "2026-10-16T13:45:29.881Z",
+    "description": "Boyun eğmeyen haberciliği birlikte büyütmek için sansürsüz konuşalım. Yayınlara ben de destek olmak istiyorum derseniz: https://www.youtube.com/channel/UCYT-ywSiWtPK_lf-dM-Kp9A/join https://www.patreon.com/aydinsule1 Haber ve bilgi paylaşımı için; aydinsule1@gmail.com",
+    "handle": "@aydinsule1",
+    "id": "channel_c45d958d-001e-41ae-a253-bcaeecfc43aa",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-16T13:45:29.870Z",
+    "name": "Şule AYDIN - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_k7iTEeCgZGHWSFXkdmuEwFF7RBhrj3MgRixC26fHS9q4c=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-16T13:45:29.870Z",
+    "updatedAt": "2026-10-16T13:45:29.881Z",
+    "url": "https://www.youtube.com/@aydinsule1",
+    "videoCount": ""
+  },
+  {
+    "category": "Aydin",
+    "categorySuggestion": {
       "confidence": 0,
       "name": "Uncategorized",
       "reason": "no-match",
