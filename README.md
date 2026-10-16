@@ -69,6 +69,8 @@ The systems are designed to work independently. Basic transcript functionality d
 - **License:** MIT
 - **Repository:**  [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
 
+![Charlie MJ Language v1.0.0 Stable Beta](assets/YouTube%20Learning%20Companion%20Extension.png)
+
 ## Critical Core Functionality
 
 ### Fast Complete YouTube Transcript
