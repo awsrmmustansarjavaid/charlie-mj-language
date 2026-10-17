@@ -55,8 +55,8 @@ async function sendToActiveTab(message) {
   }
 
   try {
-    await chrome.tabs.sendMessage(tab.id, message);
-    return true;
+    const response = await chrome.tabs.sendMessage(tab.id, message);
+    return response ?? true;
   } catch (firstError) {
     // The receiver can be missing when YouTube was already open during an
     // extension reload. Recover by injecting the same files used by the MV3
@@ -77,8 +77,8 @@ async function sendToActiveTab(message) {
         files: ['src/content/youtube.js']
       });
       await new Promise(resolve => setTimeout(resolve, 120));
-      await chrome.tabs.sendMessage(tab.id, message);
-      return true;
+      const response = await chrome.tabs.sendMessage(tab.id, message);
+      return response ?? true;
     } catch (secondError) {
       console.warn('Charlie MJ could not reach the YouTube content layer.', {
         firstError,
@@ -109,11 +109,52 @@ async function loadStats() {
   $('#videos').textContent = String((data.watchLater || []).length);
 }
 
+function showPopupNotice(message, kind = 'success') {
+  const notice = $('#popupNotice');
+  if (!notice) return;
+  notice.textContent = message;
+  notice.className = `popup-notice ${kind}`;
+  notice.hidden = false;
+  clearTimeout(showPopupNotice.timer);
+  showPopupNotice.timer = setTimeout(() => { notice.hidden = true; }, 3200);
+}
+
+async function loadLightweightState() {
+  try {
+    const stored = await chrome.storage.local.get('cmjLightweightSleepMode');
+    const sleeping = stored.cmjLightweightSleepMode === true;
+    const button = $('#sleepMode');
+    if (button) {
+      button.classList.toggle('active', sleeping);
+      button.textContent = sleeping ? '☀ Wake Charlie MJ' : '💤 Lightweight Sleep';
+    }
+  } catch (_) {}
+}
+
 $('#learn').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#focus').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_TOGGLE_FOCUS' }));
 $('#transcript').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#watch').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_ADD_WATCH_LATER' }));
 
+$('#resetNetwork').addEventListener('click', async () => {
+  showPopupNotice('Resetting YouTube caption connection…', 'success');
+  const result = await sendToActiveTab({ type: 'CMJ_RESET_YOUTUBE_NETWORK' });
+  if (result?.ok === false) showPopupNotice(result.error || 'Reset could not start on this tab.', 'success');
+  else showPopupNotice('YouTube network/caption state cleared. One controlled retry will run, then return to sleep.', 'success');
+});
+
+$('#sleepMode').addEventListener('click', async () => {
+  const stored = await chrome.storage.local.get('cmjLightweightSleepMode');
+  const sleeping = stored.cmjLightweightSleepMode === true;
+  const next = !sleeping;
+  await chrome.storage.local.set({ cmjLightweightSleepMode: next });
+  const result = await sendToActiveTab({ type: 'CMJ_SET_LIGHTWEIGHT_SLEEP', enabled: next });
+  if (result?.ok === false && next) showPopupNotice('Lightweight Sleep saved. Open YouTube later to apply its page-side pause.', 'sleep');
+  else showPopupNotice(next ? 'Lightweight Sleep is ON. Optional activity is paused.' : 'Charlie MJ is awake again.', 'sleep');
+  await loadLightweightState();
+});
+
+$('#about').addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/about/about.html') }));
 $('#settings').addEventListener('click', () => chrome.runtime.openOptionsPage());
 document.getElementById('favorites')?.addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/favorites/favorites.html') }));
 
@@ -122,3 +163,4 @@ $('#library').addEventListener('click', () => {
 });
 
 loadStats().catch(error => console.warn('Charlie MJ popup statistics could not be loaded.', error));
+loadLightweightState();

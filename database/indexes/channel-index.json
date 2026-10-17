@@ -1,78 +1,283 @@
 [
   {
-    "id": "UC7VWjWks866ALEL_94Bj74w",
-    "name": "Kalucci - YouTube",
+    "id": "UC7fWeaHhqgM4Ry-RMpM2YYw",
+    "name": "TRT World - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC_LdgZiGPqhvkOlSQR1H1cA",
+    "name": "Urdu 1 Official - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCSAJ7W0a8heVQrG-FTBCdyA",
+    "name": "The Professor - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCPy8l1I_lSGSGyNZ2Zf2xrg",
+    "name": "Sıfır Bir - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC87i0zjmuKzpZTOmvi7AYqQ",
+    "name": "Julia | Turkish Teacher - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
+    "id": "UCtxMrki2fnCPG3GOX4kyINg",
+    "name": "Go Türkiye - YouTube",
     "category": "Turkiye Seyahat"
   },
   {
-    "id": "UCdBo4wxIl0iMwa3DL0KO2CA",
-    "name": "Wanderlust Feet Vlog - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCDannGNXphlR3vLJ4JJfPkA",
+    "name": "Turk 1 by DRM - YouTube",
+    "category": "Turkish TV"
   },
   {
-    "id": "UC5WuOOdLyKtpSCcKyJdE5bA",
-    "name": "Şenay Akkurt - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCTVR8LvMMm08A2kI0vAvyXQ",
+    "name": "Şahane Hayatım - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCLMQqAoaKBOIQP9Tqnm6njg",
-    "name": "Gezeyenti - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UC5d3mcgb1Fhn5KNfpNTKtnQ",
+    "name": "Aile Dizisi - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCaB8w5_u6gaPlupjWHUtf2g",
-    "name": "Melis Akyıldız - YouTube",
-    "category": "Turkish Foodie Vloger"
+    "id": "UC0wR33ME38keyy0Bg0lOs3A",
+    "name": "Hayat Bugün - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCYRBWnivlRwLYVgI-osXx1w",
-    "name": "Gürkan travel - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCSuT6t8Yet4XaYF5juKjyxg",
+    "name": "Kahve Bahane - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UC2AG3kJwZVW2WcM6zuH_4xQ",
-    "name": "Türkiye'yi Geziyorum - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCQ2_iKgBBZMq9FWyAasmJQA",
+    "name": "Canım Annem - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCN4NiCAWJbzuSaS1_mY6meQ",
-    "name": "Alp Kırşan'la Bir Yolculuk Hikayesi - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCJyqcMfUu20mztSt2BF_C0w",
+    "name": "Aşka Mahkum - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCmgD0NFxQWlWCil6s83Od5Q",
-    "name": "Buğra Karaman - YouTube",
-    "category": "Turkish Foodie Vloger"
+    "id": "UCrj5zWUY4cZn5Oq9eEJVrbw",
+    "name": "Kan Çiçekleri - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCIYo3Ne_LyW1gaq9ivU16sA",
-    "name": "Gezi Rotası - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCNIr3_nBs6ba2BS5076rSaQ",
+    "name": "Kiralık Aşk - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UC6VMzRFLZy_aS24Y78dfleA",
-    "name": "Dünyadan Bildiriyoruz - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCzYNcw7NI3KA2bimswFRY8g",
+    "name": "Son Yaz - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCjbqHxhf5aM7jn3FLkeJbuQ",
-    "name": "Atakan Okumuş - YouTube",
-    "category": "Turkish Foodie Vloger"
+    "id": "UCYN-z1B7Luc54FFmgdExjnw",
+    "name": "Bahar - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UC0orOTjBAHcoVcZZVmNS5Fw",
-    "name": "Gezgin Çoban - YouTube",
-    "category": "Turkiye Seyahat"
+    "id": "UCPhRY37z7u68NCDZgMojJvg",
+    "name": "Aşk ve Gözyaşı - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCYT-ywSiWtPK_lf-dM-Kp9A",
-    "name": "Şule AYDIN - YouTube",
-    "category": "Aydin"
+    "id": "UCFoe1tg8MuHjRzmqXtV816A",
+    "name": "KanalD - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCI9GFXTwpgU4YkyRGG9p_hA",
+    "name": "Veliaht - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCsVJDy6KueIEQ89-rQ1PF-w",
+    "name": "Halef: Köklerin Çağrısı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCJe13zu6MyE6Oueac41KAqg",
+    "name": "NOW - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCcqrjI4zmEO4VmZkd8m-rgQ",
+    "name": "Üç Kız Kardeş - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCbzmvkaP9ohAabm7oHWr2Lw",
+    "name": "Aynadaki Yabancı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCx7gLo8iS4ofgNfBENUxWDA",
+    "name": "Taşacak Bu Deniz - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCvFudBDDILdDljN4VIZ4Msw",
+    "name": "TRT 1 - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC5vnjCVQWyos1pmKTd36i-w",
+    "name": "Most Production - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC9qIbva82rrHzSM1kI7Cb6g",
+    "name": "Daha 17 - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCIh4Huh5s1Ot0ZT1BWf3LiA",
+    "name": "Dizi Dünyası - NOW - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC0SnrpkD9htjfW2_KDk9WuA",
+    "name": "Yeni Hayat - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC8HkYRnZHgSkkkPavTe9OSA",
+    "name": "Yazlık Dizi Kulübü - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCalPDcmRPlpaaXgNg8csL5w",
+    "name": "Güller ve Günahlar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCP2b77If-BpdTv9bxC_o8Xg",
+    "name": "Aşk ve Taht - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCUVZ7T_kwkxDOGFcDlFI-hg",
+    "name": "atv - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC3io_Be860afwv_fk99OegA",
+    "name": "Baş Belası - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCHprDc8AKwqFlpEIvl684Lg",
+    "name": "Senden Daha Güzel - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCehp1spQnKiZpucxbJ4X8sA",
+    "name": "Halka - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC_pH-Asc8j4r9DmEnJg64AQ",
+    "name": "Sahtekarlar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC8_t8TgAZHN7Ip_AodpG_mg",
+    "name": "Bir Deli Rüzgar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCxLjR-OvV8BTP6NTDNW-9JA",
+    "name": "Kader Bağları - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC1W2UHtrE8yxrV3974W6hGQ",
+    "name": "NOW Nostalji Diziler - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCr7HZRKiCB6pga9oG52dHmA",
+    "name": "Muhtemel Aşk - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCp3nEM_gpoEY6yhYXPZEIOQ",
+    "name": "Anne Yarısı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCQ6g3UhNipCU54arLutFYiw",
+    "name": "Azize - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC_irRHD_xUVa21y2OvpV-0A",
+    "name": "Çirkin - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCVrIsj8UiYCHfauVmlI05IA",
+    "name": "Tuzlu Kahve - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCkoOmxdvb53TMs37oqFO68Q",
+    "name": "Ömür Usta - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCp6YDG0KzJnRshNkA2frSHA",
+    "name": "TODTR - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UC9JMe_We017gYrRc7kZHgmg",
+    "name": "Show TV - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCZImCN5KcM17JwnyyoOt74w",
+    "name": "Sevdan Bir Ateş - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCsFINj3y7SjBaeUxiSdRjlA",
+    "name": "STAR TV - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCMbIx110LxfFHQCJCbw02fw",
+    "name": "ARAFTA - Türk Dizileri - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCJzad3LyzEYkgt0344l65iQ",
+    "name": "Türk Tv Dizileri",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCR5wZcXtOUka8jTA57flzMg",
+    "name": "netd müzik - YouTube",
+    "category": "Turkish müzik"
   },
   {
     "id": "UCeMez5oMgp-hrunHReJ4G1g",
     "name": "Şarköy'den Manzaralar - YouTube",
     "category": "Tekirdag"
+  },
+  {
+    "id": "UCYT-ywSiWtPK_lf-dM-Kp9A",
+    "name": "Şule AYDIN - YouTube",
+    "category": "Aydin"
   },
   {
     "id": "UCTr_Ep9s_21NqR68B-gWjCQ",
@@ -265,6 +470,21 @@
     "category": "Turkish Chef Vloger"
   },
   {
+    "id": "UCaB8w5_u6gaPlupjWHUtf2g",
+    "name": "Melis Akyıldız - YouTube",
+    "category": "Turkish Foodie Vloger"
+  },
+  {
+    "id": "UCmgD0NFxQWlWCil6s83Od5Q",
+    "name": "Buğra Karaman - YouTube",
+    "category": "Turkish Foodie Vloger"
+  },
+  {
+    "id": "UCjbqHxhf5aM7jn3FLkeJbuQ",
+    "name": "Atakan Okumuş - YouTube",
+    "category": "Turkish Foodie Vloger"
+  },
+  {
     "id": "UCUsS3JE8nwh1mS_pPPOdzpw",
     "name": "StarTV Diziler Arşiv - YouTube",
     "category": "Turkish TV"
@@ -333,6 +553,56 @@
     "id": "channel_2fe9050a-1ca3-4d30-9084-d7f3eab1a3e2",
     "name": "Limonografi - YouTube",
     "category": "Turkish vlogers"
+  },
+  {
+    "id": "UC7VWjWks866ALEL_94Bj74w",
+    "name": "Kalucci - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCdBo4wxIl0iMwa3DL0KO2CA",
+    "name": "Wanderlust Feet Vlog - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UC5WuOOdLyKtpSCcKyJdE5bA",
+    "name": "Şenay Akkurt - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCLMQqAoaKBOIQP9Tqnm6njg",
+    "name": "Gezeyenti - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCYRBWnivlRwLYVgI-osXx1w",
+    "name": "Gürkan travel - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UC2AG3kJwZVW2WcM6zuH_4xQ",
+    "name": "Türkiye'yi Geziyorum - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCN4NiCAWJbzuSaS1_mY6meQ",
+    "name": "Alp Kırşan'la Bir Yolculuk Hikayesi - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCIYo3Ne_LyW1gaq9ivU16sA",
+    "name": "Gezi Rotası - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UC6VMzRFLZy_aS24Y78dfleA",
+    "name": "Dünyadan Bildiriyoruz - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UC0orOTjBAHcoVcZZVmNS5Fw",
+    "name": "Gezgin Çoban - YouTube",
+    "category": "Turkiye Seyahat"
   },
   {
     "id": "UCEXWwqJ-yCxIqm0yVBpeZ_A",

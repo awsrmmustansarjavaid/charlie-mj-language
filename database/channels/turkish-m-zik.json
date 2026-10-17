@@ -1,0 +1,29 @@
+[
+  {
+    "category": "Turkish müzik",
+    "categorySuggestion": {
+      "confidence": 0.8,
+      "name": "Turkish müzik",
+      "source": "existing-category",
+      "suggestNew": false
+    },
+    "channelId": "UCR5wZcXtOUka8jTA57flzMg",
+    "dateAdded": "2026-10-17T12:37:00.148Z",
+    "description": "netd müzik, anlaşmalı müzik yapım firmalarından sağladığı, Türkçe pop müzikten alternatif müziğe kadar çeşitli tarzlardaki müzik kliplerinin resmi yayın platformudur.",
+    "handle": "@netdmuzik",
+    "id": "channel_922ec5e9-e115-4067-bad1-22db821a673b",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-17T12:37:00.137Z",
+    "name": "netd müzik - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/RbxUCU-vLXu2DrPKbDd7QeuVMDwi9Kd7Vi9QZnPKW1KNjNPNVXqayAHFjSN_x20a7i9XFH9ORQ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-17T12:37:00.137Z",
+    "updatedAt": "2026-10-17T12:37:00.148Z",
+    "url": "https://www.youtube.com/@netdmuzik",
+    "videoCount": ""
+  }
+]

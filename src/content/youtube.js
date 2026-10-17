@@ -68,7 +68,7 @@
     targetLanguage: 'en',
     translationProvider: 'youtube-first',
     translationProviderPriority: ['youtube-captions','google','microsoft','mymemory','libretranslate'],
-    enabledTranslationProviders: {google:false,microsoft:false,deepl:false,mymemory:false,libretranslate:false,argos:false},
+    enabledTranslationProviders: {google:false,microsoft:false,deepl:false,mymemory:false,libretranslate:false,argos:false,'dual-youtube':false},
     translationApiKeys: {google:'',microsoft:'',deepl:''},
     microsoftRegion: '',
     libreTranslateUrl: '',
@@ -222,6 +222,7 @@
     // Do not attach listeners or start timers from an already-invalid content script.
     if (!extensionContextAlive()) return;
     state.settings = { ...DEFAULTS, ...(stored.settings || {}) };
+    try { state.lightweightSleep = (await storageGet('cmjLightweightSleepMode')).cmjLightweightSleepMode === true; } catch (_) { state.lightweightSleep = false; }
     state.focusMode = Boolean(state.settings.focusMode);
     state.studyMode = Boolean(state.settings.studyModeDefault);
     const saved=stored.settings||{};
@@ -287,14 +288,15 @@
 
     installObservers();
     routeChanged();
-    setInterval(routeChanged, 1000);
+    setInterval(() => { if (!state.lightweightSleep) routeChanged(); }, 1000);
     startSubtitleSyncLoop();
-    setInterval(injectYouTubeWatchLaterItem, 1500);
+    setInterval(() => { if (!state.lightweightSleep) injectYouTubeWatchLaterItem(); }, 1500);
   }
 
   function startSubtitleSyncLoop() {
     if (state.syncFrame) return;
     const tick = () => {
+      if (state.lightweightSleep) { state.syncFrame = null; return; }
       // Keep playback/UI synchronization independent of extension storage APIs.
       // Chrome can invalidate chrome.runtime after an extension update while this
       // already-injected script still has enough page data to keep subtitles moving.
@@ -1329,7 +1331,13 @@
     const saveSentenceButton = event.target.closest('[data-cmj-save-current-sentence]');
     if (saveSentenceButton) { await saveCurrentSentence(getCurrentCaption()?.text || '', getCurrentCaption()?.start ?? null); return; }
     const line = event.target.closest('[data-cmj-line]');
-    if (line) { seek(Number(line.dataset.cmjLine)); return; }
+    if (line) {
+      // Selecting a transcript row intentionally resumes normal live-follow
+      // behaviour after seeking to that exact sentence.
+      state.liveHighlightManualScrollUntil = 0;
+      seek(Number(line.dataset.cmjLine));
+      return;
+    }
     const sentence = event.target.closest('[data-cmj-sentence]');
     if (sentence) { await saveCurrentSentence(sentence.textContent || '', getCurrentCaption()?.start ?? null); return; }
     const word = event.target.closest('.cmj-word');
@@ -1750,8 +1758,21 @@
       const same = x => x && x.type === 'sentence' && x.videoId === item.videoId && String(x.sentence || x.word || '').trim() === item.sentence && Math.abs(Number(x.timestamp||0)-timestamp)<1.5;
       const existingVocab = vocabulary.find(same);
       const existingLearning = sentenceLearning.find(same);
-      const translated = current && Math.abs(Number(current.start || 0)-timestamp)<1.5 ? (state.translationCache[state.activeIndex] || '') : '';
-      if (translated) { item.translation = translated; item.sentenceTranslation = translated; }
+      let translated = current && Math.abs(Number(current.start || 0)-timestamp)<1.5 ? (state.translationCache[state.activeIndex] || '') : '';
+      let translatedProvider = current && Math.abs(Number(current.start || 0)-timestamp)<1.5 ? (state.translationSourceCache[state.activeIndex] || '') : '';
+      if (!translated && dualYouTubeEnabled() && dualYouTubeIsInPriority()) {
+        try {
+          const dual = await window.CMJ_DUAL_YOUTUBE_TRANSLATION?.getSentenceTranslation({
+            videoId, sourceLanguage:state.settings.sourceLanguage || 'auto', targetLanguage:state.settings.targetLanguage || 'en',
+            start:timestamp, text:sentenceText
+          });
+          if (dual?.translation) { translated = dual.translation; translatedProvider = 'dual-youtube'; }
+        } catch (_) {}
+      }
+      if (translated) {
+        item.translation = translated; item.sentenceTranslation = translated;
+        item.translationProvider = translatedProvider || item.translationProvider || '';
+      }
       if (existingVocab || existingLearning) {
         // Repair an older partial save so the item appears in both Library views.
         const existing = existingVocab || existingLearning;
@@ -1777,6 +1798,130 @@
 
 
 
+  // ============================================================
+  // ADDITIONAL: Dual YouTube provider adapter
+  // ------------------------------------------------------------
+  // This does not replace the existing provider router. It only gives
+  // the existing learning workflow an optional Dual YouTube provider.
+  // ============================================================
+  function dualYouTubeEnabled() {
+    return state.settings?.enabledTranslationProviders?.['dual-youtube'] === true;
+  }
+
+  function dualYouTubeIsInPriority() {
+    const priority = Array.isArray(state.settings?.translationProviderPriority)
+      ? state.settings.translationProviderPriority
+      : [];
+    return priority.includes('dual-youtube');
+  }
+
+  async function translateLearningTextByPriority(text, options = {}) {
+    const value = String(text || '').trim();
+    if (!value) return { translation:'', provider:'', error:'Empty text.' };
+
+    const priority = Array.isArray(state.settings.translationProviderPriority) && state.settings.translationProviderPriority.length
+      ? state.settings.translationProviderPriority.slice()
+      : ['youtube-captions','google','microsoft','mymemory','libretranslate'];
+    const enabled = state.settings.enabledTranslationProviders || {};
+    const errors = [];
+
+    for (const provider of priority) {
+      if (provider === 'youtube-captions') {
+        // For a word, the existing YouTube-caption provider cannot provide a
+        // safe word translation by itself, so it is skipped here. Sentence
+        // translation continues through the normal caption path below.
+        if (options.kind === 'word') continue;
+        const caption = options.caption || getCurrentCaption();
+        if (caption) {
+          const translated = await getYouTubeTargetSubtitle(caption);
+          if (translated) {
+            return {
+              translation: translated,
+              provider: state.translationSourceCache[state.activeIndex] || 'YouTube Auto-Translation'
+            };
+          }
+        }
+        errors.push('YouTube captions unavailable');
+        continue;
+      }
+
+      if (provider === 'dual-youtube') {
+        if (enabled['dual-youtube'] !== true) continue;
+        const api = window.CMJ_DUAL_YOUTUBE_TRANSLATION;
+        if (!api) {
+          errors.push('Dual YouTube service unavailable');
+          continue;
+        }
+        try {
+          const current = options.caption || getCurrentCaption();
+          const payload = {
+            videoId: state.videoId || getVideoId(),
+            sourceLanguage: state.settings.sourceLanguage || 'auto',
+            targetLanguage: state.settings.targetLanguage || 'en',
+            start: options.start ?? current?.start ?? getVideo()?.currentTime ?? 0,
+            text: options.text || value,
+            sentence: options.sentence || current?.text || ''
+          };
+          const result = options.kind === 'word'
+            ? await api.getWordTranslation({ ...payload, word:value })
+            : await api.getSentenceTranslation(payload);
+          if (result?.translation) return result;
+          errors.push('Dual YouTube returned no translation');
+        } catch (error) {
+          errors.push(`Dual YouTube: ${error?.message || 'unavailable'}`);
+          try {
+            const svc=await chrome.storage.local.get('cmjDualYouTubeServiceSettings');
+            if (svc?.cmjDualYouTubeServiceSettings?.fallbackEnabled === false) return { translation:'', provider:'dual-youtube', error:errors.join(' • ') };
+          } catch (_) {}
+        }
+        if (options.kind === 'word') {
+          try {
+            const currentSentence = options.sentence || getCurrentCaption()?.text || '';
+            let sentenceTranslation = state.translationCache[state.activeIndex] || '';
+            if (!sentenceTranslation && currentSentence && getCurrentCaption()) {
+              sentenceTranslation = await getYouTubeTargetSubtitle(getCurrentCaption()) || '';
+            }
+            const derived = await deriveWordTranslationFromSentence(value, currentSentence, sentenceTranslation);
+            if (derived?.translation) return derived;
+          } catch (_) {}
+        }
+        continue;
+      }
+
+      if (enabled[provider] !== true) continue;
+      try {
+        // Keep the background router completely compatible with the existing
+        // providers. Dual YouTube is content-side because it needs YouTube's
+        // page/session transcript data, so it is removed only from this
+        // delegated provider list.
+        const delegatedSettings = {
+          ...state.settings,
+          translationProviderPriority: priority.filter(x => x !== 'dual-youtube')
+        };
+        const response = await safeRuntimeMessage({
+          type:'CMJ_TRANSLATE', text:value,
+          source:state.settings.sourceLanguage || 'auto',
+          target:state.settings.targetLanguage || 'en',
+          provider:'youtube-first',
+          libreUrl:state.settings.libreTranslateUrl || '',
+          settings:delegatedSettings
+        });
+        if(response?.ok && response.translation) {
+          return { translation:response.translation, provider:response.provider || provider };
+        }
+        errors.push(`${provider}: ${response?.error || 'unavailable'}`);
+      } catch (error) {
+        errors.push(`${provider}: ${error?.message || 'unavailable'}`);
+      }
+    }
+
+    return {
+      translation:'',
+      provider:'',
+      error:errors.join(' • ') || 'No translation provider is enabled.'
+    };
+  }
+
   async function translateCaptionByPriority(caption) {
     let priority = Array.isArray(state.settings.translationProviderPriority) && state.settings.translationProviderPriority.length
       ? state.settings.translationProviderPriority.slice()
@@ -1790,6 +1935,23 @@
         const value = await getYouTubeTargetSubtitle(caption);
         if (value) return { translation:value, provider:state.translationSourceCache[state.activeIndex] || 'YouTube Auto-Translation' };
         errors.push('YouTube captions unavailable');
+        continue;
+      }
+      if (provider === 'dual-youtube') {
+        if (enabled['dual-youtube'] !== true) continue;
+        const api = window.CMJ_DUAL_YOUTUBE_TRANSLATION;
+        if (!api) { errors.push('Dual YouTube service unavailable'); continue; }
+        try {
+          const result = await api.getSentenceTranslation({
+            videoId: state.videoId || getVideoId(),
+            sourceLanguage: state.settings.sourceLanguage || 'auto',
+            targetLanguage: state.settings.targetLanguage || 'en',
+            start: caption.start,
+            text: caption.text
+          });
+          if (result?.translation) return { translation:result.translation, provider:'dual-youtube' };
+          errors.push('Dual YouTube returned no translation');
+        } catch (e) { errors.push(`Dual YouTube: ${e.message || 'unavailable'}`); }
         continue;
       }
       if (enabled[provider] !== true) continue;
@@ -1851,11 +2013,11 @@
     const value = String(provider || '').trim();
     const known = {
       'youtube-native':'YouTube native captions', 'youtube native':'YouTube Native captions', 'youtube-captions':'YouTube captions',
-      'youtube-auto':'YouTube Auto-Translation', 'youtube auto-translation':'YouTube Auto-Translation', 'google':'Google Translate',
+      'youtube-auto':'YouTube Auto-Translation', 'dual-youtube':'Dual YouTube', 'youtube auto-translation':'YouTube Auto-Translation', 'google':'Google Translate',
       'microsoft':'Microsoft Translator', 'mymemory':'MyMemory',
       'libretranslate':'LibreTranslate', 'deepl':'DeepL', 'argos':'Argos Translate',
       'cache':'Cached translation (original provider unavailable)',
-      'translation-router':'Provider not reported', 'youtube-first':'Provider not reported'
+      'translation-router':'Provider not reported', 'youtube-first':'Provider not reported', 'sentence-derived':'Sentence-Derived Translation'
     };
     return known[value.toLowerCase()] || (value ? value.replaceAll('-', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Provider not reported');
   }
@@ -1870,16 +2032,23 @@
     card.hidden = false;
     card.innerHTML = `<button class="cmj-word-speak" data-cmj-word-speak aria-label="Pronounce">🔊</button><button class="cmj-word-card-close" data-cmj-word-close aria-label="Close">×</button><strong>${escapeHTML(clean)}</strong><span>${info.posLabel} · ${info.cefr} · ${CEFR[info.cefr]}</span><span class="cmj-word-translation">Translation: loading…</span><small class="cmj-word-translation-source">Translated by: checking…</small><span class="cmj-word-dictionary">Dictionary: looking up…</span><small class="cmj-word-dictionary-source">Dictionary source: checking…</small><button data-cmj-save-word="${escapeHTML(clean)}">⭐ Save vocabulary</button>`;
     state.wordCardTimer = setTimeout(() => { card.hidden = true; }, Number(state.settings.wordCardAutoCloseMs || 6000));
-    safeRuntimeMessage({
-      type: 'CMJ_TRANSLATE', text: clean,
-      source: state.settings.sourceLanguage || 'auto', target: state.settings.targetLanguage || 'en',
-      provider: 'youtube-first', libreUrl: state.settings.libreTranslateUrl || '',
-      settings: state.settings
-    }).then(response => {
+    translateLearningTextByPriority(clean, {
+      kind:'word',
+      text:clean,
+      sentence:getCurrentCaption()?.text || clean,
+      start:getCurrentCaption()?.start ?? getVideo()?.currentTime ?? 0
+    }).then(async response => {
+      let resolved=response;
+      if(!resolved?.translation){
+        const sentenceText=getCurrentCaption()?.text || clean;
+        const sentenceTranslation=state.translationCache[state.activeIndex] || '';
+        const fallback=await resolveWordTranslationFallback(clean,sentenceText,sentenceTranslation);
+        if(fallback) resolved=fallback;
+      }
       const target = $('.cmj-word-translation');
       const source = $('.cmj-word-translation-source');
-      if (target) target.textContent = response?.ok ? `Translation: ${response.translation}` : 'Translation: unavailable';
-      if (source) source.textContent = `Translated by: ${response?.ok ? formatTranslationProvider(response.provider || response.source || '') : (response?.provider || 'no translation returned')}`;
+      if (target) target.textContent = resolved?.translation ? `Translation: ${resolved.translation}` : 'Translation: unavailable';
+      if (source) source.textContent = `Translated by: ${resolved?.translation ? formatTranslationProvider(resolved.provider || resolved.source || '') : (resolved?.provider || 'no translation returned')}`;
     });
     safeRuntimeMessage({
       type:'CMJ_DICTIONARY', text:clean,
@@ -1972,6 +2141,38 @@
     return saveCurrentSentence(current.text, current.start);
   }
 
+  async function deriveWordTranslationFromSentence(word, sentence, sentenceTranslation) {
+    const wanted=String(word||'').trim(), source=String(sentence||'').trim(), target=String(sentenceTranslation||'').trim();
+    if(!wanted||!source||!target) return null;
+    const clean=v=>String(v||'').replace(/[“”"'`]/g,'').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu,'').trim();
+    const norm=v=>clean(v).toLocaleLowerCase();
+    const src=source.split(/\s+/).filter(Boolean), dst=target.split(/\s+/).filter(Boolean), wn=norm(wanted);
+    if(!src.length||!dst.length) return null;
+    const exact=dst.find(t=>norm(t)===wn);
+    if(exact) return {translation:clean(exact),provider:'sentence-derived',confidence:0.98,method:'exact-target-token'};
+    const si=src.findIndex(t=>norm(t)===wn);
+    if(si<0)return null;
+    if(src.length===1)return {translation:target,provider:'sentence-derived',confidence:0.96,method:'single-source-token'};
+    if(src.length===dst.length&&dst[si])return {translation:clean(dst[si]),provider:'sentence-derived',confidence:0.86,method:'same-position'};
+    const anchors=[];
+    src.forEach((st,idx)=>{const n=norm(st);if(!n)return;const ti=dst.findIndex(dt=>norm(dt)===n);if(ti>=0)anchors.push({si:idx,ti});});
+    let before=null,after=null;
+    for(const a of anchors){if(a.si<si&&(!before||a.si>before.si))before=a;if(a.si>si&&(!after||a.si<after.si))after=a;}
+    if(before&&after){const lo=Math.min(before.ti,after.ti),hi=Math.max(before.ti,after.ti),span=dst.slice(lo+1,hi);if(span.length===1)return {translation:clean(span[0]),provider:'sentence-derived',confidence:0.82,method:'anchor-window'};}
+    const near=anchors.slice().sort((a,b)=>Math.abs(a.si-si)-Math.abs(b.si-si))[0];
+    if(near&&Math.abs(near.si-si)===1){const direction=si>near.si?1:-1,candidate=dst[near.ti+direction];if(candidate&&!anchors.some(a=>a.ti===near.ti+direction))return {translation:clean(candidate),provider:'sentence-derived',confidence:0.74,method:'adjacent-anchor'};}
+    return null;
+  }
+
+  async function resolveWordTranslationFallback(word, sentence, sentenceTranslation) {
+    if(dualYouTubeEnabled() && dualYouTubeIsInPriority() && window.CMJ_DUAL_YOUTUBE_TRANSLATION?.getWordTranslation){
+      try { const r=await window.CMJ_DUAL_YOUTUBE_TRANSLATION.getWordTranslation({videoId:state.videoId,sourceLanguage:state.settings.sourceLanguage||'auto',targetLanguage:state.settings.targetLanguage||'en',start:getCurrentCaption()?.start ?? getVideo()?.currentTime ?? 0,sentence,word}); if(r?.translation)return r; } catch(_) {}
+    }
+    const derived=await deriveWordTranslationFromSentence(word,sentence,sentenceTranslation);
+    if(derived) return derived;
+    return null;
+  }
+
   async function saveVocabulary(word, info, translation, translationProviderOverride = '') {
     const cleanWord = String(word || '').trim();
     if (!cleanWord) { showToast('Nothing to save. Select a word first.'); return false; }
@@ -1986,9 +2187,17 @@
       const timestamp = Number(getCurrentCaption()?.start ?? getVideo()?.currentTime ?? 0) || 0;
       const existing = vocabulary.find(item => item && (item.word || '').toLocaleLowerCase() === cleanWord.toLocaleLowerCase() && item.videoId === state.videoId && Math.abs(Number(item.timestamp || 0)-timestamp)<1.5);
       if (existing) { showToast(`“${cleanWord}” is already saved in your Library.`); return true; }
+      const sentenceText=getCurrentCaption()?.text || cleanWord;
+      const knownSentenceTranslation=state.translationCache[state.activeIndex] || '';
+      let resolvedTranslation=String(translation || '').replace(/^Translation:\s*/i,'').trim();
+      let resolvedProvider=translationProviderOverride || state.translationSourceCache[state.activeIndex] || '';
+      if(!resolvedTranslation || /^unavailable$/i.test(resolvedTranslation)){
+        const fallback=await resolveWordTranslationFallback(cleanWord,sentenceText,knownSentenceTranslation);
+        if(fallback?.translation){ resolvedTranslation=fallback.translation; resolvedProvider=fallback.provider || resolvedProvider; }
+      }
       const record = {
-        id: crypto.randomUUID(), type:'word', word:cleanWord, translation:String(translation || '').replace(/^Translation:\s*/i,''),
-        translationProvider: translationProviderOverride || state.translationSourceCache[state.activeIndex] || '',
+        id: crypto.randomUUID(), type:'word', word:cleanWord, translation:resolvedTranslation,
+        translationProvider: resolvedProvider,
         lemma: info.lemma || inferLemma(cleanWord), pos: info.pos || 'sentence', level: info.cefr || getSentenceLevel(cleanWord),
         levelLabel: CEFR[info.cefr] || 'Learner', stage:'New', sentence:getCurrentCaption()?.text || cleanWord,
         sentenceTranslation: state.translationCache[state.activeIndex] || '', words:Array.isArray(info.words) ? info.words : [],
@@ -2287,103 +2496,25 @@
     }
   }
 
-  // ============================================================
-// ADDITIONAL: Manual Transcript Scrolling Support
-// Keeps existing timeline sync + auto-scroll functionality.
-// Manual scrolling temporarily takes control of the scroll
-// position without disabling subtitle synchronization.
-// ============================================================
-
-function enableAdditionalManualTranscriptScroll(list) {
-  if (!list || list.dataset.cmjManualScrollEnabled === '1') return;
-
-  list.dataset.cmjManualScrollEnabled = '1';
-
-  const state = {
-    manual: false,
-    lastUserScroll: 0,
-    resumeDelay: 5000
-  };
-
-  list.__cmjManualScrollState = state;
-
-  const markManualScroll = () => {
-    state.manual = true;
-    state.lastUserScroll = Date.now();
-
-    // Do NOT change the current subtitle.
-    // Do NOT stop YouTube timeline synchronization.
-    // Only prevent automatic repositioning of the scroll.
-    list.dataset.cmjManualScrolling = '1';
-  };
-
-  const finishManualScroll = () => {
-    state.lastUserScroll = Date.now();
-  };
-
-  list.addEventListener(
-    'wheel',
-    markManualScroll,
-    { passive: true }
-  );
-
-  list.addEventListener(
-    'touchmove',
-    markManualScroll,
-    { passive: true }
-  );
-
-  list.addEventListener(
-    'pointerdown',
-    markManualScroll,
-    { passive: true }
-  );
-
-  list.addEventListener(
-    'scroll',
-    finishManualScroll,
-    { passive: true }
-  );
-
-  // Allow the existing auto-follow system to resume after
-  // the user has stopped manually scrolling.
-  const checkResume = () => {
-    if (
-      state.manual &&
-      Date.now() - state.lastUserScroll >= state.resumeDelay
-    ) {
-      state.manual = false;
-      list.dataset.cmjManualScrolling = '0';
-    }
-
-    requestAnimationFrame(checkResume);
-  };
-
-  requestAnimationFrame(checkResume);
-}
-
-function isAdditionalManualTranscriptScrolling(list) {
-  return !!(
-    list &&
-    list.__cmjManualScrollState &&
-    list.__cmjManualScrollState.manual
-  );
-}
-
   function bindLiveTranscriptScroll(list) {
-    enableAdditionalManualTranscriptScroll(list);
     if (!list || list.dataset.cmjLiveScrollBound === 'true') return;
     list.dataset.cmjLiveScrollBound = 'true';
     const markManualScroll = () => {
       if (state.liveHighlightProgrammaticScroll || state.settings.liveTranscriptRespectManualScroll === false) return;
-      state.liveHighlightManualScrollUntil = Date.now() + 4000;
+      // Once the learner manually scrolls, keep the transcript where they
+      // placed it until they explicitly click a transcript line. This makes
+      // it possible to scroll to any sentence and click it without the live
+      // player highlight immediately pulling the list back.
+      state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
     };
     list.addEventListener('wheel', markManualScroll, { passive: true });
     list.addEventListener('touchmove', markManualScroll, { passive: true });
     list.addEventListener('pointerdown', markManualScroll, { passive: true });
     list.addEventListener('scroll', () => {
       if (!state.liveHighlightProgrammaticScroll && state.settings.liveTranscriptRespectManualScroll !== false) {
-        state.liveHighlightManualScrollUntil = Date.now() + 4000;
+        // Preserve the learner's manual position until a transcript line is
+        // explicitly selected.
+        state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
       }
     }, { passive: true });
   }
@@ -2426,8 +2557,7 @@ function isAdditionalManualTranscriptScrolling(list) {
     active.classList.remove('cmj-live-style-soft-background','cmj-live-style-rounded','cmj-live-style-underline','cmj-live-style-accent','cmj-live-style-text');
     const styleMap = {'soft-background':'soft-background','rounded-background':'rounded','underline':'underline','left-accent':'accent','text-color':'text'};
     active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
-    const manualScrolling = isAdditionalManualTranscriptScrolling(list);
-    const shouldScroll = settings.liveTranscriptAutoScroll !== false && !manualScrolling && (changed || forceScroll);
+    const shouldScroll = settings.liveTranscriptAutoScroll !== false && (changed || forceScroll);
     if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
     if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
     if (!forceScroll && Date.now() - state.liveHighlightLastAutoScrollAt < 250) return;
@@ -2616,6 +2746,24 @@ function isAdditionalManualTranscriptScrolling(list) {
 
   async function onMessage(message) {
     if (!message?.type) return;
+    if (message.type === 'CMJ_RESET_YOUTUBE_NETWORK') {
+      if (state.lightweightSleep) { state.lightweightSleep = false; chrome.storage.local.set({ cmjLightweightSleepMode: false }).catch(() => {}); window.postMessage({ source: 'CMJ_LANGUAGE_DUAL_TRANSCRIPT', type: 'SET_LIGHTWEIGHT_SLEEP', enabled: false }, '*'); }
+      window.postMessage({ source: 'CMJ_LANGUAGE_DUAL_TRANSCRIPT', type: 'RESET_NETWORK' }, '*');
+      showToast('YouTube network/caption state reset. One controlled retry will run.');
+      return { ok: true, message: 'YouTube network/caption state cleared. One controlled retry started.' };
+    }
+    if (message.type === 'CMJ_SET_LIGHTWEIGHT_SLEEP') {
+      state.lightweightSleep = message.enabled === true;
+      window.postMessage({ source: 'CMJ_LANGUAGE_DUAL_TRANSCRIPT', type: 'SET_LIGHTWEIGHT_SLEEP', enabled: state.lightweightSleep }, '*');
+      if (state.lightweightSleep) {
+        if (state.syncFrame) { clearTimeout(state.syncFrame); state.syncFrame = null; }
+        showToast('Lightweight Sleep enabled. Optional activity is paused.');
+      } else {
+        showToast('Charlie MJ is awake again.');
+        startSubtitleSyncLoop();
+      }
+      return { ok: true, message: state.lightweightSleep ? 'Lightweight Sleep enabled.' : 'Charlie MJ awake.' };
+    }
     if (message.type === 'CMJ_TOGGLE_FOCUS') toggleFocusMode();
     if (message.type === 'CMJ_SAVE_CURRENT') await saveCurrentSubtitle();
     if (message.type === 'CMJ_BOOKMARK') await saveBookmark();

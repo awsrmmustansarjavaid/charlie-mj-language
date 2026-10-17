@@ -9,7 +9,7 @@ Charlie MJ Language keeps the original fast YouTube transcript workflow as its c
 ## Download
 
 <p align="center">
-  <a href="/downloads/charliemj-language-v1.0.0-stable-beta-final.zip">
+  <a href="/downloads/charliemj-language-v1.0.0-stable-beta-final-network-reset-lightweight-about-dual-2026-10-17-12-15-34.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
@@ -68,8 +68,6 @@ The systems are designed to work independently. Basic transcript functionality d
 - **Minimum Chrome version:** 114
 - **License:** MIT
 - **Repository:**  [GitHub repository](https://github.com/awsrmmustansarjavaid/charlie-mj-language)
-
-![Charlie MJ Language v1.0.0 Stable Beta](assets/YouTube%20Learning%20Companion%20Extension.png)
 
 ## Critical Core Functionality
 

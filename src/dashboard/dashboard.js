@@ -67,13 +67,20 @@ async function pageData(p){
   }
   let s=await chrome.storage.local.get(p.key);return Array.isArray(s[p.key])?s[p.key]:[]
 }
-async function load(){await loadPages();let p=info(); if(current==='overview'){data=[];renderOverview();return} if(current==='collections'){data=pages;renderCollections();return} data=await pageData(p);render()}
+function ensureLibraryRefreshButton(){
+ const bulk=$('.toolbar-card .bulk-actions'); if(!bulk)return;
+ let rb=bulk.querySelector('[data-library-tab-refresh]');
+ if(!rb){ rb=document.createElement('button'); rb.type='button'; rb.className='secondary'; rb.dataset.libraryTabRefresh='1'; rb.textContent='↻ Refresh'; rb.title='Refresh this My Learning Library tab'; bulk.insertBefore(rb, bulk.firstChild); }
+ rb.onclick=async()=>{ rb.disabled=true; const old=rb.textContent; rb.textContent='↻ Refreshing…'; try{ await load(); } finally { rb.disabled=false; rb.textContent=old; } };
+}
+async function load(){await loadPages();ensureLibraryRefreshButton();let p=info(); if(current==='overview'){data=[];renderOverview();return} if(current==='collections'){data=pages;renderCollections();return} data=await pageData(p);render()}
 function render(){
  $('#overview').hidden=true;let p=info(),q=$('#search').value.trim().toLowerCase(),lv=$('#levelFilter').value,tag=$('#tagFilter').value.trim().toLowerCase(),vid=$('#videoFilter').value,typ=$('#typeFilter').value;
  let filtered=data.filter(x=>{let hay=JSON.stringify(x).toLowerCase();let tags=(x.tags||[]).join(' ').toLowerCase();let itemType=x.type||x.kind||(p.id==='videos'||p.id==='continue'?'video':'');return(!q||hay.includes(q))&&(!lv||String(x.level||'').toUpperCase()===lv)&&(!tag||tags.includes(tag))&&(!vid||x.videoId===vid)&&(!typ||itemType===typ)});
  $('#typeFilter').disabled=['overview','collections','history','continue','videos','checkpoints'].includes(p.id);
  if(p.id==='notes'){ const host=$('.toolbar-card .bulk-actions'); if(host && !host.querySelector('[data-add-library-note]')){ const b=document.createElement('button'); b.type='button'; b.dataset.addLibraryNote='1'; b.className='primary'; b.textContent='＋ Add Note'; host.insertBefore(b, host.firstChild); } } else { $('.toolbar-card .bulk-actions [data-add-library-note]')?.remove(); }
  renderNav();renderVideoFilter();renderStats(filtered,p);
+ ensureLibraryRefreshButton();
  $('#items').className=`item-grid ${view==='list'?'list-view':''}`;
  $('#items').innerHTML=filtered.length?filtered.map(x=>card(x,p)).join(''):`<div class="empty"><h3>Nothing saved here yet</h3><p>${esc(p.name)} will fill automatically as you learn.</p></div>`;
 }

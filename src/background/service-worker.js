@@ -14,8 +14,9 @@ chrome.alarms.create('cmj-favorites-refresh', {periodInMinutes: 60});
 chrome.alarms.onAlarm.addListener(async alarm => {
   if (alarm.name !== 'cmj-favorites-refresh') return;
   try {
-    const settingsStore = await chrome.storage.local.get(['cmjAdditionalSettings','cmjPerformance']);
+    const settingsStore = await chrome.storage.local.get(['cmjAdditionalSettings','cmjPerformance','cmjLightweightSleepMode']);
     const settings = settingsStore.cmjAdditionalSettings || {}; const performance=settingsStore.cmjPerformance || {};
+    if(settingsStore.cmjLightweightSleepMode===true) return;
     if(performance.backgroundTasks!==true || performance.services?.metadataRefresh==='sleep') return;
     if (settings.thumbnailRefresh === false) return;
     const intervalMs = Math.max(24, Number(settings.metadataRefreshHours) || Number(settings.thumbnailRefreshHours) || 168) * 3600000;
@@ -160,6 +161,74 @@ async function youtubeSuggestions(query,type='channel'){
   const walk=(node)=>{if(!node||typeof node!=='object')return;const c=node.channelRenderer;const p=node.playlistRenderer;if(type==='channel'&&c?.channelId){const item={type:'channel',id:c.channelId,name:c.title?.simpleText||c.title?.runs?.map(x=>x.text).join('')||'',url:`https://www.youtube.com/channel/${c.channelId}`,thumbnail:c.thumbnail?.thumbnails?.slice(-1)[0]?.url||''};if(!seen.has(item.id)){seen.add(item.id);out.push(item)}}if(type==='playlist'&&p?.playlistId){const item={type:'playlist',id:p.playlistId,name:p.title?.simpleText||p.title?.runs?.map(x=>x.text).join('')||'',url:`https://www.youtube.com/playlist?list=${p.playlistId}`,thumbnail:p.thumbnails?.slice(-1)[0]?.url||''};if(!seen.has(item.id)){seen.add(item.id);out.push(item)}}for(const v of Object.values(node))if(v&&typeof v==='object')walk(v)};walk(data);return out.slice(0,30);
 }
 function localDatabaseSnapshot(){return Promise.all([chrome.storage.local.get('cmjFavChannels'),chrome.storage.local.get('cmjFavPlaylists'),chrome.storage.local.get('cmjFavCategories'),chrome.storage.local.get('cmjFavCollections'),chrome.storage.local.get('cmjYoutubeSuggestions')]).then(([c,p,k,g,s])=>{const channels=Array.isArray(c.cmjFavChannels)?c.cmjFavChannels:[],playlists=Array.isArray(p.cmjFavPlaylists)?p.cmjFavPlaylists:[],categories=Array.isArray(k.cmjFavCategories)?k.cmjFavCategories:[],groups=Array.isArray(g.cmjFavCollections)?g.cmjFavCollections:[],suggestions=s.cmjYoutubeSuggestions||{channels:[],playlists:[]};const byCat=(arr)=>{const m={};for(const x of arr){const n=String(x.category||'Uncategorized').trim()||'Uncategorized';(m[n] ||= []).push(x)}return m};return {channels,playlists,categories,groups,suggestions,files:{channels:byCat(channels),playlists:byCat(playlists),categories:{'all.json':categories},suggestions:{'channels.json':suggestions.channels||[],'playlists.json':suggestions.playlists||[]}}}})}
+function compareRecordIdentity(type, item, index = 0) {
+  const x = item && typeof item === 'object' ? item : {};
+  const id = type === 'channel'
+    ? (x.channelId || x.id || x.handle || x.url)
+    : type === 'playlist'
+      ? (x.playlistId || x.id || x.url)
+      : type === 'category'
+        ? (x.id || x.name)
+        : (x.id || x.channelId || x.playlistId || x.url || x.name);
+  return String(id || `${type}:${index}`).trim();
+}
+
+function compareNormalise(value) {
+  if (Array.isArray(value)) return value.map(compareNormalise);
+  if (value && typeof value === 'object') {
+    const out = {};
+    Object.keys(value).sort().forEach(key => { out[key] = compareNormalise(value[key]); });
+    return out;
+  }
+  return value;
+}
+
+function compareValue(value, max = 180) {
+  let text = '';
+  try { text = typeof value === 'string' ? value : JSON.stringify(value); }
+  catch (_) { text = String(value); }
+  if (text === undefined) text = '';
+  return text.length > max ? `${text.slice(0, max)}…` : text;
+}
+
+function compareRecordSets(type, localRecords, githubRecords) {
+  const local = Array.isArray(localRecords) ? localRecords : [];
+  const github = Array.isArray(githubRecords) ? githubRecords : [];
+  const localMap = new Map(local.map((item, i) => [compareRecordIdentity(type, item, i), item]));
+  const githubMap = new Map(github.map((item, i) => [compareRecordIdentity(type, item, i), item]));
+  const onlyLocal = [], onlyGithub = [], changed = [];
+
+  for (const [id, item] of localMap) {
+    if (!githubMap.has(id)) {
+      onlyLocal.push({ id, name:item?.name || item?.title || item?.handle || id, url:item?.url || '' });
+      continue;
+    }
+    const remote = githubMap.get(id);
+    if (JSON.stringify(compareNormalise(item)) !== JSON.stringify(compareNormalise(remote))) {
+      const keys = new Set([...Object.keys(item || {}), ...Object.keys(remote || {})]);
+      const fields = [];
+      for (const key of [...keys].sort()) {
+        const a = JSON.stringify(compareNormalise(item?.[key]));
+        const b = JSON.stringify(compareNormalise(remote?.[key]));
+        if (a !== b) fields.push({ field:key, local:compareValue(item?.[key]), github:compareValue(remote?.[key]) });
+      }
+      changed.push({ id, name:item?.name || item?.title || item?.handle || remote?.name || remote?.title || id, url:item?.url || remote?.url || '', fields });
+    }
+  }
+  for (const [id, item] of githubMap) {
+    if (!localMap.has(id)) onlyGithub.push({ id, name:item?.name || item?.title || item?.handle || id, url:item?.url || '' });
+  }
+
+  return {
+    localCount:local.length,
+    githubCount:github.length,
+    sameCount:local.length - onlyLocal.length - changed.length,
+    onlyLocal,
+    onlyGithub,
+    changed
+  };
+}
+
 function jsonDataUrl(value){const bytes=new TextEncoder().encode(JSON.stringify(value,null,2));let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return 'data:application/json;base64,'+btoa(binary)}
 async function githubConfig(settings){const m=String(settings.githubUrl||'').match(/github\.com\/([^/]+)\/([^/#]+?)(?:\.git)?$/);if(!m)throw new Error('Enter a GitHub repository URL such as https://github.com/owner/repo.');return {owner:m[1],repo:m[2],branch:settings.branch||'main',base:String(settings.databasePath||'database').replace(/^\/+|\/+$/g,''),token:String(settings.token||'').trim()}}
 async function githubRequest(path,settings,init={}){const cfg=await githubConfig(settings);const headers={'Accept':'application/vnd.github+json',...(cfg.token?{Authorization:`Bearer ${cfg.token}`}:{}) ,...(init.headers||{})};const url=`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path.replace(/^\/+/, '')}`;const r=await fetch(url,{...init,headers});if(!r.ok)throw new Error(`GitHub HTTP ${r.status}`);return r.json()}
@@ -210,9 +279,52 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     (async()=>{const cfg=await githubConfig(message.settings||{});const repo=await githubRequest('',message.settings||{});sendResponse({ok:true,message:`GitHub connected: ${repo.full_name||cfg.owner+'/'+cfg.repo} (${cfg.branch})`});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
   }
   if (message.type === 'CMJ_DATA_SYNC_COMPARE') {
-    (async()=>{const cfg=await githubConfig(message.settings||{});const local=await localDatabaseSnapshot();const root=await githubTree(cfg.base,message.settings||{});const directories=root.filter(x=>x.type==='dir').map(x=>x.name);const github={channels:0,playlists:0,categories:0,suggestions:0,directories};
-      for(const dirName of ['channels','playlists','categories','suggestions']){const files=await githubTree(`${cfg.base}/${dirName}`,message.settings||{});for(const f of files.filter(x=>x.type==='file'&&x.name.endsWith('.json'))){try{const payload=await (await fetch(f.download_url,{headers:{Accept:'application/vnd.github.raw+json'}})).json();const count=Array.isArray(payload)?payload.length:((payload&&Array.isArray(payload.items))?payload.items.length:0);if(dirName==='channels')github.channels+=count;else if(dirName==='playlists')github.playlists+=count;else if(dirName==='categories')github.categories+=count;else github.suggestions+=count;}catch(_){}}}
-      local.total=local.channels.length+local.playlists.length+local.categories.length;github.total=github.channels+github.playlists+github.categories;sendResponse({ok:true,summary:{local:{channels:local.channels.length,playlists:local.playlists.length,categories:local.categories.length,suggestions:(local.suggestions?.channels||[]).length+(local.suggestions?.playlists||[]).length,total:local.total},github,status:'Review the resource counts and file-level differences before overwrite.'}});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;
+    (async()=>{
+      const cfg=await githubConfig(message.settings||{});
+      const local=await localDatabaseSnapshot();
+      const root=await githubTree(cfg.base,message.settings||{});
+      const directories=root.filter(x=>x.type==='dir').map(x=>x.name);
+      const github={channels:[],playlists:[],categories:[],suggestions:[],directories,files:[]};
+
+      for(const dirName of ['channels','playlists','categories','suggestions']){
+        const files=await githubTree(`${cfg.base}/${dirName}`,message.settings||{});
+        for(const f of files.filter(x=>x.type==='file'&&x.name.endsWith('.json'))){
+          try{
+            const payload=await (await fetch(f.download_url,{headers:{Accept:'application/vnd.github.raw+json'}})).json();
+            const records=Array.isArray(payload) ? payload : ((payload&&Array.isArray(payload.items)) ? payload.items : []);
+            const type=dirName==='channels'?'channel':dirName==='playlists'?'playlist':dirName==='categories'?'category':'suggestion';
+            github[dirName].push(...records);
+            github.files.push({path:`${cfg.base}/${dirName}/${f.name}`,type:dirName,count:records.length});
+          }catch(_){
+            github.files.push({path:`${cfg.base}/${dirName}/${f.name}`,type:dirName,count:0,error:'Could not read JSON'});
+          }
+        }
+      }
+
+      const localSuggestions=[...(local.suggestions?.channels||[]),...(local.suggestions?.playlists||[])];
+      const details={
+        channels:compareRecordSets('channel',local.channels,github.channels),
+        playlists:compareRecordSets('playlist',local.playlists,github.playlists),
+        categories:compareRecordSets('category',local.categories,github.categories),
+        suggestions:compareRecordSets('suggestion',localSuggestions,github.suggestions)
+      };
+      const allOnlyLocal=Object.values(details).reduce((n,x)=>n+x.onlyLocal.length,0);
+      const allOnlyGithub=Object.values(details).reduce((n,x)=>n+x.onlyGithub.length,0);
+      const allChanged=Object.values(details).reduce((n,x)=>n+x.changed.length,0);
+      const differenceCount=allOnlyLocal+allOnlyGithub+allChanged;
+
+      const localTotal=local.channels.length+local.playlists.length+local.categories.length;
+      const githubTotal=github.channels.length+github.playlists.length+github.categories.length;
+      sendResponse({ok:true,summary:{
+        local:{channels:local.channels.length,playlists:local.playlists.length,categories:local.categories.length,suggestions:localSuggestions.length,total:localTotal},
+        github:{channels:github.channels.length,playlists:github.playlists.length,categories:github.categories.length,suggestions:github.suggestions.length,total:githubTotal,directories},
+        differences:{onlyLocal:allOnlyLocal,onlyGithub:allOnlyGithub,changed:allChanged,total:differenceCount},
+        details,
+        files:github.files,
+        status:differenceCount ? `Comparison complete — ${differenceCount} difference(s) found.` : 'Comparison complete — Local and GitHub records match.'
+      }});
+    })().catch(e=>sendResponse({ok:false,error:e.message}));
+    return true;
   }
   if (message.type === 'CMJ_DATA_SYNC_PULL') {
     (async()=>{const cfg=await githubConfig(message.settings||{});const dirs=await githubTree(cfg.base,message.settings||{});let count=0;for(const dir of dirs.filter(x=>x.type==='dir'&&['channels','playlists','categories','suggestions','indexes'].includes(x.name))){const files=await githubTree(`${cfg.base}/${dir.name}`,message.settings||{});for(const f of files.filter(x=>x.type==='file'&&x.name.endsWith('.json'))){const payload=await (await fetch(f.download_url,{headers:{Accept:'application/vnd.github.raw+json'}})).json();if(dir.name==='channels'){const current=await listFavorites('channel');const merged=[...current];for(const x of (Array.isArray(payload)?payload:[])){const id=x.channelId||x.id;if(id&&!merged.some(y=>(y.channelId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavChannels:merged})}else if(dir.name==='playlists'){const current=await listFavorites('playlist');const merged=[...current];for(const x of (Array.isArray(payload)?payload:[])){const id=x.playlistId||x.id;if(id&&!merged.some(y=>(y.playlistId||y.id)===id))merged.push(x)}await chrome.storage.local.set({cmjFavPlaylists:merged})}else if(dir.name==='categories'&&Array.isArray(payload)){await setCategories(payload)}count++}}sendResponse({ok:true,files:count});})().catch(e=>sendResponse({ok:false,error:e.message}));return true;

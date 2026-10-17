@@ -18,11 +18,14 @@
   const SOURCE = 'CMJ_LANGUAGE_DUAL_TRANSCRIPT';
   const SETTINGS_KEY = 'cmjDualTranscriptSettings';
   const CACHE_KEY = 'cmjDualTranscriptCache';
+  const CATALOG_KEY = 'cmjDualTranscriptLanguageCatalog';
+  const SERVICE_KEY = 'cmjDualYouTubeServiceSettings';
   const DEFAULTS = {
     enabled: true,
     showToolbarButton: true,
     autoFetchOnPlay: true,
     targetLanguage: 'en',
+    sourceLanguage: 'auto',
     sentenceMerging: true,
     cacheEnabled: true,
     cacheLimit: 20
@@ -34,6 +37,7 @@
     sourceLanguage: '',
     sourceName: '',
     targetLanguage: 'en',
+    sourceLanguage: 'auto',
     cues: [],
     sentences: [],
     translationAvailable: false,
@@ -46,7 +50,9 @@
     lastRequestedVideo: '',
     lastRenderedTab: false,
     dualActive: false,
-    bodyObserver: null
+    bodyObserver: null,
+    lightweightSleep: false,
+    resettingNetwork: false
   };
 
   const $ = (s, root = document) => root.querySelector(s);
@@ -56,10 +62,12 @@
 
   async function loadSettings() {
     try {
-      const stored = await chrome.storage.local.get(SETTINGS_KEY);
+      const stored = await chrome.storage.local.get([SETTINGS_KEY, SERVICE_KEY]);
       state.settings = { ...DEFAULTS, ...(stored[SETTINGS_KEY] || {}) };
+      state.serviceSettings = { enabled: true, ...(stored[SERVICE_KEY] || {}) };
     } catch (_) {}
     state.targetLanguage = state.settings.targetLanguage || 'en';
+    state.sourceLanguage = state.settings.sourceLanguage || 'auto';
   }
 
   async function saveCache(value) {
@@ -156,14 +164,49 @@
 
   function requestTranscript(force = false) {
     const id = videoId();
-    if (!id || !state.settings.enabled) return;
+    if (!id || state.lightweightSleep || !state.settings.enabled || state.serviceSettings?.enabled === false) return;
     state.videoId = id;
     state.targetLanguage = state.settings.targetLanguage || 'en';
     if (!force && state.lastRequestedVideo === id) return;
     state.lastRequestedVideo = id;
     state.status = 'loading';
     renderPanel();
-    post('REQUEST_TRANSCRIPT', { targetLanguage: state.targetLanguage });
+    post('REQUEST_TRANSCRIPT', { targetLanguage: state.targetLanguage, sourceLanguage: state.sourceLanguage || 'auto' });
+  }
+
+
+  async function resetNetworkAndRetry() {
+    state.status = 'loading';
+    state.resettingNetwork = true;
+    state.translationError = '';
+    state.translationAvailable = false;
+    state.cues = [];
+    state.sentences = [];
+    state.lastRequestedVideo = '';
+    renderPanel();
+    try { await chrome.storage.local.remove(CACHE_KEY); } catch (_) {}
+    post('RESET_NETWORK');
+    setTimeout(() => {
+      if (!state.lightweightSleep) requestTranscript(true);
+    }, 1200);
+  }
+
+  function setLightweightSleep(enabled) {
+    state.lightweightSleep = Boolean(enabled);
+    clearTimeout(state.requestTimer);
+    state.requestTimer = null;
+    if (state.lightweightSleep) {
+      post('SET_LIGHTWEIGHT_SLEEP', { enabled: true });
+      chrome.storage.local.set({ cmjLightweightSleepMode: true }).catch(() => {});
+      if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
+      state.status = 'idle';
+      state.translationError = '';
+      if (state.panelOpen) renderPanel();
+    } else {
+      post('SET_LIGHTWEIGHT_SLEEP', { enabled: false });
+      chrome.storage.local.set({ cmjLightweightSleepMode: false }).catch(() => {});
+      startSync();
+    }
   }
 
   function renderStatus(extra = '') {
@@ -296,12 +339,31 @@
     } catch (_) { toast('Could not save sentence.'); }
   }
 
+  function deriveWordTranslationFromSentence(word, sentence, sentenceTranslation) {
+    const wanted=String(word||'').trim(), source=String(sentence||'').trim(), target=String(sentenceTranslation||'').trim();
+    if(!wanted||!source||!target)return null;
+    const clean=v=>String(v||'').replace(/[“”\"'`]/g,'').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu,'').trim();
+    const norm=v=>clean(v).toLocaleLowerCase();
+    const src=source.split(/\s+/).filter(Boolean), dst=target.split(/\s+/).filter(Boolean), wn=norm(wanted);
+    const exact=dst.find(t=>norm(t)===wn); if(exact)return {translation:clean(exact),provider:'sentence-derived'};
+    const si=src.findIndex(t=>norm(t)===wn); if(si<0)return null;
+    if(src.length===1)return {translation:target,provider:'sentence-derived'};
+    if(src.length===dst.length&&dst[si])return {translation:clean(dst[si]),provider:'sentence-derived'};
+    const anchors=[];src.forEach((t,i)=>{const n=norm(t),ti=dst.findIndex(x=>norm(x)===n);if(n&&ti>=0)anchors.push({si:i,ti});});
+    let before=null,after=null;for(const a of anchors){if(a.si<si&&(!before||a.si>before.si))before=a;if(a.si>si&&(!after||a.si<after.si))after=a;}
+    if(before&&after){const lo=Math.min(before.ti,after.ti),hi=Math.max(before.ti,after.ti),span=dst.slice(lo+1,hi);if(span.length===1)return {translation:clean(span[0]),provider:'sentence-derived'};}
+    return null;
+  }
+
   async function saveWord(word, time, sentence, translation) {
     const clean = String(word||'').trim();
     if (!clean) return;
     try {
       const stored = await chrome.storage.local.get(['vocabulary','wordLearning']);
-      const item = { id: crypto.randomUUID(), type:'word', word:clean, translation, sentence, sentenceTranslation:translation, level:'A1', levelLabel:'Learner', stage:'New', language:state.sourceLanguage || 'auto', videoId:state.videoId, videoTitle:document.title.replace(/\s*-\s*YouTube\s*$/i,''), url:location.href, timestamp:Number(time)||0, source:'Dual Transcript', tags:['YouTube','Dual Transcript'], createdAt:new Date().toISOString() };
+      let resolved=String(translation||'').trim();
+      let provider='dual-youtube';
+      if(!resolved||/^unavailable$/i.test(resolved)){const d=deriveWordTranslationFromSentence(clean,sentence,translation);if(d?.translation){resolved=d.translation;provider=d.provider;}}
+      const item = { id: crypto.randomUUID(), type:'word', word:clean, translation:resolved, sentence, sentenceTranslation:translation, translationProvider:provider, level:'A1', levelLabel:'Learner', stage:'New', language:state.sourceLanguage || 'auto', videoId:state.videoId, videoTitle:document.title.replace(/\s*-\s*YouTube\s*$/i,''), url:location.href, timestamp:Number(time)||0, source:'Dual Transcript', tags:['YouTube','Dual Transcript'], createdAt:new Date().toISOString() };
       const duplicate = (stored.vocabulary || []).some(x => x?.type === 'word' && x.videoId === item.videoId && String(x.word||'').toLocaleLowerCase() === clean.toLocaleLowerCase() && Math.abs(Number(x.timestamp||0)-item.timestamp)<1.5);
       if (!duplicate) await chrome.storage.local.set({ vocabulary:[item,...(stored.vocabulary||[])].slice(0,5000), wordLearning:[item,...(stored.wordLearning||[])].slice(0,5000) });
       toast(duplicate ? `“${clean}” is already in your Library.` : `“${clean}” saved to your Library.`);
@@ -314,13 +376,16 @@
     el.textContent = message; el.hidden = false; clearTimeout(el.__t); el.__t = setTimeout(() => { el.hidden = true; }, 1800);
   }
 
+
+
   window.addEventListener('message', event => {
     const data = event.data;
     if (!data || data.source !== SOURCE) return;
-    if (data.type === 'TRACK_INFO') { state.videoId=data.videoId||state.videoId; state.sourceLanguage=data.sourceLanguage||''; state.sourceName=data.sourceName||''; }
+    if (data.type === 'TRACK_INFO') { state.videoId=data.videoId||state.videoId; state.sourceLanguage=data.sourceLanguage||''; state.sourceName=data.sourceName||''; chrome.storage.local.set({[CATALOG_KEY]:{videoId:data.videoId||'',updatedAt:Date.now(),originals:Array.isArray(data.tracks)?data.tracks:[],translations:Array.isArray(data.translationLanguages)?data.translationLanguages:[]}}).catch(()=>{}); }
     if (data.type === 'FETCH_STATUS') { state.status='loading'; if(state.panelOpen) renderPanel(); }
-    if (data.type === 'TRANSCRIPT_ERROR') { state.status='error'; state.translationError=data.error||'YouTube transcript request failed'; if(state.panelOpen) renderPanel(); }
-    if (data.type === 'TRANSCRIPT_DATA') applyTranscriptData(data);
+    if (data.type === 'NETWORK_RESET_STATUS' && state.panelOpen) { state.status = data.status === 'sleep' ? 'idle' : 'loading'; renderPanel(); }
+    if (data.type === 'TRANSCRIPT_ERROR') { state.status='error'; state.translationError=data.error||'YouTube transcript request failed'; if(state.panelOpen) renderPanel(); if(state.resettingNetwork){ state.resettingNetwork=false; setTimeout(()=>setLightweightSleep(true),500); } }
+    if (data.type === 'TRANSCRIPT_DATA') { applyTranscriptData(data); if(state.resettingNetwork){ state.resettingNetwork=false; setTimeout(()=>setLightweightSleep(true),500); } }
   });
 
   function handleVideoChange() {
@@ -430,9 +495,9 @@
       const windowAction=event.target.closest?.('[data-cmj-action]')?.dataset?.cmjAction;
       if((tab && !tab.hasAttribute('data-cmj-dual-tab')) || toolbarAction==='transcript' || windowAction==='close') { state.panelOpen=false; state.dualActive=false; $('.cmj-panel')?.classList.remove('cmj-panel-dual-active'); }
     }, true);
-    document.addEventListener('play', () => { ensureUI(); if (state.settings.autoFetchOnPlay !== false) requestTranscript(false); }, true);
+    document.addEventListener('play', () => { ensureUI(); if (!state.lightweightSleep && state.settings.autoFetchOnPlay !== false) requestTranscript(false); }, true);
     setInterval(handleVideoChange, 1200);
   }
 
-  (async () => { await loadSettings(); install(); })();
+  (async () => { await loadSettings(); try { const stored = await chrome.storage.local.get('cmjLightweightSleepMode'); state.lightweightSleep = stored.cmjLightweightSleepMode === true; } catch (_) {} install(); if (state.lightweightSleep) setLightweightSleep(true); })();
 })();

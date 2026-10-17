@@ -83,7 +83,8 @@
         "https://m.youtube.com/*"
       ],
       "js": [
-        "src/dual-transcript/dualTranscript.js"
+        "src/dual-transcript/dualTranscript.js",
+        "src/translation/dual-youtube-translation-service.js"
       ],
       "css": [
         "src/dual-transcript/dualTranscript.css"

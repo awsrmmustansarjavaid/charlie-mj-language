@@ -19,6 +19,10 @@
   let lastVideoId = '';
   let busy = false;
   let lastRequestKey = '';
+  let resetGeneration = 0;
+  let activeController = null;
+  let lightweightSleep = false;
+  let bridgeInterval = null;
 
   const post = (type, payload = {}) =>
     window.postMessage({ source: SOURCE, type, ...payload }, '*');
@@ -49,9 +53,20 @@
     } catch { return ''; }
   }
 
+  function getTrackRenderer(response) {
+    return response?.captions?.playerCaptionsTracklistRenderer || null;
+  }
+
   function getTracks(response) {
-    const renderer = response?.captions?.playerCaptionsTracklistRenderer;
-    return renderer?.captionTracks || [];
+    return getTrackRenderer(response)?.captionTracks || [];
+  }
+
+  function getTranslationLanguages(response) {
+    const rows = getTrackRenderer(response)?.translationLanguages || [];
+    return rows.map(item => ({
+      languageCode: item?.languageCode || '',
+      name: item?.languageName?.simpleText || item?.languageName?.runs?.map(x => x?.text || '').join('') || item?.languageCode || ''
+    })).filter(x => x.languageCode);
   }
 
   function cleanUrl(url) {
@@ -145,8 +160,12 @@
     return u.toString();
   }
 
-  async function fetchJsonText(url) {
-    const response = await fetch(url, { credentials: 'include', cache: 'no-store' });
+  async function fetchJsonText(url, generation = resetGeneration) {
+    if (lightweightSleep) throw new Error('Charlie MJ is in Lightweight Sleep mode.');
+    if (generation !== resetGeneration) throw new Error('YouTube caption request cancelled by network reset.');
+    const controller = new AbortController();
+    activeController = controller;
+    const response = await fetch(url, { credentials: 'include', cache: 'no-store', signal: controller.signal });
     if (!response.ok) throw new Error(`YouTube caption request failed: HTTP ${response.status}`);
     const text = await response.text();
     if (!text || /^\s*</.test(text)) throw new Error('YouTube returned an empty/HTML caption response');
@@ -192,14 +211,15 @@
     return null;
   }
 
-  async function fetchTrackWithFallback(captured, track, videoId, targetLanguage = '') {
+  async function fetchTrackWithFallback(captured, track, videoId, targetLanguage = '', generation = resetGeneration) {
     const secure = mergeTrackIntoCaptured(captured, track, videoId, targetLanguage);
     const plain = plainTrackUrl(track, videoId, targetLanguage);
     const urls = [...new Set([secure, plain].filter(Boolean))];
     let lastError = null;
     for (const url of urls) {
+      if (generation !== resetGeneration || lightweightSleep) throw new Error('YouTube caption request cancelled.');
       try {
-        const text = await fetchJsonText(url);
+        const text = await fetchJsonText(url, generation);
         const cues = parseJson3(text);
         if (cues.length) return { cues, url };
         lastError = new Error('YouTube returned no caption cues');
@@ -208,24 +228,42 @@
     throw lastError || new Error('Unable to fetch YouTube caption track');
   }
 
-  async function handleTranscriptRequest(targetLanguage) {
-    if (busy) return;
+  async function handleTranscriptRequest(targetLanguage, requestedSourceLanguage = 'auto') {
+    if (busy || lightweightSleep) return;
+    const generation = resetGeneration;
     busy = true;
     try {
       const response = getPlayerResponse();
       const videoId = getVideoId();
       if (!response || !videoId) throw new Error('YouTube player metadata is not ready');
+      const renderer = response?.captions?.playerCaptionsTracklistRenderer || null;
       const tracks = getTracks(response);
       if (!tracks.length) throw new Error('This video has no YouTube caption track');
 
-      const sourceTrack = tracks.find(t => t.languageCode === response?.captions?.playerCaptionsTracklistRenderer?.audioTrack?.captionTrack?.languageCode) || tracks[0];
+      const autoSource = renderer?.audioTrack?.captionTrack?.languageCode || tracks[0]?.languageCode || '';
+      const requested = String(requestedSourceLanguage || 'auto');
+      const normaliseLang = value => String(value || '').split('-')[0].toLowerCase();
+      const requestedBase = normaliseLang(requested);
+      const sourceTrack = requested !== 'auto'
+        ? (tracks.find(t => t.languageCode === requested)
+          || tracks.find(t => normaliseLang(t.languageCode) === requestedBase)
+          || tracks.find(t => t.languageCode === autoSource)
+          || tracks[0])
+        : (tracks.find(t => t.languageCode === autoSource) || tracks[0]);
+
       post('TRACK_INFO', {
         videoId,
         sourceLanguage: sourceTrack.languageCode || '',
         sourceName: sourceTrack.name?.simpleText || sourceTrack.languageCode || '',
-        tracks: tracks.map(t => ({ languageCode: t.languageCode || '', name: t.name?.simpleText || t.languageCode || '', kind: t.kind || '' }))
+        requestedSourceLanguage: requested,
+        tracks: tracks.map(t => ({ languageCode: t.languageCode || '', name: t.name?.simpleText || t.languageCode || '', kind: t.kind || '' })),
+        translationLanguages: getTranslationLanguages(response)
       });
 
+      // IMPORTANT: use the same proof-bearing timedtext request already made
+      // by YouTube. Do not create a separate anonymous caption-request path.
+      // This keeps the original Dual Transcript behavior and avoids the extra
+      // request pattern that can trigger YouTube HTTP 429 rate limiting.
       let captured = findCapturedRequest(videoId);
       if (!captured) {
         await requestNativeCaptions();
@@ -238,21 +276,21 @@
       lastRequestKey = requestKey;
 
       post('FETCH_STATUS', { status: 'fetching-original' });
-      const original = await fetchTrackWithFallback(captured, sourceTrack, videoId, '');
+      const original = await fetchTrackWithFallback(captured, sourceTrack, videoId, '', generation);
       post('FETCH_STATUS', { status: 'original-ready', count: original.cues.length });
 
       let translated = { cues: [], available: false, error: '' };
-      if (targetLanguage && targetLanguage !== sourceTrack.languageCode) {
+      if (targetLanguage && normaliseLang(targetLanguage) !== normaliseLang(sourceTrack.languageCode)) {
         post('FETCH_STATUS', { status: 'fetching-translation', language: targetLanguage });
         try {
-          // YouTube's native whole-track translation. This is the requested
-          // target-language transcript, not a third-party sentence translator.
-          const result = await fetchTrackWithFallback(captured, sourceTrack, videoId, targetLanguage);
+          // YouTube native whole-track translation. This is the actual
+          // translated transcript shown beside the original transcript.
+          const result = await fetchTrackWithFallback(captured, sourceTrack, videoId, targetLanguage, generation);
           translated = { cues: result.cues, available: true, error: '' };
         } catch (error) {
           translated = { cues: [], available: false, error: error?.message || String(error) };
         }
-      } else if (targetLanguage === sourceTrack.languageCode) {
+      } else if (targetLanguage && normaliseLang(targetLanguage) === normaliseLang(sourceTrack.languageCode)) {
         translated = { cues: original.cues.map(c => ({ ...c })), available: true, error: '' };
       }
 
@@ -272,6 +310,42 @@
       busy = false;
     }
   }
+
+
+  function resetYouTubeNetwork() {
+    resetGeneration += 1;
+    try { activeController?.abort(); } catch (_) {}
+    activeController = null;
+    busy = false;
+    lastRequestKey = '';
+    try { window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = ''; } catch (_) {}
+    post('NETWORK_RESET_STATUS', { status: 'resetting' });
+    setTimeout(() => {
+      if (lightweightSleep) return;
+      try { requestNativeCaptions(); } catch (_) {}
+      post('NETWORK_RESET_STATUS', { status: 'ready' });
+    }, 500);
+  }
+
+  function setLightweightSleep(enabled) {
+    lightweightSleep = Boolean(enabled);
+    if (lightweightSleep) {
+      resetGeneration += 1;
+      try { activeController?.abort(); } catch (_) {}
+      activeController = null;
+      busy = false;
+      lastRequestKey = '';
+      if (bridgeInterval) { clearInterval(bridgeInterval); bridgeInterval = null; }
+      post('NETWORK_RESET_STATUS', { status: 'sleep' });
+      return;
+    }
+    if (!bridgeInterval) bridgeInterval = setInterval(() => {
+      hookFetchAndXHR();
+      const id = getVideoId();
+      if (id && id !== lastVideoId) { lastVideoId = id; lastRequestKey = ''; exposePlayerState(); }
+    }, 1000);
+  }
+
 
   function exposePlayerState() {
     const response = getPlayerResponse();
@@ -293,12 +367,15 @@
   window.addEventListener('message', event => {
     if (event.source !== window || event.data?.source !== SOURCE) return;
     if (event.data.type === 'REQUEST_PLAYER_STATE') exposePlayerState();
-    if (event.data.type === 'REQUEST_TRANSCRIPT') handleTranscriptRequest(event.data.targetLanguage || 'en');
+    if (event.data.type === 'REQUEST_TRANSCRIPT') handleTranscriptRequest(event.data.targetLanguage || 'en', event.data.sourceLanguage || 'auto');
+    if (event.data.type === 'RESET_NETWORK') resetYouTubeNetwork();
+    if (event.data.type === 'SET_LIGHTWEIGHT_SLEEP') setLightweightSleep(event.data.enabled === true);
   });
 
   // YouTube is an SPA. Keep the bridge aware of a newly selected video and
   // re-check resource timing rather than rebuilding hooks on every navigation.
-  setInterval(() => {
+  bridgeInterval = setInterval(() => {
+    if (lightweightSleep) return;
     hookFetchAndXHR();
     const id = getVideoId();
     if (id && id !== lastVideoId) {
