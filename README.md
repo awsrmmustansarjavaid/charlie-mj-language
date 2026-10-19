@@ -9,7 +9,7 @@ Charlie MJ Language keeps the original fast YouTube transcript workflow as its c
 ## Download
 
 <p align="center">
-  <a href="/downloads/charliemj-language-v1.0.0-stable-beta-final.zip">
+  <a href="/downloads/charliemj-language-v1.0.0-youtube-language-catalog-fixed-2026-10-19.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>
