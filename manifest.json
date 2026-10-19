@@ -70,10 +70,12 @@
         "https://m.youtube.com/*"
       ],
       "js": [
-        "src/content/youtube.js"
+        "src/content/youtube.js",
+        "src/content/subtitle-learning-controls.js"
       ],
       "css": [
-        "src/content/youtube.css"
+        "src/content/youtube.css",
+        "src/content/subtitle-learning-controls.css"
       ],
       "run_at": "document_idle"
     },

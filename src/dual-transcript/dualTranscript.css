@@ -26,3 +26,4 @@
 .cmj-dual-minimized-restore:hover{background:#1e293b;transform:scale(1.05)}
 
 .cmj-dual-speaker svg{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cmj-dual-language-controls{display:flex;gap:8px;flex-wrap:wrap;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(11,20,40,.985);box-sizing:border-box}.cmj-dual-language-field{display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:10px;font-weight:700;flex:1 1 150px;min-width:130px}.cmj-dual-language-field select{min-width:0;flex:1;border:1px solid rgba(148,163,184,.22);border-radius:7px;padding:6px 8px;background:#0b1428;color:#fff;font:600 11px/1.2 system-ui,sans-serif;outline:none;color-scheme:dark}.cmj-dual-language-field select:focus{border-color:rgba(56,189,248,.55);box-shadow:0 0 0 2px rgba(56,189,248,.10)}

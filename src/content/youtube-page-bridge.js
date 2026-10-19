@@ -419,17 +419,31 @@
         const lang=x=>String(x||'').split('-')[0].toLowerCase();
         const find=l=>tracks.find(t=>lang(t.languageCode)===l&&t.kind!=='asr')||tracks.find(t=>lang(t.languageCode)===l);
         const sourceTrack=(src&&src!=='auto'?find(src):null)||tracks.find(t=>t.kind==='asr')||tracks[0];
+        const actualSourceLanguage=lang(sourceTrack?.languageCode);
+        const sourceWasAutoTranslated=!!(sourceTrack&&src&&src!=='auto'&&src!==actualSourceLanguage);
         let original=[];
-        try{original=await fetchTrackInPage(sourceTrack); }catch(e){errors.push('page-track:'+e.message)}
+        try{
+          // If YouTube is showing a translated subtitle (for example Turkish)
+          // from an English ASR track, make the requested source language the
+          // ORIGINAL by asking YouTube to translate the same timed track.
+          original=sourceWasAutoTranslated
+            ? await fetchTrackInPage(sourceTrack,src,true)
+            : await fetchTrackInPage(sourceTrack);
+        }catch(e){errors.push('page-track:'+e.message)}
         let translation=[]; let translationSource='';
         const native=find(tgt);
-        if(native && (!sourceTrack||lang(native.languageCode)!==lang(sourceTrack.languageCode))){
+        if(native && (!sourceTrack||lang(native.languageCode)!==actualSourceLanguage)){
           try{translation=await fetchTrackInPage(native);translationSource='YouTube Native';}catch(e){errors.push('native:'+e.message)}
         }
-        if(!translation.length&&sourceTrack&&tgt&&tgt!==lang(sourceTrack.languageCode)){
+        // If target is the actual source track language, use the original
+        // native track rather than copying the translated source back to target.
+        if(!translation.length&&sourceTrack&&tgt&&tgt===actualSourceLanguage){
+          try{translation=await fetchTrackInPage(sourceTrack);translationSource='YouTube Native';}catch(e){errors.push('native-source:'+e.message)}
+        }
+        if(!translation.length&&sourceTrack&&tgt&&tgt!==actualSourceLanguage){
           try{translation=await fetchTrackInPage(sourceTrack,tgt,true);if(translation.length)translationSource='YouTube Auto-Translation';}catch(e){errors.push('auto:'+e.message)}
         }
-        if(original.length||translation.length)return {ok:true,videoId,tracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceTrack?.languageCode||src,targetLanguage:tgt,method:'watch-page'};
+        if(original.length||translation.length)return {ok:true,videoId,tracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceWasAutoTranslated?src:(sourceTrack?.languageCode||src),targetLanguage:tgt,method:'watch-page'};
       }catch(e){errors.push('watch-page:'+e.message)}
     }
     const key=pageApiKey();
@@ -442,12 +456,19 @@
         const lang=x=>String(x||'').split('-')[0].toLowerCase();
         const find=l=>tracks.find(t=>lang(t.languageCode)===l&&t.kind!=='asr')||tracks.find(t=>lang(t.languageCode)===l);
         const sourceTrack=(src&&src!=='auto'?find(src):null)||tracks.find(t=>t.kind==='asr')||tracks[0];
+        const actualSourceLanguage=lang(sourceTrack?.languageCode);
+        const sourceWasAutoTranslated=!!(sourceTrack&&src&&src!=='auto'&&src!==actualSourceLanguage);
         let original=[];let translation=[];let translationSource='';
-        try{original=await fetchTrackInPage(sourceTrack);}catch(e){errors.push(item.name+':original:'+e.message)}
+        try{
+          original=sourceWasAutoTranslated
+            ? await fetchTrackInPage(sourceTrack,src,true)
+            : await fetchTrackInPage(sourceTrack);
+        }catch(e){errors.push(item.name+':original:'+e.message)}
         const native=find(tgt);
-        if(native&&(!sourceTrack||lang(native.languageCode)!==lang(sourceTrack.languageCode))){try{translation=await fetchTrackInPage(native);translationSource='YouTube Native';}catch(e){errors.push(item.name+':native:'+e.message)}}
-        if(!translation.length&&sourceTrack&&tgt&&tgt!==lang(sourceTrack.languageCode)){try{translation=await fetchTrackInPage(sourceTrack,tgt,true);if(translation.length)translationSource='YouTube Auto-Translation';}catch(e){errors.push(item.name+':auto:'+e.message)}}
-        if(original.length||translation.length)return {ok:true,videoId,tracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceTrack?.languageCode||src,targetLanguage:tgt,method:item.name};
+        if(native&&(!sourceTrack||lang(native.languageCode)!==actualSourceLanguage)){try{translation=await fetchTrackInPage(native);translationSource='YouTube Native';}catch(e){errors.push(item.name+':native:'+e.message)}}
+        if(!translation.length&&sourceTrack&&tgt&&tgt===actualSourceLanguage){try{translation=await fetchTrackInPage(sourceTrack);translationSource='YouTube Native';}catch(e){errors.push(item.name+':native-source:'+e.message)}}
+        if(!translation.length&&sourceTrack&&tgt&&tgt!==actualSourceLanguage){try{translation=await fetchTrackInPage(sourceTrack,tgt,true);if(translation.length)translationSource='YouTube Auto-Translation';}catch(e){errors.push(item.name+':auto:'+e.message)}}
+        if(original.length||translation.length)return {ok:true,videoId,tracks,original,translation,translationSource:translationSource||'YouTube Auto-Translation',sourceLanguage:sourceWasAutoTranslated?src:(sourceTrack?.languageCode||src),targetLanguage:tgt,method:item.name};
       }catch(e){errors.push(item.name+':'+e.message)}
     }
     throw new Error(errors.slice(-8).join(' | ')||'YouTube caption data unavailable');
@@ -484,10 +505,10 @@
     return fetchAndroidCaptions('', 'original-'+crypto.randomUUID(), language, 'original');
   }
 
-  // Token-free InnerTube Android fallback. Modern WEB timedtext requests can be
-  // proof-token gated, while the Android player response commonly exposes a
-  // usable caption URL. This runs invisibly and never clicks YouTube controls.
-  requestOriginalFromBridge('tr').catch(()=>{});
+  // Do not force a caption-network request during every YouTube page load.
+  // YouTube normally publishes the player response / timedtext request itself.
+  // The fallback is deferred and only used if captions have not appeared yet.
+  let deferredFallbackTimer = null;
 
   function scan() {
     currentVideoId = getVideoId();
@@ -508,18 +529,46 @@
   installNetworkHooks();
   scan();
 
-  let count = 0;
-  const timer = setInterval(() => {
-    scan();
-    if (++count > 80) clearInterval(timer);
-  }, 150);
+  // Startup used to run an expensive transcript scan every 150ms for ~12s.
+  // That created repeated DOM walks + InnerTube requests while YouTube was
+  // still building the player. Use a few one-shot checks instead. Existing
+  // network hooks and YouTube navigation events still provide immediate data.
+  const delayedScanTimers = [500, 1500, 3000, 5000].map(delay => setTimeout(() => {
+    if (!seenDataSignatures.size && !seenTrackSignatures.size) scan();
+  }, delay));
 
-  window.addEventListener('yt-navigate-finish', () => {
-    seenTrackSignatures.clear(); seenDataSignatures.clear(); lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan();
+  function scheduleDeferredFallback() {
+    clearTimeout(deferredFallbackTimer);
+    deferredFallbackTimer = setTimeout(() => {
+      if (!seenDataSignatures.size && !seenTrackSignatures.size) {
+        requestOriginalFromBridge('tr').catch(()=>{});
+        scan();
+      }
+    }, 3500);
+  }
+  scheduleDeferredFallback();
+
+  function resetForNavigation() {
+    seenTrackSignatures.clear();
+    seenDataSignatures.clear();
+    lastTranscriptAttemptAt = 0;
+    transcriptPanelFallbackAt = 0;
+    currentVideoId = getVideoId();
+    scan();
+    scheduleDeferredFallback();
+  }
+
+  window.addEventListener('yt-navigate-finish', resetForNavigation, true);
+  window.addEventListener('yt-page-data-fetched', () => {
+    lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan();
   }, true);
-  window.addEventListener('yt-page-data-fetched', () => { lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan(); }, true);
-  window.addEventListener('yt-page-data-updated', () => { lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan(); }, true);
-  window.addEventListener('beforeunload', () => clearInterval(timer), { once: true });
+  window.addEventListener('yt-page-data-updated', () => {
+    lastTranscriptAttemptAt = 0; transcriptPanelFallbackAt = 0; currentVideoId = getVideoId(); scan();
+  }, true);
+  window.addEventListener('beforeunload', () => {
+    delayedScanTimers.forEach(clearTimeout);
+    clearTimeout(deferredFallbackTimer);
+  }, { once: true });
 
   emit(DIAG_EVENT, { version: '4.3.0', networkHooks: installedNetworkHooks, strategy: 'page-session -> android -> ios -> tvhtml5 -> transcript', videoId: currentVideoId });
 })();

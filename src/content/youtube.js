@@ -99,7 +99,7 @@
     wordCardAutoCloseMs: 6000,
     captionAutoFetch: true,
     captionFetchIntervalMs: 180,
-    captionSyncIntervalMs: 40,
+    captionSyncIntervalMs: 80,
     captionSyncToleranceMs: 350,
     toolbarRevealMode: 'hover',
     toolbarDefaultX: 50, toolbarDefaultY: 2, toolbarHeight: 45, toolbarHorizontalAnchor: 'center', toolbarVerticalAnchor: 'bottom', toolbarOffsetX: 0, toolbarOffsetY: 2, toolbarPositionMode: 'default', toolbarOverflowMode: 'auto',
@@ -145,6 +145,10 @@
     autoPauseAfterSubtitle: false,
     replayCount: 1,
     playbackSpeed: 1,
+    // Subtitle Learning Controls
+    subtitleLearningAutoResumeDelay: 3,
+    subtitleLearningKeepSubtitleVisible: true,
+    subtitleLearningReplayAudioCount: 2,
     subtitleGrammarColorsEnabled: true, transcriptGrammarColorsEnabled: true,
     grammarColors: {
       noun: '#38bdf8', verb: '#fb7185', adjective: '#a78bfa', adverb: '#4ade80', pronoun: '#facc15',
@@ -288,9 +292,11 @@
 
     installObservers();
     routeChanged();
-    setInterval(() => { if (!state.lightweightSleep) routeChanged(); }, 1000);
+    // YouTube is an SPA; navigation events handle normal route changes.
+    // Keep a low-frequency safety check instead of waking every second.
+    setInterval(() => { if (!state.lightweightSleep) routeChanged(); }, 3000);
     startSubtitleSyncLoop();
-    setInterval(() => { if (!state.lightweightSleep) injectYouTubeWatchLaterItem(); }, 1500);
+    setInterval(() => { if (!state.lightweightSleep) injectYouTubeWatchLaterItem(); }, 3000);
   }
 
   function startSubtitleSyncLoop() {
@@ -347,12 +353,18 @@
 
   /** Observe YouTube's SPA DOM and player changes. */
   function installObservers() {
+    let queued = false;
     const observer = new MutationObserver(() => {
-      if (isWatchPage()) {
-        ensureUI();
-        readNativeCaptions();
-        injectYouTubeWatchLaterItem();
-      }
+      if (queued) return;
+      queued = true;
+      setTimeout(() => {
+        queued = false;
+        if (isWatchPage()) {
+          ensureUI();
+          readNativeCaptions();
+          injectYouTubeWatchLaterItem();
+        }
+      }, 120);
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
 
@@ -1120,8 +1132,12 @@
     const custom = s.toolbarPositionMode === 'custom' && (Number.isFinite(Number(pos.leftPx)) || Number.isFinite(Number(pos.topPx)));
     host.style.position = 'fixed'; host.style.transform = 'none';
     const toolbarWidth = Math.max(300, Math.min(1600, Number(s.toolbarWidth || 905)));
-    host.style.width = `min(96vw, ${toolbarWidth}px)`;
-    host.style.height = `${Math.max(30, Math.min(120, Number(s.toolbarHeight || 45)))}px`;
+    // Let the toolbar size itself from its actual buttons.
+    // Do not force a large viewport-sized container.
+    host.style.width = 'max-content';
+    host.style.maxWidth = '96vw';
+    host.style.height = 'auto';
+    host.style.minHeight = '0';
     host.style.setProperty('--cmj-toolbar-scale', String(Math.max(0.7, Math.min(1.4, Number(s.toolbarScale || 1)))));
     host.style.right = 'auto';
     if (custom) {
@@ -1196,10 +1212,11 @@
   }
 
   function buildToolbarHTML() {
-    const frontDefault=['toggle','transcript','word','sentence','save','bookmark','capture','watch','focus','theme'];
+    const frontDefault=['toggle','transcript','word','sentence','save','bookmark','capture','watch','focus','theme','auto-pause','replay-audio'];
     const moreDefault=['translate','replay','loop','speed','ab','study','save-sentence','download-transcript','download-vocabulary','settings'];
     const front=Array.isArray(state.settings.toolbarActionOrder)?state.settings.toolbarActionOrder:frontDefault;
     const more=Array.isArray(state.settings.toolbarMoreActions)?state.settings.toolbarMoreActions:moreDefault;
+    for (const action of ['auto-pause','replay-audio']) { if (!front.includes(action) && !more.includes(action)) front.push(action); }
     const labels={
       toggle:['🌍','CMJ','Enable or disable Charlie MJ subtitles'],
       transcript:['📜','Transcript','Complete transcript'],
@@ -1210,7 +1227,9 @@
       capture:['📸','Capture','Capture this timeline position'],
       watch:['⏰','Watch Later','Add this video to Charlie MJ Watch Later'],
       focus:['🎯','Focus','Reduce YouTube distractions'],
-      theme:['☼/☾','Theme','Switch appearance']
+      theme:['☼/☾','Theme','Switch appearance'],
+      'auto-pause':['⏸','Auto-Pause','Pause when a new subtitle appears'],
+      'replay-audio':['🔊','Replay Audio','Replay the current subtitle audio']
     };
     const moreLabels={
       translate:['🌐','Translate current subtitle'],replay:['🔁','Replay current sentence'],loop:['🔁','Loop current sentence'],
@@ -1273,12 +1292,13 @@
     if (state.studyMode) active.add('study');
     if (state.abRange) active.add('ab');
     if (state.settings.theme === 'dark') active.add('theme');
+    if (state.settings.autoPauseAfterSubtitle) active.add('auto-pause');
     toolbar.querySelectorAll('[data-cmj-toolbar]').forEach(button => {
       const action = button.dataset.cmjToolbar;
       if (action === 'more') return;
       const isActive = active.has(action);
       button.classList.toggle('cmj-toolbar-active', isActive);
-      if (['toggle','transcript','word','sentence','focus','study','ab','theme'].includes(action)) button.setAttribute('aria-pressed', String(isActive));
+      if (['toggle','transcript','word','sentence','focus','study','ab','theme','auto-pause'].includes(action)) button.setAttribute('aria-pressed', String(isActive));
     });
   }
 
@@ -1404,7 +1424,8 @@
     if (!isWatchPage()) return;
     const video = getVideo();
     if (!video) return;
-    saveLearningProgress(false).catch(() => {});
+    const nowProgress = Date.now();
+    if (nowProgress - state.lastProgressWrite >= 3000) saveLearningProgress(false).catch(() => {});
     const current = getCurrentCaption();
     // Both sync modes must use the same validated timestamped cue index so
     // the source subtitle and its translation stay highlighted as one row.
@@ -1414,13 +1435,16 @@
       while (lo <= hi) { const mid = (lo + hi) >> 1; if (Number(state.captions[mid].start || 0) <= t) { candidate = mid; lo = mid + 1; } else hi = mid - 1; }
       if (candidate >= 0) { const item = state.captions[candidate], next = state.captions[candidate + 1]; const end = item.start + Math.max(item.duration || 0, next ? next.start - item.start : 0.001); liveIndex = t <= end + Math.max(0, Number(state.settings.captionSyncToleranceMs || 350)) / 1000 || candidate === state.captions.length - 1 ? candidate : -1; } else liveIndex = -1;
     }
+    const liveIndexChanged = liveIndex !== state.liveHighlightLastIndex;
     updateLiveTranscriptHighlight(liveIndex, video);
-    cmjAdditionalAutoFollowTranscript(
-      $('.cmj-transcript-list'),
-      liveIndex,
-      video
-    );
-    
+    if (liveIndexChanged) {
+      cmjAdditionalAutoFollowTranscript(
+        $('.cmj-transcript-list'),
+        liveIndex,
+        video
+      );
+    }
+
     if (!current) {
       readNativeCaptions();
       return;
@@ -1429,7 +1453,22 @@
     if (key !== state.lastCaptionKey) {
       state.lastCaptionKey = key;
       renderCurrentSubtitle();
-      if (state.settings.autoPauseAfterSubtitle) { const video = getVideo(); if (video && !video.paused) video.pause(); }
+      const pauseVideo = getVideo();
+      const wasPlaying = Boolean(pauseVideo && !pauseVideo.paused);
+      let autoPaused = false;
+      if (state.settings.autoPauseAfterSubtitle && wasPlaying) {
+        pauseVideo.pause();
+        autoPaused = true;
+      }
+      try {
+        document.dispatchEvent(new CustomEvent('cmj-subtitle-changed', {
+          detail: { key, index: state.activeIndex, wasPlaying, autoPaused, bounds: {
+            start: Number(current.start) || 0,
+            end: Number(current.start || 0) + Math.max(0.05, Number(current.duration) || 0),
+            text: current.text || ''
+          } }
+        }));
+      } catch (_) {}
       if (state.settings.autoTranslate) {
         translateCurrent(true).catch(() => {});
         prefetchTranslations(state.activeIndex + 1, Number(state.settings.subtitlePreloadTranslations || 2));
@@ -2729,6 +2768,7 @@
     list.classList.toggle('cmj-live-highlight-disabled', !enabled);
     const safeIndex = Number.isInteger(index) ? index : -1;
     const changed = safeIndex !== state.liveHighlightLastIndex;
+    if (!changed && !forceScroll) return;
     if (changed) state.liveHighlightLastIndex = safeIndex;
     // Update only the previous/current row when the timestamp changes; never rebuild transcript HTML per tick.
     if (!enabled) {
@@ -3026,4 +3066,35 @@
   function csv(value) { return `"${String(value ?? '').replaceAll('"', '""')}"`; }
   function stripHTML(value) { const box = document.createElement('div'); box.innerHTML = String(value || ''); return box.textContent || ''; }
   function escapeHTML(value) { return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])); }
+
+  /*
+  * Public bridge for optional learner-control modules.
+  * Existing Charlie MJ functionality remains untouched.
+  * The separate subtitle-learning-controls.js file uses
+  * this bridge instead of duplicating the caption engine.
+  */
+  window.__CMJSubtitleLearningAPI={
+    getVideo,
+    getSettings(){ return { ...state.settings }; },
+    async updateSettings(patch){
+      state.settings={ ...state.settings, ...(patch || {}) };
+      await storageSet({ settings:state.settings });
+      return { ...state.settings };
+    },
+    getCurrentCaption,
+    getCurrentCaptionBounds(){
+      const current=getCurrentCaption();
+      if (!current) return null;
+      const index=state.activeIndex;
+      const next=state.captions[index + 1];
+      const start=Number(current.start) || 0;
+      const duration=Math.max(0.05,Number(current.duration) || 0);
+      const durationEnd=start + duration;
+      const nextStart=next ? Number(next.start) : Number.POSITIVE_INFINITY;
+      const end=Number.isFinite(nextStart) ? Math.max(start + 0.05,nextStart) : Math.max(start + 0.05,durationEnd);
+      return { index,start,end,duration:end - start,key:`${index}:${start}:${current.text || ''}`,text:current.text || '' };
+    },
+    showToast(message){ showToast(message); }
+  };
+
 })();

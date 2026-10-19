@@ -38,6 +38,9 @@
     sourceName: '',
     targetLanguage: 'en',
     sourceLanguage: 'auto',
+    sourceCatalog: [],
+    targetCatalog: [],
+    translationCatalog: [],
     cues: [],
     sentences: [],
     translationAvailable: false,
@@ -209,6 +212,72 @@
     }
   }
 
+  function normaliseLanguageCode(value) {
+    return String(value || '').trim().toLowerCase().split('-')[0];
+  }
+
+  function uniqueLanguages(rows = []) {
+    const seen = new Set();
+    const out = [];
+    for (const row of rows) {
+      const code = String(row?.languageCode || '').trim();
+      if (!code) continue;
+      const key = normaliseLanguageCode(code);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push({ languageCode: code, name: String(row?.name || code).trim() || code, kind: row?.kind || '' });
+    }
+    return out;
+  }
+
+  function languageLabel(row) {
+    const code = String(row?.languageCode || '').trim();
+    const name = String(row?.name || '').trim();
+    return name && normaliseLanguageCode(name) !== normaliseLanguageCode(code) ? `${name} (${code})` : (name || code);
+  }
+
+  function renderLanguageSelect(kind, value, rows, allowAuto = false) {
+    const options = [];
+    if (allowAuto) options.push(`<option value="auto">Auto (YouTube)</option>`);
+    for (const row of uniqueLanguages(rows)) {
+      const code = String(row.languageCode);
+      options.push(`<option value="${esc(code)}"${normaliseLanguageCode(value) === normaliseLanguageCode(code) ? ' selected' : ''}>${esc(languageLabel(row))}</option>`);
+    }
+    if (!options.length) {
+      options.push(`<option value="${esc(value || 'en')}" selected>${esc(value || 'en')}</option>`);
+    }
+    return `<label class="cmj-dual-language-field"><span>${kind === 'source' ? 'Original' : 'Target'}</span><select data-dual-language="${kind}">${options.join('')}</select></label>`;
+  }
+
+  function renderLanguageControls() {
+    const sources = uniqueLanguages([
+      ...(state.sourceCatalog || []),
+      ...(state.translationCatalog || [])
+    ]);
+    const targets = uniqueLanguages([
+      ...(state.targetCatalog || []),
+      ...(state.translationCatalog || []),
+      ...(state.sourceCatalog || [])
+    ]);
+    return `<div class="cmj-dual-language-controls">${renderLanguageSelect('source', state.sourceLanguage || 'auto', sources, true)}${renderLanguageSelect('target', state.targetLanguage || 'en', targets, false)}</div>`;
+  }
+
+  async function changeLanguage(kind, value) {
+    const code = String(value || '').trim() || (kind === 'source' ? 'auto' : 'en');
+    if (kind === 'source') state.sourceLanguage = code;
+    else state.targetLanguage = code;
+    state.settings.sourceLanguage = state.sourceLanguage;
+    state.settings.targetLanguage = state.targetLanguage;
+    try { await chrome.storage.local.set({ [SETTINGS_KEY]: state.settings }); } catch (_) {}
+    state.lastRequestedVideo = '';
+    state.cues = [];
+    state.sentences = [];
+    state.translationAvailable = false;
+    state.translationError = '';
+    renderPanel();
+    requestTranscript(true);
+  }
+
   function renderStatus(extra = '') {
     const status = state.status === 'ready' ? 'Ready' : state.status === 'loading' ? 'Fetching YouTube transcript…' : state.status === 'error' ? 'Error' : 'Waiting';
     const detail = state.translationAvailable ? ` · ${state.sourceLanguage || 'source'} → ${state.targetLanguage}` : state.translationError ? ` · ${state.translationError}` : '';
@@ -222,9 +291,12 @@
     body.style.setProperty('--cmj-dual-speaker-color', colorValue(state.settings.speakerIconColor, '#ffd54a'));
     body.style.setProperty('--cmj-dual-speaker-size', `${Math.max(12, Math.min(32, Number(state.settings.speakerIconSize) || 18))}px`);
     body.innerHTML = `<div data-cmj-dual-root="1" class="cmj-dual-root">${renderStatus()}
+      ${renderLanguageControls()}
       <div class="cmj-dual-toolbar-row"><span>Original: <strong>${esc(state.sourceName || state.sourceLanguage || '—')}</strong></span><span>Target: <strong>${esc(state.targetLanguage)}</strong></span><span>${state.cues.length ? `${state.cues.length} cues` : ''}</span></div>
-      <div class="cmj-dual-list" role="list">${state.sentences.length ? state.sentences.map((row, i) => renderRow(row, i)).join('') : `<div class="cmj-dual-empty">Play the YouTube video for a moment, then the complete original + translated transcript will appear here.</div>`}</div></div>`;
+      <div class="cmj-dual-list" role="list">${state.sentences.length ? state.sentences.map((row, i) => renderRow(row, i)).join('') : `<div class="cmj-dual-empty">Select the YouTube caption languages above, then the transcript will be fetched from YouTube.</div>`}</div></div>`;
     body.querySelector('[data-dual-refresh]')?.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); requestTranscript(true); });
+    body.querySelector('[data-dual-language="source"]')?.addEventListener('change', e => changeLanguage('source', e.target.value));
+    body.querySelector('[data-dual-language="target"]')?.addEventListener('change', e => changeLanguage('target', e.target.value));
     body.querySelectorAll('[data-dual-seek]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); seek(Number(el.dataset.dualSeek || 0)); }));
     body.querySelectorAll('[data-dual-save-sentence]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); saveSentence(Number(el.dataset.dualSaveSentence)); }));
     body.querySelectorAll('[data-dual-save-word]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); saveWord(String(el.dataset.dualSaveWord || ''), Number(el.dataset.dualSaveTime || 0), String(el.dataset.dualSaveSentenceText || ''), String(el.dataset.dualSaveTranslation || '')); }));
@@ -381,7 +453,15 @@
   window.addEventListener('message', event => {
     const data = event.data;
     if (!data || data.source !== SOURCE) return;
-    if (data.type === 'TRACK_INFO') { state.videoId=data.videoId||state.videoId; state.sourceLanguage=data.sourceLanguage||''; state.sourceName=data.sourceName||''; chrome.storage.local.set({[CATALOG_KEY]:{videoId:data.videoId||'',updatedAt:Date.now(),originals:Array.isArray(data.tracks)?data.tracks:[],translations:Array.isArray(data.translationLanguages)?data.translationLanguages:[]}}).catch(()=>{}); }
+    if (data.type === 'TRACK_INFO') {
+      state.videoId=data.videoId||state.videoId;
+      state.sourceCatalog=uniqueLanguages(Array.isArray(data.tracks)?data.tracks:[]);
+      state.translationCatalog=uniqueLanguages(Array.isArray(data.translationLanguages)?data.translationLanguages:[]);
+      state.targetCatalog=uniqueLanguages([...(Array.isArray(data.translationLanguages)?data.translationLanguages:[]), ...(Array.isArray(data.tracks)?data.tracks:[])]);
+      if (state.sourceLanguage === 'auto' && data.sourceLanguage) state.sourceName=data.sourceName||data.sourceLanguage;
+      chrome.storage.local.set({[CATALOG_KEY]:{videoId:data.videoId||'',updatedAt:Date.now(),originals:Array.isArray(data.tracks)?data.tracks:[],translations:Array.isArray(data.translationLanguages)?data.translationLanguages:[]}}).catch(()=>{});
+      if(state.panelOpen) renderPanel();
+    }
     if (data.type === 'FETCH_STATUS') { state.status='loading'; if(state.panelOpen) renderPanel(); }
     if (data.type === 'NETWORK_RESET_STATUS' && state.panelOpen) { state.status = data.status === 'sleep' ? 'idle' : 'loading'; renderPanel(); }
     if (data.type === 'TRANSCRIPT_ERROR') { state.status='error'; state.translationError=data.error||'YouTube transcript request failed'; if(state.panelOpen) renderPanel(); if(state.resettingNetwork){ state.resettingNetwork=false; setTimeout(()=>setLightweightSleep(true),500); } }
@@ -486,7 +566,12 @@
     installMinimizedRestoreAffordance();
     installToolbarActionFallbacks();
     startSync();
-    state.observer = new MutationObserver(() => ensureUI());
+    let uiQueued = false;
+    state.observer = new MutationObserver(() => {
+      if (uiQueued) return;
+      uiQueued = true;
+      setTimeout(() => { uiQueued = false; ensureUI(); }, 150);
+    });
     state.observer.observe(document.documentElement, { childList:true, subtree:true });
     document.addEventListener('yt-navigate-finish', () => { state.lastRequestedVideo=''; setTimeout(handleVideoChange, 700); }, true);
     document.addEventListener('click', event => {
@@ -496,7 +581,7 @@
       if((tab && !tab.hasAttribute('data-cmj-dual-tab')) || toolbarAction==='transcript' || windowAction==='close') { state.panelOpen=false; state.dualActive=false; $('.cmj-panel')?.classList.remove('cmj-panel-dual-active'); }
     }, true);
     document.addEventListener('play', () => { ensureUI(); if (!state.lightweightSleep && state.settings.autoFetchOnPlay !== false) requestTranscript(false); }, true);
-    setInterval(handleVideoChange, 1200);
+    setInterval(handleVideoChange, 3000);
   }
 
   (async () => { await loadSettings(); try { const stored = await chrome.storage.local.get('cmjLightweightSleepMode'); state.lightweightSleep = stored.cmjLightweightSleepMode === true; } catch (_) {} install(); if (state.lightweightSleep) setLightweightSleep(true); })();

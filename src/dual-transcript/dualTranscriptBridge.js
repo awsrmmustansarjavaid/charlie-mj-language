@@ -244,20 +244,31 @@
       const requested = String(requestedSourceLanguage || 'auto');
       const normaliseLang = value => String(value || '').split('-')[0].toLowerCase();
       const requestedBase = normaliseLang(requested);
-      const sourceTrack = requested !== 'auto'
+      const translationLanguages = getTranslationLanguages(response);
+      const directSourceTrack = requested !== 'auto'
         ? (tracks.find(t => t.languageCode === requested)
-          || tracks.find(t => normaliseLang(t.languageCode) === requestedBase)
-          || tracks.find(t => t.languageCode === autoSource)
-          || tracks[0])
-        : (tracks.find(t => t.languageCode === autoSource) || tracks[0]);
+          || tracks.find(t => normaliseLang(t.languageCode) === requestedBase))
+        : null;
+      const baseTrack = tracks.find(t => t.languageCode === autoSource) || tracks[0];
+      // YouTube often exposes the video's real caption track (for example
+      // English auto-generated) plus a separate translationLanguages catalog
+      // (for example Turkish). If the user selects one of those translated
+      // languages as ORIGINAL, fetch that language with tlang instead of
+      // silently falling back to the base English track.
+      const translatedSource = !directSourceTrack && requested !== 'auto'
+        ? translationLanguages.find(t => normaliseLang(t.languageCode) === requestedBase)
+        : null;
+      const sourceTrack = directSourceTrack || baseTrack;
+      const originalLanguage = requested !== 'auto' && translatedSource ? translatedSource.languageCode : (sourceTrack.languageCode || '');
+      const originalName = requested !== 'auto' && translatedSource ? translatedSource.name : (sourceTrack.name?.simpleText || sourceTrack.languageCode || '');
 
       post('TRACK_INFO', {
         videoId,
-        sourceLanguage: sourceTrack.languageCode || '',
-        sourceName: sourceTrack.name?.simpleText || sourceTrack.languageCode || '',
+        sourceLanguage: originalLanguage,
+        sourceName: originalName,
         requestedSourceLanguage: requested,
         tracks: tracks.map(t => ({ languageCode: t.languageCode || '', name: t.name?.simpleText || t.languageCode || '', kind: t.kind || '' })),
-        translationLanguages: getTranslationLanguages(response)
+        translationLanguages
       });
 
       // IMPORTANT: use the same proof-bearing timedtext request already made
@@ -276,28 +287,31 @@
       lastRequestKey = requestKey;
 
       post('FETCH_STATUS', { status: 'fetching-original' });
-      const original = await fetchTrackWithFallback(captured, sourceTrack, videoId, '', generation);
+      const original = translatedSource
+        ? await fetchTrackWithFallback(captured, sourceTrack, videoId, translatedSource.languageCode, generation)
+        : await fetchTrackWithFallback(captured, sourceTrack, videoId, '', generation);
       post('FETCH_STATUS', { status: 'original-ready', count: original.cues.length });
 
       let translated = { cues: [], available: false, error: '' };
-      if (targetLanguage && normaliseLang(targetLanguage) !== normaliseLang(sourceTrack.languageCode)) {
+      const effectiveOriginalLanguage = normaliseLang(originalLanguage);
+      if (targetLanguage && normaliseLang(targetLanguage) !== effectiveOriginalLanguage) {
         post('FETCH_STATUS', { status: 'fetching-translation', language: targetLanguage });
         try {
-          // YouTube native whole-track translation. This is the actual
-          // translated transcript shown beside the original transcript.
+          // Fetch the requested target from the SAME base YouTube track.
+          // This supports both native tracks and YouTube's translationLanguages.
           const result = await fetchTrackWithFallback(captured, sourceTrack, videoId, targetLanguage, generation);
           translated = { cues: result.cues, available: true, error: '' };
         } catch (error) {
           translated = { cues: [], available: false, error: error?.message || String(error) };
         }
-      } else if (targetLanguage && normaliseLang(targetLanguage) === normaliseLang(sourceTrack.languageCode)) {
+      } else if (targetLanguage && normaliseLang(targetLanguage) === effectiveOriginalLanguage) {
         translated = { cues: original.cues.map(c => ({ ...c })), available: true, error: '' };
       }
 
       post('TRANSCRIPT_DATA', {
         videoId,
-        sourceLanguage: sourceTrack.languageCode || '',
-        sourceName: sourceTrack.name?.simpleText || sourceTrack.languageCode || '',
+        sourceLanguage: originalLanguage,
+        sourceName: originalName,
         targetLanguage,
         original: original.cues,
         translated: translated.cues,
@@ -343,7 +357,7 @@
       hookFetchAndXHR();
       const id = getVideoId();
       if (id && id !== lastVideoId) { lastVideoId = id; lastRequestKey = ''; exposePlayerState(); }
-    }, 1000);
+    }, 3000);
   }
 
 

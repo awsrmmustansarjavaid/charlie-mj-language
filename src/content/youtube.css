@@ -27,11 +27,15 @@
 #cmj-player-tools {
   position: fixed;
   left: 50%;
-  bottom: 58px;
+  bottom: 70px;
   transform: translateX(-50%);
   z-index: 2147483001;
-  width: min(96%, 1180px);
+  width: max-content;
+  max-width: 96vw;
+  height: auto !important;
+  min-height: 0 !important;
   pointer-events: auto;
+  box-sizing: border-box;
 }
 
 .cmj-toolbar {
@@ -39,10 +43,15 @@
   transform: scale(var(--cmj-toolbar-scale, 1));
   transform-origin: center bottom;
   display: flex;
+  box-sizing: border-box;
+  height: auto;
+  min-height: 45px;
   justify-content: center;
   align-items: center;
   gap: 5px;
   padding: 6px;
+  flex-wrap: nowrap;
+  overflow: visible;
   border: 1px solid rgba(125, 211, 252, .22);
   border-radius: 14px;
   background: linear-gradient(135deg, rgba(7, 17, 37, .96), rgba(19, 32, 64, .96));
@@ -53,6 +62,7 @@
 .cmj-toolbar button,
 .cmj-more-menu button,
 .cmj-export-row button {
+  box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 9px;
   background: rgba(255, 255, 255, .075);
