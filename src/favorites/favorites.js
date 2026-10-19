@@ -1132,6 +1132,15 @@ function renderGroups() {
 }
 
 function renderCategories() {
+  const q = $('#search').value.trim().toLowerCase();
+  const filteredCategories = categories.filter(
+    c =>
+      !q ||
+      [c.name, c.description]
+        .join(' ')
+        .toLowerCase()
+        .includes(q)
+  );
   const countResources =
     name =>
       allResources.filter(
@@ -1146,10 +1155,10 @@ function renderCategories() {
 
   $('#resultCount')
     .textContent =
-      `${categories.length} categories`;
+      `${filteredCategories.length} categories`;
 
   $('#list').innerHTML =
-    `<div class="resource-grid">${categories.map(c => {
+    `<div class="resource-grid">${filteredCategories.map(c => {
       const rs =
         countResources(
           c.name
@@ -2176,11 +2185,14 @@ function syncTabs() {
     tab ===
     'suggestions';
 
-  $('#search')
-    .disabled =
-      tab ===
-        'categories' ||
-      sug;
+  $('#search').disabled = false;
+
+  $('#search').placeholder =
+  tab === 'categories'
+    ? 'Search categories…'
+    : tab === 'suggestions'
+      ? 'Search suggestions…'
+      : 'Search names, descriptions, tags, categories…';
 
   $('#categoryFilter')
     .disabled =
