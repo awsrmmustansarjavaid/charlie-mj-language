@@ -2,6 +2,33 @@
   {
     "category": "Turkish TV",
     "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCdVBWUBCuREx1Q2Ikw9R8Mw",
+    "dateAdded": "2026-10-20T09:00:13.955Z",
+    "description": "İzleri Takip Et, Hikâyeyi Paylaş! 😎",
+    "handle": "",
+    "id": "channel_6c1df24d-a4b9-407f-a3ed-57d9686d82a6",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-20T09:00:13.948Z",
+    "name": "TRT Belgesel - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "163k subscribers",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/bnBf3_3Nw-sQkrjyj0U1Gb68Od0em3yzm9_VzgHqyxPvYyP069gRuRW-QdLI5qJ8QFl3m-y6Mw=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-20T09:00:13.948Z",
+    "updatedAt": "2026-10-20T09:00:13.955Z",
+    "url": "https://www.youtube.com/trtbelgesel",
+    "videoCount": "6,620 videos"
+  },
+  {
+    "category": "Turkish TV",
+    "categorySuggestion": {
       "confidence": 0.5882352941176471,
       "name": "Uncategorized",
       "source": "insufficient-confidence",

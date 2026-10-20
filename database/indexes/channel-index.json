@@ -1,73 +1,68 @@
 [
   {
-    "id": "UCmsbOgBMbhehaXat-Vw22jg",
-    "name": "GEL DE ANLAT - YouTube",
-    "category": "Turkish vlogers"
+    "id": "UCb28zFjyHwE-K5D5MzMXRCA",
+    "name": "Zuhalce - YouTube",
+    "category": "Turkish Bazaars Vloggers"
   },
   {
-    "id": "UCbOyfFymQaJnl16LRqvkvHw",
-    "name": "Musa ZEYBEK - YouTube",
+    "id": "UC6_RR9GIqv_Q6IkwNpTFavA",
+    "name": "Master Of Language Hacking | Türkçe - YouTube",
+    "category": "Turkish Polyglots"
+  },
+  {
+    "id": "UCB53cTZp9cb1v6wPj1CE5vg",
+    "name": "Tolga Uğur - YouTube",
+    "category": "Turkish Foodie Vloger"
+  },
+  {
+    "id": "UCaggh5Gw0ao-M8lLwLZQjrA",
+    "name": "Anadolunun Şarkıları - YouTube",
+    "category": "Turkish müzik"
+  },
+  {
+    "id": "UC4gagFeUGFVJcHKshYcR0cw",
+    "name": "Ayhan Mortepe - YouTube",
+    "category": "Turkish Foodie Vloger"
+  },
+  {
+    "id": "UCKKfRI2ouciVh1phdShiNuw",
+    "name": "KORAL KILIÇ (YAŞAM HİKAYELERİ) - YouTube",
     "category": "Turkish Travel vlogers"
   },
   {
-    "id": "UCxDkmiw0h57HiQGaGJVbGVQ",
-    "name": "Elveda Rumeli - YouTube",
-    "category": "Türk dizisi"
-  },
-  {
-    "id": "UC1EmLjaje4UnYmg8Hl7R1lA",
-    "name": "Tarih ve Türkler - YouTube",
-    "category": "Turkiye Tarih"
-  },
-  {
-    "id": "UCt-kljHgMy9P0AvcVcBHy3g",
-    "name": "Eko Rotam - YouTube",
+    "id": "UCmIyh8YmlcVhT5oYJ1rpulQ",
+    "name": "Gezginle Keşfet - YouTube",
     "category": "Turkish Travel vlogers"
   },
   {
-    "id": "UC0GKelxahF1nHwKyGhfJVYA",
-    "name": "Yedi Numara - YouTube",
-    "category": "Türk dizisi"
+    "id": "UC_vc5MMTEKOjD3gce3NCYdQ",
+    "name": "Kartal Gökberk - YouTube",
+    "category": "Turkish Foodie Vloger"
   },
   {
-    "id": "UC6q5G7Y8MutjMfs7bjOCdTw",
-    "name": "Şeyma Yolda - YouTube",
+    "id": "UCAvJOWhJ6u6tEpQ-fuVecrA",
+    "name": "Canan Erdem - YouTube",
+    "category": "Turkish Bazaars Vloggers"
+  },
+  {
+    "id": "UC4KPxPThGnE3AdHHkcgNzpw",
+    "name": "Yasin Karabacak - YouTube",
     "category": "Turkish Travel vlogers"
   },
   {
-    "id": "UC2e6TQ6gn_xd1VIGlM6x7Uw",
-    "name": "Güzel Köylü - YouTube",
-    "category": "Türk dizisi"
+    "id": "UCdVBWUBCuREx1Q2Ikw9R8Mw",
+    "name": "TRT Belgesel - YouTube",
+    "category": "Turkish TV"
   },
   {
-    "id": "UCfj2bu-apHga0rO5SH2vwRA",
-    "name": "Çatı Katı Aşk - YouTube",
-    "category": "Türk dizisi"
-  },
-  {
-    "id": "UCFLXe5d3gHLFLtNO7e3YPmA",
-    "name": "O Hayat Benim - YouTube",
-    "category": "Türk dizisi"
-  },
-  {
-    "id": "UCLuqvb2RbDuyENpwEo4F0sQ",
-    "name": "gezdelisi - YouTube",
+    "id": "UCvedU4KbaKCsuxwaCXnCwLw",
+    "name": "İlyas Uçar - YouTube",
     "category": "Turkish Travel vlogers"
   },
   {
-    "id": "UC6zAMy6boneCLJzRKiiwzmQ",
-    "name": "Gönül Dağı - YouTube",
-    "category": "Türk dizisi"
-  },
-  {
-    "id": "UCgQZqm_gPoRGjIy-nPY9U3g",
-    "name": "Aşk Mantık İntikam - YouTube",
-    "category": "Türk dizisi"
-  },
-  {
-    "id": "UCgpb7FbW23x_-8mwr67-lFA",
-    "name": "Ayrıcalıklı Rotalar - YouTube",
-    "category": "Turkish Travel vlogers"
+    "id": "UCDpnylF7rZxbdKfJSRB28Ag",
+    "name": "REDMAX TV - YouTube",
+    "category": "Turkish Film Productions"
   },
   {
     "id": "UCeMez5oMgp-hrunHReJ4G1g",
@@ -833,5 +828,75 @@
     "id": "channel_dd386619-a2fa-4300-9d0c-d9e088a24ff5",
     "name": "gezilesiyer - YouTube",
     "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCxDkmiw0h57HiQGaGJVbGVQ",
+    "name": "Elveda Rumeli - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC0GKelxahF1nHwKyGhfJVYA",
+    "name": "Yedi Numara - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC2e6TQ6gn_xd1VIGlM6x7Uw",
+    "name": "Güzel Köylü - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCfj2bu-apHga0rO5SH2vwRA",
+    "name": "Çatı Katı Aşk - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCFLXe5d3gHLFLtNO7e3YPmA",
+    "name": "O Hayat Benim - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC6zAMy6boneCLJzRKiiwzmQ",
+    "name": "Gönül Dağı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCgQZqm_gPoRGjIy-nPY9U3g",
+    "name": "Aşk Mantık İntikam - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCbOyfFymQaJnl16LRqvkvHw",
+    "name": "Musa ZEYBEK - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UCt-kljHgMy9P0AvcVcBHy3g",
+    "name": "Eko Rotam - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UC6q5G7Y8MutjMfs7bjOCdTw",
+    "name": "Şeyma Yolda - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UCLuqvb2RbDuyENpwEo4F0sQ",
+    "name": "gezdelisi - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UCgpb7FbW23x_-8mwr67-lFA",
+    "name": "Ayrıcalıklı Rotalar - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UCmsbOgBMbhehaXat-Vw22jg",
+    "name": "GEL DE ANLAT - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UC1EmLjaje4UnYmg8Hl7R1lA",
+    "name": "Tarih ve Türkler - YouTube",
+    "category": "Turkiye Tarih"
   }
 ]

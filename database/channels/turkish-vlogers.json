@@ -2,33 +2,6 @@
   {
     "category": "Turkish vlogers",
     "categorySuggestion": {
-      "confidence": 0,
-      "name": "Uncategorized",
-      "reason": "no-match",
-      "suggestedName": ""
-    },
-    "channelId": "UCmsbOgBMbhehaXat-Vw22jg",
-    "dateAdded": "2026-10-19T14:33:45.703Z",
-    "description": "İnsan Hikâyeleri • Sokak Kültürü • Eğlenceli Sosyal Deneyler https://www.instagram.com/geldeanlats/",
-    "handle": "@geldeanlats",
-    "id": "channel_7fd93117-c081-47bc-bd29-6f6e2e60d234",
-    "kind": "channel",
-    "metadataLastChecked": "2026-10-19T14:33:45.693Z",
-    "name": "GEL DE ANLAT - YouTube",
-    "notes": "",
-    "owner": "",
-    "playlistId": "",
-    "subscriberCount": "",
-    "tags": [],
-    "thumbnail": "https://yt3.googleusercontent.com/mXKBiCSz70ybV4RDEVANl9NWYYGnrtkLRJZ2AX3FkpvkiZu6QllrlUQFpmit-oSMQp4SqF5L=s900-c-k-c0x00ffffff-no-rj",
-    "thumbnailChecked": "2026-10-19T14:33:45.693Z",
-    "updatedAt": "2026-10-19T14:33:45.703Z",
-    "url": "https://www.youtube.com/@geldeanlats",
-    "videoCount": ""
-  },
-  {
-    "category": "Turkish vlogers",
-    "categorySuggestion": {
       "confidence": 0.8,
       "name": "Turkiye Seyahat",
       "source": "existing-category",
@@ -357,6 +330,33 @@
     "thumbnailChecked": "2026-10-15T10:52:25.288Z",
     "updatedAt": "2026-10-16T10:30:44.837Z",
     "url": "https://www.youtube.com/@limonografi",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish vlogers",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCmsbOgBMbhehaXat-Vw22jg",
+    "dateAdded": "2026-10-19T14:33:45.703Z",
+    "description": "İnsan Hikâyeleri • Sokak Kültürü • Eğlenceli Sosyal Deneyler https://www.instagram.com/geldeanlats/",
+    "handle": "@geldeanlats",
+    "id": "channel_7fd93117-c081-47bc-bd29-6f6e2e60d234",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-19T14:33:45.693Z",
+    "name": "GEL DE ANLAT - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/mXKBiCSz70ybV4RDEVANl9NWYYGnrtkLRJZ2AX3FkpvkiZu6QllrlUQFpmit-oSMQp4SqF5L=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-19T14:33:45.693Z",
+    "updatedAt": "2026-10-19T14:33:45.703Z",
+    "url": "https://www.youtube.com/@geldeanlats",
     "videoCount": ""
   }
 ]
