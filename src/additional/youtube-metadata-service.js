@@ -9,25 +9,19 @@
  * - Playlist identity is based on the YouTube playlist ID.
  * - Playlist names come from YouTube page metadata before generic fallbacks.
  */
-
 function clean(s) {
   return String(s ?? '').replace(/\s+/g, ' ').trim();
 }
-
 function firstJson(text, marker) {
   const i = text.indexOf(marker);
   if (i < 0) return null;
-
   const start = text.indexOf('{', i);
   if (start < 0) return null;
-
   let depth = 0;
   let quote = false;
   let esc = false;
-
   for (let p = start; p < text.length; p++) {
     const c = text[p];
-
     if (quote) {
       if (esc) {
         esc = false;
@@ -38,17 +32,14 @@ function firstJson(text, marker) {
       }
       continue;
     }
-
     if (c === '"') {
       quote = true;
       continue;
     }
-
     if (c === '{') {
       depth++;
     } else if (c === '}') {
       depth--;
-
       if (depth === 0) {
         try {
           return JSON.parse(text.slice(start, p + 1));
@@ -58,42 +49,31 @@ function firstJson(text, marker) {
       }
     }
   }
-
   return null;
 }
-
 function deepFind(obj, keys) {
   const wanted = new Set(keys);
   const stack = [obj];
-
   while (stack.length) {
     const x = stack.pop();
-
     if (!x || typeof x !== 'object') continue;
-
     for (const [k, v] of Object.entries(x)) {
       if (wanted.has(k) && v != null) return v;
-
       if (v && typeof v === 'object') {
         stack.push(v);
       }
     }
   }
-
   return null;
 }
-
 function textValue(value) {
   if (value == null) return '';
-
   if (typeof value === 'string') {
     return clean(value);
   }
-
   if (value.simpleText) {
     return clean(value.simpleText);
   }
-
   if (Array.isArray(value.runs)) {
     return clean(
       value.runs
@@ -101,42 +81,34 @@ function textValue(value) {
         .join('')
     );
   }
-
   return '';
 }
-
 function metaTag(html, name) {
   const escapedName = name.replace(
     /[.*+?^${}()|[\]\\]/g,
     '\\$&'
   );
-
   const re = new RegExp(
     `<meta[^>]+(?:property|name)=["']${escapedName}["'][^>]+content=["']([^"']+)["']` +
-      `|<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escapedName}["']`,
+    `|<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escapedName}["']`,
     'i'
   );
-
   const m = String(html || '').match(re);
-
   return clean(
     m?.[1] ||
     m?.[2] ||
     ''
   );
 }
-
 /**
  * Extract a real channel ID from a URL.
  */
 function channelIdFromUrl(url) {
   try {
     const u = new URL(url);
-
     const match = u.pathname.match(
       /^\/channel\/(UC[\w-]{10,})\/?/i
     );
-
     return clean(
       match?.[1] || ''
     );
@@ -144,34 +116,25 @@ function channelIdFromUrl(url) {
     return '';
   }
 }
-
 /**
  * Extract channel ID from canonical YouTube URL references.
  */
 function channelIdFromCanonicalHtml(html) {
   const text = String(html || '');
-
   const patterns = [
     /<link[^>]+rel=["']canonical["'][^>]+href=["'][^"]*\/channel\/(UC[\w-]{10,})[^"]*["']/i,
-
     /<link[^>]+href=["'][^"]*\/channel\/(UC[\w-]{10,})[^"]*["'][^>]+rel=["']canonical["']/i,
-
     /<meta[^>]+property=["']og:url["'][^>]+content=["'][^"]*\/channel\/(UC[\w-]{10,})[^"]*["']/i,
-
     /<meta[^>]+content=["'][^"]*\/channel\/(UC[\w-]{10,})[^"]*["'][^>]+property=["']og:url["']/i
   ];
-
   for (const re of patterns) {
     const match = text.match(re);
-
     if (match?.[1]) {
       return clean(match[1]);
     }
   }
-
   return '';
 }
-
 /**
  * Extract a channel ID from explicit YouTube channel references.
  *
@@ -179,37 +142,28 @@ function channelIdFromCanonicalHtml(html) {
  */
 function channelIdFromHtml(html) {
   const text = String(html || '');
-
   const patterns = [
     /"channelId"\s*:\s*"(UC[\w-]{10,})"/i,
-
     /"externalId"\s*:\s*"(UC[\w-]{10,})"/i,
-
     /"browseId"\s*:\s*"(UC[\w-]{10,})"/i
   ];
-
   for (const re of patterns) {
     const match = text.match(re);
-
     if (match?.[1]) {
       return clean(match[1]);
     }
   }
-
   return '';
 }
-
 /**
  * Extract the handle from the requested URL.
  */
 function handleFromUrl(url) {
   try {
     const u = new URL(url);
-
     const match = u.pathname.match(
       /^\/@([^/]+)\/?/i
     );
-
     return match?.[1]
       ? `@${clean(match[1])}`
       : '';
@@ -217,11 +171,9 @@ function handleFromUrl(url) {
     return '';
   }
 }
-
 function isChannelUrl(url) {
   try {
     const u = new URL(url);
-
     return (
       /^\/channel\/UC[\w-]{10,}/i.test(
         u.pathname
@@ -240,11 +192,9 @@ function isChannelUrl(url) {
     return false;
   }
 }
-
 function isPlaylistUrl(url) {
   try {
     const u = new URL(url);
-
     return (
       u.pathname === '/playlist' ||
       (
@@ -256,7 +206,6 @@ function isPlaylistUrl(url) {
     return false;
   }
 }
-
 /**
  * Extract the actual playlist title from YouTube's
  * playlist-specific page structures.
@@ -272,59 +221,46 @@ function playlistTitleFromData(yt) {
     yt,
     ['playlistHeaderRenderer']
   );
-
   const headerTitle =
     textValue(header?.title);
-
   if (headerTitle) {
     return headerTitle;
   }
-
   const playlistRenderer = deepFind(
     yt,
     ['playlistRenderer']
   );
-
   const rendererTitle =
     textValue(
       playlistRenderer?.title
     );
-
   if (rendererTitle) {
     return rendererTitle;
   }
-
   const playlistSidebar = deepFind(
     yt,
     ['playlistSidebarPrimaryInfoRenderer']
   );
-
   const sidebarTitle =
     textValue(
       playlistSidebar?.title
     );
-
   if (sidebarTitle) {
     return sidebarTitle;
   }
-
   const microformat = deepFind(
     yt,
     ['microformatDataRenderer']
   );
-
   const microformatTitle =
     clean(
       microformat?.title
     );
-
   if (microformatTitle) {
     return microformatTitle;
   }
-
   return '';
 }
-
 export function parseYouTubeMetadata(
   url,
   html,
@@ -332,38 +268,30 @@ export function parseYouTubeMetadata(
 ) {
   const u = new URL(url);
   const text = String(html || '');
-
   const isPlaylist =
     isPlaylistUrl(url);
-
   const isChannel =
     isChannelUrl(url);
-
   const kind =
     type === 'auto'
       ? (
-          isChannel
-            ? 'channel'
-            : isPlaylist
-              ? 'playlist'
-              : 'unknown'
-        )
+        isChannel
+          ? 'channel'
+          : isPlaylist
+            ? 'playlist'
+            : 'unknown'
+      )
       : type;
-
   /**
    * JSON-LD extraction.
    */
   const ld = [];
-
   const ldRe =
     /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
-
   let m;
-
   while ((m = ldRe.exec(text))) {
     try {
       const x = JSON.parse(m[1]);
-
       if (Array.isArray(x)) {
         ld.push(...x);
       } else {
@@ -373,7 +301,6 @@ export function parseYouTubeMetadata(
       // Ignore malformed JSON-LD.
     }
   }
-
   const schema =
     ld.find(
       x =>
@@ -384,7 +311,6 @@ export function parseYouTubeMetadata(
           x.description
         )
     ) || {};
-
   /**
    * YouTube initial data.
    */
@@ -402,7 +328,6 @@ export function parseYouTubeMetadata(
       'window["ytInitialData"]'
     ) ||
     null;
-
   /**
    * Playlist title.
    *
@@ -414,40 +339,38 @@ export function parseYouTubeMetadata(
   const playlistName =
     kind === 'playlist'
       ? (
-          playlistTitleFromData(yt) ||
-          clean(schema.name || '') ||
-          metaTag(
-            text,
-            'og:title'
-          )
+        playlistTitleFromData(yt) ||
+        clean(schema.name || '') ||
+        metaTag(
+          text,
+          'og:title'
         )
+      )
       : '';
-
   const name = clean(
     kind === 'playlist'
       ? playlistName
       : (
-          schema.name ||
-          textValue(
-            deepFind(
-              yt,
-              ['title']
-            )
-          ) ||
-          textValue(
-            deepFind(
-              yt,
-              ['text']
-            )
-          ) ||
-          metaTag(
-            text,
-            'og:title'
-          ) ||
-          ''
-        )
+        schema.name ||
+        textValue(
+          deepFind(
+            yt,
+            ['title']
+          )
+        ) ||
+        textValue(
+          deepFind(
+            yt,
+            ['text']
+          )
+        ) ||
+        metaTag(
+          text,
+          'og:title'
+        ) ||
+        ''
+      )
   );
-
   const description = clean(
     schema.description ||
     textValue(
@@ -462,7 +385,6 @@ export function parseYouTubeMetadata(
     ) ||
     ''
   );
-
   let thumb = clean(
     schema.image?.url ||
     schema.thumbnailUrl?.[0] ||
@@ -476,13 +398,11 @@ export function parseYouTubeMetadata(
     ) ||
     ''
   );
-
   const avatar =
     deepFind(
       yt,
       ['avatar']
     );
-
   if (
     !thumb &&
     avatar?.thumbnails?.length
@@ -491,7 +411,6 @@ export function parseYouTubeMetadata(
       avatar.thumbnails.at(-1)?.url ||
       '';
   }
-
   if (
     kind === 'playlist' &&
     !thumb
@@ -501,12 +420,10 @@ export function parseYouTubeMetadata(
         yt,
         ['playlistVideoRenderer']
       );
-
     thumb =
       pv?.thumbnail?.thumbnails?.at(-1)?.url ||
       '';
   }
-
   /**
    * CHANNEL ID RESOLUTION
    *
@@ -517,7 +434,6 @@ export function parseYouTubeMetadata(
    * Different Channel IDs remain separate records.
    */
   let id = '';
-
   if (kind === 'channel') {
     id =
       channelIdFromUrl(url) ||
@@ -529,16 +445,13 @@ export function parseYouTubeMetadata(
         u.searchParams.get('list') || ''
       );
   }
-
   const handle =
     handleFromUrl(url);
-
   const subscriberValue =
     deepFind(
       yt,
       ['subscriberCountText']
     );
-
   const subscribers = clean(
     subscriberValue?.simpleText ||
     subscriberValue?.runs
@@ -546,13 +459,11 @@ export function parseYouTubeMetadata(
       .join('') ||
     ''
   );
-
   const videoValue =
     deepFind(
       yt,
       ['videoCountText']
     );
-
   const videoCount = clean(
     videoValue?.simpleText ||
     videoValue?.runs
@@ -560,7 +471,6 @@ export function parseYouTubeMetadata(
       .join('') ||
     ''
   );
-
   const ownerValue =
     deepFind(
       yt,
@@ -570,54 +480,38 @@ export function parseYouTubeMetadata(
       yt,
       ['longBylineText']
     );
-
   const owner = clean(
     ownerValue?.runs
       ?.map(x => x.text)
       .join('') ||
     ''
   );
-
   return {
     kind,
-
     id,
-
     channelId:
       kind === 'channel'
         ? id
         : '',
-
     playlistId:
       kind === 'playlist'
         ? id
         : '',
-
     name,
-
     handle,
-
     url: u.href,
-
     description,
-
     thumbnail: thumb,
-
     subscriberCount:
       subscribers,
-
     videoCount,
-
     owner,
-
     metadataLastChecked:
       new Date().toISOString(),
-
     thumbnailChecked:
       new Date().toISOString()
   };
 }
-
 export async function fetchYouTubeMetadata(
   url,
   type = 'auto'
@@ -626,32 +520,26 @@ export async function fetchYouTubeMetadata(
     url,
     {
       credentials: 'include',
-
       cache: 'no-store',
-
       headers: {
         accept:
           'text/html,application/xhtml+xml'
       }
     }
   );
-
   if (!r.ok) {
     throw new Error(
       `YouTube metadata HTTP ${r.status}`
     );
   }
-
   const html =
     await r.text();
-
   /**
    * Use the final response URL when YouTube redirects
    * a legacy/custom URL to another canonical page.
    */
   const finalUrl =
     r.url || url;
-
   return parseYouTubeMetadata(
     finalUrl,
     html,

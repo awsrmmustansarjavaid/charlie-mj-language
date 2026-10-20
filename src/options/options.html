@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <!-- Charlie MJ Language settings page. Every setting is stored locally in Chrome storage. -->
 <html lang="en">
  <head>
@@ -184,67 +184,73 @@
      <p aria-live="polite" class="note" id="liveHighlightCopyStatus">
      </p>
     </div>
-
     <!-- Subtitle learning controls for Auto-Pause and Replay Audio. -->
-
     <div class="component-card subtitle-learning-controls-settings">
-        <h3>
-            🎓 Subtitle Learning Controls
-        </h3>
-
-        <p class="note">
-            Learner controls for pausing on new subtitles and replaying
+     <h3>
+      🎓 Subtitle Learning Controls
+     </h3>
+     <p class="note">
+      Learner controls for pausing on new subtitles and replaying
             only the current subtitle's audio. Existing Replay Subtitle,
             Slow Replay and other learning controls remain unchanged.
-        </p>
-
-        <label class="check">
-            <input
-            type="checkbox"
-            id="subtitleLearningAutoPauseToggle"
-            >
-            Enable Auto-Pause
-        </label>
-
-        <label>
-            Auto-resume after
-            <select id="subtitleLearningAutoResumeDelay">
-            <option value="1">1 second</option>
-            <option value="2">2 seconds</option>
-            <option value="3">3 seconds</option>
-            <option value="4">4 seconds</option>
-            <option value="5">5 seconds</option>
-            <option value="6">6 seconds</option>
-            <option value="8">8 seconds</option>
-            <option value="10">10 seconds</option>
-            </select>
-        </label>
-
-        <label class="check">
-            <input
-            type="checkbox"
-            id="subtitleLearningKeepSubtitleVisible"
-            >
-            Keep subtitle visible while paused
-        </label>
-
-        <label>
-            Replay Audio repetitions
-            <select id="subtitleLearningReplayAudioCount">
-            <option value="1">1×</option>
-            <option value="2">2×</option>
-            <option value="3">3×</option>
-            </select>
-        </label>
-
-        <p class="note">
-            Auto-Pause uses your existing subtitle detection.
+     </p>
+     <label class="check">
+      <input id="subtitleLearningAutoPauseToggle" type="checkbox"/>
+      Enable Auto-Pause
+     </label>
+     <label>
+      Auto-resume after
+      <select id="subtitleLearningAutoResumeDelay">
+       <option value="1">
+        1 second
+       </option>
+       <option value="2">
+        2 seconds
+       </option>
+       <option value="3">
+        3 seconds
+       </option>
+       <option value="4">
+        4 seconds
+       </option>
+       <option value="5">
+        5 seconds
+       </option>
+       <option value="6">
+        6 seconds
+       </option>
+       <option value="8">
+        8 seconds
+       </option>
+       <option value="10">
+        10 seconds
+       </option>
+      </select>
+     </label>
+     <label class="check">
+      <input id="subtitleLearningKeepSubtitleVisible" type="checkbox"/>
+      Keep subtitle visible while paused
+     </label>
+     <label>
+      Replay Audio repetitions
+      <select id="subtitleLearningReplayAudioCount">
+       <option value="1">
+        1×
+       </option>
+       <option value="2">
+        2×
+       </option>
+       <option value="3">
+        3×
+       </option>
+      </select>
+     </label>
+     <p class="note">
+      Auto-Pause uses your existing subtitle detection.
             Replay Audio plays only the current subtitle's timed
             audio segment and does not replace Replay Subtitle.
-        </p>
+     </p>
     </div>
-
-
     <div class="component-card toolbar-settings-card">
      <h3>
       🛠 Toolbar
@@ -306,11 +312,13 @@
      <div class="two-col">
       <label>
        Horizontal offset (%)
-       <input id="toolbarOffsetX" max="50" min="0" step="0.1" type="number"/>
+       <input id="toolbarOffsetX" max="50" min="0" step="0.1" type="number">
+       </input>
       </label>
       <label>
        Vertical offset (%)
-       <input id="toolbarOffsetY" max="50" min="0" step="0.1" type="number"/>
+       <input id="toolbarOffsetY" max="50" min="0" step="0.1" type="number">
+       </input>
       </label>
      </div>
      <div class="two-col">
@@ -382,10 +390,10 @@
        More / overflow behavior
        <select id="toolbarOverflowMode">
         <option value="auto">
-         Automatic &mdash; move extra actions to &vellip; More
+         Automatic — move extra actions to ⋮ More
         </option>
         <option value="always">
-         Always show &vellip; More for overflow
+         Always show ⋮ More for overflow
         </option>
        </select>
       </label>
@@ -415,7 +423,7 @@
       </div>
      </div>
      <p class="note">
-      Default: Center + Down/Bottom &middot; 2% from bottom &middot; 905 &times; 45 px. Toolbar and Transcript Window auto-hide are independently controlled; each defaults to 15 seconds.
+      Default: Center + Down/Bottom · 2% from bottom · 905 × 45 px. Toolbar and Transcript Window auto-hide are independently controlled; each defaults to 15 seconds.
      </p>
     </div>
     <div class="component-card">
@@ -515,7 +523,7 @@
       Font size is managed in Appearance. Box layout is configured independently for original and translated subtitles below.
      </p>
      <p class="note">
-      Default: Center + Down/Bottom &middot; 11% from bottom &middot; 60% width.
+      Default: Center + Down/Bottom · 11% from bottom · 60% width.
      </p>
     </div>
     <div class="component-card subtitle-box-settings" data-subtitle-box="original">
@@ -632,7 +640,7 @@
       </label>
      </div>
      <div aria-live="polite" class="subtitle-box-preview" id="originalBoxPreview">
-      Original subtitle preview &mdash; a longer sentence wraps according to your box settings.
+      Original subtitle preview — a longer sentence wraps according to your box settings.
      </div>
      <button class="secondary" id="resetOriginalBoxSettings" type="button">
       Reset original box settings
@@ -752,7 +760,7 @@
       </label>
      </div>
      <div aria-live="polite" class="subtitle-box-preview" id="translationBoxPreview">
-      Translation preview &mdash; long translated text can use its own width and line limit.
+      Translation preview — long translated text can use its own width and line limit.
      </div>
      <button class="secondary" id="resetTranslationBoxSettings" type="button">
       Reset translation box settings
@@ -869,7 +877,7 @@
       </select>
      </label>
      <p class="note">
-      Default: Right 2% &middot; Top 12% &middot; 300 &times; 545 px. Drag, resize from all 8 directions, minimize/maximize, dock, pin, close, and reset.
+      Default: Right 2% · Top 12% · 300 × 545 px. Drag, resize from all 8 directions, minimize/maximize, dock, pin, close, and reset.
      </p>
     </div>
    </section>
@@ -1130,19 +1138,19 @@
       Line spacing (multiplier)
       <select id="originalLineSpacing">
        <option value="1.0">
-        1.0 &middot; Compact
+        1.0 · Compact
        </option>
        <option value="1.2">
-        1.2 &middot; Tight
+        1.2 · Tight
        </option>
        <option value="1.5">
-        1.5 &middot; Normal
+        1.5 · Normal
        </option>
        <option value="1.8">
-        1.8 &middot; Relaxed
+        1.8 · Relaxed
        </option>
        <option value="2.0">
-        2.0 &middot; Spacious
+        2.0 · Spacious
        </option>
        <option value="custom">
         Custom
@@ -1189,19 +1197,19 @@
       Line spacing (multiplier)
       <select id="translationLineSpacing">
        <option value="1.0">
-        1.0 &middot; Compact
+        1.0 · Compact
        </option>
        <option value="1.2">
-        1.2 &middot; Tight
+        1.2 · Tight
        </option>
        <option value="1.5">
-        1.5 &middot; Normal
+        1.5 · Normal
        </option>
        <option value="1.8">
-        1.8 &middot; Relaxed
+        1.8 · Relaxed
        </option>
        <option value="2.0">
-        2.0 &middot; Spacious
+        2.0 · Spacious
        </option>
        <option value="custom">
         Custom
@@ -1246,19 +1254,19 @@
      Replay current subtitle
      <select id="replayCount">
       <option value="1">
-       1&times;
+       1×
       </option>
       <option value="2">
-       2&times;
+       2×
       </option>
       <option value="3">
-       3&times;
+       3×
       </option>
       <option value="4">
-       4&times;
+       4×
       </option>
       <option value="5">
-       5&times;
+       5×
       </option>
      </select>
     </label>
@@ -1266,19 +1274,19 @@
      Default playback speed
      <select id="playbackSpeed">
       <option value="0.5">
-       0.5&times;
+       0.5×
       </option>
       <option value="0.75">
-       0.75&times;
+       0.75×
       </option>
       <option value="1">
-       1&times;
+       1×
       </option>
       <option value="1.25">
-       1.25&times;
+       1.25×
       </option>
       <option value="1.5">
-       1.5&times;
+       1.5×
       </option>
      </select>
     </label>
@@ -1520,7 +1528,7 @@
      <p class="note">
       Choose the exact fallback order.
       <strong>
-       YouTube Captions &mdash; Native + Auto-Translation
+       YouTube Captions — Native + Auto-Translation
       </strong>
       is one provider group and is Priority 1 by default. If Native captions exist in your target language they are used; otherwise YouTube Auto-Translation is requested from the original caption track. Each provider can appear only once.
      </p>
@@ -1577,11 +1585,11 @@
     </label>
     <label class="check">
      <input id="onlineOfflineFallback" type="checkbox"/>
-     Automatic online &rarr; offline fallback
+     Automatic online → offline fallback
     </label>
     <label class="check">
      <input id="privacyMode" type="checkbox"/>
-     Privacy mode &mdash; don't send text to online providers
+     Privacy mode — don't send text to online providers
     </label>
     <label class="check">
      <input id="translationCache" type="checkbox"/>
@@ -1589,7 +1597,7 @@
     </label>
     <label class="check">
      <input id="verificationMode" type="checkbox"/>
-     Verification Mode &mdash; compare available providers
+     Verification Mode — compare available providers
     </label>
     <div class="two-col">
      <label>

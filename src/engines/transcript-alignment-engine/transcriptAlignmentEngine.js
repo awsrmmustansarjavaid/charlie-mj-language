@@ -1,1 +1,1 @@
-export {alignTranscripts,alignWords,normalizeSegments} from '../../additional/alignment.js';
+export { alignTranscripts, alignWords, normalizeSegments } from '../../additional/alignment.js';

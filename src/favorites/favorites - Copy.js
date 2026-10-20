@@ -1,18 +1,22 @@
 'use strict';
 
+
 const $ = (s, r = document) =>
   r.querySelector(s);
+
 
 const $$ = (s, r = document) =>
   [...r.querySelectorAll(s)];
 
+
 let tab = 'channels',
-    items = [],
-    allResources = [],
-    categories = [],
-    groups = [],
-    editingId = null,
-    editingType = null;
+  items = [],
+  allResources = [],
+  categories = [],
+  groups = [],
+  editingId = null,
+  editingType = null;
+
 
 const send = m =>
   new Promise(resolve =>
@@ -30,6 +34,7 @@ const send = m =>
     )
   );
 
+
 const esc = v =>
   String(v ?? '').replace(
     /[&<>"']/g,
@@ -43,39 +48,52 @@ const esc = v =>
       })[c]
   );
 
+
 function toast(
   message,
   type = 'info'
 ) {
+
   const host =
     $('#toastHost');
+
 
   const n =
     document.createElement(
       'div'
     );
 
+
   n.className =
     `toast ${type}`;
+
 
   n.textContent =
     message;
 
+
   host.appendChild(n);
+
 
   setTimeout(
     () => n.remove(),
     2800
   );
+
 }
 
+
 function typeForTab() {
+
   return tab === 'playlists'
     ? 'playlist'
     : 'channel';
+
 }
 
+
 async function load() {
+
   const [
     r,
     cr,
@@ -113,39 +131,50 @@ async function load() {
     })
   ]);
 
+
   items =
     r.ok &&
-    Array.isArray(r.result)
+      Array.isArray(r.result)
       ? r.result
       : [];
+
 
   allResources = [
     ...(cr.result || []),
     ...(pr.result || [])
   ];
 
+
   categories =
     c.ok &&
-    Array.isArray(c.result)
+      Array.isArray(c.result)
       ? c.result
       : [];
 
+
   groups =
     g.ok &&
-    Array.isArray(g.result)
+      Array.isArray(g.result)
       ? g.result
       : [];
 
+
   renderCategoryFilter();
+
   render();
+
 }
 
+
 function renderCategoryFilter() {
+
   const s =
     $('#categoryFilter');
 
+
   const old =
     s.value;
+
 
   s.innerHTML =
     '<option value="">All categories</option>' +
@@ -156,18 +185,24 @@ function renderCategoryFilter() {
       )
       .join('');
 
+
   if (
     [...s.options].some(
       o => o.value === old
     )
   ) {
+
     s.value = old;
+
   }
+
 
   const a =
     $('#addCategory');
 
+
   if (a) {
+
     a.innerHTML =
       '<option value="">Auto-suggest from YouTube metadata</option>' +
       categories
@@ -176,12 +211,16 @@ function renderCategoryFilter() {
             `<option value="${esc(c.name)}">${esc(c.name)}</option>`
         )
         .join('');
+
   }
+
 
   const d =
     $('#categoryOptions');
 
+
   if (d) {
+
     d.innerHTML =
       categories
         .map(
@@ -189,30 +228,46 @@ function renderCategoryFilter() {
             `<option value="${esc(c.name)}"></option>`
         )
         .join('');
+
   }
+
 }
 
+
 function render() {
+
   if (
     tab === 'categories'
   ) {
+
     renderCategories();
+
     return;
+
   }
+
 
   if (
     tab === 'groups'
   ) {
+
     renderGroups();
+
     return;
+
   }
+
 
   if (
     tab === 'suggestions'
   ) {
+
     renderSuggestions();
+
     return;
+
   }
+
 
   const q =
     $('#search')
@@ -220,13 +275,16 @@ function render() {
       .trim()
       .toLowerCase();
 
+
   const cat =
     $('#categoryFilter')
       .value
       .toLowerCase();
 
+
   const list =
     items.filter(x => {
+
       const hay = [
         x.name,
         x.title,
@@ -241,6 +299,7 @@ function render() {
         .join(' ')
         .toLowerCase();
 
+
       return (
         (!q ||
           hay.includes(q)) &&
@@ -251,41 +310,49 @@ function render() {
           ).toLowerCase() === cat
         )
       );
+
     });
+
 
   $('#resultCount')
     .textContent =
-      `${list.length} ${
-        tab === 'channels'
-          ? 'channel'
-          : 'playlist'
-      }${
-        list.length === 1
-          ? ''
-          : 's'
-      }`;
+    `${list.length} ${tab === 'channels'
+      ? 'channel'
+      : 'playlist'
+    }${list.length === 1
+      ? ''
+      : 's'
+    }`;
+
 
   $('#list').innerHTML =
     list.length
       ? `<div class="resource-grid">${list.map(card).join('')}</div>`
       : '<div class="empty"><div class="empty-icon">☆</div><h3>No resources found</h3><p>Add a YouTube channel or playlist, or change your search/filter.</p></div>';
 
+
   bindCards();
+
 }
 
+
 function card(x) {
+
   const name =
     x.name ||
     x.title ||
     'Unnamed';
 
+
   const type =
     typeForTab();
+
 
   const thumb =
     x.thumbnail?.url ||
     x.thumbnail ||
     '';
+
 
   return `<article class="resource-card ${x.isPinned ? 'pinned' : ''}" data-id="${esc(x.id)}">
   <div class="thumb-wrap"><img class="thumb" src="${esc(thumb)}" alt="" data-thumb-fallback><span class="type-badge">${type === 'channel' ? 'CHANNEL' : 'PLAYLIST'}</span>${x.isPinned ? '<span class="pin-badge">📌</span>' : ''}</div>
@@ -293,9 +360,12 @@ function card(x) {
   <p class="muted clamp">${esc(x.description || 'No description available.')}</p><div class="meta-line">${esc(x.handle || x.owner || '')}${x.videoCount ? ' · ' + esc(x.videoCount) : ''}</div>
   <div class="chips"><span class="chip category-chip">${esc(x.category || 'Uncategorized')}</span>${(x.tags || []).slice(0, 3).map(t => `<span class="chip">${esc(t)}</span>`).join('')}</div>
   <div class="card-footer"><span>${x.isPinned ? 'Pinned · ' : ''}${x.dateAdded ? new Date(x.dateAdded).toLocaleDateString() : ''}</span><button class="secondary small" data-detail="${esc(x.id)}">View Detail</button></div></div></article>`;
+
 }
 
+
 function bindCards() {
+
   $$('[data-detail]')
     .forEach(b =>
       b.addEventListener(
@@ -307,41 +377,54 @@ function bindCards() {
       )
     );
 
+
   $$('[data-menu]')
     .forEach(b =>
       b.addEventListener(
         'click',
         e => {
+
           e.stopPropagation();
+
           openCardMenu(b);
+
         }
       )
     );
+
 
   $$('[data-thumb-fallback]')
     .forEach(img =>
       img.addEventListener(
         'error',
         () => {
+
           img.src =
             chrome.runtime.getURL(
               'assets/charlie-mj-language-main-thumbnail.png'
             );
 
+
           img.classList.add(
             'fallback'
           );
+
         },
         { once: true }
       )
     );
+
 }
 
+
 function openCardMenu(btn) {
+
   const old =
     $('.card-menu');
 
+
   old?.remove();
+
 
   const x =
     items.find(
@@ -350,15 +433,19 @@ function openCardMenu(btn) {
         btn.dataset.menu
     );
 
+
   if (!x) return;
+
 
   const m =
     document.createElement(
       'div'
     );
 
+
   m.className =
     'card-menu';
+
 
   m.innerHTML =
     `<button data-act="detail">View Detail</button>` +
@@ -369,12 +456,15 @@ function openCardMenu(btn) {
     `<button data-act="refresh">Refresh Metadata</button>` +
     `<button data-act="remove" class="danger">Remove</button>`;
 
+
   btn.parentElement
     .appendChild(m);
+
 
   m.addEventListener(
     'click',
     async e => {
+
       const act =
         e.target
           .closest(
@@ -382,57 +472,82 @@ function openCardMenu(btn) {
           )
           ?.dataset.act;
 
+
       if (!act) return;
 
+
       m.remove();
+
 
       if (
         act === 'detail'
       ) {
+
         openDetail(x.id);
+
       }
+
 
       if (
         act === 'edit'
       ) {
+
         openEdit(x.id);
+
       }
+
 
       if (
         act === 'open'
       ) {
+
         chrome.tabs.create({
           url: x.url
         });
+
       }
+
 
       if (
         act === 'group'
       ) {
+
         openGroupPicker(
           x.id
         );
+
       }
+
 
       if (
         act === 'pin'
       ) {
+
         await mutatePin(x);
+
       }
+
 
       if (
         act === 'refresh'
       ) {
+
         await refreshOne(x);
+
       }
+
 
       if (
         act === 'remove'
       ) {
+
         await removeOne(x);
+
       }
+
     }
   );
+
 
   setTimeout(
     () =>
@@ -444,9 +559,12 @@ function openCardMenu(btn) {
       ),
     0
   );
+
 }
 
+
 function openDetail(id) {
+
   const x =
     items.find(
       i => i.id === id
@@ -455,100 +573,126 @@ function openDetail(id) {
       i => i.id === id
     );
 
+
   if (!x) return;
+
 
   editingId = id;
 
+
   $('#detailContent')
     .innerHTML =
-      `<div class="detail-hero"><img id="detailThumb" src="${esc(x.thumbnail?.url || x.thumbnail || '')}"><div><span class="eyebrow">${tab === 'channels' ? 'YOUTUBE CHANNEL' : 'YOUTUBE PLAYLIST'}</span><h2>${esc(x.name || x.title || 'Unnamed')}</h2><p>${esc(x.description || 'No description available.')}</p></div></div>` +
-      `<div class="detail-grid"><div><b>Category</b><span>${esc(x.category || 'Uncategorized')}</span></div>` +
-      `<div><b>Tags</b><span>${esc((x.tags || []).join(', ') || 'None')}</span></div>` +
-      `<div><b>Owner</b><span>${esc(x.owner || x.handle || '—')}</span></div>` +
-      `<div><b>Video count</b><span>${esc(x.videoCount || '—')}</span></div>` +
-      `<div><b>ID</b><span>${esc(x.channelId || x.playlistId || '—')}</span></div>` +
-      `<div><b>Last checked</b><span>${esc(x.metadataLastChecked || x.thumbnail?.lastChecked || '—')}</span></div></div>` +
-      `<div class="detail-notes"><b>Notes</b><p>${esc(x.notes || 'No personal notes.')}</p></div>`;
+    `<div class="detail-hero"><img id="detailThumb" src="${esc(x.thumbnail?.url || x.thumbnail || '')}"><div><span class="eyebrow">${tab === 'channels' ? 'YOUTUBE CHANNEL' : 'YOUTUBE PLAYLIST'}</span><h2>${esc(x.name || x.title || 'Unnamed')}</h2><p>${esc(x.description || 'No description available.')}</p></div></div>` +
+    `<div class="detail-grid"><div><b>Category</b><span>${esc(x.category || 'Uncategorized')}</span></div>` +
+    `<div><b>Tags</b><span>${esc((x.tags || []).join(', ') || 'None')}</span></div>` +
+    `<div><b>Owner</b><span>${esc(x.owner || x.handle || '—')}</span></div>` +
+    `<div><b>Video count</b><span>${esc(x.videoCount || '—')}</span></div>` +
+    `<div><b>ID</b><span>${esc(x.channelId || x.playlistId || '—')}</span></div>` +
+    `<div><b>Last checked</b><span>${esc(x.metadataLastChecked || x.thumbnail?.lastChecked || '—')}</span></div></div>` +
+    `<div class="detail-notes"><b>Notes</b><p>${esc(x.notes || 'No personal notes.')}</p></div>`;
+
 
   const img =
     $('#detailThumb');
 
+
   if (img) {
+
     img.addEventListener(
       'error',
       () => {
+
         img.src =
           chrome.runtime.getURL(
             'assets/charlie-mj-language-main-thumbnail.png'
           );
+
       },
       { once: true }
     );
+
   }
+
 
   $('#detailDialog')
     .showModal();
+
 }
 
+
 function openEdit(id) {
+
   const x =
     items.find(
       i => i.id === id
     );
 
+
   if (!x) return;
 
+
   editingId = id;
+
 
   editingType =
     typeForTab();
 
+
   $('#editTitle')
     .textContent =
-      `Edit ${
-        editingType === 'channel'
-          ? 'Channel'
-          : 'Playlist'
-      }`;
+    `Edit ${editingType === 'channel'
+      ? 'Channel'
+      : 'Playlist'
+    }`;
+
 
   $('#editName')
     .value =
-      x.name ||
-      x.title ||
-      '';
+    x.name ||
+    x.title ||
+    '';
+
 
   $('#editUrl')
     .value =
-      x.url ||
-      '';
+    x.url ||
+    '';
+
 
   $('#editCategory')
     .value =
-      x.category ||
-      '';
+    x.category ||
+    '';
+
 
   $('#editTags')
     .value =
-      (x.tags || [])
-        .join(', ');
+    (x.tags || [])
+      .join(', ');
+
 
   $('#editNotes')
     .value =
-      x.notes ||
-      '';
+    x.notes ||
+    '';
+
 
   $('#editPinned')
     .checked =
-      !!x.isPinned;
+    !!x.isPinned;
+
 
   $('#editGroupIds')
     .value =
-      (x.collectionIds || [])
-        .join(',');
+    (x.collectionIds || [])
+      .join(',');
+
 
   $('#editDialog')
     .showModal();
+
 }
+
 
 /**
  * Save all editable fields.
@@ -561,17 +705,21 @@ function openEdit(id) {
  * continues to work.
  */
 async function saveEdit() {
+
   const x =
     items.find(
       i => i.id === editingId
     );
 
+
   if (!x) return;
+
 
   const editedName =
     $('#editName')
       .value
       .trim();
+
 
   const record = {
     ...x,
@@ -585,11 +733,11 @@ async function saveEdit() {
     title:
       editingType === 'playlist'
         ? (
-            editedName ||
-            x.name ||
-            x.title ||
-            ''
-          )
+          editedName ||
+          x.name ||
+          x.title ||
+          ''
+        )
         : x.title,
 
     category:
@@ -624,6 +772,7 @@ async function saveEdit() {
         .filter(Boolean)
   };
 
+
   const r =
     await send({
       type:
@@ -638,27 +787,37 @@ async function saveEdit() {
       record
     });
 
+
   if (!r.ok) {
+
     toast(
       r.error,
       'error'
     );
 
+
     return;
+
   }
+
 
   $('#editDialog')
     .close();
+
 
   toast(
     'Saved successfully.',
     'success'
   );
 
+
   load();
+
 }
 
+
 async function refreshOne(x) {
+
   const r =
     await send({
       type:
@@ -677,24 +836,33 @@ async function refreshOne(x) {
         x
     });
 
+
   if (!r.ok) {
+
     toast(
       r.error,
       'error'
     );
 
+
     return;
+
   }
+
 
   toast(
     'Metadata and thumbnail refreshed.',
     'success'
   );
 
+
   load();
+
 }
 
+
 async function mutatePin(x) {
+
   const r =
     await send({
       type:
@@ -713,36 +881,47 @@ async function mutatePin(x) {
       }
     });
 
+
   if (!r.ok) {
+
     toast(
       x.isPinned
         ? 'Unpinned.'
         : 'Pinned.',
       'success'
     );
+
   } else {
+
     toast(
       x.isPinned
         ? 'Unpinned.'
         : 'Pinned.',
       'success'
     );
+
 
     load();
+
   }
+
 }
 
+
 async function removeOne(x) {
+
   if (
     !confirm(
-      `Remove “${
-        x.name ||
-        x.title
+      `Remove “${x.name ||
+      x.title
       }” from favorites?`
     )
   ) {
+
     return;
+
   }
+
 
   const r =
     await send({
@@ -759,42 +938,58 @@ async function removeOne(x) {
         x.id
     });
 
+
   if (!r.ok) {
+
     toast(
       r.error,
       'error'
     );
+
   } else {
+
     toast(
       'Removed from favorites.',
       'success'
     );
 
+
     load();
+
   }
+
 }
 
+
 async function openGroupPicker(id) {
+
   if (!groups.length) {
+
     toast(
       'Create a Learning Group first.',
       'error'
     );
 
+
     return;
+
   }
+
 
   const box =
     document.createElement(
       'dialog'
     );
 
+
   box.innerHTML =
     `<form method="dialog" class="dialog-form"><button class="close" type="button" data-x>×</button><span class="eyebrow">LEARNING GROUP</span><h2>Add to Learning Group</h2><label>Group<select id="pickGroup">${groups.map(g => `<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('')}</select></label><div class="dialog-actions"><button type="button" data-x>Cancel</button><button class="primary" value="default">Add</button></div></form>`;
+
 
   document.body.appendChild(
     box
   );
+
 
   box
     .querySelectorAll(
@@ -808,34 +1003,43 @@ async function openGroupPicker(id) {
       )
     );
 
+
   box.addEventListener(
     'close',
     async () => {
+
       const gid =
         box.querySelector(
           '#pickGroup'
         )?.value;
 
+
       box.remove();
 
+
       if (!gid) return;
+
 
       const g =
         groups.find(
           x => x.id === gid
         );
 
+
       if (!g) return;
+
 
       const copy = {
         ...g
       };
 
+
       const key =
         typeForTab() ===
-        'channel'
+          'channel'
           ? 'channels'
           : 'playlists';
+
 
       copy[key] =
         Array.isArray(
@@ -844,11 +1048,15 @@ async function openGroupPicker(id) {
           ? copy[key]
           : [];
 
+
       if (
         !copy[key].includes(id)
       ) {
+
         copy[key].push(id);
+
       }
+
 
       await send({
         type:
@@ -866,23 +1074,31 @@ async function openGroupPicker(id) {
           )
       });
 
+
       toast(
         `Added to ${copy.name}.`,
         'success'
       );
+
     }
   );
 
+
   box.showModal();
+
 }
 
+
 function renderGroups() {
+
   $('#resultCount')
     .textContent =
-      `${groups.length} learning groups`;
+    `${groups.length} learning groups`;
+
 
   $('#list').innerHTML =
     `<div class="resource-grid">${groups.map(g => `<article class="group-card"><div class="group-icon">▦</div><div><h3>${esc(g.name)}</h3><p>${esc(g.description || '')}</p><span class="muted">${(g.channels || []).length} channels · ${(g.playlists || []).length} playlists</span></div><div class="group-actions"><button data-group-view="${esc(g.id)}">View</button><button data-group-edit="${esc(g.id)}">Edit</button><button data-group-remove="${esc(g.id)}" class="danger">Remove</button></div></article>`).join('') || '<div class="empty">No Learning Groups yet.</div>'}</div>`;
+
 
   $$('[data-group-view]')
     .forEach(b =>
@@ -895,6 +1111,7 @@ function renderGroups() {
       )
     );
 
+
   $$('[data-group-edit]')
     .forEach(b =>
       b.addEventListener(
@@ -906,6 +1123,7 @@ function renderGroups() {
       )
     );
 
+
   $$('[data-group-remove]')
     .forEach(b =>
       b.addEventListener(
@@ -916,9 +1134,12 @@ function renderGroups() {
           )
       )
     );
+
 }
 
+
 function renderCategories() {
+
   const countResources =
     name =>
       allResources.filter(
@@ -931,16 +1152,20 @@ function renderCategories() {
           ).toLowerCase()
       );
 
+
   $('#resultCount')
     .textContent =
-      `${categories.length} categories`;
+    `${categories.length} categories`;
+
 
   $('#list').innerHTML =
     `<div class="resource-grid">${categories.map(c => {
+
       const rs =
         countResources(
           c.name
         );
+
 
       const ch =
         rs.filter(
@@ -949,6 +1174,7 @@ function renderCategories() {
             x.type === 'channel'
         ).length;
 
+
       const pl =
         rs.filter(
           x =>
@@ -956,8 +1182,11 @@ function renderCategories() {
             x.type === 'playlist'
         ).length;
 
+
       return `<article class="group-card"><div class="group-icon">#</div><div><h3>${esc(c.name)}</h3><p>${esc(c.description || 'Category for YouTube learning resources.')}</p><span class="muted">${rs.length} resources · ${ch} channels · ${pl} playlists</span></div><div class="group-actions"><button data-cat-view="${esc(c.id)}">View</button><button data-cat-open="${esc(c.id)}">Open</button><button data-cat-edit="${esc(c.id)}">Edit</button><button data-cat-remove="${esc(c.id)}" class="danger">Remove</button></div></article>`;
+
     }).join('') || '<div class="empty">No categories yet.</div>'}</div>`;
+
 
   $$('[data-cat-view]')
     .forEach(b =>
@@ -970,6 +1199,7 @@ function renderCategories() {
       )
     );
 
+
   $$('[data-cat-open]')
     .forEach(b =>
       b.addEventListener(
@@ -980,6 +1210,7 @@ function renderCategories() {
           )
       )
     );
+
 
   $$('[data-cat-edit]')
     .forEach(b =>
@@ -992,6 +1223,7 @@ function renderCategories() {
       )
     );
 
+
   $$('[data-cat-remove]')
     .forEach(b =>
       b.addEventListener(
@@ -1002,15 +1234,20 @@ function renderCategories() {
           )
       )
     );
+
 }
 
+
 async function viewCategory(id) {
+
   const c =
     categories.find(
       x => x.id === id
     );
 
+
   if (!c) return;
+
 
   const resources =
     allResources.filter(
@@ -1023,6 +1260,7 @@ async function viewCategory(id) {
         ).toLowerCase()
     );
 
+
   const channels =
     resources.filter(
       x =>
@@ -1033,6 +1271,7 @@ async function viewCategory(id) {
         )
     );
 
+
   const playlists =
     resources.filter(
       x =>
@@ -1040,12 +1279,14 @@ async function viewCategory(id) {
         x.type === 'playlist'
     );
 
+
   $('#detailContent')
     .innerHTML =
-      `<div class="detail-hero"><div class="group-icon large">#</div><div><span class="eyebrow">CATEGORY</span><h2>${esc(c.name)}</h2><p>${esc(c.description || '')}</p></div></div>` +
-      `<div class="detail-grid"><div><b>Channels</b><span>${channels.length}</span></div><div><b>Playlists</b><span>${playlists.length}</span></div><div><b>Total</b><span>${resources.length}</span></div><div><b>Category ID</b><span>${esc(c.id || '—')}</span></div></div>` +
-      `<div class="detail-notes"><b>Channels</b>${channels.map(x => `<div class="member-row"><span>◉ ${esc(x.name || x.title)}</span><button data-cat-resource="${esc(x.id)}">View</button></div>`).join('') || '<p class="muted">None</p>'}</div>` +
-      `<div class="detail-notes"><b>Playlists</b>${playlists.map(x => `<div class="member-row"><span>▣ ${esc(x.name || x.title)}</span><button data-cat-resource="${esc(x.id)}">View</button></div>`).join('') || '<p class="muted">None</p>'}</div>`;
+    `<div class="detail-hero"><div class="group-icon large">#</div><div><span class="eyebrow">CATEGORY</span><h2>${esc(c.name)}</h2><p>${esc(c.description || '')}</p></div></div>` +
+    `<div class="detail-grid"><div><b>Channels</b><span>${channels.length}</span></div><div><b>Playlists</b><span>${playlists.length}</span></div><div><b>Total</b><span>${resources.length}</span></div><div><b>Category ID</b><span>${esc(c.id || '—')}</span></div></div>` +
+    `<div class="detail-notes"><b>Channels</b>${channels.map(x => `<div class="member-row"><span>◉ ${esc(x.name || x.title)}</span><button data-cat-resource="${esc(x.id)}">View</button></div>`).join('') || '<p class="muted">None</p>'}</div>` +
+    `<div class="detail-notes"><b>Playlists</b>${playlists.map(x => `<div class="member-row"><span>▣ ${esc(x.name || x.title)}</span><button data-cat-resource="${esc(x.id)}">View</button></div>`).join('') || '<p class="muted">None</p>'}</div>`;
+
 
   $$('[data-cat-resource]')
     .forEach(b =>
@@ -1058,23 +1299,30 @@ async function viewCategory(id) {
       )
     );
 
+
   $('#detailDialog')
     .showModal();
+
 }
 
+
 function renderSuggestions() {
+
   const box =
     $('#suggestionQuery');
+
 
   const type =
     $('#suggestionType')
       .value;
+
 
   chrome.storage.local
     .get(
       'cmjYoutubeSuggestions'
     )
     .then(s => {
+
       const data =
         s.cmjYoutubeSuggestions ||
         {
@@ -1082,16 +1330,18 @@ function renderSuggestions() {
           playlists: []
         };
 
+
       const list =
         type === 'channel'
           ? (
-              data.channels ||
-              []
-            )
+            data.channels ||
+            []
+          )
           : (
-              data.playlists ||
-              []
-            );
+            data.playlists ||
+            []
+          );
+
 
       const q =
         (
@@ -1100,6 +1350,7 @@ function renderSuggestions() {
         )
           .trim()
           .toLowerCase();
+
 
       const filtered =
         list.filter(
@@ -1114,36 +1365,42 @@ function renderSuggestions() {
               .includes(q)
         );
 
+
       $('#resultCount')
         .textContent =
-          `${filtered.length} ${
-            type === 'channel'
-              ? 'channel'
-              : 'playlist'
-          } suggestions`;
+        `${filtered.length} ${type === 'channel'
+          ? 'channel'
+          : 'playlist'
+        } suggestions`;
+
 
       $('#list').innerHTML =
         filtered.length
           ? `<div class="resource-grid">${filtered.map(x => `<article class="resource-card"><div class="thumb-wrap"><img class="thumb" src="${esc(x.thumbnail || '')}" data-suggestion-thumb><span class="type-badge">${type.toUpperCase()}</span></div><div class="card-body"><h3>${esc(x.name)}</h3><p class="muted">Suggestion — not yet saved to Favorites.</p><div class="group-actions"><button data-sug-view="${esc(x.id)}">View</button><button data-sug-open="${esc(x.url)}">Open</button><button data-sug-save="${esc(x.id)}">Save to Favorites</button><button data-sug-ignore="${esc(x.id)}">Ignore</button></div></div></article>`).join('')}</div>`
           : '<div class="empty"><h3>No suggestions</h3><p>Enter a search term and fetch YouTube suggestions.</p></div>';
 
+
       $$('[data-suggestion-thumb]')
         .forEach(img =>
           img.addEventListener(
             'error',
             () => {
+
               img.src =
                 chrome.runtime.getURL(
                   'assets/charlie-mj-language-main-thumbnail.png'
                 );
 
+
               img.classList.add(
                 'fallback'
               );
+
             },
             { once: true }
           )
         );
+
 
       $$('[data-sug-open]')
         .forEach(b =>
@@ -1157,11 +1414,13 @@ function renderSuggestions() {
           )
         );
 
+
       $$('[data-sug-view]')
         .forEach(b =>
           b.addEventListener(
             'click',
             () => {
+
               const x =
                 list.find(
                   v =>
@@ -1169,12 +1428,15 @@ function renderSuggestions() {
                     b.dataset.sugView
                 );
 
+
               if (!x) return;
+
 
               $('#detailContent')
                 .innerHTML =
-                  `<div class="detail-hero"><img src="${esc(x.thumbnail || '')}" alt=""><div><span class="eyebrow">${type.toUpperCase()} SUGGESTION</span><h2>${esc(x.name)}</h2><p>${esc(x.url)}</p></div></div>` +
-                  `<div class="dialog-actions"><button type="button" data-suggestion-open>Open YouTube</button><button type="button" data-close>Close</button></div>`;
+                `<div class="detail-hero"><img src="${esc(x.thumbnail || '')}" alt=""><div><span class="eyebrow">${type.toUpperCase()} SUGGESTION</span><h2>${esc(x.name)}</h2><p>${esc(x.url)}</p></div></div>` +
+                `<div class="dialog-actions"><button type="button" data-suggestion-open>Open YouTube</button><button type="button" data-close>Close</button></div>`;
+
 
               $('#detailContent [data-suggestion-open]')
                 .addEventListener(
@@ -1186,17 +1448,21 @@ function renderSuggestions() {
                     })
                 );
 
+
               $('#detailDialog')
                 .showModal();
+
             }
           )
         );
+
 
       $$('[data-sug-save]')
         .forEach(b =>
           b.addEventListener(
             'click',
             async () => {
+
               const x =
                 list.find(
                   v =>
@@ -1204,7 +1470,9 @@ function renderSuggestions() {
                     b.dataset.sugSave
                 );
 
+
               if (!x) return;
+
 
               const r =
                 await send({
@@ -1229,7 +1497,7 @@ function renderSuggestions() {
 
                     title:
                       type ===
-                      'playlist'
+                        'playlist'
                         ? x.name
                         : undefined,
 
@@ -1243,6 +1511,7 @@ function renderSuggestions() {
                   }
                 });
 
+
               toast(
                 r.ok
                   ? 'Saved to Favorites.'
@@ -1253,11 +1522,14 @@ function renderSuggestions() {
                   : 'error'
               );
 
+
               if (r.ok) {
+
                 const key =
                   type === 'channel'
                     ? 'channels'
                     : 'playlists';
+
 
                 data[key] =
                   list.filter(
@@ -1266,23 +1538,29 @@ function renderSuggestions() {
                       x.id
                   );
 
+
                 await chrome.storage.local
                   .set({
                     cmjYoutubeSuggestions:
                       data
                   });
 
+
                 renderSuggestions();
+
               }
+
             }
           )
         );
+
 
       $$('[data-sug-ignore]')
         .forEach(b =>
           b.addEventListener(
             'click',
             async () => {
+
               const next =
                 list.filter(
                   v =>
@@ -1290,11 +1568,13 @@ function renderSuggestions() {
                     b.dataset.sugIgnore
                 );
 
+
               data[
                 type === 'channel'
                   ? 'channels'
                   : 'playlists'
               ] = next;
+
 
               await chrome.storage.local
                 .set({
@@ -1302,20 +1582,28 @@ function renderSuggestions() {
                     data
                 });
 
+
               renderSuggestions();
+
             }
           )
         );
+
     });
+
 }
 
+
 async function viewGroup(id) {
+
   const g =
     groups.find(
       x => x.id === id
     );
 
+
   if (!g) return;
+
 
   const [
     cr,
@@ -1344,11 +1632,14 @@ async function viewGroup(id) {
     })
   ]);
 
+
   const channels =
     cr.result || [];
 
+
   const playlists =
     pr.result || [];
+
 
   const members = [
     ...(g.channels || [])
@@ -1374,48 +1665,61 @@ async function viewGroup(id) {
       }))
   ];
 
+
   $('#detailContent')
     .innerHTML =
-      `<div class="detail-hero"><div class="group-icon large">▦</div><div><span class="eyebrow">LEARNING GROUP</span><h2>${esc(g.name)}</h2><p>${esc(g.description || '')}</p></div></div>` +
-      `<div class="detail-notes"><b>Tags</b><p>${esc((g.tags || []).join(', ') || 'None')}</p></div>` +
-      `<div class="detail-notes"><b>Members</b><div class="group-member-list" id="groupMemberList">${members.map(m => `<div class="member-row"><span>${m.type === 'channel' ? '◉' : '▣'} ${esc(m.item?.name || m.item?.title || m.id)}</span><button data-member-remove="${esc(m.id)}" data-member-type="${m.type}">Remove</button></div>`).join('') || '<span class="muted">No resources in this group.</span>'}</div></div>` +
-      `<div class="dialog-actions"><button type="button" id="detailEditGroup">Edit Group</button><button type="button" class="danger" id="detailRemoveGroup">Remove Group</button><button type="button" data-close>Close</button></div>`;
+    `<div class="detail-hero"><div class="group-icon large">▦</div><div><span class="eyebrow">LEARNING GROUP</span><h2>${esc(g.name)}</h2><p>${esc(g.description || '')}</p></div></div>` +
+    `<div class="detail-notes"><b>Tags</b><p>${esc((g.tags || []).join(', ') || 'None')}</p></div>` +
+    `<div class="detail-notes"><b>Members</b><div class="group-member-list" id="groupMemberList">${members.map(m => `<div class="member-row"><span>${m.type === 'channel' ? '◉' : '▣'} ${esc(m.item?.name || m.item?.title || m.id)}</span><button data-member-remove="${esc(m.id)}" data-member-type="${m.type}">Remove</button></div>`).join('') || '<span class="muted">No resources in this group.</span>'}</div></div>` +
+    `<div class="dialog-actions"><button type="button" id="detailEditGroup">Edit Group</button><button type="button" class="danger" id="detailRemoveGroup">Remove Group</button><button type="button" data-close>Close</button></div>`;
+
 
   $('#detailEditGroup')
     .addEventListener(
       'click',
       () => {
+
         $('#detailDialog')
           .close();
 
+
         editGroup(g.id);
+
       }
     );
+
 
   $('#detailRemoveGroup')
     .addEventListener(
       'click',
       () => {
+
         $('#detailDialog')
           .close();
 
+
         removeGroup(g.id);
+
       }
     );
+
 
   $$('[data-member-remove]')
     .forEach(b =>
       b.addEventListener(
         'click',
         async () => {
+
           const copy =
             { ...g };
 
+
           const key =
             b.dataset.memberType ===
-            'channel'
+              'channel'
               ? 'channels'
               : 'playlists';
+
 
           copy[key] =
             (
@@ -1426,6 +1730,7 @@ async function viewGroup(id) {
                 x !==
                 b.dataset.memberRemove
             );
+
 
           await send({
             type:
@@ -1443,55 +1748,73 @@ async function viewGroup(id) {
               )
           });
 
+
           toast(
             'Removed from Learning Group.',
             'success'
           );
 
+
           $('#detailDialog')
             .close();
 
+
           load();
+
         }
       )
     );
 
+
   $('#detailDialog')
     .showModal();
+
 }
 
+
 function editGroup(id) {
+
   const g =
     groups.find(
       x => x.id === id
     );
 
+
   if (!g) return;
+
 
   editingId = id;
 
+
   $('#groupName')
     .value =
-      g.name || '';
+    g.name || '';
+
 
   $('#groupDescription')
     .value =
-      g.description || '';
+    g.description || '';
+
 
   $('#groupTags')
     .value =
-      (g.tags || [])
-        .join(', ');
+    (g.tags || [])
+      .join(', ');
+
 
   $('#groupDialog')
     .showModal();
+
 }
 
+
 async function saveGroup() {
+
   const existing =
     groups.find(
       x => x.id === editingId
     );
+
 
   const g = {
     ...(existing || {
@@ -1528,7 +1851,9 @@ async function saveGroup() {
         .filter(Boolean)
   };
 
+
   if (!g.name) return;
+
 
   await send({
     type:
@@ -1540,33 +1865,42 @@ async function saveGroup() {
     data:
       existing
         ? groups.map(
-            x =>
-              x.id === g.id
-                ? g
-                : x
-          )
+          x =>
+            x.id === g.id
+              ? g
+              : x
+        )
         : [g, ...groups]
   });
 
+
   $('#groupDialog')
     .close();
+
 
   toast(
     'Learning Group saved.',
     'success'
   );
 
+
   load();
+
 }
 
+
 async function removeGroup(id) {
+
   if (
     !confirm(
       'Remove this Learning Group? Saved channels/playlists will not be removed.'
     )
   ) {
+
     return;
+
   }
+
 
   await send({
     type:
@@ -1582,49 +1916,65 @@ async function removeGroup(id) {
       )
   });
 
+
   toast(
     'Learning Group removed.',
     'success'
   );
 
+
   load();
+
 }
 
+
 function editCategory(id) {
+
   const c =
     categories.find(
       x => x.id === id
     );
 
+
   if (!c) return;
+
 
   editingId = id;
 
+
   $('#categoryName')
     .value =
-      c.name || '';
+    c.name || '';
+
 
   $('#categoryDescription')
     .value =
-      c.description || '';
+    c.description || '';
+
 
   $('#categoryDialog')
     .showModal();
+
 }
 
+
 async function saveCategory() {
+
   const name =
     $('#categoryName')
       .value
       .trim();
 
+
   if (!name) return;
+
 
   const existing =
     categories.find(
       x =>
         x.id === editingId
     );
+
 
   const c = {
     ...(existing || {
@@ -1641,18 +1991,20 @@ async function saveCategory() {
         .trim()
   };
 
+
   const next =
     existing
       ? categories.map(
-          x =>
-            x.id === c.id
-              ? c
-              : x
-        )
+        x =>
+          x.id === c.id
+            ? c
+            : x
+      )
       : [
-          c,
-          ...categories
-        ];
+        c,
+        ...categories
+      ];
+
 
   await send({
     type:
@@ -1665,33 +2017,44 @@ async function saveCategory() {
       next
   });
 
+
   $('#categoryDialog')
     .close();
+
 
   toast(
     'Category saved.',
     'success'
   );
 
+
   load();
+
 }
 
+
 async function removeCategory(id) {
+
   const c =
     categories.find(
       x =>
         x.id === id
     );
 
+
   if (!c) return;
+
 
   if (
     !confirm(
       `Remove category “${c.name}”? Resources will remain saved.`
     )
   ) {
+
     return;
+
   }
+
 
   await send({
     type:
@@ -1707,29 +2070,40 @@ async function removeCategory(id) {
       )
   });
 
+
   toast(
     'Category removed.',
     'success'
   );
 
+
   load();
+
 }
 
+
 function openAdd() {
+
   editingId = null;
+
 
   $('#addForm')
     .reset();
 
+
   $('#addDialog')
     .showModal();
+
 }
 
+
 async function addResource() {
+
   const url =
     $('#addUrl')
       .value
       .trim();
+
 
   const type =
     /[?&]list=|\/playlist\?/
@@ -1737,10 +2111,12 @@ async function addResource() {
       ? 'playlist'
       : 'channel';
 
+
   const category =
     $('#addCategory')
       .value
       .trim();
+
 
   const r =
     await send({
@@ -1775,29 +2151,38 @@ async function addResource() {
       }
     });
 
+
   if (!r.ok) {
+
     toast(
       r.error,
       'error'
     );
 
+
     return;
+
   }
+
 
   $('#addDialog')
     .close();
+
 
   tab =
     type === 'channel'
       ? 'channels'
       : 'playlists';
 
+
   syncTabs();
+
 
   toast(
     'YouTube resource added successfully.',
     'success'
   );
+
 
   if (
     r.result
@@ -1805,36 +2190,47 @@ async function addResource() {
       ?.suggestedName &&
     !category
   ) {
+
     showCategorySuggestion(
       r.result,
       type
     );
+
   }
 
+
   load();
+
 }
+
 
 function showCategorySuggestion(
   record,
   type
 ) {
+
   const s =
     record.categorySuggestion;
 
+
   if (!s?.suggestedName)
     return;
+
 
   const box =
     document.createElement(
       'dialog'
     );
 
+
   box.innerHTML =
     `<form method="dialog" class="dialog-form"><button class="close" type="button" data-close-suggestion>×</button><span class="eyebrow">EXTENSION INTELLIGENCE</span><h2>Category suggestion</h2><p>Suggested new category: <strong>${esc(s.suggestedName)}</strong></p><p class="form-note">Confidence: ${Math.round((s.confidence || 0) * 100)}%. Existing categories were checked first.</p><div class="dialog-actions"><button type="button" data-close-suggestion>Keep Uncategorized</button><button type="button" class="primary" id="acceptSuggestedCategory">Create & Apply</button></div></form>`;
+
 
   document.body.appendChild(
     box
   );
+
 
   box
     .querySelectorAll(
@@ -1844,11 +2240,15 @@ function showCategorySuggestion(
       b.addEventListener(
         'click',
         () => {
+
           box.close();
+
           box.remove();
+
         }
       )
     );
+
 
   box
     .querySelector(
@@ -1857,6 +2257,7 @@ function showCategorySuggestion(
     .addEventListener(
       'click',
       async () => {
+
         const next = [
           ...categories,
           {
@@ -1872,6 +2273,7 @@ function showCategorySuggestion(
           }
         ];
 
+
         const c =
           await send({
             type:
@@ -1884,6 +2286,7 @@ function showCategorySuggestion(
               next
           });
 
+
         const x =
           allResources.find(
             v =>
@@ -1891,7 +2294,9 @@ function showCategorySuggestion(
               record.id
           );
 
+
         if (x) {
+
           await send({
             type:
               'CMJ_FAVORITES',
@@ -1908,7 +2313,9 @@ function showCategorySuggestion(
                 s.suggestedName
             }
           });
+
         }
+
 
         toast(
           c.ok
@@ -1919,17 +2326,25 @@ function showCategorySuggestion(
             : 'error'
         );
 
+
         box.close();
+
         box.remove();
 
+
         load();
+
       }
     );
 
+
   box.showModal();
+
 }
 
+
 function syncTabs() {
+
   $$('.side-tab')
     .forEach(b =>
       b.classList.toggle(
@@ -1938,54 +2353,70 @@ function syncTabs() {
       )
     );
 
+
   const sug =
     tab ===
     'suggestions';
 
+
   $('#search')
     .disabled =
-      tab ===
-        'categories' ||
-      sug;
+    tab ===
+    'categories' ||
+    sug;
+
 
   $('#categoryFilter')
     .disabled =
-      tab ===
-        'categories' ||
-      sug;
+    tab ===
+    'categories' ||
+    sug;
+
 
   $('#suggestionQuery')
     .hidden =
-      !sug;
+    !sug;
+
 
   $('#suggestionType')
     .hidden =
-      !sug;
+    !sug;
+
 
   $('#fetchSuggestions')
     .hidden =
-      !sug;
+    !sug;
+
 }
 
+
 function openSearchSuggestions() {
+
   const q =
     $('#search')
       .value
       .trim()
       .toLowerCase();
 
+
   const box =
     $('#suggestions');
 
+
   if (!q) {
+
     box.hidden =
       true;
 
+
     return;
+
   }
+
 
   const vals =
     new Set();
+
 
   [
     ...allResources,
@@ -1998,18 +2429,23 @@ function openSearchSuggestions() {
         x.category,
         ...(x.tags || [])
       ].forEach(v => {
+
         if (
           v &&
           String(v)
             .toLowerCase()
             .includes(q)
         ) {
+
           vals.add(
             String(v)
           );
+
         }
+
       })
   );
+
 
   box.innerHTML =
     [...vals]
@@ -2020,26 +2456,34 @@ function openSearchSuggestions() {
       )
       .join('');
 
+
   box.hidden =
     !vals.size;
+
 
   $$('[data-suggest]')
     .forEach(b =>
       b.addEventListener(
         'click',
         () => {
+
           $('#search')
             .value =
-              b.dataset.suggest;
+            b.dataset.suggest;
+
 
           box.hidden =
             true;
 
+
           render();
+
         }
       )
     );
+
 }
+
 
 $('#add')
   .addEventListener(
@@ -2047,14 +2491,19 @@ $('#add')
     openAdd
   );
 
+
 $('#search')
   .addEventListener(
     'input',
     () => {
+
       openSearchSuggestions();
+
       render();
+
     }
   );
+
 
 $('#categoryFilter')
   .addEventListener(
@@ -2062,11 +2511,13 @@ $('#categoryFilter')
     render
   );
 
+
 $('#refresh')
   .addEventListener(
     'click',
     load
   );
+
 
 $('#settings')
   .addEventListener(
@@ -2075,6 +2526,7 @@ $('#settings')
       chrome.runtime
         .openOptionsPage()
   );
+
 
 $('#openLibrary')
   .addEventListener(
@@ -2088,19 +2540,25 @@ $('#openLibrary')
       })
   );
 
+
 $$('.side-tab')
   .forEach(b =>
     b.addEventListener(
       'click',
       () => {
+
         tab =
           b.dataset.tab;
 
+
         syncTabs();
+
         load();
+
       }
     )
   );
+
 
 $('#suggestionQuery')
   .addEventListener(
@@ -2108,33 +2566,42 @@ $('#suggestionQuery')
     renderSuggestions
   );
 
+
 $('#suggestionType')
   .addEventListener(
     'change',
     renderSuggestions
   );
 
+
 $('#fetchSuggestions')
   .addEventListener(
     'click',
     async () => {
+
       const query =
         $('#suggestionQuery')
           .value
           .trim();
 
+
       const type =
         $('#suggestionType')
           .value;
 
+
       if (!query) {
+
         toast(
           'Enter a YouTube suggestion search term.',
           'error'
         );
 
+
         return;
+
       }
+
 
       const r =
         await send({
@@ -2147,6 +2614,7 @@ $('#fetchSuggestions')
             type
         });
 
+
       toast(
         r.ok
           ? `Fetched ${r.result.length} ${type} suggestions.`
@@ -2157,47 +2625,68 @@ $('#fetchSuggestions')
           : 'error'
       );
 
+
       if (r.ok) {
+
         renderSuggestions();
+
       }
+
     }
   );
+
 
 $('#addForm')
   .addEventListener(
     'submit',
     e => {
+
       e.preventDefault();
+
       addResource();
+
     }
   );
+
 
 $('#editForm')
   .addEventListener(
     'submit',
     e => {
+
       e.preventDefault();
+
       saveEdit();
+
     }
   );
+
 
 $('#groupForm')
   .addEventListener(
     'submit',
     e => {
+
       e.preventDefault();
+
       saveGroup();
+
     }
   );
+
 
 $('#categoryForm')
   .addEventListener(
     'submit',
     e => {
+
       e.preventDefault();
+
       saveCategory();
+
     }
   );
+
 
 $$('[data-close]')
   .forEach(b =>
@@ -2210,38 +2699,50 @@ $$('[data-close]')
     )
   );
 
+
 $('#newGroup')
   .addEventListener(
     'click',
     () => {
+
       editingId = null;
+
 
       $('#groupForm')
         .reset();
 
+
       $('#groupDialog')
         .showModal();
+
     }
   );
+
 
 $('#newCategory')
   .addEventListener(
     'click',
     () => {
+
       editingId = null;
+
 
       $('#categoryForm')
         .reset();
 
+
       $('#categoryDialog')
         .showModal();
+
     }
   );
+
 
 $('#backup')
   .addEventListener(
     'click',
     async () => {
+
       const r =
         await send({
           type:
@@ -2250,6 +2751,7 @@ $('#backup')
           action:
             'export'
         });
+
 
       download(
         'charlie-mj-youtube-favorites.json',
@@ -2260,8 +2762,10 @@ $('#backup')
         ),
         'application/json'
       );
+
     }
   );
+
 
 $('#restore')
   .addEventListener(
@@ -2270,20 +2774,26 @@ $('#restore')
       $('#file').click()
   );
 
+
 $('#file')
   .addEventListener(
     'change',
     async e => {
+
       const f =
         e.target.files[0];
 
+
       if (!f) return;
 
+
       try {
+
         const data =
           JSON.parse(
             await f.text()
           );
+
 
         const mode =
           confirm(
@@ -2291,6 +2801,7 @@ $('#file')
           )
             ? 'merge'
             : 'replace';
+
 
         const r =
           await send({
@@ -2305,34 +2816,46 @@ $('#file')
             mode
           });
 
+
         if (!r.ok) {
+
           throw Error(
             r.error
           );
+
         }
+
 
         toast(
           'Backup restored.',
           'success'
         );
 
+
         load();
+
       } catch (err) {
+
         toast(
           err.message,
           'error'
         );
+
       }
+
 
       e.target.value =
         '';
+
     }
   );
+
 
 $('#txt')
   .addEventListener(
     'click',
     async () => {
+
       const r =
         await send({
           type:
@@ -2342,23 +2865,28 @@ $('#txt')
             'txt'
         });
 
+
       download(
         'charlie-mj-youtube-favorites.txt',
         r.result.text,
         'text/plain'
       );
+
     }
   );
+
 
 function download(
   name,
   text,
   mime
 ) {
+
   const a =
     document.createElement(
       'a'
     );
+
 
   a.href =
     URL.createObjectURL(
@@ -2370,16 +2898,21 @@ function download(
       )
     );
 
+
   a.download =
     name;
+
 
   document.body.appendChild(
     a
   );
 
+
   a.click();
 
+
   a.remove();
+
 
   setTimeout(
     () =>
@@ -2388,7 +2921,10 @@ function download(
       ),
     1000
   );
+
 }
 
+
 syncTabs();
+
 load();

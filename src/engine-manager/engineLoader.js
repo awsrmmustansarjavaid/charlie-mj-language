@@ -1,1 +1,3 @@
-export async function loadEngine(id){return {id};}
+export async function loadEngine(id) {
+  return { id };
+}

@@ -15,7 +15,7 @@ and thumbnails, Suggestions, and local data synchronization.
 ## Download
 
 <p align="center">
-  <a href="/downloads/charliemj-language-v1.0.0-youtube-language-catalog-fixed-2026-10-19.zip">
+  <a href="/downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
     <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
   </a>
 </p>

@@ -9,9 +9,7 @@
  * which validates the page, attempts a normal message first, and then safely
  * injects the YouTube content layer as a recovery path when necessary.
  */
-
 const $ = selector => document.querySelector(selector);
-
 /**
  * Read the active browser tab.
  * @returns {Promise<chrome.tabs.Tab|undefined>} The active tab.
@@ -20,7 +18,6 @@ async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return tab;
 }
-
 /**
  * Check whether a tab is a YouTube page supported by Charlie MJ.
  * @param {chrome.tabs.Tab} tab Browser tab.
@@ -34,7 +31,6 @@ function isYouTubeTab(tab) {
     return false;
   }
 }
-
 /**
  * Send a message to the active tab without producing the common
  * "Receiving end does not exist" unhandled Promise rejection.
@@ -48,12 +44,10 @@ function isYouTubeTab(tab) {
 async function sendToActiveTab(message) {
   const tab = await getActiveTab();
   if (!tab?.id) return false;
-
   if (!isYouTubeTab(tab)) {
     setHint('Open a YouTube video to use this feature.');
     return false;
   }
-
   try {
     const response = await chrome.tabs.sendMessage(tab.id, message);
     return response ?? true;
@@ -70,7 +64,6 @@ async function sendToActiveTab(message) {
       // CSS may already be present; do not make a harmless duplicate error
       // prevent the JavaScript recovery path.
     }
-
     try {
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -89,7 +82,6 @@ async function sendToActiveTab(message) {
     }
   }
 }
-
 /**
  * Update the small popup hint without throwing if the element is unavailable.
  * @param {string} message User-facing status.
@@ -98,7 +90,6 @@ function setHint(message) {
   const hint = $('.hint');
   if (hint) hint.textContent = message;
 }
-
 /**
  * Load local library counters whenever the popup opens.
  */
@@ -108,7 +99,6 @@ async function loadStats() {
   $('#bookmarks').textContent = String((data.bookmarks || []).length);
   $('#videos').textContent = String((data.watchLater || []).length);
 }
-
 function showPopupNotice(message, kind = 'success') {
   const notice = $('#popupNotice');
   if (!notice) return;
@@ -116,9 +106,10 @@ function showPopupNotice(message, kind = 'success') {
   notice.className = `popup-notice ${kind}`;
   notice.hidden = false;
   clearTimeout(showPopupNotice.timer);
-  showPopupNotice.timer = setTimeout(() => { notice.hidden = true; }, 3200);
+  showPopupNotice.timer = setTimeout(() => {
+    notice.hidden = true;
+  }, 3200);
 }
-
 async function loadLightweightState() {
   try {
     const stored = await chrome.storage.local.get('cmjLightweightSleepMode');
@@ -128,21 +119,19 @@ async function loadLightweightState() {
       button.classList.toggle('active', sleeping);
       button.textContent = sleeping ? '☀ Wake Charlie MJ' : '💤 Lightweight Sleep';
     }
-  } catch (_) {}
+  } catch (_) {
+  }
 }
-
 $('#learn').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#focus').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_TOGGLE_FOCUS' }));
 $('#transcript').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#watch').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_ADD_WATCH_LATER' }));
-
 $('#resetNetwork').addEventListener('click', async () => {
   showPopupNotice('Resetting YouTube caption connection…', 'success');
   const result = await sendToActiveTab({ type: 'CMJ_RESET_YOUTUBE_NETWORK' });
   if (result?.ok === false) showPopupNotice(result.error || 'Reset could not start on this tab.', 'success');
   else showPopupNotice('YouTube network/caption state cleared. One controlled retry will run, then return to sleep.', 'success');
 });
-
 $('#sleepMode').addEventListener('click', async () => {
   const stored = await chrome.storage.local.get('cmjLightweightSleepMode');
   const sleeping = stored.cmjLightweightSleepMode === true;
@@ -153,14 +142,11 @@ $('#sleepMode').addEventListener('click', async () => {
   else showPopupNotice(next ? 'Lightweight Sleep is ON. Optional activity is paused.' : 'Charlie MJ is awake again.', 'sleep');
   await loadLightweightState();
 });
-
 $('#about').addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/about/about.html') }));
 $('#settings').addEventListener('click', () => chrome.runtime.openOptionsPage());
 document.getElementById('favorites')?.addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/favorites/favorites.html') }));
-
 $('#library').addEventListener('click', () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/dashboard/dashboard.html') });
 });
-
 loadStats().catch(error => console.warn('Charlie MJ popup statistics could not be loaded.', error));
 loadLightweightState();

@@ -1,12 +1,84 @@
 {
-  "English Learning":["english","ielts","toefl","grammar","vocabulary","listening","speaking","pronunciation"],
-  "Programming":["programming","coding","javascript","python","typescript","java","developer","software"],
-  "AI & Machine Learning":["artificial intelligence","machine learning","deep learning","llm","ollama","neural network"],
-  "DevOps & Cloud":["devops","docker","kubernetes","aws","azure","gcp","terraform","linux"],
-  "Science & Technology":["science","technology","physics","chemistry","biology","research"],
-  "History & Culture":["history","historical","culture","civilization","documentary"],
-  "Health & Fitness":["health","fitness","workout","nutrition","exercise"],
-  "Music Learning":["music theory","guitar","piano","singing","music lesson"],
-  "Travel":["travel","tourism","destination","trip","vlog"],
-  "Gaming":["gaming","gameplay","esports","walkthrough","minecraft","roblox"]
+  "English Learning": [
+    "english",
+    "ielts",
+    "toefl",
+    "grammar",
+    "vocabulary",
+    "listening",
+    "speaking",
+    "pronunciation"
+  ],
+  "Programming": [
+    "programming",
+    "coding",
+    "javascript",
+    "python",
+    "typescript",
+    "java",
+    "developer",
+    "software"
+  ],
+  "AI & Machine Learning": [
+    "artificial intelligence",
+    "machine learning",
+    "deep learning",
+    "llm",
+    "ollama",
+    "neural network"
+  ],
+  "DevOps & Cloud": [
+    "devops",
+    "docker",
+    "kubernetes",
+    "aws",
+    "azure",
+    "gcp",
+    "terraform",
+    "linux"
+  ],
+  "Science & Technology": [
+    "science",
+    "technology",
+    "physics",
+    "chemistry",
+    "biology",
+    "research"
+  ],
+  "History & Culture": [
+    "history",
+    "historical",
+    "culture",
+    "civilization",
+    "documentary"
+  ],
+  "Health & Fitness": [
+    "health",
+    "fitness",
+    "workout",
+    "nutrition",
+    "exercise"
+  ],
+  "Music Learning": [
+    "music theory",
+    "guitar",
+    "piano",
+    "singing",
+    "music lesson"
+  ],
+  "Travel": [
+    "travel",
+    "tourism",
+    "destination",
+    "trip",
+    "vlog"
+  ],
+  "Gaming": [
+    "gaming",
+    "gameplay",
+    "esports",
+    "walkthrough",
+    "minecraft",
+    "roblox"
+  ]
 }

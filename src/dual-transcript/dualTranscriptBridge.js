@@ -14,7 +14,6 @@
   'use strict';
   if (window.__CMJ_LANGUAGE_DUAL_TRANSCRIPT_BRIDGE_V1__) return;
   window.__CMJ_LANGUAGE_DUAL_TRANSCRIPT_BRIDGE_V1__ = true;
-
   const SOURCE = 'CMJ_LANGUAGE_DUAL_TRANSCRIPT';
   let lastVideoId = '';
   let busy = false;
@@ -23,44 +22,42 @@
   let activeController = null;
   let lightweightSleep = false;
   let bridgeInterval = null;
-
   const post = (type, payload = {}) =>
     window.postMessage({ source: SOURCE, type, ...payload }, '*');
-
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-
   function getPlayerResponse() {
     try {
       const player = document.querySelector('#movie_player');
       const response = player?.getPlayerResponse?.();
       if (response?.videoDetails?.videoId) return response;
-    } catch {}
+    } catch {
+    }
     try {
       if (window.ytInitialPlayerResponse?.videoDetails?.videoId) return window.ytInitialPlayerResponse;
-    } catch {}
+    } catch {
+    }
     return null;
   }
-
   function getVideoId() {
     try {
       const player = document.querySelector('#movie_player');
       const id = player?.getVideoData?.()?.video_id;
       if (id) return id;
-    } catch {}
+    } catch {
+    }
     try {
       const u = new URL(location.href);
       return u.searchParams.get('v') || (u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : '');
-    } catch { return ''; }
+    } catch {
+      return '';
+    }
   }
-
   function getTrackRenderer(response) {
     return response?.captions?.playerCaptionsTracklistRenderer || null;
   }
-
   function getTracks(response) {
     return getTrackRenderer(response)?.captionTracks || [];
   }
-
   function getTranslationLanguages(response) {
     const rows = getTrackRenderer(response)?.translationLanguages || [];
     return rows.map(item => ({
@@ -68,16 +65,17 @@
       name: item?.languageName?.simpleText || item?.languageName?.runs?.map(x => x?.text || '').join('') || item?.languageCode || ''
     })).filter(x => x.languageCode);
   }
-
   function cleanUrl(url) {
-    try { return new URL(url, location.href); } catch { return null; }
+    try {
+      return new URL(url, location.href);
+    } catch {
+      return null;
+    }
   }
-
   function isTimedText(url) {
     const u = cleanUrl(url);
     return !!u && u.pathname.includes('/api/timedtext');
   }
-
   // The player can use fetch/XHR references captured before our wrappers exist.
   // Resource Timing therefore remains the primary observation mechanism.
   function findPotRequest(videoId) {
@@ -94,7 +92,6 @@
     }
     return candidates.length ? candidates[candidates.length - 1] : null;
   }
-
   function hookFetchAndXHR() {
     // These hooks help on player variants that use the page's current fetch/XHR
     // objects. They are supplementary; Resource Timing is still checked often.
@@ -105,24 +102,29 @@
           try {
             const url = typeof input === 'string' ? input : input?.url;
             if (isTimedText(url)) window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = String(url);
-          } catch {}
+          } catch {
+          }
           return originalFetch.apply(this, arguments);
         };
         window.__CMJ_LANGUAGE_DUAL_FETCH_HOOK__ = true;
       }
-    } catch {}
+    } catch {
+    }
     try {
       if (!window.__CMJ_LANGUAGE_DUAL_XHR_HOOK__) {
         const originalOpen = XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.open = function(method, url) {
-          try { if (isTimedText(url)) window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = String(url); } catch {}
+          try {
+            if (isTimedText(url)) window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = String(url);
+          } catch {
+          }
           return originalOpen.apply(this, arguments);
         };
         window.__CMJ_LANGUAGE_DUAL_XHR_HOOK__ = true;
       }
-    } catch {}
+    } catch {
+    }
   }
-
   function findCapturedRequest(videoId) {
     const timed = findPotRequest(videoId);
     if (timed) return timed;
@@ -130,12 +132,10 @@
     if (hook && hook.searchParams.get('pot')) return hook;
     return null;
   }
-
   function mergeTrackIntoCaptured(captured, track, videoId, translatedLanguage = '') {
     const source = cleanUrl(track?.baseUrl || '');
     if (!captured) return null;
     const u = new URL(captured.toString());
-
     // Keep the player's proof/session parameters but use the actual selected
     // caption track's language/kind/name/variant parameters.
     for (const key of ['lang', 'kind', 'name', 'variant', 'fmt', 'tlang']) {
@@ -149,7 +149,6 @@
     else u.searchParams.delete('tlang');
     return u.toString();
   }
-
   function plainTrackUrl(track, videoId, translatedLanguage = '') {
     const u = cleanUrl(track?.baseUrl || '');
     if (!u) return '';
@@ -159,7 +158,6 @@
     else u.searchParams.delete('tlang');
     return u.toString();
   }
-
   async function fetchJsonText(url, generation = resetGeneration) {
     if (lightweightSleep) throw new Error('Charlie MJ is in Lightweight Sleep mode.');
     if (generation !== resetGeneration) throw new Error('YouTube caption request cancelled by network reset.');
@@ -171,10 +169,13 @@
     if (!text || /^\s*</.test(text)) throw new Error('YouTube returned an empty/HTML caption response');
     return text;
   }
-
   function parseJson3(text) {
     let data;
-    try { data = JSON.parse(text); } catch { throw new Error('YouTube returned invalid JSON3 caption data'); }
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error('YouTube returned invalid JSON3 caption data');
+    }
     const cues = [];
     for (const event of (data?.events || [])) {
       if (!Array.isArray(event?.segs) || event.tStartMs == null) continue;
@@ -189,18 +190,20 @@
     }
     return cues;
   }
-
   async function requestNativeCaptions() {
     const player = document.querySelector('#movie_player');
     // Reloading the captions track is preferable to toggling the user's CC
     // state because it asks YouTube for the timedtext resource directly.
-    try { player?.setOption?.('captions', 'reload', true); } catch {}
+    try {
+      player?.setOption?.('captions', 'reload', true);
+    } catch {
+    }
     try {
       const cc = document.querySelector('.ytp-subtitles-button');
       if (cc && cc.getAttribute('aria-pressed') !== 'true') cc.click();
-    } catch {}
+    } catch {
+    }
   }
-
   async function waitForCapturedRequest(videoId, timeout = 7000) {
     const end = Date.now() + timeout;
     while (Date.now() < end) {
@@ -210,7 +213,6 @@
     }
     return null;
   }
-
   async function fetchTrackWithFallback(captured, track, videoId, targetLanguage = '', generation = resetGeneration) {
     const secure = mergeTrackIntoCaptured(captured, track, videoId, targetLanguage);
     const plain = plainTrackUrl(track, videoId, targetLanguage);
@@ -223,11 +225,12 @@
         const cues = parseJson3(text);
         if (cues.length) return { cues, url };
         lastError = new Error('YouTube returned no caption cues');
-      } catch (e) { lastError = e; }
+      } catch (e) {
+        lastError = e;
+      }
     }
     throw lastError || new Error('Unable to fetch YouTube caption track');
   }
-
   async function handleTranscriptRequest(targetLanguage, requestedSourceLanguage = 'auto') {
     if (busy || lightweightSleep) return;
     const generation = resetGeneration;
@@ -239,7 +242,6 @@
       const renderer = response?.captions?.playerCaptionsTracklistRenderer || null;
       const tracks = getTracks(response);
       if (!tracks.length) throw new Error('This video has no YouTube caption track');
-
       const autoSource = renderer?.audioTrack?.captionTrack?.languageCode || tracks[0]?.languageCode || '';
       const requested = String(requestedSourceLanguage || 'auto');
       const normaliseLang = value => String(value || '').split('-')[0].toLowerCase();
@@ -261,7 +263,6 @@
       const sourceTrack = directSourceTrack || baseTrack;
       const originalLanguage = requested !== 'auto' && translatedSource ? translatedSource.languageCode : (sourceTrack.languageCode || '');
       const originalName = requested !== 'auto' && translatedSource ? translatedSource.name : (sourceTrack.name?.simpleText || sourceTrack.languageCode || '');
-
       post('TRACK_INFO', {
         videoId,
         sourceLanguage: originalLanguage,
@@ -270,7 +271,6 @@
         tracks: tracks.map(t => ({ languageCode: t.languageCode || '', name: t.name?.simpleText || t.languageCode || '', kind: t.kind || '' })),
         translationLanguages
       });
-
       // IMPORTANT: use the same proof-bearing timedtext request already made
       // by YouTube. Do not create a separate anonymous caption-request path.
       // This keeps the original Dual Transcript behavior and avoids the extra
@@ -281,17 +281,14 @@
         captured = await waitForCapturedRequest(videoId, 8000);
       }
       if (!captured) throw new Error('YouTube did not expose a proof-bearing caption request yet');
-
       const requestKey = `${videoId}|${sourceTrack.languageCode}|${targetLanguage}|${captured}`;
       if (requestKey === lastRequestKey) return;
       lastRequestKey = requestKey;
-
       post('FETCH_STATUS', { status: 'fetching-original' });
       const original = translatedSource
         ? await fetchTrackWithFallback(captured, sourceTrack, videoId, translatedSource.languageCode, generation)
         : await fetchTrackWithFallback(captured, sourceTrack, videoId, '', generation);
       post('FETCH_STATUS', { status: 'original-ready', count: original.cues.length });
-
       let translated = { cues: [], available: false, error: '' };
       const effectiveOriginalLanguage = normaliseLang(originalLanguage);
       if (targetLanguage && normaliseLang(targetLanguage) !== effectiveOriginalLanguage) {
@@ -307,7 +304,6 @@
       } else if (targetLanguage && normaliseLang(targetLanguage) === effectiveOriginalLanguage) {
         translated = { cues: original.cues.map(c => ({ ...c })), available: true, error: '' };
       }
-
       post('TRANSCRIPT_DATA', {
         videoId,
         sourceLanguage: originalLanguage,
@@ -324,43 +320,57 @@
       busy = false;
     }
   }
-
-
   function resetYouTubeNetwork() {
     resetGeneration += 1;
-    try { activeController?.abort(); } catch (_) {}
+    try {
+      activeController?.abort();
+    } catch (_) {
+    }
     activeController = null;
     busy = false;
     lastRequestKey = '';
-    try { window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = ''; } catch (_) {}
+    try {
+      window.__CMJ_LANGUAGE_LAST_TIMEDTEXT__ = '';
+    } catch (_) {
+    }
     post('NETWORK_RESET_STATUS', { status: 'resetting' });
     setTimeout(() => {
       if (lightweightSleep) return;
-      try { requestNativeCaptions(); } catch (_) {}
+      try {
+        requestNativeCaptions();
+      } catch (_) {
+      }
       post('NETWORK_RESET_STATUS', { status: 'ready' });
     }, 500);
   }
-
   function setLightweightSleep(enabled) {
     lightweightSleep = Boolean(enabled);
     if (lightweightSleep) {
       resetGeneration += 1;
-      try { activeController?.abort(); } catch (_) {}
+      try {
+        activeController?.abort();
+      } catch (_) {
+      }
       activeController = null;
       busy = false;
       lastRequestKey = '';
-      if (bridgeInterval) { clearInterval(bridgeInterval); bridgeInterval = null; }
+      if (bridgeInterval) {
+        clearInterval(bridgeInterval);
+        bridgeInterval = null;
+      }
       post('NETWORK_RESET_STATUS', { status: 'sleep' });
       return;
     }
     if (!bridgeInterval) bridgeInterval = setInterval(() => {
       hookFetchAndXHR();
       const id = getVideoId();
-      if (id && id !== lastVideoId) { lastVideoId = id; lastRequestKey = ''; exposePlayerState(); }
+      if (id && id !== lastVideoId) {
+        lastVideoId = id;
+        lastRequestKey = '';
+        exposePlayerState();
+      }
     }, 3000);
   }
-
-
   function exposePlayerState() {
     const response = getPlayerResponse();
     const videoId = getVideoId();
@@ -374,10 +384,8 @@
       captions: renderer
     });
   }
-
   hookFetchAndXHR();
   exposePlayerState();
-
   window.addEventListener('message', event => {
     if (event.source !== window || event.data?.source !== SOURCE) return;
     if (event.data.type === 'REQUEST_PLAYER_STATE') exposePlayerState();
@@ -385,7 +393,6 @@
     if (event.data.type === 'RESET_NETWORK') resetYouTubeNetwork();
     if (event.data.type === 'SET_LIGHTWEIGHT_SLEEP') setLightweightSleep(event.data.enabled === true);
   });
-
   // YouTube is an SPA. Keep the bridge aware of a newly selected video and
   // re-check resource timing rather than rebuilding hooks on every navigation.
   bridgeInterval = setInterval(() => {

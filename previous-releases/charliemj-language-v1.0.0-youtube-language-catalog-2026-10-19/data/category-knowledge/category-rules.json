@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {"id":"prefer-existing","priority":100,"condition":"existing-category-similarity","action":"prefer-existing"},
+    {"id":"metadata-first","priority":90,"condition":"youtube-metadata-available","action":"score-metadata"},
+    {"id":"title-description","priority":80,"condition":"title-or-description-match","action":"score-text"},
+    {"id":"keywords","priority":70,"condition":"keyword-match","action":"score-keywords"},
+    {"id":"new-category","priority":10,"condition":"no-existing-category-meets-confidence","action":"suggest-new-category"}
+  ]
+}
