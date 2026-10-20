@@ -3046,7 +3046,11 @@
       // placed it until they explicitly click a transcript line. This makes
       // it possible to scroll to any sentence and click it without the live
       // player highlight immediately pulling the list back.
-      state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
+      state.liveHighlightManualScrollUntil =
+      Date.now() + Math.max(
+        800,
+        Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
+      );
     };
     list.addEventListener('wheel', markManualScroll, { passive: true });
     list.addEventListener('touchmove', markManualScroll, { passive: true });
@@ -3055,7 +3059,11 @@
       if (!state.liveHighlightProgrammaticScroll && state.settings.liveTranscriptRespectManualScroll !== false) {
         // Preserve the learner's manual position until a transcript line is
         // explicitly selected.
-        state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
+        state.liveHighlightManualScrollUntil =
+        Date.now() + Math.max(
+          800,
+          Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
+        );
       }
     }, { passive: true });
   }
@@ -3090,6 +3098,13 @@
     ) {
       return;
     }
+    // Once the learner takes manual control, keep that position until a transcript line is clicked.
+    if (
+      settings.liveTranscriptRespectManualScroll !== false &&
+      manualUntil === Number.MAX_SAFE_INTEGER
+    ) {
+      return;
+    }
     /*
     * If the existing system marked manual scrolling as permanent,
     * convert that state into a temporary pause.
@@ -3111,6 +3126,14 @@
       }
       state.liveHighlightManualScrollUntil = 0;
     }
+
+    /*
+    * Never automatically move the transcript while the video is paused.
+    */
+    if (video && video.paused) {
+      return;
+    }    
+
     /*
     * Do not force-follow paused playback when the user disabled
     * follow-while-paused.
@@ -3189,7 +3212,11 @@
       * The additional controller decides when it is safe to
       * resume automatic following.
       */
-      state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
+      state.liveHighlightManualScrollUntil =
+      Date.now() + Math.max(
+        800,
+        Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
+      );
     };
     list.addEventListener('wheel', markInteraction, {
       passive: true
@@ -3205,7 +3232,11 @@
       () => {
         if (state.liveHighlightProgrammaticScroll) return;
         state.liveHighlightLastManualInteractionAt = Date.now();
-        state.liveHighlightManualScrollUntil = Number.MAX_SAFE_INTEGER;
+        state.liveHighlightManualScrollUntil =
+        Date.now() + Math.max(
+          800,
+          Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
+        );
       },
       { passive: true }
     );
@@ -3225,7 +3256,13 @@
     list.classList.toggle('cmj-live-highlight-disabled', !enabled);
     const safeIndex = Number.isInteger(index) ? index : -1;
     const changed = safeIndex !== state.liveHighlightLastIndex;
-    if (!changed && !forceScroll) return;
+    const manualScrollExpired =
+      settings.liveTranscriptRespectManualScroll !== false &&
+      state.liveHighlightManualScrollUntil > 0 &&
+      state.liveHighlightManualScrollUntil !== Number.MAX_SAFE_INTEGER &&
+      Date.now() >= state.liveHighlightManualScrollUntil;
+
+    if (!changed && !forceScroll && !manualScrollExpired) return;
     if (changed) state.liveHighlightLastIndex = safeIndex;
     // Update only the previous/current row when the timestamp changes; never rebuild transcript HTML per tick.
     if (!enabled) {
@@ -3264,7 +3301,23 @@
     active.classList.remove('cmj-live-style-soft-background', 'cmj-live-style-rounded', 'cmj-live-style-underline', 'cmj-live-style-accent', 'cmj-live-style-text');
     const styleMap = { 'soft-background': 'soft-background', 'rounded-background': 'rounded', 'underline': 'underline', 'left-accent': 'accent', 'text-color': 'text' };
     active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
-    const shouldScroll = settings.liveTranscriptAutoScroll !== false && (changed || forceScroll);
+    if (
+    settings.liveTranscriptRespectManualScroll !== false &&
+    state.liveHighlightManualScrollUntil === Number.MAX_SAFE_INTEGER
+    ) {
+      return;
+    }
+
+    /*
+    * Never automatically move the transcript while the video is paused.
+    */
+    if (video && video.paused) {
+      return;
+    }
+
+    const shouldScroll =
+      settings.liveTranscriptAutoScroll !== false &&
+      (changed || forceScroll || manualScrollExpired);
     if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
     if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
     if (!forceScroll && Date.now() - state.liveHighlightLastAutoScrollAt < 250) return;

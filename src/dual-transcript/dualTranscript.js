@@ -53,7 +53,12 @@
     dualActive: false,
     bodyObserver: null,
     lightweightSleep: false,
-    resettingNetwork: false
+    resettingNetwork: false,
+    dualLastActiveIndex: -1,
+    dualManualScrollUntil: 0,
+    dualProgrammaticScroll: false,
+    dualLastAutoScrollAt: 0,
+    dualManualResumeDelayMs: 1800
   };
   const $ = (s, root = document) => root.querySelector(s);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
@@ -330,6 +335,9 @@
       e.stopPropagation();
       playSentence(Number(el.dataset.dualSpeak || 0));
     }));
+    const dualList = $('.cmj-dual-list', body);
+    if (dualList) bindDualTranscriptScroll(dualList);
+
     syncHighlight();
   }
   function colorValue(value, fallback) {
@@ -365,6 +373,100 @@
     if (play?.catch) play.catch(() => {
     });
   }
+
+  function bindDualTranscriptScroll(list) {
+    if (!list || list.dataset.cmjDualScrollBound === 'true') return;
+
+    list.dataset.cmjDualScrollBound = 'true';
+
+    const markManualScroll = () => {
+      if (state.dualProgrammaticScroll) return;
+
+      state.dualManualScrollUntil =
+        Date.now() + Math.max(
+          800,
+          Number(state.settings.dualManualResumeDelayMs || state.dualManualResumeDelayMs || 1800)
+        );
+    };
+
+    list.addEventListener('wheel', markManualScroll, { passive: true });
+    list.addEventListener('touchmove', markManualScroll, { passive: true });
+    list.addEventListener('pointerdown', markManualScroll, { passive: true });
+
+    list.addEventListener('scroll', () => {
+      if (state.dualProgrammaticScroll) return;
+
+      state.dualManualScrollUntil =
+        Date.now() + Math.max(
+          800,
+          Number(state.settings.dualManualResumeDelayMs || state.dualManualResumeDelayMs || 1800)
+        );
+    }, { passive: true });
+  }
+
+  function autoFollowDualTranscript(list, activeIndex, video) {
+    if (!list) return;
+    if (!video || video.paused) return;
+    if (!Number.isInteger(activeIndex) || activeIndex < 0) return;
+
+    const settings = state.settings || {};
+
+    const active = list.querySelector(
+      `[data-dual-row="${activeIndex}"]`
+    );
+
+    if (!active) return;
+
+    const manualUntil = Number(state.dualManualScrollUntil || 0);
+
+    if (
+      manualUntil > 0 &&
+      Date.now() < manualUntil
+    ) {
+      return;
+    }
+
+    if (Date.now() - state.dualLastAutoScrollAt < 250) {
+      return;
+    }
+
+    state.dualLastAutoScrollAt = Date.now();
+    state.dualProgrammaticScroll = true;
+
+    const position = settings.dualTranscriptScrollPosition || 'center';
+
+    try {
+      if (position === 'top') {
+        list.scrollTo({
+          top: Math.max(0, active.offsetTop - 8),
+          behavior: 'smooth'
+        });
+      } else if (position === 'bottom') {
+        list.scrollTo({
+          top: Math.max(
+            0,
+            active.offsetTop -
+              list.clientHeight +
+              active.offsetHeight +
+              8
+          ),
+          behavior: 'smooth'
+        });
+      } else {
+        active.scrollIntoView({
+          block: 'center',
+          behavior: 'smooth'
+        });
+      }
+    } catch (_) {
+      active.scrollIntoView(false);
+    }
+
+    setTimeout(() => {
+      state.dualProgrammaticScroll = false;
+    }, 500);
+  }
+
   function syncHighlight() {
     if (!state.panelOpen) return;
     const video = document.querySelector('video');
@@ -390,7 +492,23 @@
         speaker.setAttribute('aria-hidden', live ? 'false' : 'true');
       }
     });
+    const manualScrollExpired =
+      state.dualManualScrollUntil > 0 &&
+      Date.now() >= state.dualManualScrollUntil;
+
+    if (manualScrollExpired) {
+      state.dualManualScrollUntil = 0;
+    }
+
+    if (active !== state.dualLastActiveIndex || manualScrollExpired) {
+      state.dualLastActiveIndex = active;
+
+      if (active >= 0) {
+        autoFollowDualTranscript(list, active, video);
+      }
+    }
   }
+  
   function startSync() {
     if (state.syncTimer) return;
     state.syncTimer = setInterval(syncHighlight, 80);
