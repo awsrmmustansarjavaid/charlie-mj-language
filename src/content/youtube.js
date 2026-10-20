@@ -3090,13 +3090,6 @@
     ) {
       return;
     }
-    // Once the learner takes manual control, keep that position until a transcript line is clicked.
-    if (
-      settings.liveTranscriptRespectManualScroll !== false &&
-      manualUntil === Number.MAX_SAFE_INTEGER
-    ) {
-      return;
-    }
     /*
     * If the existing system marked manual scrolling as permanent,
     * convert that state into a temporary pause.
@@ -3118,14 +3111,6 @@
       }
       state.liveHighlightManualScrollUntil = 0;
     }
-
-    /*
-    * Never automatically move the transcript while the video is paused.
-    */
-    if (video && video.paused) {
-      return;
-    }    
-
     /*
     * Do not force-follow paused playback when the user disabled
     * follow-while-paused.
@@ -3279,20 +3264,6 @@
     active.classList.remove('cmj-live-style-soft-background', 'cmj-live-style-rounded', 'cmj-live-style-underline', 'cmj-live-style-accent', 'cmj-live-style-text');
     const styleMap = { 'soft-background': 'soft-background', 'rounded-background': 'rounded', 'underline': 'underline', 'left-accent': 'accent', 'text-color': 'text' };
     active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
-    if (
-    settings.liveTranscriptRespectManualScroll !== false &&
-    state.liveHighlightManualScrollUntil === Number.MAX_SAFE_INTEGER
-    ) {
-      return;
-    }
-
-    /*
-    * Never automatically move the transcript while the video is paused.
-    */
-    if (video && video.paused) {
-      return;
-    }
-
     const shouldScroll = settings.liveTranscriptAutoScroll !== false && (changed || forceScroll);
     if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
     if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
