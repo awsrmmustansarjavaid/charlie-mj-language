@@ -6,13 +6,13 @@ const defaults = {
   transcriptDefaultX: 98, transcriptDefaultY: 12, transcriptUIWidth: 300, transcriptUIHeight: 545, transcriptHorizontalAnchor: 'right', transcriptPositionMode: 'default', transcriptVerticalAnchor: 'top', transcriptOffsetX: 2, transcriptOffsetY: 12, transcriptControlHideDelayMs: 15000, transcriptAutoHideEnabled: true, transcriptAutoHideDelayMs: 15000, transcriptHoverZonePx: 120,
   subtitleDragEnabled: true, subtitlePosition: { leftPx: null, topPx: null, left: 21.3, top: 76.7, bottom: null },
   transcriptWindowWidth: 300, transcriptWindowHeight: 545, transcriptWindowMinWidth: 220, transcriptWindowMaxWidth: 1000,
-  transcriptWindowMinHeight: 220, transcriptWindowMaxHeight: 900, transcriptWindowPosition: { leftPx: null, topPx: 70, right: 18, bottom: 18 }, transcriptPinned: false, theme: 'dark', subtitlePreloadTranslations: 2, captionMaxRetries: 20, subtitleDisplayMode: 'both', originalFontSize: 28, translationFontSize: 22, originalLineSpacing: '1.0', translationLineSpacing: '1.0', originalBoxWidthMode: 'auto', originalBoxWidthCustom: 640, originalBoxHeightMode: 'auto', originalBoxHeightCustom: 180, originalMaxWidth: 900, originalMaxHeight: 180, originalMaxLines: 2, originalCustomMaxLines: 2, originalTextWrapping: true, originalBoxPadding: 7, originalBackgroundOpacity: 62, originalCornerRadius: 9, translationBoxWidthMode: 'auto', translationBoxWidthCustom: 640, translationBoxHeightMode: 'auto', translationBoxHeightCustom: 180, translationMaxWidth: 900, translationMaxHeight: 180, translationMaxLines: 2, translationCustomMaxLines: 2, translationTextWrapping: true, translationBoxPadding: 7, translationBackgroundOpacity: 52, translationCornerRadius: 9, originalBold: true, translationBold: false, originalUnderline: false, translationUnderline: false, originalItalic: false, translationItalic: false, originalColor: '#ffffff', translationColor: '#e2e8f0', sentenceShowLevel: true, replayCount: 1, playbackSpeed: 1, autoPauseAfterSubtitle: false, subtitleLearningAutoResumeDelay: 3, subtitleLearningKeepSubtitleVisible: true, subtitleLearningReplayAudioCount: 2, studyModeDefault: false, showWordPronunciation: true, showWordTransliteration: false, markKnownStopsHighlight: true, toolbarPosition: { left: 4.7, top: 91.8, bottom: null }, toolbarActionOrder: ['toggle', 'transcript', 'word', 'sentence', 'save', 'bookmark', 'capture', 'watch', 'focus', 'theme', 'auto-pause', 'replay-audio'], toolbarMoreActions: ['translate', 'replay', 'loop', 'speed', 'ab', 'study', 'save-sentence', 'download-transcript', 'download-vocabulary', 'settings'], grammarColors: { noun: '#38bdf8', verb: '#fb7185', adjective: '#a78bfa', adverb: '#4ade80', pronoun: '#facc15', preposition: '#f472b6', conjunction: '#fb923c', determiner: '#818cf8', numeral: '#a3e635', particle: '#22d3ee', other: '#e2e8f0', turkishSuffix: '#c084fc', turkishCase: '#f59e0b', turkishPlural: '#34d399', turkishPossessive: '#60a5fa', turkishTense: '#f87171', turkishPerson: '#fb7185' }
+  transcriptWindowMinHeight: 220, transcriptWindowMaxHeight: 900, transcriptWindowPosition: { leftPx: null, topPx: 70, right: 18, bottom: 18 }, transcriptPinned: false, theme: 'dark', subtitlePreloadTranslations: 2, captionMaxRetries: 20, subtitleDisplayMode: 'both', originalFontSize: 28, translationFontSize: 22, originalLineSpacing: '1.0', translationLineSpacing: '1.0', originalBoxWidthMode: 'auto', originalBoxWidthCustom: 640, originalBoxHeightMode: 'auto', originalBoxHeightCustom: 180, originalMaxWidth: 900, originalMaxHeight: 180, originalMaxLines: 2, originalCustomMaxLines: 2, originalTextWrapping: true, originalBoxPadding: 7, originalBackgroundOpacity: 62, originalCornerRadius: 9, translationBoxWidthMode: 'auto', translationBoxWidthCustom: 640, translationBoxHeightMode: 'auto', translationBoxHeightCustom: 180, translationMaxWidth: 900, translationMaxHeight: 180, translationMaxLines: 2, translationCustomMaxLines: 2, translationTextWrapping: true, translationBoxPadding: 7, translationBackgroundOpacity: 52, translationCornerRadius: 9, originalBold: true, translationBold: false, originalUnderline: false, translationUnderline: false, originalItalic: false, translationItalic: false, originalColor: '#ffffff', translationColor: '#e2e8f0', sentenceShowLevel: true, replayCount: 1, playbackSpeed: 1, autoPauseAfterSubtitle: false, subtitleLearningAutoResumeDelay: 3, subtitleLearningKeepSubtitleVisible: true, subtitleLearningReplayAudioCount: 2, studyModeDefault: false, showWordPronunciation: true, showWordTransliteration: false, markKnownStopsHighlight: true, toolbarPosition: { left: 4.7, top: 91.8, bottom: null }, toolbarActionOrder: ['toggle', 'transcript', 'yt-transcript-pro', 'word', 'sentence', 'save', 'bookmark', 'capture', 'watch', 'focus', 'theme', 'auto-pause', 'replay-audio'], toolbarMoreActions: ['translate', 'replay', 'loop', 'speed', 'ab', 'study', 'save-sentence', 'download-transcript', 'download-vocabulary', 'settings'], grammarColors: { noun: '#38bdf8', verb: '#fb7185', adjective: '#a78bfa', adverb: '#4ade80', pronoun: '#facc15', preposition: '#f472b6', conjunction: '#fb923c', determiner: '#818cf8', numeral: '#a3e635', particle: '#22d3ee', other: '#e2e8f0', turkishSuffix: '#c084fc', turkishCase: '#f59e0b', turkishPlural: '#34d399', turkishPossessive: '#60a5fa', turkishTense: '#f87171', turkishPerson: '#fb7185' }
 };
 const colorFields = [
   ['noun', 'Noun'], ['pronoun', 'Pronoun'], ['verb', 'Verb'], ['adjective', 'Adjective'], ['adverb', 'Adverb'], ['preposition', 'Preposition'], ['conjunction', 'Conjunction'], ['determiner', 'Determiner'], ['numeral', 'Numeral'], ['particle', 'Particle'], ['other', 'Other'],
   ['turkishSuffix', 'Turkish Suffix'], ['turkishCase', 'Turkish Case'], ['turkishPlural', 'Turkish Plural'], ['turkishPossessive', 'Turkish Possessive'], ['turkishTense', 'Turkish Tense / Aspect'], ['turkishPerson', 'Turkish Person']
 ];
-const TOOLBAR_LABELS = { toggle: 'CMJ', transcript: 'Transcript', word: 'Word Learning', sentence: 'Sentence Learning', save: 'Save', bookmark: 'Bookmark', capture: 'Capture', watch: 'Watch Later', focus: 'Focus', theme: 'Theme', 'auto-pause': 'Auto-Pause', 'replay-audio': 'Replay Audio', translate: 'Translate', replay: 'Replay', loop: 'Loop Sentence', speed: 'Speed', ab: 'A/B Replay', study: 'Study Mode', 'save-sentence': 'Save Sentence', 'download-transcript': 'Download Transcript', 'download-vocabulary': 'Download Vocabulary', settings: 'Settings' };
+const TOOLBAR_LABELS = { toggle: 'CMJ', transcript: 'Transcript', 'yt-transcript-pro': 'YT Transcript Pro', word: 'Word Learning', sentence: 'Sentence Learning', save: 'Save', bookmark: 'Bookmark', capture: 'Capture', watch: 'Watch Later', focus: 'Focus', theme: 'Theme', 'auto-pause': 'Auto-Pause', 'replay-audio': 'Replay Audio', translate: 'Translate', replay: 'Replay', loop: 'Loop Sentence', speed: 'Speed', ab: 'A/B Replay', study: 'Study Mode', 'save-sentence': 'Save Sentence', 'download-transcript': 'Download Transcript', 'download-vocabulary': 'Download Vocabulary', settings: 'Settings' };
 function renderToolbarManager(settings) {
   const visible = document.getElementById('toolbarVisibleList'), more = document.getElementById('toolbarMoreList');
   if (!visible || !more) return;
@@ -22,7 +22,7 @@ function renderToolbarManager(settings) {
   (settings.toolbarMoreActions || defaults.toolbarMoreActions).forEach(a => more.appendChild(toolbarItem(a)));
   const visibleActions = settings.toolbarActionOrder || defaults.toolbarActionOrder;
   const moreActions = settings.toolbarMoreActions || defaults.toolbarMoreActions;
-  for (const action of ['auto-pause', 'replay-audio']) {
+  for (const action of ['yt-transcript-pro', 'auto-pause', 'replay-audio']) {
     if (!visibleActions.includes(action) && !moreActions.includes(action)) {
       visible.appendChild(toolbarItem(action));
     }
@@ -87,6 +87,77 @@ function readTranslationPriority() {
   if (!out.length) out.push('youtube-captions');
   return out;
 }
+
+function ytpLabel(key) {
+  return String(key).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ').replace(/^./, c => c.toUpperCase());
+}
+function ytpOptionMap(key) {
+  const maps = {
+    buttonPosition: [['start','Start'],['beforeSettings','Before YouTube settings'],['end','End']],
+    panelMode: [['docked','Docked'],['floating','Floating']],
+    timestampFormat: [['auto','Automatic'],['mmss','MM:SS'],['hhmmss','HH:MM:SS'],['seconds','Seconds'],['ms','Milliseconds']],
+    timestampWrap: [['brackets','[00:00]'],['parens','(00:00)'],['none','No wrapper']],
+    timestampSeparator: [[' ','Space'],[' - ','Dash'],[' — ','Em dash'],['\t','Tab']],
+    dualLayout: [['stacked','Stacked'],['side','Side by side'],['delimited','Delimited']],
+    copyScope: [['both','Both'],['original','Original only'],['translation','Translation only']],
+    lineCopyScope: [['both','Both'],['original','Original only'],['translation','Translation only']],
+    theme: [['system','System'],['light','Light'],['dark','Dark'],['custom','Custom']],
+    fontFamily: [['system','System'],['serif','Serif'],['mono','Monospace'],['rounded','Rounded']],
+    density: [['compact','Compact'],['comfortable','Comfortable']],
+    highlightStyle: [['bar','Accent bar'],['fill','Fill'],['underline','Underline']],
+    lineEnding: [['lf','LF'],['crlf','CRLF']],
+    conflictAction: [['uniquify','Uniquify'],['overwrite','Overwrite'],['prompt','Prompt']],
+    scrollBehavior: [['smooth','Smooth'],['auto','Automatic']]
+  };
+  return maps[key] || null;
+}
+function buildYtpProSettings(settings) {
+  const host = document.getElementById('ytpProSettingsGrid');
+  if (!host || !window.YTP?.DEFAULTS) return;
+  const defaults = window.YTP.DEFAULTS;
+  const values = { ...defaults, ...(settings?.ytTranscriptPro || {}) };
+  host.innerHTML = '';
+  Object.entries(defaults).forEach(([key, def]) => {
+    const value = values[key];
+    if (key === 'floatX' || key === 'floatY') return;
+    const label = document.createElement('label');
+    label.title = `YT Transcript Pro: ${key}`;
+    const span = document.createElement('span'); span.textContent = ytpLabel(key); label.appendChild(span);
+    let el;
+    const options = ytpOptionMap(key);
+    if (typeof def === 'boolean') {
+      label.className = 'check'; el = document.createElement('input'); el.type = 'checkbox'; el.checked = Boolean(value);
+    } else if (Array.isArray(def)) {
+      el = document.createElement('input'); el.type = 'text'; el.value = Array.isArray(value) ? value.join(',') : String(value ?? '');
+    } else if (options) {
+      el = document.createElement('select'); options.forEach(([v,n]) => { const o=document.createElement('option'); o.value=v; o.textContent=n; el.appendChild(o); }); el.value=String(value ?? def);
+    } else {
+      el = document.createElement('input');
+      if (typeof def === 'number') { el.type='number'; el.step=String(Number.isInteger(def)?1:0.1); }
+      else if (typeof def === 'string' && /^#[0-9a-f]{6}$/i.test(def)) el.type='color';
+      else el.type='text';
+      el.value = String(value ?? def);
+    }
+    el.dataset.ytpKey = key;
+    label.appendChild(el); host.appendChild(label);
+  });
+  document.getElementById('resetYtpProSettings')?.addEventListener('click', () => buildYtpProSettings({ ytTranscriptPro: defaults }));
+}
+function readYtpProSettings() {
+  const defaults = window.YTP?.DEFAULTS || {};
+  const out = {};
+  document.querySelectorAll('[data-ytp-key]').forEach(el => {
+    const key = el.dataset.ytpKey, def = defaults[key];
+    if (el.type === 'checkbox') out[key] = el.checked;
+    else if (Array.isArray(def)) out[key] = String(el.value || '').split(',').map(x => x.trim()).filter(Boolean);
+    else if (typeof def === 'number') out[key] = Number(el.value) || def;
+    else out[key] = el.value;
+  });
+  // Keep the Pro floating position if it already exists; it is updated by drag.
+  const old = window.__cmjYtpStored || {};
+  return { ...defaults, ...old, ...out };
+}
+
 (async () => {
   const storedAll = await chrome.storage.local.get('settings');
   const settings = storedAll.settings || {};
@@ -96,6 +167,8 @@ function readTranslationPriority() {
     await chrome.storage.local.set({ settings: migratedSettings });
   }
   const s = { ...defaults, ...migratedSettings, grammarColors: { ...defaults.grammarColors, ...(migratedSettings.grammarColors || {}) } };
+  buildYtpProSettings(migratedSettings);
+  window.__cmjYtpStored = { ...(migratedSettings.ytTranscriptPro || {}) };
   const normalizeLineSpacing = (value, fontSize, legacyDefault) => {
     const n = Number(value);
     if (!Number.isFinite(n) || n <= 0) return '1.0';
@@ -204,7 +277,8 @@ function buildSettingsNavigation() {
     'Additional Windows': ['▣', 'Additional Learning window behavior'],
     'Extension Intelligence': ['🧠', 'Smart category suggestions and learning'],
     'Data Sync': ['⇄', 'Local database and GitHub synchronization'],
-    'Performance': ['⚡', 'Startup, service lifecycle, sleep and resource controls']
+    'Performance': ['⚡', 'Startup, service lifecycle, sleep and resource controls'],
+    'YT Transcript Pro': ['⚡', 'Professional transcript, dual subtitles, search and export']
   };
   const groups = new Map();
   [...document.querySelectorAll('main>section, main .additional-settings-section')].forEach((section, index) => {
@@ -473,6 +547,8 @@ document.getElementById('save').onclick = async () => {
   if (learningAutoPause) {
     settings.autoPauseAfterSubtitle = learningAutoPause.checked
   }
+  settings.ytTranscriptPro = readYtpProSettings();
+  window.__cmjYtpStored = { ...settings.ytTranscriptPro };
   await chrome.storage.local.set({ settings });
   const saveButton = document.getElementById('save');
   const status = document.getElementById('status');

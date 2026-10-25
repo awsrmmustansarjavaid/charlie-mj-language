@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Charlie MJ Language",
   "short_name": "Charlie MJ",
-  "version": "1.0.0",
-  "description": "Multilingual YouTube language learning with the original fast Charlie MJ transcript engine, learning tools, YouTube favorites, category intelligence and optional services.",
+  "version": "2.0.0",
+  "description": "Multilingual YouTube language learning with transcript, dual transcript and YT Transcript Pro features, learning tools, language intelligence and local-first services.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",
@@ -13,7 +13,8 @@
     "scripting",
     "commands",
     "tabs",
-    "alarms"
+    "alarms",
+    "clipboardWrite"
   ],
   "host_permissions": [
     "https://*.googlevideo.com/*",
@@ -59,6 +60,17 @@
         "https://m.youtube.com/*"
       ],
       "js": [
+        "src/transcript-pro/ytp-page-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
         "src/dual-transcript/dualTranscriptBridge.js"
       ],
       "run_at": "document_start",
@@ -70,10 +82,27 @@
         "https://m.youtube.com/*"
       ],
       "js": [
+        "src/transcript-pro/ytp-helpers.js",
+        "src/transcript-pro/ytp-defaults.js",
+        "src/transcript-pro/ytp-storage.js",
+        "src/transcript-pro/ytp-theme.js",
+        "src/transcript-pro/caption-parser.js",
+        "src/transcript-pro/caption-extractor.js",
+        "src/transcript-pro/language-manager.js",
+        "src/transcript-pro/transcript-aligner.js",
+        "src/transcript-pro/transcript-formatter.js",
+        "src/transcript-pro/clipboard.js",
+        "src/transcript-pro/txt-exporter.js",
+        "src/transcript-pro/srt-exporter.js",
+        "src/transcript-pro/vtt-exporter.js",
+        "src/transcript-pro/csv-exporter.js",
+        "src/transcript-pro/ytp-youtube-detector.js",
+        "src/transcript-pro/ytp-content.js",
         "src/content/youtube.js",
         "src/content/subtitle-learning-controls.js"
       ],
       "css": [
+        "src/transcript-pro/ytp-content.css",
         "src/content/youtube.css",
         "src/content/subtitle-learning-controls.css"
       ],

@@ -937,6 +937,7 @@
           </header>
           <nav class="cmj-tabs">
             <button data-cmj-tab="transcript">Transcript</button>
+            <button data-cmj-tab="ytTranscriptPro">YT Transcript Pro</button>
             <button data-cmj-tab="vocabulary">Vocabulary</button>
             <button data-cmj-tab="bookmarks">Bookmarks</button>
             <button data-cmj-tab="watchLater">Watch Later</button>
@@ -1484,16 +1485,17 @@
     reveal();
   }
   function buildToolbarHTML() {
-    const frontDefault = ['toggle', 'transcript', 'word', 'sentence', 'save', 'bookmark', 'capture', 'watch', 'focus', 'theme', 'auto-pause', 'replay-audio'];
+    const frontDefault = ['toggle', 'transcript', 'yt-transcript-pro', 'word', 'sentence', 'save', 'bookmark', 'capture', 'watch', 'focus', 'theme', 'auto-pause', 'replay-audio'];
     const moreDefault = ['translate', 'replay', 'loop', 'speed', 'ab', 'study', 'save-sentence', 'download-transcript', 'download-vocabulary', 'settings'];
     const front = Array.isArray(state.settings.toolbarActionOrder) ? state.settings.toolbarActionOrder : frontDefault;
     const more = Array.isArray(state.settings.toolbarMoreActions) ? state.settings.toolbarMoreActions : moreDefault;
-    for (const action of ['auto-pause', 'replay-audio']) {
+    for (const action of ['yt-transcript-pro', 'auto-pause', 'replay-audio']) {
       if (!front.includes(action) && !more.includes(action)) front.push(action);
     }
     const labels = {
       toggle: ['🌍', 'CMJ', 'Enable or disable Charlie MJ subtitles'],
       transcript: ['📜', 'Transcript', 'Complete transcript'],
+      'yt-transcript-pro': ['⚡', 'YT Pro', 'YT Transcript Pro'],
       word: ['🔤', 'Word', 'Word Learning'],
       sentence: ['📝', 'Sentence', 'Sentence Learning'],
       save: ['⭐', 'Save', 'Save current subtitle'],
@@ -1623,6 +1625,10 @@
     }
     if (action === 'transcript') {
       openPanel('transcript');
+      updateToolbarButtonStates();
+    }
+    if (action === 'yt-transcript-pro') {
+      openPanel('ytTranscriptPro');
       updateToolbarButtonStates();
     }
     if (action === 'word') {
@@ -2893,10 +2899,66 @@
     if (panel) panel.hidden = true;
     updateToolbarButtonStates();
   }
+  function ytpCommand(command, value = '') {
+    // Primitive DOM attributes + a plain Event avoid object transfer between
+    // isolated worlds. The Pro controller reads these values in its own world.
+    const root = document.documentElement;
+    if (!root) return;
+    root.dataset.cmjYtpCommand = String(command || '');
+    root.dataset.cmjYtpCommandValue = String(value || '');
+    document.dispatchEvent(new Event('cmj-ytp-command'));
+  }
+
+  function waitForYtTranscriptPro(timeout = 10000) {
+    if (document.documentElement?.dataset?.cmjYtpProReady === '1' || window.CMJTranscriptPro?.mount) return Promise.resolve(true);
+    return new Promise((resolve) => {
+      let done = false;
+      let pollTimer = null;
+      let timeoutTimer = null;
+      const cleanup = () => {
+        document.removeEventListener('cmj-ytp-pro-ready', finish);
+        window.removeEventListener('cmj-ytp-pro-ready', finish);
+        if (pollTimer) clearInterval(pollTimer);
+        if (timeoutTimer) clearTimeout(timeoutTimer);
+      };
+      const finish = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        resolve(document.documentElement?.dataset?.cmjYtpProReady === '1' || Boolean(window.CMJTranscriptPro?.mount));
+      };
+      const check = () => {
+        if (document.documentElement?.dataset?.cmjYtpProReady === '1' || window.CMJTranscriptPro?.mount) finish();
+      };
+      document.addEventListener('cmj-ytp-pro-ready', finish);
+      window.addEventListener('cmj-ytp-pro-ready', finish);
+      pollTimer = setInterval(check, 50);
+      timeoutTimer = setTimeout(finish, timeout);
+      check();
+    });
+  }
+
   async function renderPanel(tab) {
     const body = $('.cmj-panel-body');
     if (!body) return;
     state.panelTab = tab;
+    if (tab !== 'ytTranscriptPro') {
+      ytpCommand('unmount');
+    }
+    if (tab === 'ytTranscriptPro') {
+      body.innerHTML = '<div class="cmj-ytp-embed-host" id="cmjYtTranscriptProHost"></div>';
+      const host = document.getElementById('cmjYtTranscriptProHost');
+      const ready = await waitForYtTranscriptPro();
+      if (ready && host?.isConnected) {
+        document.documentElement.dataset.cmjYtpHostId = host.id;
+        // Use the DOM event bridge so this works even if Chrome gives the
+        // two content-script files different isolated-world wrappers.
+        ytpCommand('mount', host.id);
+      } else if (host?.isConnected) {
+        body.innerHTML = '<p class="cmj-empty">YT Transcript Pro could not initialize. Please reload this YouTube tab once.</p>';
+      }
+      return;
+    }
     if (tab === 'transcript') {
       body.innerHTML = `<div class="cmj-export-row">
         <button data-cmj-export="both">📋 Copy complete</button>
@@ -3550,6 +3612,7 @@
     if (message.type === 'CMJ_BOOKMARK') await saveBookmark();
     if (message.type === 'CMJ_ADD_WATCH_LATER') await addWatchLater(message.url || '', message.title || '');
     if (message.type === 'CMJ_OPEN_PANEL') openPanel('transcript');
+    if (message.type === 'CMJ_OPEN_YT_TRANSCRIPT_PRO') openPanel('ytTranscriptPro');
     if (message.type === 'CMJ_SAVE_TEXT' && message.text) {
       await saveVocabulary(message.text, analyzeWord(message.text), '');
       showToast('Selected text saved to vocabulary.');

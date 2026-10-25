@@ -1077,3 +1077,26 @@ body.cmj-toolbar-dragging * {
   opacity:0;
   visibility:hidden;
 }
+
+/* YT Transcript Pro integration */
+.cmj-ytp-embed-host {
+  width: 100%;
+  min-height: 420px;
+  display: block;
+}
+.cmj-ytp-embed-host #ytp-panel.ytp-open {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.cmj-ytp-embed-host .ytp-header {
+  cursor: default !important;
+}

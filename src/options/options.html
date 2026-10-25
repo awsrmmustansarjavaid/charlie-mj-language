@@ -1720,7 +1720,17 @@
      Fade comments while focused
     </label>
    </section>
-   <div class="settings-savebar">
+ 
+  <section data-settings-category="YT Transcript Pro">
+   <h2>YT Transcript Pro</h2>
+   <div class="component-card">
+    <h3>⚡ Professional YouTube Transcript Workspace</h3>
+    <p class="note">All YT Transcript Pro features are integrated into Charlie MJ Language v2.0.0. Existing Charlie MJ features remain unchanged. Settings are stored inside the main Charlie MJ settings profile.</p>
+    <div id="ytpProSettingsGrid" class="two-col"></div>
+    <div class="row"><button class="secondary" id="resetYtpProSettings" type="button">Reset YT Transcript Pro settings</button></div>
+   </div>
+  </section>
+  <div class="settings-savebar">
     <div>
      <strong id="settingsContextTitle">
       General
@@ -1739,6 +1749,7 @@
    </div>
   </main>
   <!-- JavaScript dependencies: main options logic plus additional settings and upgrade integrations. -->
+  <script src="../transcript-pro/ytp-defaults.js"></script>
   <script src="options.js">
   </script>
   <script src="../dual-transcript/dualTranscriptSettings.js">

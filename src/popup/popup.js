@@ -125,6 +125,7 @@ async function loadLightweightState() {
 $('#learn').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#focus').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_TOGGLE_FOCUS' }));
 $('#transcript').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
+$('#ytTranscriptPro').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_YT_TRANSCRIPT_PRO' }));
 $('#watch').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_ADD_WATCH_LATER' }));
 $('#resetNetwork').addEventListener('click', async () => {
   showPopupNotice('Resetting YouTube caption connection…', 'success');

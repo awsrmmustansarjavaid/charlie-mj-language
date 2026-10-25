@@ -450,6 +450,27 @@ async function prepareDatabaseBackup() {
   return { files: files.length, filename }
 }
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === 'ytp:download') {
+    (async () => {
+      try {
+        const settings = (await chrome.storage.local.get('settings')).settings || {};
+        const s = settings.ytTranscriptPro || {};
+        const cleanPart = part => String(part || '').replace(/[<>:"|?*\u0000-\u001f]/g, '-').replace(/^\.+/, '').trim();
+        const folder = String(s.downloadFolder || '').replace(/\\/g, '/').split('/').map(cleanPart).filter(Boolean).filter(x => x !== '..');
+        const name = cleanPart(message.filename) || 'youtube-transcript.txt';
+        const filename = [...folder, name].join('/');
+        const bytes = new TextEncoder().encode((message.bom ? '\ufeff' : '') + String(message.content || ''));
+        let binary = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        const url = `data:${message.mime || 'text/plain;charset=utf-8'};base64,${btoa(binary)}`;
+        const id = await chrome.downloads.download({ url, filename, saveAs: Boolean(s.saveAs), conflictAction: s.conflictAction || 'uniquify' });
+        if (s.revealAfterDownload && id != null) chrome.downloads.show(id).catch(() => {});
+        sendResponse({ ok: true, id });
+      } catch (error) { sendResponse({ ok: false, error: String(error?.message || error) }); }
+    })();
+    return true;
+  }
+  if (message?.type === 'ytp:openOptions') { chrome.runtime.openOptionsPage(); sendResponse({ ok: true }); return false; }
   if (message.type === 'CMJ_LIST_TRANSCRIPT_ENGINES') {
     sendResponse({ ok: true, engines: listTranscriptEngines() });
     return false;

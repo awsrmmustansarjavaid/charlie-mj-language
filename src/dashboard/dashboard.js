@@ -18,7 +18,7 @@
     { id: 'favorites', name: 'Favorites', key: 'favorites', icon: '⭐', group: 'Organize' },
     { id: 'checkpoints', name: 'Checkpoints', key: 'checkpoints', icon: '📍', group: 'Organize' }
   ];
-  let pages = [], current = 'overview', data = [], view = 'grid', pendingDelete = null;
+  let pages = [], current = 'overview', data = [], view = 'grid', pendingDelete = null, renderToken = 0, globalSearchData = null;
   const $ = s => document.querySelector(s);
   const esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
   const safe = v => String(v || 'library').replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, ' ').trim().slice(0, 100) || 'library';
@@ -76,7 +76,22 @@
     $('#exportPage').onclick = () => openExport(false);
     $('#importPage').onclick = () => $('#importFile').click();
     $('#importFile').onchange = importPage;
-    ['search', 'tagFilter'].forEach(id => $('#' + id).oninput = render);
+    $('#search').oninput = async () => {
+      const query = $('#search').value.trim();
+      if (!query) {
+        globalSearchData = null;
+        await load();
+        return;
+      }
+
+      const token = ++renderToken;
+      const results = await getGlobalSearchData();
+      if (token !== renderToken || $('#search').value.trim() !== query) return;
+
+      data = results;
+      render();
+    };
+    $('#tagFilter').oninput = render;
     ['levelFilter', 'videoFilter', 'typeFilter'].forEach(id => $('#' + id).onchange = render);
     $('#pageForm').onsubmit = createPage;
     $('#noteForm').onsubmit = createLibraryNote;
@@ -162,11 +177,12 @@
     };
   }
   async function load() {
+    globalSearchData = null;
     await loadPages();
     ensureLibraryRefreshButton();
     let p = info();
     if (current === 'overview') {
-      data = [];
+      data = await pageData({ key: 'history' });
       renderOverview();
       return
     }
@@ -179,8 +195,26 @@
     render()
   }
   function render() {
+    const token = ++renderToken;
+    let p = info();
+    let q = $('#search').value.trim().toLowerCase();
+    let lv = $('#levelFilter').value;
+    let tag = $('#tagFilter').value.trim().toLowerCase();
+    let vid = $('#videoFilter').value;
+    let typ = $('#typeFilter').value;
+
+    if (p.id === 'overview' && !q && !lv && !tag && !vid && !typ) {
+      renderOverview();
+      return;
+    }
+
     $('#overview').hidden = true;
-    let p = info(), q = $('#search').value.trim().toLowerCase(), lv = $('#levelFilter').value, tag = $('#tagFilter').value.trim().toLowerCase(), vid = $('#videoFilter').value, typ = $('#typeFilter').value;
+
+    // When searching from Overview, search the extension's saved History.
+    const cardPage = p.id === 'overview'
+      ? { id: 'history', name: 'History' }
+      : p;    
+
     let filtered = data.filter(x => {
       let hay = JSON.stringify(x).toLowerCase();
       let tags = (x.tags || []).join(' ').toLowerCase();
@@ -206,7 +240,9 @@
     renderStats(filtered, p);
     ensureLibraryRefreshButton();
     $('#items').className = `item-grid ${view === 'list' ? 'list-view' : ''}`;
-    $('#items').innerHTML = filtered.length ? filtered.map(x => card(x, p)).join('') : `<div class="empty"><h3>Nothing saved here yet</h3><p>${esc(p.name)} will fill automatically as you learn.</p></div>`;
+    $('#items').innerHTML = filtered.length
+      ? filtered.map(x => card(x, x.__cmjPage || cardPage)).join('')
+      : `<div class="empty"><h3>Nothing found</h3><p>${q ? `No saved library item matches "${esc(q)}".` : 'No saved library items match the selected filters.'}</p></div>`;
   }
   function renderVideoFilter() {
     let sel = $('#videoFilter').value, map = new Map();
@@ -253,11 +289,118 @@
  ${isVideo ? `<div class="progress"><span style="width:${Math.max(0, Math.min(100, progress))}%"></span></div><p class="item-context">${Math.round(progress)}% · Last ${esc(time ? fmt(time) : '00:00:00')} · Sessions ${esc(x.sessions || 1)}</p>` : ''}
  <p class="item-context">${esc(x.source || 'Library')}${time ? ` · ${esc(fmt(time))}` : ''}${x.pos ? ` · ${esc(x.pos)}` : ''}${x.level ? ` · ${esc(x.level)}` : ''}${x.level ? ` · ${esc(difficultyFor(x.level))}` : ''}</p>${x.sentence && x.word ? `<p class="item-context">${esc(x.sentence)}</p>` : ''}${x.note ? `<p class="note-preview">${esc(x.note)}</p>` : ''}<div class="tags">${(x.tags || []).map(t => `<span>#${esc(t)}</span>`).join('')}</div><div class="item-actions">${actions}</div></div></article>`;
   }
+  async function getGlobalSearchData() {
+    if (globalSearchData) return globalSearchData;
+
+    const keys = [
+      'history',
+      'videoProgress',
+      'vocabulary',
+      'wordLearning',
+      'sentenceLearning',
+      'bookmarks',
+      'watchLater',
+      'captures',
+      'favorites',
+      'checkpoints',
+      'transcripts',
+      'notesByVideo'
+    ];
+
+    const stored = await chrome.storage.local.get(keys);
+    const out = [];
+    const seen = new Set();
+
+    const add = (items, page) => {
+      if (!Array.isArray(items)) return;
+
+      for (const raw of items) {
+        if (!raw || typeof raw !== 'object') continue;
+
+        const item = { ...raw };
+        Object.defineProperty(item, '__cmjPage', {
+          value: page,
+          enumerable: false,
+          configurable: true
+        });
+
+        /*
+         * The same saved word/sentence can exist in both vocabulary and
+         * its dedicated learning list. Keep one search result instead of
+         * showing the same item multiple times.
+         */
+        const signature = [
+          item.videoId || '',
+          item.timestamp ?? item.lastPosition ?? '',
+          item.word || '',
+          item.sentence || '',
+          item.title || '',
+          item.id || ''
+        ].join('|').toLowerCase();
+
+        const dedupeKey = signature || JSON.stringify(item);
+        if (seen.has(dedupeKey)) continue;
+        seen.add(dedupeKey);
+        out.push(item);
+      }
+    };
+
+    /*
+     * Search order matters for duplicate records:
+     * videos first, then dedicated learning records, then the
+     * general vocabulary list and the remaining Library sections.
+     */
+    add(stored.history, { id: 'history', name: 'History', key: 'history' });
+    add(stored.videoProgress, { id: 'continue', name: 'Continue Learning', key: 'videoProgress' });
+    add(stored.wordLearning, { id: 'wordLearning', name: 'Word Learning', key: 'wordLearning' });
+    add(stored.sentenceLearning, { id: 'sentenceLearning', name: 'Sentence Learning', key: 'sentenceLearning' });
+    add(stored.vocabulary, { id: 'vocabulary', name: 'Vocabulary', key: 'vocabulary' });
+    add(stored.bookmarks, { id: 'bookmarks', name: 'Bookmarks', key: 'bookmarks' });
+    add(stored.watchLater, { id: 'watchLater', name: 'Watch Later', key: 'watchLater' });
+    add(stored.captures, { id: 'captures', name: 'Captures', key: 'captures' });
+    add(stored.favorites, { id: 'favorites', name: 'Favorites', key: 'favorites' });
+    add(stored.checkpoints, { id: 'checkpoints', name: 'Checkpoints', key: 'checkpoints' });
+    add(stored.transcripts, { id: 'transcripts', name: 'Transcripts', key: 'transcripts' });
+
+    /*
+     * notesByVideo is stored as an object rather than an array, so turn
+     * each saved note into the same searchable record shape used by cards.
+     */
+    const history = Array.isArray(stored.history) ? stored.history : [];
+    for (const [videoId, notes] of Object.entries(stored.notesByVideo || {})) {
+      const video = history.find(x => x?.videoId === videoId) || {};
+      if (!Array.isArray(notes)) continue;
+
+      const noteItems = notes.map((note, index) => ({
+        id: note?.id || `${videoId}:note:${index}`,
+        videoId,
+        videoTitle: video.videoTitle || note?.title || 'YouTube Video',
+        title: note?.title || '',
+        url: note?.url || video.url || '',
+        timestamp: note?.timestamp || 0,
+        note: String(note?.text || note?.html || ''),
+        html: note?.html || '',
+        createdAt: note?.createdAt || '',
+        source: note?.source || 'Notes'
+      }));
+
+      add(noteItems, { id: 'notes', name: 'Notes', key: 'notes' });
+    }
+
+    globalSearchData = out;
+    return out;
+  }
+
   function renderOverview() {
+    const token = ++renderToken;
+    if ($('#search').value.trim()) return;
+
     $('#overview').hidden = false;
     $('#items').innerHTML = '';
     $('#stats').innerHTML = '';
     Promise.all([pageData({ key: 'videoProgress' }), pageData({ key: 'history' }), pageData({ key: 'vocabulary' }), pageData({ key: 'sentenceLearning' })]).then(([prog, hist, vocab, sent]) => {
+      if (token !== renderToken || $('#search').value.trim()) return;
+
       let active = prog.filter(x => x.status !== 'completed').sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)).slice(0, 6), recent = hist.slice(0, 6);
       $('#overview').innerHTML = `<div class="overview-head"><div><p class="eyebrow">WELCOME BACK</p><h2>Continue your learning</h2><p>${active.length} unfinished videos · ${vocab.filter(x => x.type !== 'sentence').length} words · ${sent.length} saved sentences</p></div><div class="overview-metrics"><div><b>${vocab.length}</b><span>Vocabulary</span></div><div><b>${sent.length}</b><span>Sentences</span></div><div><b>${prog.filter(x => x.status === 'completed').length}</b><span>Completed</span></div></div></div>
   <div class="section-title"><h3>▶ Resume Queue</h3><span>Saved automatically while you watch</span></div><div class="resume-grid">${active.length ? active.map(x => card(x, { id: 'continue', name: 'Continue Learning' })).join('') : '<div class="empty">No unfinished videos yet. Open a YouTube video to start.</div>'}</div>

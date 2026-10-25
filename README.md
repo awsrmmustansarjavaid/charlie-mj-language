@@ -1,9 +1,9 @@
-# Charlie MJ Language --- v1.0.0 Stable Beta
+# Charlie MJ Language --- v2.0.0
 
 > A lightweight, local-first Chrome extension for learning languages
 > through YouTube.
 
-![Charlie MJ Language v1.0.0 Stable Beta](assets/charlie-mj-language-main-thumbnail.png)
+![Charlie MJ Language v2.0.0 Stable Beta](assets/charlie-mj-language-main-thumbnail.png)
 
 Charlie MJ Language turns YouTube into a practical language-learning
 workspace while keeping the original fast transcript workflow as its
@@ -16,7 +16,11 @@ and thumbnails, Suggestions, and local data synchronization.
 
 <p align="center">
   <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
-    <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download Language Catalog v1.0.0">
+    <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
+  </a>
+  &nbsp;
+  <a href="downloads/CharlieMJ-Language-v2.0.0.zip">
+    <img src="https://img.shields.io/badge/Language%20Catalog-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
   <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0.zip">
@@ -148,7 +152,7 @@ Suggestions, Categories, or Data Sync.
 
 ## Version and Platform
 
--   **Version:** `1.0.0 Stable Beta`
+-   **Version:** `2.0.0`
 -   **Platform:** Chrome Extension --- Manifest V3
 -   **Minimum Chrome version:** 114
 -   **License:** MIT
@@ -160,7 +164,7 @@ Suggestions, Categories, or Data Sync.
 The original transcript system is the primary and authoritative
 transcript engine.
 
-The v1.0.0 Stable Beta release does **not** replace or rewrite the
+The v2.0.0 release does **not** replace or rewrite the
 original transcript-fetching implementation.
 
 The default engine remains:
@@ -202,7 +206,7 @@ transcript systems.
 
 ## Performance and Lightweight Architecture
 
-v1.0.0 Stable Beta is designed so optional services do not make normal
+v2.0.0 Stable Beta is designed so optional services do not make normal
 YouTube playback unnecessarily heavy.
 
 ### Startup principle
@@ -1456,3 +1460,407 @@ When modifying this project:
 This project is distributed under the MIT License.
 
 See [`LICENSE`](LICENSE) for details.
+---
+
+# Charlie MJ Language — Additional Learning Library & Dashboard Features
+
+The following section documents the newer Learning Library/dashboard functionality added after the original README content above. The existing README sections and wording are intentionally preserved.
+
+## Learning Library Dashboard
+
+The Learning Library now acts as a central workspace for saved language-learning material collected throughout the extension.
+
+The dashboard is designed around the learning workflow:
+
+```text
+YouTube
+  ↓
+Transcript / Dual Transcript
+  ↓
+Vocabulary / Sentences / Notes / Bookmarks
+  ↓
+My Learning Library
+  ↓
+Search / Filter / Review / Continue Learning
+```
+
+### Dashboard overview
+
+The dashboard provides an overview of saved learning activity, including:
+
+- unfinished learning items
+- saved vocabulary
+- saved sentences
+- completed learning records
+- saved videos
+- recent learning activity
+- library statistics
+- continuation of unfinished videos
+- quick access to saved learning material
+
+The dashboard keeps the learning workspace separate from the main YouTube page while retaining the local-first storage model.
+
+## Global Learning Library Search
+
+The Learning Library search has been expanded into a cross-library search system.
+
+The main search field can search across saved learning records instead of being limited to the currently visible dashboard section.
+
+### Searchable content
+
+The search system can search for:
+
+- video titles
+- video IDs
+- channel names
+- saved vocabulary words
+- vocabulary translations
+- vocabulary definitions
+- saved sentences
+- sentence translations
+- sentence notes
+- transcript text where stored with a learning record
+- bookmarks
+- Watch Later records
+- notes
+- tags
+- learning records
+- saved history
+- video metadata
+- other searchable fields stored in the local learning records
+
+### Video title search
+
+Video titles are first-class search targets.
+
+For example:
+
+```text
+Search:
+How to Learn Turkish
+```
+
+can find a saved video whose title contains:
+
+```text
+How to Learn Turkish
+```
+
+The search is case-insensitive and searches the stored video metadata available to the dashboard.
+
+### Vocabulary search
+
+Users can search directly for saved vocabulary.
+
+Examples:
+
+```text
+Search:
+merhaba
+```
+
+or:
+
+```text
+Search:
+hello
+```
+
+depending on which word, translation, definition, or related information is stored in the vocabulary record.
+
+### Sentence search
+
+Saved sentences can also be searched directly.
+
+Examples:
+
+```text
+Search:
+Bugün hava çok güzel
+```
+
+or a stored translation, note, or other searchable sentence field.
+
+### Cross-library search
+
+A single search query can return matching records from different learning areas.
+
+For example:
+
+```text
+Search:
+travel
+```
+
+may match:
+
+```text
+Video title
+Vocabulary
+Sentence
+Note
+Tag
+History
+```
+
+This makes the dashboard a unified search entry point for the user's learning material.
+
+## Search and Filtering
+
+The dashboard supports search together with library filters.
+
+Available filtering can include:
+
+- search text
+- level
+- tag
+- video
+- learning item type
+
+Filters can be combined with the global search query.
+
+Example:
+
+```text
+Search: travel
+Level: B1
+Type: Sentence
+```
+
+The dashboard displays only records satisfying the active filters.
+
+Clearing the search and filters restores the normal dashboard view.
+
+## Learning Library Record Types
+
+The dashboard can work with multiple categories of stored learning information.
+
+### Videos
+
+Saved video-related records can contain information such as:
+
+- video title
+- video ID
+- YouTube URL
+- channel information
+- thumbnail
+- progress
+- timestamps
+- learning state
+- tags
+- notes
+
+### Vocabulary
+
+Vocabulary records can contain:
+
+- word
+- translation
+- definition
+- part of speech
+- source/provider information
+- example context
+- video relationship
+- timestamp
+- notes
+- tags
+- learning state
+
+### Sentences
+
+Sentence records can contain:
+
+- original sentence
+- translated sentence
+- source video
+- timestamp
+- notes
+- tags
+- replay information
+- learning state
+
+### Notes
+
+Notes remain associated with the relevant learning record where supported.
+
+### Bookmarks
+
+Bookmarks provide timestamp-linked access to saved moments in YouTube learning sessions.
+
+### Watch Later
+
+Watch Later records provide a dedicated way to keep videos or learning material for later review.
+
+## Continue Learning
+
+The dashboard supports a continuation workflow for unfinished learning material.
+
+Users can return to saved learning items and continue from the relevant video or learning context where progress information is available.
+
+The dashboard can surface unfinished items separately from completed learning records.
+
+## Learning Progress
+
+Learning records can retain progress information so the dashboard can distinguish between:
+
+- unfinished
+- in-progress
+- completed
+
+This allows the dashboard to act as a learning workspace rather than simply a list of saved records.
+
+## Dashboard Result Cards
+
+Search and library results can be represented using learning cards containing relevant information for the record type.
+
+Depending on the item, a card may show:
+
+- title
+- word
+- sentence
+- translation
+- thumbnail
+- channel
+- timestamp
+- learning type
+- tags
+- notes
+- progress
+- learning status
+- available actions
+
+The dashboard uses the appropriate card behavior for the underlying record type.
+
+## Library Search Behavior
+
+Search is intended to be:
+
+- case-insensitive
+- local-first
+- fast
+- compatible with saved extension data
+- independent of external search services
+- usable across multiple library record types
+
+Search does not require a remote database or external search API.
+
+The dashboard searches locally stored extension data.
+
+## Asynchronous Dashboard Rendering Protection
+
+The dashboard protects search results from asynchronous Overview rendering.
+
+When a user starts a search, an older asynchronous Overview operation must not restore the Overview and overwrite the current search results.
+
+The dashboard therefore treats an active search query as a higher-priority UI state than the default Overview rendering.
+
+This prevents the following unwanted sequence:
+
+```text
+Open Dashboard
+      ↓
+Overview starts loading
+      ↓
+User searches
+      ↓
+Search results appear
+      ↓
+Older Overview request finishes
+      ↓
+Overview overwrites search results
+```
+
+The intended behavior is:
+
+```text
+Open Dashboard
+      ↓
+Overview loads
+      ↓
+User searches
+      ↓
+Search results remain visible
+```
+
+## Local-First Search Architecture
+
+The Learning Library search follows the extension's local-first architecture.
+
+The normal search path is:
+
+```text
+User Query
+    ↓
+Dashboard Search
+    ↓
+Local Chrome Extension Storage
+    ↓
+Saved Learning Records
+    ↓
+Filtering
+    ↓
+Matching Results
+```
+
+No external search engine is required for normal Learning Library search.
+
+## Search Reliability
+
+Search should continue working after:
+
+- opening the dashboard
+- changing dashboard sections
+- saving new vocabulary
+- saving new sentences
+- saving videos
+- reloading the extension
+- refreshing the dashboard
+- clearing the search
+- changing filters
+
+When the dashboard is reopened, records are loaded from the extension's persisted local storage.
+
+## Learning Library Design Goals
+
+The newer dashboard functionality follows these principles:
+
+1. **Search everything relevant** — saved learning material should be discoverable from one search field.
+2. **Video titles matter** — saved videos should be searchable by their titles.
+3. **Words remain searchable** — vocabulary should be searchable by the saved word and related stored information.
+4. **Sentences remain searchable** — saved sentences and their searchable fields should be discoverable.
+5. **Local-first** — normal library search does not depend on an external service.
+6. **No data removal** — adding search functionality must not delete existing learning records.
+7. **Independent learning records** — vocabulary, sentences, videos, notes, bookmarks, and other records remain distinct records.
+8. **Stable dashboard behavior** — asynchronous rendering must not overwrite an active search.
+9. **Compatible filtering** — search and filters can operate together.
+10. **Preserve existing functionality** — dashboard improvements remain additive to the existing Learning Library.
+
+## Updated Learning Library Feature Summary
+
+The Learning Library now provides a broader learning-management workflow:
+
+- centralized dashboard
+- learning statistics
+- unfinished learning
+- Continue Learning
+- saved video history
+- video-title search
+- vocabulary search
+- sentence search
+- translation search
+- notes search
+- tag filtering
+- level filtering
+- video filtering
+- learning-type filtering
+- cross-library search
+- local-first search
+- saved learning records
+- timestamp-linked learning
+- bookmarks
+- Watch Later
+- import/export support
+- persistent local storage
+- search-safe asynchronous rendering
+
+These additions extend the existing Learning Library without replacing its original transcript, vocabulary, sentence, Favorites, Categories, Suggestions, Data Sync, or local-storage workflows.

@@ -1549,3 +1549,10 @@ main>section>.component-card .check {
     grid-template-columns:1fr 70px 70px
   }
 }
+
+/* Integrated YT Transcript Pro settings */
+#ytpProSettingsGrid { align-items: start; }
+#ytpProSettingsGrid label { min-width: 0; }
+#ytpProSettingsGrid input[type="color"] { width: 70px; min-height: 38px; padding: 2px; }
+#ytpProSettingsGrid input[type="checkbox"] { width: auto; min-height: auto; }
+#ytpProSettingsGrid .check { display: flex; align-items: center; gap: 10px; }
