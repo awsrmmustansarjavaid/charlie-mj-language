@@ -1159,6 +1159,121 @@ distributing a production build.
 
 A standalone, lightweight Chrome/Chromium extension whose only core job is to obtain a **complete original + YouTube-native translated transcript** from YouTube as quickly as possible, cache it locally, and keep both tracks synchronized with `video.currentTime`.
 
+![Charlie MJ Dual Transcript Engine](assets/Charlie%20MJ%20Dual%20Transcript%20Engine%20—%20Thumbnail.png)
+
+# Charlie MJ Dual Transcript Engine – Key Features
+
+## 1. YouTube Caption Extraction
+- Captures YouTube's native caption requests.
+- Extracts complete original subtitle tracks.
+- Retrieves complete translated subtitle tracks.
+- Supports manually uploaded captions.
+- Supports automatically generated captions (ASR).
+- Uses YouTube's native translation infrastructure.
+- Captures required caption request parameters.
+- Fetches complete transcripts instead of individual subtitle fragments.
+
+## 2. Dual-Language Transcript Engine
+- Extracts original and translated transcripts simultaneously.
+- Supports source and target language selection.
+- Displays original and translated subtitles together.
+- Aligns original and translated subtitle segments.
+- Matches subtitle timing between both languages.
+- Maintains original subtitle timing information.
+- Supports normalized dual-transcript data.
+- Handles fragmented automatic speech recognition captions.
+
+## 3. Intelligent Sentence Processing
+- Merges fragmented captions into readable sentences.
+- Preserves original caption timing.
+- Maintains subtitle segment relationships.
+- Generates normalized transcript cues.
+- Creates structured sentence-level transcript data.
+- Associates sentence segments with their original cue IDs.
+- Preserves original and translated text independently.
+
+## 4. Real-Time Playback Synchronization
+- Synchronizes subtitles with YouTube video playback.
+- Uses `video.currentTime` for playback tracking.
+- Highlights currently active subtitle segments.
+- Uses binary search for efficient timeline lookups.
+- Uses `requestAnimationFrame` for smooth synchronization.
+- Supports video seeking.
+- Supports pause and resume synchronization.
+- Maintains synchronization between original and translated subtitles.
+
+## 5. Dual Subtitle Overlay
+- Displays original subtitles on the video.
+- Displays translated subtitles alongside original subtitles.
+- Provides synchronized dual-language subtitle presentation.
+- Supports real-time subtitle updates.
+- Maintains subtitle timing during playback.
+
+## 6. Complete Transcript Panel
+- Provides a searchable full transcript panel.
+- Displays original-language sentences.
+- Displays translated-language sentences.
+- Supports complete transcript viewing.
+- Click any sentence to jump to its video timestamp.
+- Keeps transcript navigation synchronized with playback.
+
+## 7. Local Transcript Caching
+- Caches completed dual transcripts locally.
+- Uses an LRU (Least Recently Used) cache strategy.
+- Reduces repeated caption requests.
+- Improves transcript loading performance.
+- Provides a lightweight background cache service worker.
+
+## 8. YouTube Compatibility
+- Supports YouTube video pages.
+- Supports YouTube Shorts URLs.
+- Supports YouTube Single Page Application (SPA) navigation.
+- Detects video navigation and updates transcript data.
+- Adds a dedicated DT button to the YouTube player control bar.
+- Provides a popup interface.
+- Includes manual transcript refresh controls.
+
+## 9. Language & Translation Management
+- Select source subtitle language.
+- Select target translation language.
+- Uses YouTube-native automatic translation.
+- Requests translated tracks using YouTube's `tlang` parameter.
+- Handles unavailable translation languages.
+- Reports translation unavailability instead of silently using an external translation service.
+
+## 10. Lightweight Architecture
+- Chrome Manifest V3 architecture.
+- Vanilla JavaScript implementation.
+- No frontend framework.
+- No npm dependencies.
+- No developer-owned backend.
+- No mandatory third-party translation API.
+- Lightweight background service worker.
+- Separated caption extraction and transcript processing.
+- Reusable normalized transcript data structure.
+- Independent transcript engine and UI architecture.
+
+## 11. Privacy & Security
+- No user account required.
+- No login system.
+- No analytics tracking.
+- No telemetry.
+- No external developer server.
+- No mandatory external API keys.
+- Local transcript caching.
+- Uses YouTube's own caption and translation infrastructure.
+
+## 12. Developer & Integration Features
+- Standalone reusable dual-transcript engine.
+- Separated YouTube request observation layer.
+- Independent caption extraction module.
+- Independent transcript parsing module.
+- Structured cue and sentence data models.
+- Reusable normalized transcript API.
+- Isolated caption-fetching architecture.
+- Designed for future Charlie MJ application integration.
+- MIT-licensed implementation.
+
 ## Download
 
 <p align="center">
@@ -1178,6 +1293,111 @@ A standalone, lightweight Chrome/Chromium extension whose only core job is to ob
 Copy or download YouTube transcripts and two-language (dual) subtitles, with or without timestamps. Manifest V3, Chrome and Edge, no account, no server, no analytics.
 
 ![YT Transcript Pro v2.0.0](assets/YT-Transcript-Pro-v2-instagram-story.png)
+
+# YT Transcript Pro v2.0.0 – Key Features
+
+## 1. YouTube Integration
+- Direct SUB button inside the YouTube video player control bar.
+- One-click transcript window.
+- Transcript panel beside the video or floating window.
+- Supports YouTube videos and YouTube Shorts through popup and keyboard shortcuts.
+- Automatic video detection and transcript loading.
+
+## 2. Transcript Extraction
+- Extract complete YouTube transcripts.
+- Support manually uploaded subtitles.
+- Support automatically generated captions.
+- Original language selection.
+- Multiple available subtitle language options.
+- YouTube automatic translation support.
+- Dual-language transcript extraction.
+
+## 3. Dual-Language Subtitles
+- Display original and translated subtitles together.
+- Select original and translation languages independently.
+- Side-by-side or combined transcript formatting.
+- Timestamp-based subtitle alignment.
+- Copy original language independently.
+- Copy translated language independently.
+- Copy both languages together.
+- Copy individual subtitle lines with their translations.
+
+## 4. Copy Transcript
+- Copy the entire transcript with timestamps.
+- Copy the entire transcript without timestamps.
+- Copy original-language transcript.
+- Copy translated-language transcript.
+- Copy complete dual-language transcript.
+- Select multiple transcript lines and copy them.
+- Copy individual subtitle segments.
+- No TXT file required for copying.
+
+## 5. Download & Export
+- Download transcripts as TXT.
+- Download subtitles as SRT.
+- Download subtitles as VTT.
+- Export transcripts as CSV.
+- Export single-language transcripts.
+- Export dual-language transcripts.
+- Preserve timestamps during export.
+- Custom download folder and filename options.
+- Option to ask where to save downloaded files.
+
+## 6. Transcript Navigation
+- Click any transcript line to jump to its video timestamp.
+- Select multiple transcript segments.
+- Search within the transcript.
+- Navigate through subtitle segments.
+- Individual subtitle copy buttons.
+- Synchronized transcript and video playback.
+
+## 7. Keyboard Shortcuts
+- `Alt + T` – Open transcript window.
+- `Alt + C` – Copy transcript with timestamps.
+- `Alt + Shift + C` – Copy transcript without timestamps.
+- `Alt + D` – Download TXT transcript.
+- `Alt + F` – Search transcript.
+- Customizable keyboard shortcuts.
+
+## 8. Extension Settings
+- General settings.
+- Transcript settings.
+- Dual-language settings.
+- Appearance customization.
+- Copy and export settings.
+- Download preferences.
+- Player and synchronization settings.
+- Keyboard shortcut configuration.
+- Advanced settings.
+- Backup, import and reset settings.
+
+## 9. Appearance & Customization
+- Multiple interface themes.
+- Nine customizable theme colors.
+- Custom font selection.
+- Adjustable transcript window size.
+- Live appearance preview.
+- Floating transcript window.
+- Side-panel transcript window.
+
+## 10. YouTube Connection & Reliability
+- YouTube connection reset option.
+- Clear extension caches.
+- Refresh YouTube connection.
+- Multiple caption-loading methods.
+- Error handling for unavailable captions.
+- Diagnostic logging.
+- Support for YouTube's dynamic page navigation.
+
+## 11. Privacy & Performance
+- Lightweight Manifest V3 architecture.
+- Google Chrome compatibility.
+- Microsoft Edge compatibility.
+- Brave compatibility.
+- No user account required.
+- No external backend server.
+- No analytics tracking.
+- Local browser-based processing.
 
 ## Download
 
@@ -1209,8 +1429,6 @@ Copy or download YouTube transcripts and two-language (dual) subtitles, with or 
 2. In the other extension's toolbar, switch **Focus** and **Theme** to **OFF**.
 3. If it is still faded, disable the other extension in `chrome://extensions`, then refresh the YouTube page.
 4. Optional: switch YT Transcript Pro to **floating** mode so the window sits above the page.
-
-
 
 ---
 
