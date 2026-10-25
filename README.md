@@ -1195,6 +1195,21 @@ Copy or download YouTube transcripts and two-language (dual) subtitles, with or 
   </a>
 </p>
 
+## Troubleshooting: Transcript Panel Looks Transparent or Faded
+
+![Transcript panel faded vs solid](assets/Troubleshooting%20Transcript%20Panel%20Looks%20Transparent%20or%20Faded.png)
+
+**Problem:** The YT Transcript Pro window looks transparent or dimmed on YouTube, even though **Background opacity** is already set to 100%.
+
+**Cause:** Another extension (for example a language-learning overlay with **Focus** or **Theme** modes) is dimming or restyling everything on the page except the video. This is not a YT Transcript Pro setting.
+
+**Fix:**
+
+1. Open **Settings → Appearance → Window → Background opacity** and confirm it is **100%**.
+2. In the other extension's toolbar, switch **Focus** and **Theme** to **OFF**.
+3. If it is still faded, disable the other extension in `chrome://extensions`, then refresh the YouTube page.
+4. Optional: switch YT Transcript Pro to **floating** mode so the window sits above the page.
+
 
 
 ---
