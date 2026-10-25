@@ -301,8 +301,15 @@ function buildSettingsNavigation() {
     button.addEventListener('click', () => showSettingsCategory(category));
     nav.appendChild(button);
   }
+  // A deep link (?category=YT Transcript Pro) wins over the last remembered tab.
+  let requestedCategory = '';
+  try {
+    const q = new URLSearchParams(location.search).get('category') || decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    const wanted = String(q || '').trim().toLowerCase().replace(/[-_]+/g, ' ');
+    requestedCategory = [...groups.keys()].find(k => k.toLowerCase() === wanted) || '';
+  } catch {}
   const savedCategory = localStorage.getItem('cmjSettingsCategory');
-  showSettingsCategory(savedCategory && groups.has(savedCategory) ? savedCategory : (groups.keys().next().value || 'General'));
+  showSettingsCategory(requestedCategory || (savedCategory && groups.has(savedCategory) ? savedCategory : (groups.keys().next().value || 'General')));
   function showSettingsCategory(category) {
     localStorage.setItem('cmjSettingsCategory', category);
     document.querySelectorAll('main>section, main .additional-settings-section').forEach(section => section.classList.toggle('settings-visible', section.dataset.settingsCategory === category));

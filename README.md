@@ -16,11 +16,11 @@ and thumbnails, Suggestions, and local data synchronization.
 
 <p align="center">
   <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
-    <img src="https://img.shields.io/badge/charliemj--language-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
+    <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
   </a>
   &nbsp;
   <a href="downloads/CharlieMJ-Language-v2.0.0.zip">
-    <img src="https://img.shields.io/badge/charliemj--language-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
+    <img src="https://img.shields.io/badge/Language%20Catalog-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
   <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0.zip">
@@ -32,34 +32,108 @@ and thumbnails, Suggestions, and local data synchronization.
   </a>
 </p>
 
+
+
 ## Key Features
 
-- ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the complete available YouTube caption track with timestamps.
-- 🌐 **Dual Transcript** --- view original and YouTube-native translated subtitles/transcripts together.
-- 📋 **Copy & Download Transcript** --- copy the complete transcript to the clipboard or download it as a text file, with the option to include timestamps/timeline information or export a clean version without timestamps.
-- 📝 **Copy Individual Subtitle** --- copy a single selected subtitle or transcript line directly from the transcript without needing to copy the entire transcript.
-- ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each subtitle/cue for reading and practice.
-- 🔁 **Replay Audio** --- replay the current subtitle or sentence for listening and pronunciation practice.
-- 🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to the matching video timestamp.
-- 🔄 **Live Transcript Synchronization** --- keep transcript position synchronized with playback.
-- 🗣️ **Original + Translated Subtitles** --- control subtitle display, layout, typography, opacity, and translation.
-- 🌍 **YouTube Language Catalog** --- use caption and translation language availability supplied by YouTube for the current video.
-- ❤️ **Favorite Channels** --- save channels using stable YouTube Channel IDs and fetch their details.
-- 📚 **Favorite Playlists** --- save playlists using stable YouTube Playlist IDs and fetch their details.
-- 🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles, descriptions, channel/playlist information, URLs, IDs, and thumbnails.
-- 🏷️ **Categories** --- organize channels and playlists into searchable learning categories.
-- 👥 **Learning Groups** --- organize saved resources into custom groups.
-- 💡 **YouTube Suggestions** --- fetch Suggested Channels and Suggested Playlists and decide what to save.
-- 🔎 **Search & Filtering** --- search channels, playlists, categories, suggestions, names, descriptions, tags, and categories.
-- 📝 **Learning Library** --- save vocabulary, sentences, notes, bookmarks, and Watch Later records.
-- 💾 **Import / Export** --- back up and restore structured local learning data.
-- 🔄 **Data Sync** --- compare and synchronize local data with the configured GitHub repository when enabled.
-- ⚡ **Performance Controls** --- optional services remain on-demand instead of continuously running.
-- 🎛️ **Custom Learning UI** --- configurable toolbar, transcript window, subtitles, and additional learning windows.
+-   ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the
+    complete available YouTube caption track with timestamps.
+-   🌐 **Dual Transcript** --- view original and YouTube-native
+    translated subtitles/transcripts together.
+-   ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each
+    subtitle/cue for reading and practice.
+-   🔁 **Replay Audio** --- replay the current subtitle or sentence for
+    listening and pronunciation practice.
+-   🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to
+    the matching video timestamp.
+-   🔄 **Live Transcript Synchronization** --- keep transcript position
+    synchronized with playback.
+-   🗣️ **Original + Translated Subtitles** --- control subtitle display,
+    layout, typography, opacity, and translation.
+-   🌍 **YouTube Language Catalog** --- use caption and translation
+    language availability supplied by YouTube for the current video.
+-   ❤️ **Favorite Channels** --- save channels using stable YouTube
+    Channel IDs and fetch their details.
+-   📚 **Favorite Playlists** --- save playlists using stable YouTube
+    Playlist IDs and fetch their details.
+-   🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles,
+    descriptions, channel/playlist information, URLs, IDs, and
+    thumbnails.
+-   🏷️ **Categories** --- organize channels and playlists into
+    searchable learning categories.
+-   👥 **Learning Groups** --- organize saved resources into custom
+    groups.
+-   💡 **YouTube Suggestions** --- fetch Suggested Channels and
+    Suggested Playlists and decide what to save.
+-   🔎 **Search & Filtering** --- search channels, playlists,
+    categories, suggestions, names, descriptions, tags, and categories.
+-   📝 **Learning Library** --- save vocabulary, sentences, notes,
+    bookmarks, and Watch Later records.
+-   💾 **Import / Export** --- back up and restore structured local
+    learning data.
+-   🔄 **Data Sync** --- compare and synchronize local data with the
+    configured GitHub repository when enabled.
+-   ⚡ **Performance Controls** --- optional services remain on-demand
+    instead of continuously running.
+-   🎛️ **Custom Learning UI** --- configurable toolbar, transcript
+    window, subtitles, and additional learning windows.
 
+## Latest Update --- 2026-10-25
+
+This build is a fixes-and-feature update on top of v2.0.0. It is
+additive only: the core transcript engine, Dual Transcript, Word
+Learning, Sentence Learning and all existing Library data are untouched.
+
+### Fixed
+
+-   **YT Transcript Pro → Open settings.** The settings icon in the
+    transcript window header now opens the extension Settings page
+    directly on the **YT Transcript Pro** tab. If a Settings tab is
+    already open it is re-used and brought to the front instead of
+    opening a duplicate. The page also accepts a deep link such as
+    `options.html?category=YT%20Transcript%20Pro`.
+-   **My Library search.** Search now reliably returns results across
+    videos, History, Word Learning, Sentence Learning, Subtitle
+    Learning, Vocabulary, Bookmarks, Watch Later, Captures, Favorites,
+    Checkpoints, Transcripts and Notes.
+    -   One saved item with an unexpected shape (for example `tags`
+        stored as text instead of a list) no longer breaks the whole
+        search or render.
+    -   Matching is case-, accent- and Turkish-`ı/İ`-insensitive, so
+        `nasilsin` finds *Nasılsın*; multi-word queries match when every
+        word is present.
+    -   Only saved *values* are searched (not internal field names), so
+        searching a word such as `type` no longer matches everything.
+    -   Typing is debounced, `Enter` searches immediately, large result
+        sets are capped at 400 with a notice, and a failing card can no
+        longer blank the result list.
+    -   Refresh and tab changes keep an active search instead of
+        clearing it.
+
+### New: Subtitle Learning (My Library)
+
+A new **💬 Subtitle Learning** tab (My Library → Learning) stores
+subtitles together with their translation, just like Sentence Learning.
+
+-   **Save from the YT Transcript Pro window:** every transcript line has
+    a new bookmark button next to *Copy line*, and selecting several
+    lines shows **Save selected (n)**. The original subtitle, its
+    translation (when a translation language is on), timestamp, video
+    title, channel and link are saved. Duplicates (same video, same text,
+    same time) are never created twice; a missing translation is filled
+    in on re-save.
+-   **Same features as Sentence Learning:** Details / Study Card with
+    word-by-word analysis, Copy, Add / Move to Collection, Checkpoint,
+    Favorite, *Open at timestamp*, Download, Export (TXT / MD / CSV /
+    JSON / Word / PDF), Remove, Import, level / tag / video / type
+    filters, and global search.
+-   **Setting:** *YT Transcript Pro → Show Line Save* (on by default)
+    hides or shows the per-line save button.
+-   **Storage key:** `subtitleLearning` (local `chrome.storage.local`).
 
 ## Table of Contents
 
+-   [Latest Update](#latest-update--2026-10-25)
 -   [Overview](#overview)
 -   [Version and Platform](#version-and-platform)
 -   [Critical Core Functionality](#critical-core-functionality)
@@ -330,6 +404,11 @@ The Transcript window supports:
 When minimized, a hover-based restore/maximize control can appear when
 the mouse is moved near the minimized window.
 
+The YT Transcript Pro window header also provides **Open settings**
+(opens Settings directly on the YT Transcript Pro tab), and each
+transcript line offers **Copy line** and **Save to My Library →
+Subtitle Learning** (original + translation).
+
 ## Subtitles, Translation, and Language Selection
 
 The extension supports:
@@ -428,6 +507,7 @@ The local learning library supports:
 
 -   vocabulary
 -   saved sentences
+-   saved subtitles with translations (**Subtitle Learning** tab)
 -   bookmarks
 -   notes
 -   Watch Later
@@ -650,6 +730,10 @@ where supported, while the dedicated suggestion query remains available
 for fetching new recommendations.
 
 ## Search and Filtering
+
+My Library search covers every Library tab at once (videos, words,
+sentences, subtitles, translations, notes, tags, transcripts and more),
+ignores case and accents, and treats Turkish `ı/İ` like `i/I`.
 
 Search and filtering can be used across:
 
@@ -973,7 +1057,7 @@ charlie-mj-language/
 │   ├── content/
 │   │   ├── youtube.js
 │   │   └── youtube-page-bridge.js
-│   ├── dashboard/
+│   ├── dashboard/            (My Library incl. Subtitle Learning tab)
 │   ├── dual-transcript/
 │   ├── favorites/
 │   ├── lib/
@@ -1440,407 +1524,3 @@ When modifying this project:
 This project is distributed under the MIT License.
 
 See [`LICENSE`](LICENSE) for details.
----
-
-# Charlie MJ Language — Additional Learning Library & Dashboard Features
-
-The following section documents the newer Learning Library/dashboard functionality added after the original README content above. The existing README sections and wording are intentionally preserved.
-
-## Learning Library Dashboard
-
-The Learning Library now acts as a central workspace for saved language-learning material collected throughout the extension.
-
-The dashboard is designed around the learning workflow:
-
-```text
-YouTube
-  ↓
-Transcript / Dual Transcript
-  ↓
-Vocabulary / Sentences / Notes / Bookmarks
-  ↓
-My Learning Library
-  ↓
-Search / Filter / Review / Continue Learning
-```
-
-### Dashboard overview
-
-The dashboard provides an overview of saved learning activity, including:
-
-- unfinished learning items
-- saved vocabulary
-- saved sentences
-- completed learning records
-- saved videos
-- recent learning activity
-- library statistics
-- continuation of unfinished videos
-- quick access to saved learning material
-
-The dashboard keeps the learning workspace separate from the main YouTube page while retaining the local-first storage model.
-
-## Global Learning Library Search
-
-The Learning Library search has been expanded into a cross-library search system.
-
-The main search field can search across saved learning records instead of being limited to the currently visible dashboard section.
-
-### Searchable content
-
-The search system can search for:
-
-- video titles
-- video IDs
-- channel names
-- saved vocabulary words
-- vocabulary translations
-- vocabulary definitions
-- saved sentences
-- sentence translations
-- sentence notes
-- transcript text where stored with a learning record
-- bookmarks
-- Watch Later records
-- notes
-- tags
-- learning records
-- saved history
-- video metadata
-- other searchable fields stored in the local learning records
-
-### Video title search
-
-Video titles are first-class search targets.
-
-For example:
-
-```text
-Search:
-How to Learn Turkish
-```
-
-can find a saved video whose title contains:
-
-```text
-How to Learn Turkish
-```
-
-The search is case-insensitive and searches the stored video metadata available to the dashboard.
-
-### Vocabulary search
-
-Users can search directly for saved vocabulary.
-
-Examples:
-
-```text
-Search:
-merhaba
-```
-
-or:
-
-```text
-Search:
-hello
-```
-
-depending on which word, translation, definition, or related information is stored in the vocabulary record.
-
-### Sentence search
-
-Saved sentences can also be searched directly.
-
-Examples:
-
-```text
-Search:
-Bugün hava çok güzel
-```
-
-or a stored translation, note, or other searchable sentence field.
-
-### Cross-library search
-
-A single search query can return matching records from different learning areas.
-
-For example:
-
-```text
-Search:
-travel
-```
-
-may match:
-
-```text
-Video title
-Vocabulary
-Sentence
-Note
-Tag
-History
-```
-
-This makes the dashboard a unified search entry point for the user's learning material.
-
-## Search and Filtering
-
-The dashboard supports search together with library filters.
-
-Available filtering can include:
-
-- search text
-- level
-- tag
-- video
-- learning item type
-
-Filters can be combined with the global search query.
-
-Example:
-
-```text
-Search: travel
-Level: B1
-Type: Sentence
-```
-
-The dashboard displays only records satisfying the active filters.
-
-Clearing the search and filters restores the normal dashboard view.
-
-## Learning Library Record Types
-
-The dashboard can work with multiple categories of stored learning information.
-
-### Videos
-
-Saved video-related records can contain information such as:
-
-- video title
-- video ID
-- YouTube URL
-- channel information
-- thumbnail
-- progress
-- timestamps
-- learning state
-- tags
-- notes
-
-### Vocabulary
-
-Vocabulary records can contain:
-
-- word
-- translation
-- definition
-- part of speech
-- source/provider information
-- example context
-- video relationship
-- timestamp
-- notes
-- tags
-- learning state
-
-### Sentences
-
-Sentence records can contain:
-
-- original sentence
-- translated sentence
-- source video
-- timestamp
-- notes
-- tags
-- replay information
-- learning state
-
-### Notes
-
-Notes remain associated with the relevant learning record where supported.
-
-### Bookmarks
-
-Bookmarks provide timestamp-linked access to saved moments in YouTube learning sessions.
-
-### Watch Later
-
-Watch Later records provide a dedicated way to keep videos or learning material for later review.
-
-## Continue Learning
-
-The dashboard supports a continuation workflow for unfinished learning material.
-
-Users can return to saved learning items and continue from the relevant video or learning context where progress information is available.
-
-The dashboard can surface unfinished items separately from completed learning records.
-
-## Learning Progress
-
-Learning records can retain progress information so the dashboard can distinguish between:
-
-- unfinished
-- in-progress
-- completed
-
-This allows the dashboard to act as a learning workspace rather than simply a list of saved records.
-
-## Dashboard Result Cards
-
-Search and library results can be represented using learning cards containing relevant information for the record type.
-
-Depending on the item, a card may show:
-
-- title
-- word
-- sentence
-- translation
-- thumbnail
-- channel
-- timestamp
-- learning type
-- tags
-- notes
-- progress
-- learning status
-- available actions
-
-The dashboard uses the appropriate card behavior for the underlying record type.
-
-## Library Search Behavior
-
-Search is intended to be:
-
-- case-insensitive
-- local-first
-- fast
-- compatible with saved extension data
-- independent of external search services
-- usable across multiple library record types
-
-Search does not require a remote database or external search API.
-
-The dashboard searches locally stored extension data.
-
-## Asynchronous Dashboard Rendering Protection
-
-The dashboard protects search results from asynchronous Overview rendering.
-
-When a user starts a search, an older asynchronous Overview operation must not restore the Overview and overwrite the current search results.
-
-The dashboard therefore treats an active search query as a higher-priority UI state than the default Overview rendering.
-
-This prevents the following unwanted sequence:
-
-```text
-Open Dashboard
-      ↓
-Overview starts loading
-      ↓
-User searches
-      ↓
-Search results appear
-      ↓
-Older Overview request finishes
-      ↓
-Overview overwrites search results
-```
-
-The intended behavior is:
-
-```text
-Open Dashboard
-      ↓
-Overview loads
-      ↓
-User searches
-      ↓
-Search results remain visible
-```
-
-## Local-First Search Architecture
-
-The Learning Library search follows the extension's local-first architecture.
-
-The normal search path is:
-
-```text
-User Query
-    ↓
-Dashboard Search
-    ↓
-Local Chrome Extension Storage
-    ↓
-Saved Learning Records
-    ↓
-Filtering
-    ↓
-Matching Results
-```
-
-No external search engine is required for normal Learning Library search.
-
-## Search Reliability
-
-Search should continue working after:
-
-- opening the dashboard
-- changing dashboard sections
-- saving new vocabulary
-- saving new sentences
-- saving videos
-- reloading the extension
-- refreshing the dashboard
-- clearing the search
-- changing filters
-
-When the dashboard is reopened, records are loaded from the extension's persisted local storage.
-
-## Learning Library Design Goals
-
-The newer dashboard functionality follows these principles:
-
-1. **Search everything relevant** — saved learning material should be discoverable from one search field.
-2. **Video titles matter** — saved videos should be searchable by their titles.
-3. **Words remain searchable** — vocabulary should be searchable by the saved word and related stored information.
-4. **Sentences remain searchable** — saved sentences and their searchable fields should be discoverable.
-5. **Local-first** — normal library search does not depend on an external service.
-6. **No data removal** — adding search functionality must not delete existing learning records.
-7. **Independent learning records** — vocabulary, sentences, videos, notes, bookmarks, and other records remain distinct records.
-8. **Stable dashboard behavior** — asynchronous rendering must not overwrite an active search.
-9. **Compatible filtering** — search and filters can operate together.
-10. **Preserve existing functionality** — dashboard improvements remain additive to the existing Learning Library.
-
-## Updated Learning Library Feature Summary
-
-The Learning Library now provides a broader learning-management workflow:
-
-- centralized dashboard
-- learning statistics
-- unfinished learning
-- Continue Learning
-- saved video history
-- video-title search
-- vocabulary search
-- sentence search
-- translation search
-- notes search
-- tag filtering
-- level filtering
-- video filtering
-- learning-type filtering
-- cross-library search
-- local-first search
-- saved learning records
-- timestamp-linked learning
-- bookmarks
-- Watch Later
-- import/export support
-- persistent local storage
-- search-safe asynchronous rendering
-
-These additions extend the existing Learning Library without replacing its original transcript, vocabulary, sentence, Favorites, Categories, Suggestions, Data Sync, or local-storage workflows.

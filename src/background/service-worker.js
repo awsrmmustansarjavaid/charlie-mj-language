@@ -470,7 +470,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })();
     return true;
   }
-  if (message?.type === 'ytp:openOptions') { chrome.runtime.openOptionsPage(); sendResponse({ ok: true }); return false; }
+  if (message?.type === 'ytp:openOptions' || message?.type === 'CMJ_OPEN_OPTIONS_CATEGORY') {
+    // Open (or re-use) the Settings page directly on the requested tab/category.
+    // Defaults to the YT Transcript Pro tab when opened from the transcript window.
+    (async () => {
+      try {
+        const category = String(message.category || 'YT Transcript Pro');
+        const base = chrome.runtime.getURL('src/options/options.html');
+        const target = `${base}?category=${encodeURIComponent(category)}`;
+        const existing = (await chrome.tabs.query({})).find(t => String(t.url || '').split(/[?#]/)[0] === base);
+        if (existing) {
+          await chrome.tabs.update(existing.id, { url: target, active: true });
+          if (existing.windowId != null) chrome.windows.update(existing.windowId, { focused: true }).catch(() => {});
+        } else {
+          await chrome.tabs.create({ url: target });
+        }
+        sendResponse({ ok: true });
+      } catch (error) {
+        try { await chrome.runtime.openOptionsPage(); sendResponse({ ok: true, fallback: true }); }
+        catch (e) { sendResponse({ ok: false, error: String(e?.message || e) }); }
+      }
+    })();
+    return true;
+  }
   if (message.type === 'CMJ_LIST_TRANSCRIPT_ENGINES') {
     sendResponse({ ok: true, engines: listTranscriptEngines() });
     return false;

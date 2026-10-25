@@ -8,6 +8,7 @@
     { id: 'transcripts', name: 'Transcripts', key: 'transcripts', icon: '📄', group: 'Content' },
     { id: 'wordLearning', name: 'Word Learning', key: 'wordLearning', icon: '🔤', group: 'Learning' },
     { id: 'sentenceLearning', name: 'Sentence Learning', key: 'sentenceLearning', icon: '📝', group: 'Learning' },
+    { id: 'subtitleLearning', name: 'Subtitle Learning', key: 'subtitleLearning', icon: '💬', group: 'Learning' },
     { id: 'vocabulary', name: 'Vocabulary', key: 'vocabulary', icon: '📚', group: 'Learning' },
     { id: 'review', name: 'Review / Weak Words', key: 'vocabulary', icon: '🧠', group: 'Learning' },
     { id: 'collections', name: 'Collections', key: null, icon: '📁', collections: true, group: 'Organize' },
@@ -48,6 +49,31 @@
     clearTimeout(notify.t);
     notify.t = setTimeout(() => e.remove(), 3200)
   };
+  /* ---- Search helpers: safe against odd saved-data shapes ---- */
+  const tagsOf = x => Array.isArray(x?.tags) ? x.tags.map(String) : (typeof x?.tags === 'string' && x.tags.trim() ? x.tags.split(/[,#]/).map(t => t.trim()).filter(Boolean) : []);
+  // Case/accent-insensitive folding (also maps Turkish ı/İ so "nasilsin" finds "Nasılsın").
+  const fold = v => String(v ?? '').replace(/İ/g, 'i').replace(/ı/g, 'i').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const hayCache = new WeakMap();
+  function collectText(v, out, depth) {
+    if (v == null || depth > 4 || out.length > 400) return;
+    if (typeof v === 'string') { out.push(v.length > 20000 ? v.slice(0, 20000) : v); return; }
+    if (typeof v === 'number') { out.push(String(v)); return; }
+    if (Array.isArray(v)) { for (const a of v.slice(0, 500)) collectText(a, out, depth + 1); return; }
+    if (typeof v === 'object') for (const k of Object.keys(v)) collectText(v[k], out, depth + 1);
+  }
+  function hayOf(x) {
+    if (x && typeof x === 'object') {
+      const hit = hayCache.get(x);
+      if (hit !== undefined) return hit;
+    }
+    const parts = [];
+    try { collectText(x, parts, 0); } catch { }
+    const hay = fold(parts.join(' \n '));
+    if (x && typeof x === 'object') hayCache.set(x, hay);
+    return hay;
+  }
+  const matchesQuery = (x, tokens) => !tokens.length || tokens.every(t => hayOf(x).includes(t));
+  const MAX_RESULTS = 400;
   init().catch(console.error);
   async function init() {
     const s = await chrome.storage.local.get('libraryView');
@@ -76,21 +102,29 @@
     $('#exportPage').onclick = () => openExport(false);
     $('#importPage').onclick = () => $('#importFile').click();
     $('#importFile').onchange = importPage;
-    $('#search').oninput = async () => {
+    let searchTimer = null;
+    const runSearch = async () => {
       const query = $('#search').value.trim();
-      if (!query) {
-        globalSearchData = null;
-        await load();
-        return;
+      try {
+        if (!query) {
+          globalSearchData = null;
+          await load();
+          return;
+        }
+        const token = ++renderToken;
+        const results = await getGlobalSearchData();
+        if (token !== renderToken || $('#search').value.trim() !== query) return;
+        data = results;
+        render();
+      } catch (err) {
+        console.error('Library search failed:', err);
+        $('#overview').hidden = true;
+        $('#items').innerHTML = `<div class="empty"><h3>Search could not finish</h3><p>${esc(err?.message || err)}</p></div>`;
       }
-
-      const token = ++renderToken;
-      const results = await getGlobalSearchData();
-      if (token !== renderToken || $('#search').value.trim() !== query) return;
-
-      data = results;
-      render();
     };
+    $('#search').oninput = () => { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 180); };
+    $('#search').onkeydown = e => { if (e.key === 'Enter') { clearTimeout(searchTimer); runSearch(); } };
+    window.__cmjRunLibrarySearch = runSearch;
     $('#tagFilter').oninput = render;
     ['levelFilter', 'videoFilter', 'typeFilter'].forEach(id => $('#' + id).onchange = render);
     $('#pageForm').onsubmit = createPage;
@@ -181,6 +215,11 @@
     await loadPages();
     ensureLibraryRefreshButton();
     let p = info();
+    if ($('#search').value.trim() && (current === 'overview' || current === 'collections')) {
+      data = await getGlobalSearchData();
+      render();
+      return;
+    }
     if (current === 'overview') {
       data = await pageData({ key: 'history' });
       renderOverview();
@@ -197,7 +236,8 @@
   function render() {
     const token = ++renderToken;
     let p = info();
-    let q = $('#search').value.trim().toLowerCase();
+    let q = $('#search').value.trim();
+    const tokens = fold(q).split(/\s+/).filter(Boolean);
     let lv = $('#levelFilter').value;
     let tag = $('#tagFilter').value.trim().toLowerCase();
     let vid = $('#videoFilter').value;
@@ -215,12 +255,14 @@
       ? { id: 'history', name: 'History' }
       : p;    
 
-    let filtered = data.filter(x => {
-      let hay = JSON.stringify(x).toLowerCase();
-      let tags = (x.tags || []).join(' ').toLowerCase();
+    let filtered = (Array.isArray(data) ? data : []).filter(x => {
+      if (!x || typeof x !== 'object') return false;
+      let tags = tagsOf(x).join(' ').toLowerCase();
       let itemType = x.type || x.kind || (p.id === 'videos' || p.id === 'continue' ? 'video' : '');
-      return (!q || hay.includes(q)) && (!lv || String(x.level || '').toUpperCase() === lv) && (!tag || tags.includes(tag)) && (!vid || x.videoId === vid) && (!typ || itemType === typ)
+      return matchesQuery(x, tokens) && (!lv || String(x.level || '').toUpperCase() === lv) && (!tag || tags.includes(tag)) && (!vid || x.videoId === vid) && (!typ || itemType === typ)
     });
+    const totalMatches = filtered.length;
+    if (filtered.length > MAX_RESULTS) filtered = filtered.slice(0, MAX_RESULTS);
     $('#typeFilter').disabled = ['overview', 'collections', 'history', 'continue', 'videos', 'checkpoints'].includes(p.id);
     if (p.id === 'notes') {
       const host = $('.toolbar-card .bulk-actions');
@@ -241,7 +283,7 @@
     ensureLibraryRefreshButton();
     $('#items').className = `item-grid ${view === 'list' ? 'list-view' : ''}`;
     $('#items').innerHTML = filtered.length
-      ? filtered.map(x => card(x, x.__cmjPage || cardPage)).join('')
+      ? (totalMatches > MAX_RESULTS ? `<div class="notice-inline" style="grid-column:1/-1;padding:8px 12px;opacity:.8">Showing the first ${MAX_RESULTS} of ${totalMatches} matches — refine your search to narrow them down.</div>` : '') + filtered.map(x => { try { return card(x, x.__cmjPage || cardPage); } catch (err) { console.error('Card render failed', err, x); return ''; } }).join('')
       : `<div class="empty"><h3>Nothing found</h3><p>${q ? `No saved library item matches "${esc(q)}".` : 'No saved library items match the selected filters.'}</p></div>`;
   }
   function renderVideoFilter() {
@@ -253,7 +295,7 @@
     if (map.has(sel)) $('#videoFilter').value = sel
   }
   function renderStats(items, p) {
-    let vids = new Set(items.map(x => x.videoId).filter(Boolean)), tags = new Set(items.flatMap(x => x.tags || [])), total = items.length;
+    let vids = new Set(items.map(x => x.videoId).filter(Boolean)), tags = new Set(items.flatMap(x => tagsOf(x))), total = items.length;
     $('#stats').innerHTML = [['Items', total, p.name], ['Videos', vids.size, 'linked videos'], ['Tags', tags.size, 'active tags'], ['Progress', p.id === 'continue' ? items.filter(x => x.status !== 'completed').length : '—', 'unfinished / status']].map(x => `<div class="stat"><strong>${esc(x[1])}</strong><span>${esc(x[0])} · ${esc(x[2])}</span></div>`).join('')
   }
   function difficultyFor(level) {
@@ -273,7 +315,7 @@
   }
   function card(x, p) {
     let isVideo = ['history', 'continue', 'videos'].includes(p.id), title = itemTitle(x), sub = x.word ? `${x.word}${x.translation ? ' — ' + x.translation : ''}` : x.sentence || x.subtitle || x.label || '', time = itemTimestamp(x), thumb = x.thumbnail || (x.videoId ? `https://i.ytimg.com/vi/${encodeURIComponent(x.videoId)}/hqdefault.jpg` : ''), progress = Number(x.watchPercentage ?? x.progress ?? 0), url = x.url ? ts(x.url, time) : '';
-    let itemId = x.id || x.videoId || '', payload = esc(JSON.stringify(x));
+    let itemId = x.id || x.videoId || '', rawJson = ''; try { rawJson = JSON.stringify(x); } catch { } let payload = esc(rawJson.length > 12000 ? '' : rawJson);
     let actions = `<button data-details-item="${esc(itemId)}" data-item-json="${payload}">▣ Details / Card</button><button data-copy-item="${esc(itemId)}" data-item-json="${payload}">📋 Copy</button>`;
     if (p.key) actions += `<button data-add-custom="${esc(itemId)}" data-source="${esc(p.key)}" data-collection-mode="copy">＋ Add to Collection</button>`;
     if (p.custom) actions += `<button data-add-custom="${esc(itemId)}" data-source="${esc(p.key)}" data-collection-mode="move">↔ Move to Collection</button>`;
@@ -287,7 +329,7 @@
  ${thumb ? `<img class="thumb" src="${esc(thumb)}" alt="" loading="lazy">` : ''}<div class="item-body"><div class="card-top"><span class="pill">${esc(p.name)}</span>${x.status ? `<span class="status ${esc(x.status)}">${esc(x.status)}</span>` : ''}</div>
  <h3 class="item-title">${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title)}</h3><p class="item-meta"><strong>${esc(sub)}</strong></p>
  ${isVideo ? `<div class="progress"><span style="width:${Math.max(0, Math.min(100, progress))}%"></span></div><p class="item-context">${Math.round(progress)}% · Last ${esc(time ? fmt(time) : '00:00:00')} · Sessions ${esc(x.sessions || 1)}</p>` : ''}
- <p class="item-context">${esc(x.source || 'Library')}${time ? ` · ${esc(fmt(time))}` : ''}${x.pos ? ` · ${esc(x.pos)}` : ''}${x.level ? ` · ${esc(x.level)}` : ''}${x.level ? ` · ${esc(difficultyFor(x.level))}` : ''}</p>${x.sentence && x.word ? `<p class="item-context">${esc(x.sentence)}</p>` : ''}${x.note ? `<p class="note-preview">${esc(x.note)}</p>` : ''}<div class="tags">${(x.tags || []).map(t => `<span>#${esc(t)}</span>`).join('')}</div><div class="item-actions">${actions}</div></div></article>`;
+ <p class="item-context">${esc(x.source || 'Library')}${time ? ` · ${esc(fmt(time))}` : ''}${x.pos ? ` · ${esc(x.pos)}` : ''}${x.level ? ` · ${esc(x.level)}` : ''}${x.level ? ` · ${esc(difficultyFor(x.level))}` : ''}</p>${x.sentence && x.word ? `<p class="item-context">${esc(x.sentence)}</p>` : ''}${x.note ? `<p class="note-preview">${esc(x.note)}</p>` : ''}<div class="tags">${tagsOf(x).map(t => `<span>#${esc(t)}</span>`).join('')}</div><div class="item-actions">${actions}</div></div></article>`;
   }
   async function getGlobalSearchData() {
     if (globalSearchData) return globalSearchData;
@@ -298,6 +340,7 @@
       'vocabulary',
       'wordLearning',
       'sentenceLearning',
+      'subtitleLearning',
       'bookmarks',
       'watchLater',
       'captures',
@@ -354,6 +397,7 @@
     add(stored.videoProgress, { id: 'continue', name: 'Continue Learning', key: 'videoProgress' });
     add(stored.wordLearning, { id: 'wordLearning', name: 'Word Learning', key: 'wordLearning' });
     add(stored.sentenceLearning, { id: 'sentenceLearning', name: 'Sentence Learning', key: 'sentenceLearning' });
+    add(stored.subtitleLearning, { id: 'subtitleLearning', name: 'Subtitle Learning', key: 'subtitleLearning' });
     add(stored.vocabulary, { id: 'vocabulary', name: 'Vocabulary', key: 'vocabulary' });
     add(stored.bookmarks, { id: 'bookmarks', name: 'Bookmarks', key: 'bookmarks' });
     add(stored.watchLater, { id: 'watchLater', name: 'Watch Later', key: 'watchLater' });
@@ -762,7 +806,7 @@
       out.push(`- **Translation:** ${x.translation || x.sentenceTranslation || ''}`, `- **Language:** ${languageName(x.language)}`, `- **Level:** ${x.level || 'A1'} — ${difficultyFor(x.level)}`, `- **Video:** ${x.videoTitle || x.title || ''}`, `- **URL:** ${x.url || ''}`, `- **Timestamp:** ${fmt(itemTimestamp(x))}`, `- **Saved:** ${x.createdAt || x.learnedAt || ''}`);
       if (x.pos) out.push(`- **Part of speech:** ${x.pos}`);
       if (x.lemma) out.push(`- **Lemma:** ${x.lemma}`);
-      if (x.tags?.length) out.push(`- **Tags:** ${x.tags.join(', ')}`);
+      if (tagsOf(x).length) out.push(`- **Tags:** ${tagsOf(x).join(', ')}`);
       if (x.note) out.push(`- **Notes:** ${x.note}`);
       if (isSentenceItem(x)) out.push('', sentenceMarkdown(x));
       out.push('')
@@ -779,7 +823,7 @@
     return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;line-height:1.5;color:#111}h1{font-size:24pt}h2{font-size:16pt;margin-top:24pt}h3{font-size:13pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:6px;text-align:left}.meta{color:#555}</style></head><body>${body}</body></html>`
   }
   function docHtml(items, p) {
-    return `<h1>Charlie MJ Language — ${esc(p.name)}</h1><p class="meta">Exported ${esc(new Date().toLocaleString())} · ${items.length} item(s)</p>${items.map((x, i) => `<h2>${i + 1}. ${esc(itemTitle(x))}</h2><p><strong>Original:</strong> ${esc(x.word || x.sentence || x.title || '')}</p><p><strong>Translation:</strong> ${esc(x.translation || x.sentenceTranslation || '')}</p><p><strong>Language:</strong> ${esc(languageName(x.language))} · <strong>Level:</strong> ${esc(x.level || 'A1')} · <strong>Difficulty:</strong> ${esc(difficultyFor(x.level))}</p><p><strong>Video:</strong> ${esc(x.videoTitle || x.title || '')}<br><strong>URL:</strong> ${esc(x.url || '')}<br><strong>Timestamp:</strong> ${esc(fmt(itemTimestamp(x)))}<br><strong>Saved:</strong> ${esc(x.createdAt || x.learnedAt || '')}</p>${x.pos ? `<p><strong>POS:</strong> ${esc(x.pos)}</p>` : ''}${x.lemma ? `<p><strong>Lemma:</strong> ${esc(x.lemma)}</p>` : ''}${x.tags?.length ? `<p><strong>Tags:</strong> ${esc(x.tags.join(', '))}</p>` : ''}${x.note ? `<p><strong>Notes:</strong> ${esc(x.note)}</p>` : ''}${isSentenceItem(x) ? docSentence(x) : ''}`).join('')}`
+    return `<h1>Charlie MJ Language — ${esc(p.name)}</h1><p class="meta">Exported ${esc(new Date().toLocaleString())} · ${items.length} item(s)</p>${items.map((x, i) => `<h2>${i + 1}. ${esc(itemTitle(x))}</h2><p><strong>Original:</strong> ${esc(x.word || x.sentence || x.title || '')}</p><p><strong>Translation:</strong> ${esc(x.translation || x.sentenceTranslation || '')}</p><p><strong>Language:</strong> ${esc(languageName(x.language))} · <strong>Level:</strong> ${esc(x.level || 'A1')} · <strong>Difficulty:</strong> ${esc(difficultyFor(x.level))}</p><p><strong>Video:</strong> ${esc(x.videoTitle || x.title || '')}<br><strong>URL:</strong> ${esc(x.url || '')}<br><strong>Timestamp:</strong> ${esc(fmt(itemTimestamp(x)))}<br><strong>Saved:</strong> ${esc(x.createdAt || x.learnedAt || '')}</p>${x.pos ? `<p><strong>POS:</strong> ${esc(x.pos)}</p>` : ''}${x.lemma ? `<p><strong>Lemma:</strong> ${esc(x.lemma)}</p>` : ''}${tagsOf(x).length ? `<p><strong>Tags:</strong> ${esc(x.tags.join(', '))}</p>` : ''}${x.note ? `<p><strong>Notes:</strong> ${esc(x.note)}</p>` : ''}${isSentenceItem(x) ? docSentence(x) : ''}`).join('')}`
   }
   function docSentence(x) {
     let words = Array.isArray(x.words) && x.words.length ? x.words : deriveSentenceWords(x);
@@ -814,14 +858,14 @@
       let a = await loadSource(`libraryPage_${p.id}`);
       if (a.some(y => (y.id && x.id && y.id === x.id) || (!x.id && y.videoId === x.videoId && y.type === x.type))) collectionNames.push(p.name)
     }
-    $('#detailsTitle').textContent = isSentenceItem(x) ? 'Sentence Learning Card' : 'Vocabulary / Learning Card';
+    $('#detailsTitle').textContent = x.type === 'subtitle' || x.source === 'Subtitle Learning' ? 'Subtitle Learning Card' : isSentenceItem(x) ? 'Sentence Learning Card' : 'Vocabulary / Learning Card';
     $('#detailsBody').innerHTML = detailsHtml(x, isFav, collectionNames);
     $('#detailsDialog').showModal();
     if (isSentenceItem(x)) enhanceSentenceDetails(x)
   }
   function detailsHtml(x, isFav, collections) {
     let level = x.level || 'A1', diff = x.difficulty || difficultyFor(level), saved = x.createdAt || x.learnedAt || x.savedAt || '', time = itemTimestamp(x), url = x.url ? ts(x.url, time) : '';
-    let rows = [['Original', x.word || x.sentence || x.title || ''], ['Translation', x.translation || x.sentenceTranslation || ''], ['Language', languageName(x.language)], ['Language level', `${level} — ${diff}`], ['Video title', x.videoTitle || x.title || ''], ['Video URL', x.url || ''], ['Timestamp', fmt(time)], ['Date saved / learned', saved ? new Date(saved).toLocaleString() : '—'], ['Collection', collections.length ? collections.join(', ') : 'Not added'], ['Favorite', isFav ? 'Yes' : 'No'], ['Tags / labels', (x.tags || []).join(', ') || '—'], ['Notes', x.note || x.notes || '—'], ['Source / context', x.source || 'Library'], ['POS', x.pos || '—'], ['Lemma / base form', x.lemma || '—']];
+    let rows = [['Original', x.word || x.sentence || x.title || ''], ['Translation', x.translation || x.sentenceTranslation || ''], ['Language', languageName(x.language)], ['Language level', `${level} — ${diff}`], ['Video title', x.videoTitle || x.title || ''], ['Video URL', x.url || ''], ['Timestamp', fmt(time)], ['Date saved / learned', saved ? new Date(saved).toLocaleString() : '—'], ['Collection', collections.length ? collections.join(', ') : 'Not added'], ['Favorite', isFav ? 'Yes' : 'No'], ['Tags / labels', tagsOf(x).join(', ') || '—'], ['Notes', x.note || x.notes || '—'], ['Source / context', x.source || 'Library'], ['POS', x.pos || '—'], ['Lemma / base form', x.lemma || '—']];
     return `<div class="details-hero"><div class="details-original">${esc(x.word || x.sentence || x.title || 'Learning item')}</div><div class="details-translation">${esc(x.translation || x.sentenceTranslation || 'Translation not saved')}</div>${url ? `<button class="primary" data-details-open="${esc(url)}">▶ Open YouTube at ${esc(fmt(time))}</button>` : ''}</div><div class="details-grid">${rows.map(r => `<div class="detail-row"><span>${esc(r[0])}</span><strong>${esc(r[1])}</strong></div>`).join('')}</div>${x.dictionary ? `<section class="sentence-study"><h3>📖 Dictionary Details</h3><p><strong>Source:</strong> ${esc(x.dictionarySource || 'Wiktionary / Kaikki')}</p>${(x.dictionary.entries || []).slice(0, 6).map(e => `<div class="entry"><strong>${esc(e.pos || e.partOfSpeech || '')}</strong>${e.phonetic ? `<p><strong>Pronunciation:</strong> ${esc(e.phonetic)}</p>` : ''}${(e.meanings || []).slice(0, 4).map(m => {
       const defs = m.definitions || m.meanings || [];
       return defs.slice(0, 3).map(def => {
@@ -857,7 +901,7 @@
     if (el) el.innerHTML = `<div class="word-study-grid">${words.map(w => `<article class="word-study ${esc(String(w.pos || w.posLabel || 'other').toLowerCase())}" style="--word-role:${esc(w.color || roleColor(w.pos || w.posLabel))}"><div class="study-word">${esc(w.word)}</div><div class="study-meaning">${esc(w.translation || '—')}</div><div class="study-meta"><span>${esc(w.posLabel || w.pos || 'Other')}</span><span>${esc(w.cefr || x.level || 'A1')}</span></div><div class="study-lemma">Base / lemma: <strong>${esc(w.lemma || analyzeStoredWord(w.word, x).lemma || '—')}</strong></div>${w.suffix || w.morphologyLabel ? `<div class="study-suffix">${esc(w.suffix || '')} ${esc(w.morphologyLabel || 'Turkish suffix')}</div>` : ''}</article>`).join('')}</div>`
   }
   async function persistWords(updated) {
-    for (const key of ['vocabulary', 'sentenceLearning']) {
+    for (const key of ['vocabulary', 'sentenceLearning', 'subtitleLearning']) {
       let s = await chrome.storage.local.get(key), a = Array.isArray(s[key]) ? s[key] : [], i = a.findIndex(y => y.id === updated.id);
       if (i >= 0) a[i] = updated;
       await chrome.storage.local.set({ [key]: a })
@@ -880,7 +924,7 @@
       if (x.createdAt || x.learnedAt) l.push(`  Saved: ${x.createdAt || x.learnedAt}`);
       if (x.pos) l.push(`  POS: ${x.pos}`);
       if (x.lemma) l.push(`  Lemma: ${x.lemma}`);
-      if (x.tags?.length) l.push(`  Tags: ${x.tags.join(', ')}`);
+      if (tagsOf(x).length) l.push(`  Tags: ${tagsOf(x).join(', ')}`);
       if (x.note) l.push(`  Notes: ${x.note}`);
       if (isSentenceItem(x)) {
         l.push('  Complete sentence translation: ' + (x.sentenceTranslation || x.translation || ''));
@@ -1107,7 +1151,7 @@
       if (x.url) l.push(`  URL: ${x.url}`);
       if (x.pos) l.push(`  POS: ${x.pos}`);
       if (x.lemma) l.push(`  Lemma: ${x.lemma}`);
-      if (x.tags?.length) l.push(`  Tags: ${x.tags.join(', ')}`);
+      if (tagsOf(x).length) l.push(`  Tags: ${tagsOf(x).join(', ')}`);
       l.push('')
     });
     return l.join('\\n')

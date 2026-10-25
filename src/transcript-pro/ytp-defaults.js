@@ -33,6 +33,7 @@
     showOriginal: true,
     showTranslation: true,
     showLineCopy: true,
+    showLineSave: true,              // per-line "Save to My Library > Subtitle Learning" button
     lineCopyTimestamp: true,
     lineCopyScope: "both",          // both | original | translation
 

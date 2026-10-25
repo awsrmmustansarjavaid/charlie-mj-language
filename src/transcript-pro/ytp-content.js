@@ -143,6 +143,7 @@
     els.lines = h("div", { class: "ytp-lines", role: "list" });
     els.status = h("span", { class: "ytp-status", role: "status" }, "Ready");
     els.selBtn = h("button", { class: "ytp-btn ytp-hidden", type: "button", onClick: copySelected }, "Copy selected");
+    els.saveSelBtn = h("button", { class: "ytp-btn ytp-hidden", type: "button", onClick: saveSelected, title: "Save the selected subtitles to My Library › Subtitle Learning" }, "Save selected");
     els.formats = h("div", { class: "ytp-formats" });
 
     const toggle = (key, label, after) => {
@@ -155,7 +156,7 @@
       iconButton("Swap language order", iconSvg(svg("path", { d: "M7 4 3 8l4 4" }), line(3, 8, 21, 8), svg("path", { d: "m17 20 4-4-4-4" }), line(21, 16, 3, 16)), () => Settings_set({ swapOrder: !S().swapOrder })),
       iconButton("Refresh transcript", iconSvg(svg("path", { d: "M20 11a8 8 0 0 0-14.9-4" }), svg("path", { d: "M4 4v5h5" }), svg("path", { d: "M4 13a8 8 0 0 0 14.9 4" }), svg("path", { d: "M20 20v-5h-5" })), () => loadVideo()),
       iconButton("Dock or float the window", iconSvg(svg("rect", { x: 3, y: 4, width: 18, height: 14, rx: 2 }), svg("rect", { x: 12, y: 11, width: 7, height: 5, rx: 1 })), () => Settings_set({ panelMode: S().panelMode === "floating" ? "docked" : "floating" })),
-      iconButton("Open settings", iconSvg(line(4, 6, 20, 6), line(4, 12, 20, 12), line(4, 18, 20, 18), svg("circle", { cx: 9, cy: 6, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 15, cy: 12, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 8, cy: 18, r: 2, fill: "var(--ytp-bg)" })), () => chrome.runtime.sendMessage({ type: "ytp:openOptions" }).catch(() => {})),
+      iconButton("Open settings", iconSvg(line(4, 6, 20, 6), line(4, 12, 20, 12), line(4, 18, 20, 18), svg("circle", { cx: 9, cy: 6, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 15, cy: 12, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 8, cy: 18, r: 2, fill: "var(--ytp-bg)" })), () => chrome.runtime.sendMessage({ type: "ytp:openOptions", category: "YT Transcript Pro" }).catch(() => {})),
       iconButton("Close", iconSvg(line(6, 6, 18, 18), line(18, 6, 6, 18)), closePanel)
     ];
 
@@ -172,7 +173,7 @@
       h("div", { class: "ytp-actions ytp-actions-copy" },
         h("button", { class: "ytp-btn ytp-primary", type: "button", onClick: () => doCopy({ timestamps: true }) }, "Copy with timestamps"),
         h("button", { class: "ytp-btn ytp-primary", type: "button", onClick: () => doCopy({ timestamps: false }) }, "Copy without timestamps")),
-      h("div", { class: "ytp-actions ytp-actions-secondary" }, els.selBtn),
+      h("div", { class: "ytp-actions ytp-actions-secondary" }, els.selBtn, els.saveSelBtn),
       h("div", { class: "ytp-toggles" },
           toggle("timestamps", "Timestamps", () => render()),
           toggle("dualMode", "Dual language", () => render()),
@@ -453,7 +454,9 @@
         s.timestamps ? h("button", { class: "ytp-time", type: "button", title: "Jump to this moment", onClick: (e) => { e.stopPropagation(); seek(r.start); } }, root.formatStamp(r.start, stampSettings, long)) : null,
         text,
         s.showLineCopy ? h("button", { class: "ytp-copy-line", type: "button", title: "Copy this line with its translation", "aria-label": "Copy this line",
-          onClick: (e) => { e.stopPropagation(); copyLine(i, row); } }, iconSvg(svg("rect", { x: 9, y: 9, width: 11, height: 11, rx: 2 }), svg("path", { d: "M5 15V6a2 2 0 0 1 2-2h8" }))) : null);
+          onClick: (e) => { e.stopPropagation(); copyLine(i, row); } }, iconSvg(svg("rect", { x: 9, y: 9, width: 11, height: 11, rx: 2 }), svg("path", { d: "M5 15V6a2 2 0 0 1 2-2h8" }))) : null,
+        s.showLineSave !== false ? h("button", { class: "ytp-copy-line ytp-save-line", type: "button", title: "Save this subtitle and its translation to My Library › Subtitle Learning", "aria-label": "Save this subtitle to My Library",
+          onClick: (e) => { e.stopPropagation(); saveLines([i], row); } }, iconSvg(svg("path", { d: "M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" }), line(12, 7, 12, 12), line(9.5, 9.5, 14.5, 9.5))) : null);
       row.addEventListener("click", (e) => onLineClick(e, i, r));
       if (state.selected.has(i)) row.classList.add("ytp-selected");
       state.rendered.push({ start: r.start, el: row, i });
@@ -484,6 +487,8 @@
     const b = state.els.selBtn; if (!b) return;
     b.classList.toggle("ytp-hidden", state.selected.size === 0);
     b.textContent = `Copy selected (${state.selected.size})`;
+    const sb = state.els.saveSelBtn;
+    if (sb) { sb.classList.toggle("ytp-hidden", state.selected.size === 0); sb.textContent = `Save selected (${state.selected.size})`; }
   }
 
   function seek(start) {
@@ -553,6 +558,59 @@
       rowEl?.classList.add("ytp-copied"); setTimeout(() => rowEl?.classList.remove("ytp-copied"), 700);
       toast(r.translation && S().lineCopyScope !== "original" ? "Line copied with translation" : "Line copied");
     } catch (error) { toast(error.message, true); }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Save subtitle + translation to My Library > Subtitle Learning        */
+  /* ------------------------------------------------------------------ */
+  function subtitleLevel(text) {
+    const words = String(text || "").trim().split(/\s+/).filter(Boolean).length;
+    return words <= 4 ? "A1" : words <= 8 ? "A2" : words <= 13 ? "B1" : words <= 20 ? "B2" : words <= 30 ? "C1" : "C2";
+  }
+  const LEVEL_DIFFICULTY = { A1: "Beginner", A2: "Beginner", B1: "Intermediate", B2: "Intermediate", C1: "Advanced", C2: "Advanced" };
+  const LEVEL_LABEL = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", C1: "Advanced", C2: "Proficient" };
+
+  async function saveLines(indices, rowEl) {
+    const rows = indices.map((i) => state.view[i]).filter((r) => r && String(r.text || "").trim());
+    if (!rows.length) return;
+    try {
+      if (!alive()) throw new Error("The extension was updated. Refresh this YouTube tab and try again.");
+      const m = meta();
+      const stored = await chrome.storage.local.get("subtitleLearning");
+      const list = Array.isArray(stored.subtitleLearning) ? stored.subtitleLearning : [];
+      let added = 0, updated = 0;
+      for (const r of rows) {
+        const sentence = String(r.text || "").replace(/\s+/g, " ").trim();
+        const translation = String(r.translation || "").replace(/\s+/g, " ").trim();
+        const start = Math.max(0, Number(r.start) || 0);
+        const existing = list.find((x) => x && x.videoId === m.videoId && String(x.sentence || "").trim() === sentence && Math.abs(Number(x.timestamp || 0) - start) < 1.5);
+        if (existing) {
+          if (translation && !existing.translation) { existing.translation = translation; existing.sentenceTranslation = translation; updated++; }
+          continue;
+        }
+        const level = subtitleLevel(sentence);
+        list.unshift({
+          id: crypto.randomUUID(), type: "subtitle", word: "", sentence, translation, sentenceTranslation: translation,
+          words: sentence.split(/\s+/).filter(Boolean).map((word) => ({ word })),
+          lemma: "", pos: "subtitle", level, levelLabel: LEVEL_LABEL[level] || "Learner", stage: "New", difficulty: LEVEL_DIFFICULTY[level] || "Beginner",
+          language: state.sourceTrack?.languageCode || S().sourceLanguage || "", targetLanguage: state.targetCode || "",
+          videoId: m.videoId, videoTitle: m.title || "", channel: m.channel || "", url: m.url,
+          timestamp: start, endTimestamp: Number.isFinite(Number(r.end)) ? Number(r.end) : null,
+          source: "Subtitle Learning", translationProvider: translation ? "yt-transcript-pro" : "",
+          tags: ["YouTube", "Subtitle", level], createdAt: new Date().toISOString()
+        });
+        added++;
+      }
+      await chrome.storage.local.set({ subtitleLearning: list.slice(0, 5000) });
+      rowEl?.classList.add("ytp-copied"); setTimeout(() => rowEl?.classList.remove("ytp-copied"), 700);
+      toast(added ? `${added} subtitle${added > 1 ? "s" : ""} saved to My Library › Subtitle Learning` : updated ? "Subtitle updated in your Library" : "Already in My Library › Subtitle Learning");
+      if (indices.length > 1 && (added || updated)) { state.selected.clear(); refreshSelection(); }
+    } catch (error) { toast(error.message || "Could not save subtitle.", true); }
+  }
+
+  function saveSelected() {
+    const idx = [...state.selected].sort((a, b) => a - b);
+    if (idx.length) saveLines(idx);
   }
 
   async function copySelected() {
