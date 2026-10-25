@@ -1166,7 +1166,7 @@ A standalone, lightweight Chrome/Chromium extension whose only core job is to ob
     <img src="https://img.shields.io/badge/Download-v1.0.0-6c757d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download v1.0.0">
   </a>
   &nbsp;
-  <a href="Chrome%20Different%20Extentions/charlie-mj-dual-transcript-engine/README.md">
+  <a href="/Charlie MJ Subtitle & transcript Extentions/charlie-mj-dual-transcript-engine/README.md">
     <img src="https://img.shields.io/badge/Main-README-0969da?style=for-the-badge&logo=readme&logoColor=white" alt="Main README">
   </a>
 </p>
@@ -1190,7 +1190,7 @@ Copy or download YouTube transcripts and two-language (dual) subtitles, with or 
     <img src="https://img.shields.io/badge/Download-v2.0.0-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download v2.0.0">
   </a>
   &nbsp;
-  <a href="/Chrome Different Extentions/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0/YT-Transcript-Pro/README.md">
+  <a href="/Charlie MJ Subtitle & transcript Extentions/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0/YT-Transcript-Pro/README.md">
     <img src="https://img.shields.io/badge/Main-README-0969da?style=for-the-badge&logo=readme&logoColor=white" alt="Main README">
   </a>
 </p>
