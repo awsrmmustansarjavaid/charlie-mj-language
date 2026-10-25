@@ -16,11 +16,11 @@ and thumbnails, Suggestions, and local data synchronization.
 
 <p align="center">
   <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
-    <img src="https://img.shields.io/badge/charliemj-language-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
+    <img src="https://img.shields.io/badge/charliemj--language-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
   </a>
   &nbsp;
   <a href="downloads/CharlieMJ-Language-v2.0.0.zip">
-    <img src="https://img.shields.io/badge/charliemj-language-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
+    <img src="https://img.shields.io/badge/charliemj--language-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
   <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0.zip">
