@@ -32,51 +32,31 @@ and thumbnails, Suggestions, and local data synchronization.
   </a>
 </p>
 
-
-
 ## Key Features
 
--   ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the
-    complete available YouTube caption track with timestamps.
--   🌐 **Dual Transcript** --- view original and YouTube-native
-    translated subtitles/transcripts together.
--   ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each
-    subtitle/cue for reading and practice.
--   🔁 **Replay Audio** --- replay the current subtitle or sentence for
-    listening and pronunciation practice.
--   🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to
-    the matching video timestamp.
--   🔄 **Live Transcript Synchronization** --- keep transcript position
-    synchronized with playback.
--   🗣️ **Original + Translated Subtitles** --- control subtitle display,
-    layout, typography, opacity, and translation.
--   🌍 **YouTube Language Catalog** --- use caption and translation
-    language availability supplied by YouTube for the current video.
--   ❤️ **Favorite Channels** --- save channels using stable YouTube
-    Channel IDs and fetch their details.
--   📚 **Favorite Playlists** --- save playlists using stable YouTube
-    Playlist IDs and fetch their details.
--   🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles,
-    descriptions, channel/playlist information, URLs, IDs, and
-    thumbnails.
--   🏷️ **Categories** --- organize channels and playlists into
-    searchable learning categories.
--   👥 **Learning Groups** --- organize saved resources into custom
-    groups.
--   💡 **YouTube Suggestions** --- fetch Suggested Channels and
-    Suggested Playlists and decide what to save.
--   🔎 **Search & Filtering** --- search channels, playlists,
-    categories, suggestions, names, descriptions, tags, and categories.
--   📝 **Learning Library** --- save vocabulary, sentences, notes,
-    bookmarks, and Watch Later records.
--   💾 **Import / Export** --- back up and restore structured local
-    learning data.
--   🔄 **Data Sync** --- compare and synchronize local data with the
-    configured GitHub repository when enabled.
--   ⚡ **Performance Controls** --- optional services remain on-demand
-    instead of continuously running.
--   🎛️ **Custom Learning UI** --- configurable toolbar, transcript
-    window, subtitles, and additional learning windows.
+- ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the complete available YouTube caption track with timestamps.
+- 🌐 **Dual Transcript** --- view original and YouTube-native translated subtitles/transcripts together.
+- 📋 **Copy & Download Transcript** --- copy the complete transcript to the clipboard or download it as a text file, with the option to include timestamps/timeline information or export a clean version without timestamps.
+- 📝 **Copy Individual Subtitle** --- copy a single selected subtitle or transcript line directly from the transcript without needing to copy the entire transcript.
+- ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each subtitle/cue for reading and practice.
+- 🔁 **Replay Audio** --- replay the current subtitle or sentence for listening and pronunciation practice.
+- 🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to the matching video timestamp.
+- 🔄 **Live Transcript Synchronization** --- keep transcript position synchronized with playback.
+- 🗣️ **Original + Translated Subtitles** --- control subtitle display, layout, typography, opacity, and translation.
+- 🌍 **YouTube Language Catalog** --- use caption and translation language availability supplied by YouTube for the current video.
+- ❤️ **Favorite Channels** --- save channels using stable YouTube Channel IDs and fetch their details.
+- 📚 **Favorite Playlists** --- save playlists using stable YouTube Playlist IDs and fetch their details.
+- 🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles, descriptions, channel/playlist information, URLs, IDs, and thumbnails.
+- 🏷️ **Categories** --- organize channels and playlists into searchable learning categories.
+- 👥 **Learning Groups** --- organize saved resources into custom groups.
+- 💡 **YouTube Suggestions** --- fetch Suggested Channels and Suggested Playlists and decide what to save.
+- 🔎 **Search & Filtering** --- search channels, playlists, categories, suggestions, names, descriptions, tags, and categories.
+- 📝 **Learning Library** --- save vocabulary, sentences, notes, bookmarks, and Watch Later records.
+- 💾 **Import / Export** --- back up and restore structured local learning data.
+- 🔄 **Data Sync** --- compare and synchronize local data with the configured GitHub repository when enabled.
+- ⚡ **Performance Controls** --- optional services remain on-demand instead of continuously running.
+- 🎛️ **Custom Learning UI** --- configurable toolbar, transcript window, subtitles, and additional learning windows.
+
 
 ## Table of Contents
 
