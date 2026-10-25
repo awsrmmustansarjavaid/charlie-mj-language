@@ -2,6 +2,33 @@
   {
     "category": "Turkish vlogers",
     "categorySuggestion": {
+      "confidence": 0.6363636363636364,
+      "name": "Uncategorized",
+      "source": "insufficient-confidence",
+      "suggestedName": "Travel"
+    },
+    "channelId": "UCwTeDplW4GQYBlydQDqzkOQ",
+    "dateAdded": "2026-10-25T09:13:13.488Z",
+    "description": "Hoş geldin Mısra Vibes’a! 💕✨ Burada hayatın içinden samimi anlar, günlük vloglar, alışveriş, bakım, eğlence, keşifler ve bolca güzel enerji var! 🛍️💄☕️ Bazen kahkaha, bazen sürpriz, bazen de hiç planlamadığımız maceralar… 😍 Benimle birlikte hayatın küçük ama güzel anlarını keşfetmeye hazır mısın? Abone ol, Mısra Vibes’a sen de katıl! 💖✨",
+    "handle": "@M%C4%B1sra.vibess",
+    "id": "channel_6687d463-c93a-47d1-9592-5bb61df88957",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T09:13:13.472Z",
+    "name": "Mısra Vibes - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/I_fV2s6j7CXkla6f-NoF3f5WWspNe-CmDnYQnM101HeMNhdAxWEz3bBD7gfSE-7u4WLC4uGkTkQ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T09:13:13.472Z",
+    "updatedAt": "2026-10-25T09:13:13.488Z",
+    "url": "https://www.youtube.com/@M%C4%B1sra.vibess",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish vlogers",
+    "categorySuggestion": {
       "confidence": 0.8,
       "name": "Turkiye Seyahat",
       "source": "existing-category",
