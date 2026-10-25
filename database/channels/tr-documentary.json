@@ -1,0 +1,31 @@
+[
+  {
+    "category": "TR Documentary",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCKYU3d341e5BNahMpYptouA",
+    "collectionIds": [],
+    "dateAdded": "2026-10-25T13:01:18.302Z",
+    "description": "T.C. Atakum Belediyesi Resmi Youtube Hesabımızdır. Official Youtube Account of Atakum Municipality",
+    "handle": "@tcatakumbelediyesi",
+    "id": "channel_42bcd42d-e516-49d0-a08f-0d921c7f64d4",
+    "isPinned": false,
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T13:01:18.291Z",
+    "name": "T.C. Atakum Belediyesi - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_lrIaqnpa4K6xThCf4xmhR7yJ2xlzmhNkzf5sRhw8XPqA=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T13:01:18.291Z",
+    "updatedAt": "2026-10-25T13:01:45.350Z",
+    "url": "https://www.youtube.com/@tcatakumbelediyesi",
+    "videoCount": ""
+  }
+]

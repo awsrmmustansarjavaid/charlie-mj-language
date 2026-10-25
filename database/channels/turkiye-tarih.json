@@ -2,6 +2,33 @@
   {
     "category": "Turkiye Tarih",
     "categorySuggestion": {
+      "confidence": 0.5,
+      "name": "Uncategorized",
+      "source": "insufficient-confidence",
+      "suggestedName": "Art & Design"
+    },
+    "channelId": "UCGiQzbO5qp3NMRKvlsZkorA",
+    "dateAdded": "2026-10-25T12:49:02.125Z",
+    "description": "Bizimle zamanda yolculuğa çıkın, artık var olmayan bir dünyaya doğru. Unutulmuş meslekler, eski avlular, çocukluğumuzun tatları ve bir zamanlar her evin köşesini dolduran eşyalar. Büyükanne ve büyükbabalarımızın günlük yaşamını keşfediyoruz: onların adetlerini, sevinçlerini ve küçük, sıradan mucizelerini. Burada sıkıcı dersler yok: sadece sizi gülümsetecek ve \"Bunu hatırlıyorum!\" dedirtecek güzel hikayeler.",
+    "handle": "@EskiT%C3%BCrkiye-p8u",
+    "id": "channel_939ca167-252f-4c9b-88c2-7e68c0a7399b",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T12:49:02.112Z",
+    "name": "Eski Türkiye - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/ZEtZ7yEP7W9zTqCEgc_4wWccvmbWXlFDLDGAOlgkIJj4Lpos2t35loks4jEKSY-ZvjD8nO_51ks=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T12:49:02.112Z",
+    "updatedAt": "2026-10-25T12:49:02.125Z",
+    "url": "https://www.youtube.com/@EskiT%C3%BCrkiye-p8u",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkiye Tarih",
+    "categorySuggestion": {
       "confidence": 0.8,
       "name": "Turkiye Seyahat",
       "source": "existing-category",

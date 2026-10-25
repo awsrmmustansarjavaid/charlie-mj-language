@@ -15,11 +15,11 @@ and thumbnails, Suggestions, and local data synchronization.
 ## Download
 
 <p align="center">
-  <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
+  <a href="downloads/charlie-mj-language/charlie-mj-language v1.0.0/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
     <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
   </a>
   &nbsp;
-  <a href="downloads/CharlieMJ-Language-v2.0.0.zip">
+  <a href="downloads/charlie-mj-language/charlie-mj-language v2.0.0/CharlieMJ-Language-v2.0.0-20261025-170712.zip">
     <img src="https://img.shields.io/badge/Language%20Catalog-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;

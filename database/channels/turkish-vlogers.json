@@ -2,6 +2,33 @@
   {
     "category": "Turkish vlogers",
     "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCP6VNNcf7SK0AsbATabr4dQ",
+    "dateAdded": "2026-10-25T12:46:32.473Z",
+    "description": "Bir takım videolar:) İşbirlikleri için: duzcanz@gmail.com",
+    "handle": "@zeynepduzcanz",
+    "id": "channel_6b95605b-01a2-431e-a0c8-3e67cfa448d1",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T12:46:32.455Z",
+    "name": "Zeynep Düzcan - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/6DdHheDX5d8iRqzHY5uSi396OBniwuw6g2saXVc2ITQkVUKFiHENFjI_4XJqtqfPsLkUuEf1oA=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T12:46:32.455Z",
+    "updatedAt": "2026-10-25T12:46:32.473Z",
+    "url": "https://www.youtube.com/@zeynepduzcanz",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish vlogers",
+    "categorySuggestion": {
       "confidence": 0.6363636363636364,
       "name": "Uncategorized",
       "source": "insufficient-confidence",

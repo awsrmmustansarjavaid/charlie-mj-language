@@ -1,0 +1,56 @@
+[
+  {
+    "category": "Turkish Couple Vlogs",
+    "categorySuggestion": {
+      "confidence": 0.5833333333333334,
+      "name": "Uncategorized",
+      "source": "insufficient-confidence",
+      "suggestedName": "Travel"
+    },
+    "channelId": "UCUSAZrU-8W_gVG6JHrwcf9Q",
+    "dateAdded": "2026-10-25T12:55:15.916Z",
+    "description": "Koza Yolda, bir karavanın içinde başlayan sadeleşme ve özgürleşme hikâyesi. Tekerlekler üzerinde bir evle yola çıktık; daha az eşya, daha çok deneyim biriktirmek için. Bu kanalda karavan yaşamının gerçeklerini, doğada geçen günlerimizi, yeni rotaları ve yolda öğrendiğimiz küçük ama anlamlı hayat derslerini paylaşıyoruz. Karavanda yaşamın kolaylıkları, zorlukları, minimal hayat deneyimi ve doğayla kurduğumuz yeni bağ… Hepsi Koza Yolda’nın hikâyesinin bir parçası. Eğer siz de: • Karavan hayatını merak ediyorsanız • Doğaya kaçmak istiyorsanız • Minimal yaşamdan ilham almak istiyorsanız • Yol hikâyelerini seviyorsanız aramıza hoş geldiniz. Yeni videolarla her hafta yoldayız. Bir karavan, bin hikâye. Reklam ve iş birlikleri için : kozayolda@gmail.com #karavanhayatı , #vanlife #life #Türkiye , #karavanvlog, #minimalism , #doğadayaşam , #kamp rotaları, #roadtrip , #karavandayaşam #karavanyapımı #camping #campervan #caravan #nature",
+    "handle": "@KozaYolda",
+    "id": "channel_ce6b8e20-2e99-454c-aaec-f5f0a61fb886",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T12:55:15.905Z",
+    "name": "Koza Yolda - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/vTCgvKBShSh-sd_VxHNFtp1I_D6IVYPZdJwaq45be9qlWqxq8qW5v2SuKCn3FtdZdo5sWMKwcw=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T12:55:15.905Z",
+    "updatedAt": "2026-10-25T12:55:15.916Z",
+    "url": "https://www.youtube.com/@KozaYolda",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish Couple Vlogs",
+    "categorySuggestion": {
+      "confidence": 0.8,
+      "name": "Turkiye Seyahat",
+      "source": "existing-category",
+      "suggestNew": false
+    },
+    "channelId": "UCJkjadFrBBxCOE_uoTKZicw",
+    "dateAdded": "2026-10-25T12:48:11.710Z",
+    "description": "Merhaba 👋🏼 Aydemir ailesine hoşgeldiniz! Kanalımız da hayatın içinden vloglar, antrenman rutinleri ve seyahat maceraları bulabilirsiniz.. Kendimizi geliştirme yolculuğumuzu ve gerçek hayatımızı filtresiz paylaşıyoruz. Abone ol, birlikte büyüyelim 🚀 🎥 Kanal Konuları; Günlük vloglar Antrenman içerikleri Seyahat videoları",
+    "handle": "@1AydemirAilesi",
+    "id": "channel_b1e9204a-a3fe-4287-9d15-a57dfd45107c",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T12:48:11.689Z",
+    "name": "Aydemir Ailesi - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/WF8Jtme7e4pa1i4i7JlSVnDU_OGiMI_ZxZfXFB7qLX_3OvSJSjn5hqdQOh6sBc-BXCS6gVrOLg=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T12:48:11.689Z",
+    "updatedAt": "2026-10-25T12:48:11.710Z",
+    "url": "https://www.youtube.com/@1AydemirAilesi",
+    "videoCount": ""
+  }
+]

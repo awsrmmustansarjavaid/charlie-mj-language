@@ -2,6 +2,33 @@
   {
     "category": "Turkish Academic Education",
     "categorySuggestion": {
+      "confidence": 0.8,
+      "name": "İngilizce",
+      "source": "existing-category",
+      "suggestNew": false
+    },
+    "channelId": "UCDsQ8PBOi0Nrq2s1NqOVSMg",
+    "dateAdded": "2026-10-25T13:00:01.617Z",
+    "description": "Sanal Okul: pakademi.com.tr İşbirlikteleri için: info@polyglotpages.com Bu kanalda neler var ? 1) Hikayeler ile İngilizce Eğitimi. 2) İtalyanca eğitimi ( 7'den 70'e hitap eden akılda kalıcı yaratıcı videolar, yepyeni bir eğitim metodu) 3) Yabancı dil eğitimine dair kullanışlı öğrenim metotları ve taktikleri 4) Kişisel gelişim ve motivasyon videoları",
+    "handle": "@ARDAEROL1",
+    "id": "channel_ed9818e8-d56f-4a13-88ee-ca59ba687764",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-25T13:00:01.606Z",
+    "name": "ARDA EROL - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/akOM-fYtUGVf2esqRXPVzXXwq2hTYd9Yvi2_UYmyFSOAx-zzaGIp0iDIKrpDdmoxW-9r02HPbQ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-25T13:00:01.606Z",
+    "updatedAt": "2026-10-25T13:00:01.617Z",
+    "url": "https://www.youtube.com/@ARDAEROL1",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish Academic Education",
+    "categorySuggestion": {
       "confidence": 0,
       "name": "Uncategorized",
       "reason": "no-match",
