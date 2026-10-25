@@ -1,0 +1,83 @@
+{
+  "manifest_version": 3,
+  "name": "YT Transcript Pro",
+  "version": "1.0.0",
+  "description": "Copy and download YouTube transcripts and dual-language subtitles, with or without timestamps. Lightweight, private, no account.",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "storage",
+    "downloads",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://www.youtube-nocookie.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.youtube-nocookie.com/*"
+      ],
+      "js": [
+        "content/page-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.youtube-nocookie.com/*"
+      ],
+      "js": [
+        "utils/helpers.js",
+        "settings/defaults.js",
+        "settings/storage.js",
+        "utils/theme.js",
+        "transcript/caption-parser.js",
+        "transcript/caption-extractor.js",
+        "transcript/language-manager.js",
+        "transcript/transcript-aligner.js",
+        "transcript/transcript-formatter.js",
+        "export/clipboard.js",
+        "export/txt-exporter.js",
+        "export/srt-exporter.js",
+        "export/vtt-exporter.js",
+        "export/csv-exporter.js",
+        "content/youtube-detector.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "YT Transcript Pro",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png"
+    }
+  },
+  "commands": {
+    "toggle-panel": {
+      "description": "Open or close the transcript panel"
+    }
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

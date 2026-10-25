@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YT Transcript Pro</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../assets/icons/icon48.png" alt="" width="36" height="36">
+    <div class="title"><strong>YT Transcript Pro</strong><span id="version">v1.0.0</span></div>
+    <button id="open-settings" class="icon" type="button" title="Open all settings" aria-label="Open all settings"></button>
+  </header>
+
+  <section id="video" class="video" aria-live="polite"></section>
+
+  <section id="actions" class="actions" hidden>
+    <button id="open-panel" class="primary wide" type="button">Open transcript window</button>
+    <div class="pair">
+      <button data-action="copy-time" type="button">Copy with timestamps</button>
+      <button data-action="copy-clean" type="button">Copy without timestamps</button>
+    </div>
+    <div class="dl">
+      <span>Download</span>
+      <button data-action="download-txt" type="button">TXT</button>
+      <button data-action="download-srt" type="button">SRT</button>
+      <button data-action="download-vtt" type="button">VTT</button>
+      <button data-action="download-csv" type="button">CSV</button>
+    </div>
+    <div class="pair" id="scope-row" hidden>
+      <button data-action="copy-original" type="button">Copy original only</button>
+      <button data-action="copy-translation" type="button">Copy translation only</button>
+    </div>
+    <p id="result" class="result" role="status"></p>
+  </section>
+
+  <section class="quick" aria-label="Quick settings">
+    <h2>Quick settings</h2>
+    <label class="line"><span>Timestamps</span><span class="switch"><input type="checkbox" data-key="timestamps"><span></span></span></label>
+    <label class="line"><span>Dual language</span><span class="switch"><input type="checkbox" data-key="dualMode"><span></span></span></label>
+    <label class="line"><span>Auto-scroll</span><span class="switch"><input type="checkbox" data-key="autoScroll"><span></span></span></label>
+    <div class="line"><span>Window</span>
+      <div class="seg" data-key="panelMode"><button type="button" data-v="docked">Beside video</button><button type="button" data-v="floating">Floating</button></div></div>
+    <div class="line"><span>Theme</span>
+      <select data-key="theme" aria-label="Theme">
+        <option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option>
+        <option value="midnight">Midnight</option><option value="sepia">Sepia</option><option value="forest">Forest</option>
+        <option value="contrast">Contrast</option><option value="custom">Custom</option>
+      </select></div>
+  </section>
+
+  <footer class="foot">
+    <button id="more" class="link" type="button">All settings</button>
+    <span>Alt+T opens the window</span>
+  </footer>
+  <script src="../utils/helpers.js"></script>
+  <script src="../settings/defaults.js"></script>
+  <script src="../settings/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YT Transcript Pro · Settings</title>
+  <link rel="icon" href="../assets/icons/icon32.png">
+  <link rel="stylesheet" href="../content/content.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail" aria-label="Settings sections">
+      <div class="brand">
+        <img src="../assets/icons/icon48.png" alt="" width="40" height="40">
+        <div>
+          <strong>YT Transcript Pro</strong>
+          <span id="version">v1.0.0</span>
+        </div>
+      </div>
+      <label class="search">
+        <span class="sr-only">Search settings</span>
+        <input id="search" type="search" placeholder="Search settings" autocomplete="off">
+      </label>
+      <nav id="nav"></nav>
+      <p class="rail-note">Changes save automatically and apply to open YouTube tabs right away.</p>
+    </aside>
+    <main class="main">
+      <div id="sections"></div>
+      <p id="no-results" class="no-results" hidden>No settings match your search.</p>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="../utils/helpers.js"></script>
+  <script src="../settings/defaults.js"></script>
+  <script src="../settings/storage.js"></script>
+  <script src="../utils/theme.js"></script>
+  <script src="../transcript/transcript-formatter.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

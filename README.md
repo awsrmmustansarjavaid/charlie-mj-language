@@ -15,10 +15,20 @@ and thumbnails, Suggestions, and local data synchronization.
 ## Download
 
 <p align="center">
-  <a href="/downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
-    <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20Chrome%20Extension-2ea44f?style=for-the-badge" alt="Download Chrome Extension">
+  <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
+    <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download Language Catalog v1.0.0">
+  </a>
+  &nbsp;
+  <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0.zip">
+    <img src="https://img.shields.io/badge/Transcript%20Pro-v2.0.0-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download YT Transcript Pro v2.0.0">
+  </a>
+  &nbsp;
+  <a href="downloads/charlie-mj-dual-transcript-engine/charlie-mj-dual-transcript-engine-v1.0.0.zip">
+    <img src="https://img.shields.io/badge/Dual%20Transcript%20Engine-v1.0.0-6c757d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download Dual Transcript Engine v1.0.0">
   </a>
 </p>
+
+
 
 ## Key Features
 
@@ -1142,6 +1152,53 @@ every YouTube video.
 
 Live Chrome/YouTube regression testing should be performed before
 distributing a production build.
+
+---
+
+# Charlie MJ Dual Transcript Engine
+
+A standalone, lightweight Chrome/Chromium extension whose only core job is to obtain a **complete original + YouTube-native translated transcript** from YouTube as quickly as possible, cache it locally, and keep both tracks synchronized with `video.currentTime`.
+
+## Download
+
+<p align="center">
+  <a href="downloads/charlie-mj-dual-transcript-engine/charlie-mj-dual-transcript-engine-v1.0.0.zip">
+    <img src="https://img.shields.io/badge/Download-v1.0.0-6c757d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download v1.0.0">
+  </a>
+  &nbsp;
+  <a href="Chrome%20Different%20Extentions/charlie-mj-dual-transcript-engine/README.md">
+    <img src="https://img.shields.io/badge/Main-README-0969da?style=for-the-badge&logo=readme&logoColor=white" alt="Main README">
+  </a>
+</p>
+
+---
+
+# YT Transcript Pro
+
+Copy or download YouTube transcripts and two-language (dual) subtitles, with or without timestamps. Manifest V3, Chrome and Edge, no account, no server, no analytics.
+
+![YT Transcript Pro v2.0.0](assets/YT-Transcript-Pro-v2-instagram-story.png)
+
+## Download
+
+<p align="center">
+  <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v1.0.0.zip">
+    <img src="https://img.shields.io/badge/Download-v1.0.0-6c757d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download v1.0.0">
+  </a>
+  &nbsp;
+  <a href="downloads/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0.zip">
+    <img src="https://img.shields.io/badge/Download-v2.0.0-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download v2.0.0">
+  </a>
+  &nbsp;
+  <a href="/Chrome Different Extentions/YT-Transcript-Pro/YT-Transcript-Pro-v2.0.0/YT-Transcript-Pro/README.md">
+    <img src="https://img.shields.io/badge/Main-README-0969da?style=for-the-badge&logo=readme&logoColor=white" alt="Main README">
+  </a>
+</p>
+
+
+
+---
+
 
 ## Development Guidelines
 
