@@ -1881,12 +1881,9 @@
     }
     const liveIndexChanged = liveIndex !== state.liveHighlightLastIndex;
     updateLiveTranscriptHighlight(liveIndex, video);
-    if (liveIndexChanged) {
-      cmjAdditionalAutoFollowTranscript(
-        $('.cmj-transcript-list'),
-        liveIndex,
-        video
-      );
+    if (liveIndexChanged && liveIndex >= 0) {
+      // Time-driven follow: only while playing and not during a manual-scroll hold (handled by CMJScroll).
+      transcriptFollower().follow($(`.cmj-transcript-list [data-cmj-line="${liveIndex}"]`), { hard: false });
     }
     if (!current) {
       readNativeCaptions();
@@ -2942,6 +2939,9 @@
     const body = $('.cmj-panel-body');
     if (!body) return;
     state.panelTab = tab;
+    const keepTop = body.scrollTop;
+    const keepScroll = tab === 'transcript' && state.renderedPanelTab === 'transcript' && Boolean(body.querySelector('.cmj-transcript-list .cmj-line'));
+    state.renderedPanelTab = tab;
     if (tab !== 'ytTranscriptPro') {
       ytpCommand('unmount');
     }
@@ -2975,11 +2975,17 @@
         const isLive = state.settings.liveTranscriptHighlightEnabled !== false && index === state.activeIndex;
         return `<button class="cmj-line${isLive ? ' cmj-line-live-active' : ''}" data-cmj-line="${index}" aria-current="${isLive ? 'true' : 'false'}"><time>${formatTime(caption.start)}</time><span class="cmj-transcript-original"><span class="cmj-live-speaking-icon"${isLive ? ' data-live-visible="true"' : ''} role="img" aria-label="Currently speaking" title="Currently speaking"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></span>${sourceHtml}</span><small class="cmj-transcript-translation">${translationHtml}</small></button>`;
       }).join('')}</div>`;
-      bindLiveTranscriptScroll(body.querySelector('.cmj-transcript-list'));
-      installAdditionalTranscriptAutoFollow(
-        body.querySelector('.cmj-transcript-list')
-      );
+      const transcriptList = body.querySelector('.cmj-transcript-list');
+      const follower = transcriptFollower();
+      follower.bind(transcriptList);
       updateLiveTranscriptHighlight(state.activeIndex, getVideo(), true);
+      if (keepScroll) {
+        // Same tab re-rendered (for example a translation arrived): leave the learner exactly where they were.
+        body.scrollTop = keepTop;
+      } else {
+        // Opening the tab / first captions: show the line that is playing now.
+        requestAnimationFrame(() => follower.follow(transcriptList?.querySelector('.cmj-line-live-active') || (state.activeIndex >= 0 ? transcriptList?.querySelector(`[data-cmj-line="${state.activeIndex}"]`) : null), { hard: true, instant: true }));
+      }
       return;
     }
     if (tab === 'notes') {
@@ -3098,219 +3104,25 @@
       document.execCommand(action === 'bold' ? 'bold' : action === 'bullet' ? 'insertUnorderedList' : 'fontSize', false, action === 'size-up' ? '5' : action === 'size-down' ? '2' : undefined);
     }
   }
-  function bindLiveTranscriptScroll(list) {
-    if (!list || list.dataset.cmjLiveScrollBound === 'true') return;
-    list.dataset.cmjLiveScrollBound = 'true';
-    const markManualScroll = () => {
-      if (state.liveHighlightProgrammaticScroll || state.settings.liveTranscriptRespectManualScroll === false) return;
-      state.liveHighlightLastManualInteractionAt = Date.now();
-      // Once the learner manually scrolls, keep the transcript where they
-      // placed it until they explicitly click a transcript line. This makes
-      // it possible to scroll to any sentence and click it without the live
-      // player highlight immediately pulling the list back.
-      state.liveHighlightManualScrollUntil =
-      Date.now() + Math.max(
-        800,
-        Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
-      );
-    };
-    list.addEventListener('wheel', markManualScroll, { passive: true });
-    list.addEventListener('touchmove', markManualScroll, { passive: true });
-    list.addEventListener('pointerdown', markManualScroll, { passive: true });
-    list.addEventListener('scroll', () => {
-      if (!state.liveHighlightProgrammaticScroll && state.settings.liveTranscriptRespectManualScroll !== false) {
-        // Preserve the learner's manual position until a transcript line is
-        // explicitly selected.
-        state.liveHighlightManualScrollUntil =
-        Date.now() + Math.max(
-          800,
-          Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
-        );
-      }
-    }, { passive: true });
+  /* Scrolling for the Transcript tab is handled by the shared CMJScroll controller (src/lib/transcript-scroll.js). */
+  let transcriptFollowerInstance = null;
+  function transcriptFollower() {
+    if (!transcriptFollowerInstance) {
+      transcriptFollowerInstance = window.CMJScroll.create({
+        key: 'transcript',
+        getVideo: () => getVideo(),
+        // Re-sync the highlight with the video clock, then hand back the active row.
+        getActiveRow: () => {
+          state.liveHighlightLastIndex = -2;
+          updatePlayback();
+          const idx = state.liveHighlightLastIndex;
+          return idx >= 0 ? $(`.cmj-transcript-list [data-cmj-line="${idx}"]`) : null;
+        }
+      });
+    }
+    return transcriptFollowerInstance;
   }
-  /* ============================================================
-  * ADDITIONAL: Timeline Auto-Follow + Manual Scroll Coexistence
-  *
-  * Keeps:
-  *   - existing timeline synchronization
-  *   - existing active subtitle highlighting
-  *   - existing manual scrolling
-  *
-  * Adds:
-  *   - temporary manual-scroll control
-  *   - automatic follow resumes after manual scrolling stops
-  * ============================================================ */
-  function cmjAdditionalAutoFollowTranscript(list, index, video) {
-    if (!list) return;
-    const settings = state.settings || {};
-    if (settings.liveTranscriptAutoScroll === false) return;
-    if (!Number.isInteger(index) || index < 0) return;
-    const active = list.querySelector(`[data-cmj-line="${index}"]`);
-    if (!active) return;
-    /*
-    * Do not fight the learner while they are actively scrolling.
-    * The existing manual-scroll system remains untouched.
-    */
-    const manualUntil = Number(state.liveHighlightManualScrollUntil || 0);
-    if (
-      settings.liveTranscriptRespectManualScroll !== false &&
-      manualUntil !== Number.MAX_SAFE_INTEGER &&
-      Date.now() < manualUntil
-    ) {
-      return;
-    }
-    // Once the learner takes manual control, keep that position until a transcript line is clicked.
-    if (
-      settings.liveTranscriptRespectManualScroll !== false &&
-      manualUntil === Number.MAX_SAFE_INTEGER
-    ) {
-      return;
-    }
-    /*
-    * If the existing system marked manual scrolling as permanent,
-    * convert that state into a temporary pause.
-    *
-    * This is additive behavior; the existing highlight state remains.
-    */
-    if (
-      settings.liveTranscriptRespectManualScroll !== false &&
-      manualUntil === Number.MAX_SAFE_INTEGER
-    ) {
-      const lastManual =
-        Number(state.liveHighlightLastManualInteractionAt || 0);
-      const manualPauseMs = Math.max(
-        800,
-        Number(settings.liveTranscriptManualResumeDelayMs || 1800)
-      );
-      if (lastManual && Date.now() - lastManual < manualPauseMs) {
-        return;
-      }
-      state.liveHighlightManualScrollUntil = 0;
-    }
-
-    /*
-    * Never automatically move the transcript while the video is paused.
-    */
-    if (video && video.paused) {
-      return;
-    }    
-
-    /*
-    * Do not force-follow paused playback when the user disabled
-    * follow-while-paused.
-    */
-    if (
-      video &&
-      video.paused &&
-      settings.liveTranscriptFollowWhilePaused === false
-    ) {
-      return;
-    }
-    /*
-    * Avoid excessive scrolling.
-    */
-    const now = Date.now();
-    if (
-      now - Number(state.liveHighlightLastAutoScrollAt || 0) < 250
-    ) {
-      return;
-    }
-    state.liveHighlightLastAutoScrollAt = now;
-    state.liveHighlightProgrammaticScroll = true;
-    const position =
-      settings.liveTranscriptScrollPosition || 'center';
-    try {
-      if (position === 'top') {
-        list.scrollTo({
-          top: Math.max(0, active.offsetTop - 8),
-          behavior: 'smooth'
-        });
-      } else if (position === 'bottom') {
-        list.scrollTo({
-          top: Math.max(
-            0,
-            active.offsetTop -
-            list.clientHeight +
-            active.offsetHeight +
-            8
-          ),
-          behavior: 'smooth'
-        });
-      } else {
-        active.scrollIntoView({
-          block: 'center',
-          behavior: 'smooth'
-        });
-      }
-    } catch (_) {
-      try {
-        active.scrollIntoView(false);
-      } catch (_) {
-      }
-    }
-    setTimeout(() => {
-      state.liveHighlightProgrammaticScroll = false;
-    }, 180);
-  }
-  /*
-  * Additional manual-scroll timestamp.
-  *
-  * IMPORTANT:
-  * This does NOT remove the existing manual-scroll listeners.
-  * It simply records when the learner last interacted with the
-  * transcript so automatic following can resume afterward.
-  */
-  function cmjAdditionalTrackManualTranscriptInteraction(list) {
-    if (!list || list.dataset.cmjAdditionalManualFollow === 'true') {
-      return;
-    }
-    list.dataset.cmjAdditionalManualFollow = 'true';
-    const markInteraction = () => {
-      if (state.liveHighlightProgrammaticScroll) return;
-      state.liveHighlightLastManualInteractionAt = Date.now();
-      /*
-      * Preserve the existing manual-scroll state.
-      * The additional controller decides when it is safe to
-      * resume automatic following.
-      */
-      state.liveHighlightManualScrollUntil =
-      Date.now() + Math.max(
-        800,
-        Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
-      );
-    };
-    list.addEventListener('wheel', markInteraction, {
-      passive: true
-    });
-    list.addEventListener('touchmove', markInteraction, {
-      passive: true
-    });
-    list.addEventListener('pointerdown', markInteraction, {
-      passive: true
-    });
-    list.addEventListener(
-      'scroll',
-      () => {
-        if (state.liveHighlightProgrammaticScroll) return;
-        state.liveHighlightLastManualInteractionAt = Date.now();
-        state.liveHighlightManualScrollUntil =
-        Date.now() + Math.max(
-          800,
-          Number(state.settings.liveTranscriptManualResumeDelayMs || 1800)
-        );
-      },
-      { passive: true }
-    );
-  }
-  /*
-  * Additional controller installation.
-  */
-  function installAdditionalTranscriptAutoFollow(list) {
-    if (!list) return;
-    cmjAdditionalTrackManualTranscriptInteraction(list);
-  }
-  function updateLiveTranscriptHighlight(index, video, forceScroll = false) {
+  function updateLiveTranscriptHighlight(index, video, forceScroll = false) {   // highlight only; scrolling lives in CMJScroll
     const settings = state.settings || {};
     const list = $('.cmj-transcript-list');
     if (!list) return;
@@ -3318,13 +3130,7 @@
     list.classList.toggle('cmj-live-highlight-disabled', !enabled);
     const safeIndex = Number.isInteger(index) ? index : -1;
     const changed = safeIndex !== state.liveHighlightLastIndex;
-    const manualScrollExpired =
-      settings.liveTranscriptRespectManualScroll !== false &&
-      state.liveHighlightManualScrollUntil > 0 &&
-      state.liveHighlightManualScrollUntil !== Number.MAX_SAFE_INTEGER &&
-      Date.now() >= state.liveHighlightManualScrollUntil;
-
-    if (!changed && !forceScroll && !manualScrollExpired) return;
+    if (!changed && !forceScroll) return;
     if (changed) state.liveHighlightLastIndex = safeIndex;
     // Update only the previous/current row when the timestamp changes; never rebuild transcript HTML per tick.
     if (!enabled) {
@@ -3363,39 +3169,6 @@
     active.classList.remove('cmj-live-style-soft-background', 'cmj-live-style-rounded', 'cmj-live-style-underline', 'cmj-live-style-accent', 'cmj-live-style-text');
     const styleMap = { 'soft-background': 'soft-background', 'rounded-background': 'rounded', 'underline': 'underline', 'left-accent': 'accent', 'text-color': 'text' };
     active.classList.add(`cmj-live-style-${styleMap[settings.liveTranscriptHighlightStyle] || 'soft-background'}`);
-    if (
-    settings.liveTranscriptRespectManualScroll !== false &&
-    state.liveHighlightManualScrollUntil === Number.MAX_SAFE_INTEGER
-    ) {
-      return;
-    }
-
-    /*
-    * Never automatically move the transcript while the video is paused.
-    */
-    if (video && video.paused) {
-      return;
-    }
-
-    const shouldScroll =
-      settings.liveTranscriptAutoScroll !== false &&
-      (changed || forceScroll || manualScrollExpired);
-    if (!shouldScroll || (!forceScroll && settings.liveTranscriptRespectManualScroll !== false && Date.now() < state.liveHighlightManualScrollUntil)) return;
-    if (video && video.paused && settings.liveTranscriptFollowWhilePaused === false && !forceScroll) return;
-    if (!forceScroll && Date.now() - state.liveHighlightLastAutoScrollAt < 250) return;
-    state.liveHighlightLastAutoScrollAt = Date.now();
-    state.liveHighlightProgrammaticScroll = true;
-    const position = settings.liveTranscriptScrollPosition || 'center';
-    try {
-      if (position === 'top') list.scrollTo({ top: Math.max(0, active.offsetTop - 8), behavior: 'smooth' });
-      else if (position === 'bottom') list.scrollTo({ top: Math.max(0, active.offsetTop - list.clientHeight + active.offsetHeight + 8), behavior: 'smooth' });
-      else active.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    } catch (_) {
-      active.scrollIntoView(false);
-    }
-    setTimeout(() => {
-      state.liveHighlightProgrammaticScroll = false;
-    }, 180);
   }
   function renderPanelIfOpen() {
     if (!$('.cmj-panel') || $('.cmj-panel').hidden) return;

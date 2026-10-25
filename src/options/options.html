@@ -124,35 +124,14 @@
        </select>
       </label>
       <label>
-       Auto-scroll position
-       <select id="liveTranscriptScrollPosition">
-        <option value="center">
-         Keep active sentence near center
-        </option>
-        <option value="top">
-         Near top
-        </option>
-        <option value="bottom">
-         Near bottom
-        </option>
-       </select>
-      </label>
-      <label>
        Transition animation (ms)
        <input id="liveTranscriptTransitionMs" max="500" min="0" step="25" type="number"/>
       </label>
      </div>
-     <label class="check">
-      <input id="liveTranscriptAutoScroll" type="checkbox"/>
-      Auto-scroll to active sentence
-     </label>
+     <p class="note">Auto-scroll, position and manual-scroll rules are in <strong>Transcript Windows Scroll</strong> below.</p>
      <label class="check">
       <input id="liveTranscriptFollowWhilePaused" type="checkbox"/>
       Keep current sentence highlighted while paused
-     </label>
-     <label class="check">
-      <input id="liveTranscriptRespectManualScroll" type="checkbox"/>
-      Respect manual scrolling (pause auto-scroll temporarily)
      </label>
      <div class="live-highlight-preview-wrap">
       <strong>
@@ -1721,6 +1700,41 @@
     </label>
    </section>
  
+  <section data-settings-category="Subtitles &amp; Timeline" id="transcriptWindowsScrollSection">
+   <h2>Transcript Windows Scroll</h2>
+   <div class="component-card">
+    <h3>📜 Scroll &amp; timeline sync (Transcript, Dual Transcript, YT Transcript Pro)</h3>
+    <p class="note">One set of scroll rules for all three transcript tabs. While the video plays, the list follows the current subtitle. While the video is paused, the list stays still. If you seek on the YouTube timeline (paused or playing) or click a line, the list jumps to that moment. Manual scrolling always works.</p>
+    <label class="check"><input id="tswEnabled" type="checkbox"/> Auto-scroll with the video timeline</label>
+    <div class="two-col">
+     <label class="check"><input id="tswTranscript" type="checkbox"/> Transcript tab</label>
+     <label class="check"><input id="tswDual" type="checkbox"/> Dual Transcript tab</label>
+     <label class="check"><input id="tswPro" type="checkbox"/> YT Transcript Pro tab</label>
+     <label class="check"><input id="tswOnSeek" type="checkbox"/> Jump to the subtitle when I seek (also while paused)</label>
+    </div>
+    <div class="two-col">
+     <label>Active subtitle position
+      <select id="tswPosition">
+       <option value="center">Center of the window</option>
+       <option value="top">Near the top</option>
+       <option value="bottom">Near the bottom</option>
+      </select>
+     </label>
+     <label>Scroll animation
+      <select id="tswBehavior">
+       <option value="smooth">Smooth</option>
+       <option value="instant">Instant</option>
+      </select>
+     </label>
+    </div>
+    <label class="check"><input id="tswRespectManual" type="checkbox"/> Respect manual scrolling (stop following while I scroll)</label>
+    <label>Resume following after manual scroll (seconds, 0 = only when I seek, click a line or press Play)
+     <input id="tswResumeSec" type="number" min="0" max="120" step="1"/>
+    </label>
+    <div class="row"><button class="secondary" id="resetTranscriptScroll" type="button">Reset scroll settings</button></div>
+    <p class="note">Press <strong>Save Settings</strong> to apply. Open YouTube tabs pick the new values up immediately.</p>
+   </div>
+  </section>
   <section data-settings-category="YT Transcript Pro">
    <h2>YT Transcript Pro</h2>
    <div class="component-card">

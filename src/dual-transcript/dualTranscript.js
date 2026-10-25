@@ -152,6 +152,13 @@
       }
     }
     const tabs = $('.cmj-tabs');
+    const orderDualTab = () => {
+      // Required order: Transcript, Dual Transcript, YT Transcript Pro, Vocabulary, Bookmarks, Watch Later, Notes
+      const dual = tabs?.querySelector('[data-cmj-dual-tab]');
+      const first = tabs?.querySelector('[data-cmj-tab="transcript"]');
+      if (dual && first && first.nextElementSibling !== dual) first.after(dual);
+    };
+    if (tabs && tabs.querySelector('[data-cmj-dual-tab]')) orderDualTab();
     if (tabs && !tabs.querySelector('[data-cmj-dual-tab]')) {
       const tab = document.createElement('button');
       tab.type = 'button';
@@ -164,6 +171,7 @@
         openDualTab();
       });
       tabs.appendChild(tab);
+      orderDualTab();
     }
   }
   function openDualTab() {
@@ -304,6 +312,8 @@
     if (!body) return;
     body.style.setProperty('--cmj-dual-speaker-color', colorValue(state.settings.speakerIconColor, '#ffd54a'));
     body.style.setProperty('--cmj-dual-speaker-size', `${Math.max(12, Math.min(32, Number(state.settings.speakerIconSize) || 18))}px`);
+    const hadRows = Boolean(body.querySelector('.cmj-dual-list .cmj-dual-row'));
+    const keepTop = body.scrollTop;
     body.innerHTML = `<div data-cmj-dual-root="1" class="cmj-dual-root">${renderStatus()}
       ${renderLanguageControls()}
       <div class="cmj-dual-toolbar-row"><span>Original: <strong>${esc(state.sourceName || state.sourceLanguage || '—')}</strong></span><span>Target: <strong>${esc(state.targetLanguage)}</strong></span><span>${state.cues.length ? `${state.cues.length} cues` : ''}</span></div>
@@ -336,9 +346,16 @@
       playSentence(Number(el.dataset.dualSpeak || 0));
     }));
     const dualList = $('.cmj-dual-list', body);
-    if (dualList) bindDualTranscriptScroll(dualList);
-
+    const follower = dualFollower();
+    if (dualList) follower.bind(dualList);
     syncHighlight();
+    if (hadRows) {
+      // The panel was refreshed with new data: keep the learner where they were.
+      body.scrollTop = keepTop;
+    } else if (dualList) {
+      // Opening the tab / first transcript: show the sentence that is playing now.
+      requestAnimationFrame(() => follower.follow(dualList.querySelector('.cmj-dual-live'), { hard: true, instant: true }));
+    }
   }
   function colorValue(value, fallback) {
     const v = String(value || '').trim();
@@ -374,104 +391,27 @@
     });
   }
 
-  function bindDualTranscriptScroll(list) {
-    if (!list || list.dataset.cmjDualScrollBound === 'true') return;
-
-    list.dataset.cmjDualScrollBound = 'true';
-
-    const markManualScroll = () => {
-      if (state.dualProgrammaticScroll) return;
-
-      state.dualManualScrollUntil =
-        Date.now() + Math.max(
-          800,
-          Number(state.settings.dualManualResumeDelayMs || state.dualManualResumeDelayMs || 1800)
-        );
-    };
-
-    list.addEventListener('wheel', markManualScroll, { passive: true });
-    list.addEventListener('touchmove', markManualScroll, { passive: true });
-    list.addEventListener('pointerdown', markManualScroll, { passive: true });
-
-    list.addEventListener('scroll', () => {
-      if (state.dualProgrammaticScroll) return;
-
-      state.dualManualScrollUntil =
-        Date.now() + Math.max(
-          800,
-          Number(state.settings.dualManualResumeDelayMs || state.dualManualResumeDelayMs || 1800)
-        );
-    }, { passive: true });
-  }
-
-  function autoFollowDualTranscript(list, activeIndex, video) {
-    if (!list) return;
-    if (!video || video.paused) return;
-    if (!Number.isInteger(activeIndex) || activeIndex < 0) return;
-
-    const settings = state.settings || {};
-
-    const active = list.querySelector(
-      `[data-dual-row="${activeIndex}"]`
-    );
-
-    if (!active) return;
-
-    const manualUntil = Number(state.dualManualScrollUntil || 0);
-
-    if (
-      manualUntil > 0 &&
-      Date.now() < manualUntil
-    ) {
-      return;
+  // Scrolling is handled by the shared CMJScroll controller (src/lib/transcript-scroll.js).
+  let dualFollowerInstance = null;
+  function dualFollower() {
+    if (!dualFollowerInstance) {
+      dualFollowerInstance = window.CMJScroll.create({
+        key: 'dual',
+        getVideo: () => document.querySelector('video'),
+        getActiveRow: () => {
+          syncHighlight();
+          return $('.cmj-dual-list .cmj-dual-live');
+        }
+      });
     }
-
-    if (Date.now() - state.dualLastAutoScrollAt < 250) {
-      return;
-    }
-
-    state.dualLastAutoScrollAt = Date.now();
-    state.dualProgrammaticScroll = true;
-
-    const position = settings.dualTranscriptScrollPosition || 'center';
-
-    try {
-      if (position === 'top') {
-        list.scrollTo({
-          top: Math.max(0, active.offsetTop - 8),
-          behavior: 'smooth'
-        });
-      } else if (position === 'bottom') {
-        list.scrollTo({
-          top: Math.max(
-            0,
-            active.offsetTop -
-              list.clientHeight +
-              active.offsetHeight +
-              8
-          ),
-          behavior: 'smooth'
-        });
-      } else {
-        active.scrollIntoView({
-          block: 'center',
-          behavior: 'smooth'
-        });
-      }
-    } catch (_) {
-      active.scrollIntoView(false);
-    }
-
-    setTimeout(() => {
-      state.dualProgrammaticScroll = false;
-    }, 500);
+    return dualFollowerInstance;
   }
 
   function syncHighlight() {
     if (!state.panelOpen) return;
     const video = document.querySelector('video');
     const list = $('.cmj-dual-list');
-    if (!video || !list) return;
+    if (!video || !list || !state.sentences.length) return;
     const t = Number(video.currentTime || 0);
     let active = -1, lo = 0, hi = state.sentences.length - 1;
     while (lo <= hi) {
@@ -483,35 +423,33 @@
         lo = mid + 1;
       }
     }
-    list.querySelectorAll('.cmj-dual-row').forEach((row, i) => {
-      const live = i === active;
-      row.classList.toggle('cmj-dual-live', live);
-      const speaker = row.querySelector('.cmj-dual-speaker');
-      if (speaker) {
-        speaker.classList.toggle('cmj-dual-speaker-live', live);
-        speaker.setAttribute('aria-hidden', live ? 'false' : 'true');
-      }
-    });
-    const manualScrollExpired =
-      state.dualManualScrollUntil > 0 &&
-      Date.now() >= state.dualManualScrollUntil;
-
-    if (manualScrollExpired) {
-      state.dualManualScrollUntil = 0;
+    const liveEl = list.querySelector('.cmj-dual-live');
+    const liveIdx = liveEl ? Number(liveEl.dataset.dualRow) : -1;
+    if (liveIdx !== active) {
+      list.querySelectorAll('.cmj-dual-row').forEach((row, i) => {
+        const live = i === active;
+        row.classList.toggle('cmj-dual-live', live);
+        const speaker = row.querySelector('.cmj-dual-speaker');
+        if (speaker) {
+          speaker.classList.toggle('cmj-dual-speaker-live', live);
+          speaker.setAttribute('aria-hidden', live ? 'false' : 'true');
+        }
+      });
     }
-
-    if (active !== state.dualLastActiveIndex || manualScrollExpired) {
+    if (active !== state.dualLastActiveIndex) {
       state.dualLastActiveIndex = active;
-
-      if (active >= 0) {
-        autoFollowDualTranscript(list, active, video);
-      }
+      // Time-driven follow: only while playing and not during a manual-scroll hold (handled by CMJScroll).
+      if (active >= 0) dualFollower().follow(list.querySelector('.cmj-dual-live'), { hard: false });
     }
   }
-  
+
   function startSync() {
     if (state.syncTimer) return;
-    state.syncTimer = setInterval(syncHighlight, 80);
+    state.syncTimer = setInterval(() => syncHighlight(false), 120);
+    if (!state.dualSeekBound) {
+      state.dualSeekBound = true;
+      ['seeking', 'seeked'].forEach(type => document.addEventListener(type, () => syncHighlight(), true));
+    }
   }
   function applyTranscriptData(data) {
     if (!data || data.videoId !== videoId()) return;

@@ -11,6 +11,17 @@
 | `src/dashboard/dashboard.js` | New *Subtitle Learning* tab; hardened, accent-insensitive, debounced search; safe tag handling. |
 | `src/dashboard/dashboard.html` | *Subtitle Learning* type filter. |
 
+## Follow-up: scroll sync, tab order, Dock / Float
+
+| File | Change |
+|---|---|
+| `src/transcript-pro/ytp-content.js` | `syncHighlight()` rewritten: list-only scrolling, follows seeks (`seeking`/`seeked`), manual-scroll hold with catch-up, 400 ms playback safety timer; `attachPanel()` supports Float/Dock in embedded mode with a placeholder; `unmount()` keeps a floating window alive. |
+| `src/dual-transcript/dualTranscript.js` | `autoFollowDualTranscript()` / `syncHighlight()` rewritten (no pause gating, list-only scroll, seek handling); *Dual Transcript* tab is placed right after *Transcript*. |
+
+Manual checks: play a video and watch both tabs follow; scroll away, wait, confirm catch-up;
+pause and click the YouTube timeline, confirm the list jumps; click Dock/Float repeatedly;
+confirm tab order.
+
 ## Subtitle Learning record
 
 ```json

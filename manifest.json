@@ -82,6 +82,7 @@
         "https://m.youtube.com/*"
       ],
       "js": [
+        "src/lib/transcript-scroll.js",
         "src/transcript-pro/ytp-helpers.js",
         "src/transcript-pro/ytp-defaults.js",
         "src/transcript-pro/ytp-storage.js",
@@ -114,6 +115,7 @@
         "https://m.youtube.com/*"
       ],
       "js": [
+        "src/lib/transcript-scroll.js",
         "src/dual-transcript/dualTranscript.js",
         "src/translation/dual-youtube-translation-service.js"
       ],

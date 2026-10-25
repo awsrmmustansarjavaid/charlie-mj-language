@@ -155,7 +155,7 @@
     const headerActions = [
       iconButton("Swap language order", iconSvg(svg("path", { d: "M7 4 3 8l4 4" }), line(3, 8, 21, 8), svg("path", { d: "m17 20 4-4-4-4" }), line(21, 16, 3, 16)), () => Settings_set({ swapOrder: !S().swapOrder })),
       iconButton("Refresh transcript", iconSvg(svg("path", { d: "M20 11a8 8 0 0 0-14.9-4" }), svg("path", { d: "M4 4v5h5" }), svg("path", { d: "M4 13a8 8 0 0 0 14.9 4" }), svg("path", { d: "M20 20v-5h-5" })), () => loadVideo()),
-      iconButton("Dock or float the window", iconSvg(svg("rect", { x: 3, y: 4, width: 18, height: 14, rx: 2 }), svg("rect", { x: 12, y: 11, width: 7, height: 5, rx: 1 })), () => Settings_set({ panelMode: S().panelMode === "floating" ? "docked" : "floating" })),
+      iconButton("Dock or float the window", iconSvg(svg("rect", { x: 3, y: 4, width: 18, height: 14, rx: 2 }), svg("rect", { x: 12, y: 11, width: 7, height: 5, rx: 1 })), () => { Settings_set({ panelMode: S().panelMode === "floating" ? "docked" : "floating" }); applySettings(state.settings); }),
       iconButton("Open settings", iconSvg(line(4, 6, 20, 6), line(4, 12, 20, 12), line(4, 18, 20, 18), svg("circle", { cx: 9, cy: 6, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 15, cy: 12, r: 2, fill: "var(--ytp-bg)" }), svg("circle", { cx: 8, cy: 18, r: 2, fill: "var(--ytp-bg)" })), () => chrome.runtime.sendMessage({ type: "ytp:openOptions", category: "YT Transcript Pro" }).catch(() => {})),
       iconButton("Close", iconSvg(line(6, 6, 18, 18), line(18, 6, 6, 18)), closePanel)
     ];
@@ -190,7 +190,7 @@
     // Typing in the panel must never trigger YouTube's one-key shortcuts (k, f, m ...).
     ["keydown", "keyup", "keypress"].forEach((t) => panel.addEventListener(t, (e) => { if (!e.altKey && !e.ctrlKey && !e.metaKey) e.stopPropagation(); }));
 
-    ["wheel", "touchmove", "pointerdown"].forEach((t) => els.lines.addEventListener(t, () => { state.lastManualScroll = Date.now(); }, { passive: true }));
+    proFollower().bind(els.lines);   // manual scroll detection + video seek/play handling (shared CMJScroll)
     setupDrag(panel);
     setupResizeSave(panel);
     state.panel = panel;
@@ -219,10 +219,26 @@
   function attachPanel() {
     const p = state.panel;
     if (!p) return;
-    if (root.embeddedHost) {
+    if (root.embeddedMode) {
+      const host = root.embeddedHost && root.embeddedHost.isConnected ? root.embeddedHost : null;
+      if (S().panelMode === "floating") {
+        // FLOAT: detach from the Transcript window tab into a draggable / resizable window.
+        p.dataset.mode = "floating";
+        const fsHost = document.fullscreenElement || document.body;
+        if (p.parentElement !== fsHost) fsHost.append(p);
+        positionFloating();
+        if (host) showFloatingPlaceholder(host);
+        return;
+      }
+      // DOCK: put the panel back inside the Transcript window tab.
       p.dataset.mode = "embedded";
       p.style.left = p.style.top = p.style.width = p.style.height = "";
-      if (p.parentElement !== root.embeddedHost) root.embeddedHost.append(p);
+      if (host) {
+        hideFloatingPlaceholder();
+        if (p.parentElement !== host) host.append(p);
+      } else if (p.parentElement) {
+        p.remove();                       // docked but its tab is not showing
+      }
       return;
     }
     const mode = effectiveMode();
@@ -237,6 +253,17 @@
       if (host && (p.parentElement !== host || host.firstElementChild !== p)) host.prepend(p);
     }
   }
+
+  function showFloatingPlaceholder(host) {
+    if (!state.placeholder) {
+      state.placeholder = h("div", { class: "ytp-float-placeholder", style: "padding:18px;text-align:center;font:14px/1.5 system-ui,sans-serif;opacity:.85" },
+        h("p", { style: "margin:0 0 10px" }, "YT Transcript Pro is floating in its own window."),
+        h("button", { class: "cmj-ytp-dock-back", type: "button", style: "cursor:pointer;padding:6px 14px;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit",
+          onClick: () => Settings_set({ panelMode: "docked" }).then(() => applySettings(state.settings)) }, "Dock it back here"));
+    }
+    if (state.placeholder.parentElement !== host) host.replaceChildren(state.placeholder);
+  }
+  function hideFloatingPlaceholder() { state.placeholder?.remove(); }
 
   function positionFloating() {
     const p = state.panel;
@@ -290,7 +317,11 @@
     buildButton();
     if (state.videoId !== root.getVideoId() || (!state.tracks.length && !state.loadPromise)) loadVideo();
   }
-  function closePanel() { state.panel?.classList.remove("ytp-open"); buildButton(); }
+  function closePanel() {
+    state.panel?.classList.remove("ytp-open");
+    if (!root.embeddedHost && state.panel?.dataset.mode === "floating") { root.embeddedMode = false; state.panel.remove(); }   // floating window closed after its tab was left
+    buildButton();
+  }
   function togglePanel() { isOpen() ? closePanel() : openPanel(); }
 
   /* ------------------------------------------------------------------ */
@@ -435,6 +466,10 @@
     const long = state.view.length ? state.view[state.view.length - 1].start >= 3600 : false;
     const stampSettings = { ...s, timestampWrap: "none" };
     const frag = document.createDocumentFragment();
+    const hadRows = state.rendered.length > 0;
+    const keepTop = lines.scrollTop;
+    const queryChanged = query !== (state.lastQuery || "");
+    state.lastQuery = query;
     state.rendered = [];
 
     state.view.forEach((r, i) => {
@@ -468,7 +503,10 @@
     if (!state.rendered.length) renderEmpty(state.view.length ? "No lines match your search." : "The transcript will appear here.");
     state.activeIdx = -1;
     updateSelButton();
+    if (queryChanged) lines.scrollTop = 0;
+    else if (hadRows) lines.scrollTop = keepTop;       // re-render (settings, translation): keep the learner's position
     syncHighlight(true);
+    if (!hadRows && !query) followNow();                // first rows for this video: show the line playing now
   }
 
   function onLineClick(event, i, row) {
@@ -499,24 +537,43 @@
   /* ------------------------------------------------------------------ */
   /* Playback sync                                                       */
   /* ------------------------------------------------------------------ */
+  // Scrolling is handled by the shared CMJScroll controller (src/lib/transcript-scroll.js):
+  // follows the video while playing, stays still while paused, re-syncs on seek, respects manual scrolling.
+  let followerInstance = null;
+  function proFollower() {
+    if (!followerInstance) {
+      followerInstance = window.CMJScroll.create({
+        key: "pro",
+        getVideo: () => root.getVideo(),
+        extraAllowed: () => S().autoScroll !== false,        // the tab's own Auto-scroll switch
+        getActiveRow: () => syncHighlight(true)
+      });
+    }
+    return followerInstance;
+  }
+  /** Jump to the line that is active now (opening the tab, first rows, seeks). Ignores pause and manual hold. */
+  function followNow() {
+    requestAnimationFrame(() => { const row = syncHighlight(true); if (row) proFollower().follow(row, { hard: true, instant: true }); });
+  }
+
+  /* Highlights the line that matches video.currentTime (playing, paused or after a seek) and, when the
+   * active line changes, lets the follower move the list (time-driven: never while paused). Returns the row. */
   function syncHighlight(force = false) {
-    if (!isOpen() || !state.rendered.length) return;
+    if (!isOpen() || !state.rendered.length) return null;
     const v = root.getVideo();
-    if (!v) return;
+    if (!v) return null;
     const t = v.currentTime + 0.15;
     let lo = 0, hi = state.rendered.length - 1, idx = -1;
     while (lo <= hi) { const mid = (lo + hi) >> 1; if (state.rendered[mid].start <= t) { idx = mid; lo = mid + 1; } else hi = mid - 1; }
-    if (idx === state.activeIdx && !force) return;
-    state.rendered[state.activeIdx]?.el.classList.remove("ytp-active");
-    state.activeIdx = idx;
-    if (idx < 0 || !S().highlightCurrent) return;
-    const row = state.rendered[idx].el;
-    row.classList.add("ytp-active");
-    const idle = Date.now() - state.lastManualScroll > (Number(S().resumeScrollDelay) || 0) * 1000;
-    if (S().autoScroll && idle) {
-      const list = state.els.lines;
-      list.scrollTo({ top: Math.max(0, row.offsetTop - list.clientHeight * 0.35), behavior: S().scrollBehavior === "auto" ? "auto" : "smooth" });
+    const changed = idx !== state.activeIdx;
+    if (changed || force) {
+      state.rendered[state.activeIdx]?.el.classList.remove("ytp-active");
+      state.activeIdx = idx;
+      if (idx >= 0 && S().highlightCurrent) state.rendered[idx].el.classList.add("ytp-active");
     }
+    const row = idx >= 0 ? state.rendered[idx].el : null;
+    if (changed && row) proFollower().follow(row, { hard: false });
+    return row;
   }
 
   /* ------------------------------------------------------------------ */
@@ -722,10 +779,14 @@
       panel.classList.add("ytp-open");
       buildButton();
       if (state.videoId !== root.getVideoId() || (!state.tracks.length && !state.loadPromise)) loadVideo();
+      else followNow();
       return true;
     },
     unmount() {
       root.embeddedHost = null;
+      hideFloatingPlaceholder();
+      // A floating window stays open when the user switches Transcript-window tabs.
+      if (state.panel && state.panel.dataset.mode === "floating" && S().panelMode === "floating" && state.panel.classList.contains("ytp-open")) return;
       root.embeddedMode = false;
       state.panel?.classList.remove("ytp-open");
       state.panel?.remove();
@@ -794,6 +855,11 @@
     window.addEventListener("resize", root.debounce(() => { if (isOpen()) { attachPanel(); } }, 200));
     document.addEventListener("fullscreenchange", () => { if (state.panel) attachPanel(); });
     document.addEventListener("timeupdate", () => syncHighlight(), true);
+    document.addEventListener("seeked", () => syncHighlight(), true);
+    document.addEventListener("seeking", () => syncHighlight(), true);
+    document.addEventListener("play", () => syncHighlight(), true);
+    // Safety net: timeupdate only fires ~4x/s and not at all while YouTube is buffering ads.
+    setInterval(() => { const v = root.getVideo?.(); if (v && !v.paused && isOpen()) syncHighlight(); }, 400);
     setInterval(() => { if (root.isWatchPage()) { buildButton(); if (isOpen() && !state.panel.isConnected) attachPanel(); } }, 2000);
     new MutationObserver(() => root.applyTheme(state.panel, S())).observe(document.documentElement, { attributes: true, attributeFilter: ["dark"] });
     buildButton();

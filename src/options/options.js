@@ -119,7 +119,7 @@ function buildYtpProSettings(settings) {
   host.innerHTML = '';
   Object.entries(defaults).forEach(([key, def]) => {
     const value = values[key];
-    if (key === 'floatX' || key === 'floatY') return;
+    if (['floatX', 'floatY', 'scrollBehavior', 'resumeScrollDelay'].includes(key)) return;   // scroll rules: Transcript Windows Scroll
     const label = document.createElement('label');
     label.title = `YT Transcript Pro: ${key}`;
     const span = document.createElement('span'); span.textContent = ytpLabel(key); label.appendChild(span);
@@ -143,6 +143,34 @@ function buildYtpProSettings(settings) {
   });
   document.getElementById('resetYtpProSettings')?.addEventListener('click', () => buildYtpProSettings({ ytTranscriptPro: defaults }));
 }
+
+// ---- Transcript Windows Scroll (shared by Transcript, Dual Transcript and YT Transcript Pro) ----
+const TSW_FIELDS = { transcriptScrollEnabled: 'tswEnabled', transcriptScrollTranscript: 'tswTranscript', transcriptScrollDual: 'tswDual', transcriptScrollPro: 'tswPro', transcriptScrollOnSeek: 'tswOnSeek', transcriptScrollPosition: 'tswPosition', transcriptScrollBehavior: 'tswBehavior', transcriptScrollRespectManual: 'tswRespectManual', transcriptScrollResumeSec: 'tswResumeSec' };
+const TSW_DEFAULTS = { transcriptScrollEnabled: true, transcriptScrollTranscript: true, transcriptScrollDual: true, transcriptScrollPro: true, transcriptScrollOnSeek: true, transcriptScrollPosition: 'center', transcriptScrollBehavior: 'smooth', transcriptScrollRespectManual: true, transcriptScrollResumeSec: 5 };
+function fillTranscriptScrollSettings(s = {}) {
+  // Older builds stored these under the live-highlight keys; honour them until the new keys are saved.
+  const v = { ...TSW_DEFAULTS, transcriptScrollEnabled: s.liveTranscriptAutoScroll !== false, transcriptScrollPosition: s.liveTranscriptScrollPosition || 'center', transcriptScrollRespectManual: s.liveTranscriptRespectManualScroll !== false };
+  for (const key of Object.keys(TSW_DEFAULTS)) if (s[key] !== undefined) v[key] = s[key];
+  for (const [key, id] of Object.entries(TSW_FIELDS)) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (el.type === 'checkbox') el.checked = v[key] !== false;
+    else el.value = String(v[key]);
+  }
+}
+function readTranscriptScrollSettings() {
+  const out = {};
+  for (const [key, id] of Object.entries(TSW_FIELDS)) {
+    const el = document.getElementById(id);
+    if (!el) { out[key] = TSW_DEFAULTS[key]; continue; }
+    if (el.type === 'checkbox') out[key] = el.checked;
+    else if (el.type === 'number') out[key] = Math.max(0, Math.min(120, Number(el.value) || 0));
+    else out[key] = el.value || TSW_DEFAULTS[key];
+  }
+  return out;
+}
+document.getElementById('resetTranscriptScroll')?.addEventListener('click', () => fillTranscriptScrollSettings({ ...TSW_DEFAULTS }));
+
 function readYtpProSettings() {
   const defaults = window.YTP?.DEFAULTS || {};
   const out = {};
@@ -184,6 +212,7 @@ function readYtpProSettings() {
   s.originalLineSpacing = normalizeLineSpacing(s.originalLineSpacing, s.originalFontSize, 36);
   s.translationLineSpacing = normalizeLineSpacing(s.translationLineSpacing, s.translationFontSize, 28);
   renderToolbarManager(s);
+  fillTranscriptScrollSettings(s);
   const map = {
     toolbarDefaultX: 'toolbarDefaultX', toolbarDefaultY: 'toolbarDefaultY', toolbarHorizontalAnchor: 'toolbarHorizontalAnchor', toolbarVerticalAnchor: 'toolbarVerticalAnchor', toolbarOffsetX: 'toolbarOffsetX', toolbarOffsetY: 'toolbarOffsetY', toolbarPositionMode: 'toolbarPositionMode', showToolbarUnderVideo: 'showToolbarUnderVideo', toolbarScaleUI: 'toolbarScale', toolbarDragAnywhereUI: 'toolbarDragAnywhere', toolbarSnapUI: 'toolbarSnap', toolbarWidthUI: 'toolbarWidth', toolbarHeight: 'toolbarHeight', toolbarRevealModeUI: 'toolbarRevealMode', toolbarAutoHideEnabledUI: 'toolbarAutoHideEnabled', toolbarAutoHideDelayMsUI: 'toolbarAutoHideDelayMs', toolbarHoverZonePxUI: 'toolbarHoverZonePx', toolbarOverflowMode: 'toolbarOverflowMode', subtitleDefaultX: 'subtitleDefaultX', subtitleDefaultY: 'subtitleDefaultY', subtitleHorizontalAnchor: 'subtitleHorizontalAnchor', subtitleVerticalAnchor: 'subtitleVerticalAnchor', subtitleOffsetX: 'subtitleOffsetX', subtitleOffsetY: 'subtitleOffsetY', subtitleWidth: 'subtitleWidth', subtitleWidthPercent: 'subtitleWidthPercent', subtitleMoveHideDelayMs: 'subtitleMoveHideDelayMs', subtitlePositionMode: 'subtitlePositionMode', subtitleMaxWidth: 'subtitleMaxWidth', subtitleMaxHeight: 'subtitleMaxHeight', subtitleTextColor: 'subtitleTextColor', subtitleBackgroundColor: 'subtitleBackgroundColor', subtitleOpacity: 'subtitleOpacity', originalBoxWidthMode: 'originalBoxWidthMode', originalBoxWidthCustom: 'originalBoxWidthCustom', originalBoxHeightMode: 'originalBoxHeightMode', originalBoxHeightCustom: 'originalBoxHeightCustom', originalMaxWidth: 'originalMaxWidth', originalMaxHeight: 'originalMaxHeight', originalMaxLines: 'originalMaxLines', originalCustomMaxLines: 'originalCustomMaxLines', originalTextWrapping: 'originalTextWrapping', originalBoxPadding: 'originalBoxPadding', originalBackgroundOpacity: 'originalBackgroundOpacity', originalCornerRadius: 'originalCornerRadius', translationBoxWidthMode: 'translationBoxWidthMode', translationBoxWidthCustom: 'translationBoxWidthCustom', translationBoxHeightMode: 'translationBoxHeightMode', translationBoxHeightCustom: 'translationBoxHeightCustom', translationMaxWidth: 'translationMaxWidth', translationMaxHeight: 'translationMaxHeight', translationMaxLines: 'translationMaxLines', translationCustomMaxLines: 'translationCustomMaxLines', translationTextWrapping: 'translationTextWrapping', translationBoxPadding: 'translationBoxPadding', translationBackgroundOpacity: 'translationBackgroundOpacity', translationCornerRadius: 'translationCornerRadius', transcriptDefaultX: 'transcriptDefaultX', transcriptDefaultY: 'transcriptDefaultY', transcriptHorizontalAnchor: 'transcriptHorizontalAnchor', transcriptVerticalAnchor: 'transcriptVerticalAnchor', transcriptOffsetX: 'transcriptOffsetX', transcriptOffsetY: 'transcriptOffsetY', transcriptPositionMode: 'transcriptPositionMode', transcriptUIWidth: 'transcriptUIWidth', transcriptUIHeight: 'transcriptUIHeight', transcriptWindowMinWidthUI: 'transcriptWindowMinWidth', transcriptWindowMaxWidthUI: 'transcriptWindowMaxWidth', transcriptWindowMinHeightUI: 'transcriptWindowMinHeight', transcriptWindowMaxHeightUI: 'transcriptWindowMaxHeight', transcriptUIPinned: 'transcriptPinned', transcriptAutoHideEnabledUI: 'transcriptAutoHideEnabled', transcriptControlHideDelayMs: 'transcriptAutoHideDelayMs', successPopupPosition: 'successPopupPosition', liveTranscriptHighlightEnabled: 'liveTranscriptHighlightEnabled', liveTranscriptHighlightStyle: 'liveTranscriptHighlightStyle', liveTranscriptHighlightColor: 'liveTranscriptHighlightColor', liveTranscriptHighlightOpacity: 'liveTranscriptHighlightOpacity', liveTranscriptHighlightTextColor: 'liveTranscriptHighlightTextColor', liveTranscriptInheritTextColor: 'liveTranscriptInheritTextColor', liveTranscriptSyncMode: 'liveTranscriptSyncMode', liveTranscriptAutoScroll: 'liveTranscriptAutoScroll', liveTranscriptScrollPosition: 'liveTranscriptScrollPosition', liveTranscriptTransitionMs: 'liveTranscriptTransitionMs', liveTranscriptFollowWhilePaused: 'liveTranscriptFollowWhilePaused', liveTranscriptRespectManualScroll: 'liveTranscriptRespectManualScroll', transcriptServiceEngine: 'transcriptServiceEngine', captionTrackPreference: 'captionTrackPreference', enableCaptionLanguageDiscovery: 'enableCaptionLanguageDiscovery', source: 'sourceLanguage', target: 'targetLanguage', provider: 'translationProvider', libreUrl: 'libreTranslateUrl', microsoftRegion: 'microsoftRegion', argosUrl: 'argosUrl', onlineOnly: 'onlineOnly', offlineOnly: 'offlineOnly', onlineOfflineFallback: 'onlineOfflineFallback', privacyMode: 'privacyMode', translationCache: 'translationCache', verificationMode: 'verificationMode', translationTimeoutMs: 'translationTimeoutMs', translationRetries: 'translationRetries', maxTranslationLength: 'maxTranslationLength', dictionaryEnabled: 'dictionaryEnabled', dictionaryEndpoint: 'dictionaryEndpoint', dictionaryTimeoutMs: 'dictionaryTimeoutMs', dictionaryWiktionaryEnabled: 'dictionaryWiktionaryEnabled', dictionaryReferenceLinks: 'dictionaryReferenceLinks', dictionaryDefinitions: 'dictionaryDefinitions', dictionaryExamples: 'dictionaryExamples', dictionaryPronunciation: 'dictionaryPronunciation', dictionaryIdioms: 'dictionaryIdioms', dictionaryPhrasalVerbs: 'dictionaryPhrasalVerbs', dictionarySlang: 'dictionarySlang', dictionaryPreferredEnglish: 'dictionaryPreferredEnglish', dictionarySourcePriority: 'dictionarySourcePriority', focusMode: 'focusMode', posColors: 'posColors', boldPOS: 'boldPOS', showLevels: 'showLevels', autoTranslate: 'autoTranslate', hideRecommendations: 'hideRecommendations', hideShorts: 'hideShorts', hideComments: 'hideComments', showToolbarUnderVideo: 'showToolbarUnderVideo', downloadRoot: 'downloadRoot', downloadSaveAs: 'downloadSaveAs', wordCardAutoCloseMs: 'wordCardAutoCloseMs', captionAutoFetch: 'captionAutoFetch', captionFetchIntervalMs: 'captionFetchIntervalMs', captionSyncIntervalMs: 'captionSyncIntervalMs', captionSyncToleranceMs: 'captionSyncToleranceMs', toolbarRevealMode: 'toolbarRevealMode', toolbarHoverZonePx: 'toolbarHoverZonePx', toolbarDragAnywhere: 'toolbarDragAnywhere', toolbarSnap: 'toolbarSnap', toolbarAutoHideDelayMs: 'toolbarAutoHideDelayMs', toolbarScale: 'toolbarScale', toolbarWidth: 'toolbarWidth',
     subtitleDragEnabled: 'subtitleDragEnabled', transcriptWindowWidth: 'transcriptWindowWidth', transcriptWindowHeight: 'transcriptWindowHeight',
@@ -371,6 +400,7 @@ document.getElementById('save').onclick = async () => {
   const existing = (await chrome.storage.local.get('settings')).settings || {};
   const settings = {
     ...defaults, ...existing,
+    ...readTranscriptScrollSettings(),
     sourceLanguage: document.getElementById('source').value,
     targetLanguage: document.getElementById('target').value,
     translationProvider: document.getElementById('provider').value,
