@@ -39,51 +39,62 @@ and thumbnails, Suggestions, and local data synchronization.
   </a>
 </p>
 
-
-
 ## Key Features
 
--   ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the
-    complete available YouTube caption track with timestamps.
--   🌐 **Dual Transcript** --- view original and YouTube-native
-    translated subtitles/transcripts together.
--   ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each
-    subtitle/cue for reading and practice.
--   🔁 **Replay Audio** --- replay the current subtitle or sentence for
-    listening and pronunciation practice.
--   🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to
-    the matching video timestamp.
--   🔄 **Live Transcript Synchronization** --- keep transcript position
-    synchronized with playback.
--   🗣️ **Original + Translated Subtitles** --- control subtitle display,
-    layout, typography, opacity, and translation.
--   🌍 **YouTube Language Catalog** --- use caption and translation
-    language availability supplied by YouTube for the current video.
--   ❤️ **Favorite Channels** --- save channels using stable YouTube
-    Channel IDs and fetch their details.
--   📚 **Favorite Playlists** --- save playlists using stable YouTube
-    Playlist IDs and fetch their details.
--   🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles,
-    descriptions, channel/playlist information, URLs, IDs, and
-    thumbnails.
--   🏷️ **Categories** --- organize channels and playlists into
-    searchable learning categories.
--   👥 **Learning Groups** --- organize saved resources into custom
-    groups.
--   💡 **YouTube Suggestions** --- fetch Suggested Channels and
-    Suggested Playlists and decide what to save.
--   🔎 **Search & Filtering** --- search channels, playlists,
-    categories, suggestions, names, descriptions, tags, and categories.
--   📝 **Learning Library** --- save vocabulary, sentences, notes,
-    bookmarks, and Watch Later records.
--   💾 **Import / Export** --- back up and restore structured local
-    learning data.
--   🔄 **Data Sync** --- compare and synchronize local data with the
-    configured GitHub repository when enabled.
--   ⚡ **Performance Controls** --- optional services remain on-demand
-    instead of continuously running.
--   🎛️ **Custom Learning UI** --- configurable toolbar, transcript
-    window, subtitles, and additional learning windows.
+### 🎬 Transcript & Subtitle Tools
+- ⚡ **Quick Fetch Complete Transcript** — Fetch the complete available YouTube caption track with or without timestamps.
+- 🌐 **Dual Transcript** — Display original and YouTube-native translated transcripts together.
+- ⏸️ **Auto Pause on Each Subtitle** — Automatically pause playback at each subtitle cue for focused learning.
+- 🔁 **Replay Audio** — Replay the current subtitle or sentence for listening and pronunciation practice.
+- 🎯 **Click-to-Seek Transcript** — Click transcript rows to jump to the corresponding video timestamp.
+- 🔄 **Live Transcript Synchronization** — Keep transcript content and active subtitles synchronized with video playback.
+- 📖 **Instant Subtitle Auto-Follow** — Automatically scroll to the active subtitle with responsive synchronization.
+- 🖱️ **Playback-Aware Manual Scrolling** — Scroll freely through Quick Transcript, Dual Transcript, and YT Transcript Pro without unwanted auto-follow interruptions.
+- 📺 **Ad-Aware Subtitle Synchronization** — Detect YouTube ads and synchronize subtitles only with the actual video.
+- 🗣️ **Original & Translated Subtitle Controls** — Customize subtitle display, layout, typography, opacity, and translation settings.
+
+### 🧠 Language Learning & Vocabulary
+- 📚 **Learning Library** — Save vocabulary, sentences, notes, bookmarks, and Watch Later records.
+- ⚡ **Instant Vocabulary Filters** — Switch between Word-to-Word, Sentence-to-Sentence, and All views without unnecessary panel reloads.
+- 🎨 **Language Intelligence Styling** — Apply grammar and part-of-speech highlighting to Dual Transcript and YT Transcript Pro.
+- 🌈 **Independent Subtitle Colors** — Configure original subtitle and translated text colors separately.
+- 🌑 **YT Transcript Pro Dark Theme** — Use a dedicated, persistent dark default theme for YT Transcript Pro.
+
+### 🌍 YouTube Discovery & Organization
+- 🌐 **YouTube Language Catalog** — Explore caption and translation languages available for the current video.
+- ❤️ **Favorite Channels** — Save channels using stable YouTube Channel IDs.
+- 📚 **Favorite Playlists** — Save playlists using stable YouTube Playlist IDs.
+- 🖼️ **YouTube Metadata & Thumbnails** — Retrieve available titles, descriptions, channel and playlist information, URLs, IDs, and thumbnails.
+- 🏷️ **Categories & Learning Groups** — Organize saved channels and playlists into searchable categories and custom groups.
+- 💡 **YouTube Suggestions** — Discover suggested channels and playlists and choose which resources to save.
+
+### 🔎 Search & Smart Categorization
+- 🔍 **Advanced Live Search** — Search learning libraries and YouTube favorites with instant results, matching-text highlighting, fuzzy matching, autocomplete, filters, and optional search history.
+- 🧠 **Local YouTube Metadata Intelligence** — Automatically suggest categories using YouTube metadata through a local rule-based engine, without AI or external LLM services.
+- 🌍 **Country-First Categorization** — Detect country, language, keywords, and tags to generate more relevant category suggestions.
+- 🏷️ **Smart Category Management** — Search existing categories, receive suggestions, and create new categories instantly.
+- 🎯 **Weighted Rule-Based Classification** — Combine metadata signals using configurable priorities, weights, confidence scores, and explanations.
+- 📖 **Expandable JSON Rule Databases** — Maintain structured country, language, category, keyword, tag, label, synonym, and classification-rule datasets.
+
+### 🌙 YouTube Focus & Interface Customization
+- 🌙 **Day/Night YouTube Focus Mode** — Apply non-invasive background dimming while keeping the video player accessible.
+- 🎯 **YouTube Distraction Controls** — Optionally hide video details, descriptions, recommendations, Shorts, and comments.
+- 🛡️ **YouTube Native UI Protection** — Preserve YouTube's native player controls, captions, navigation, and interface.
+- 🎨 **Independent Toolbar Themes** — Customize the extension toolbar with Dark, Light, System, and Custom theme options.
+- 🌙 **Night View Toolbar Settings** — Configure a separate toolbar theme for Night Focus Mode.
+- 🎛️ **Custom Learning Interface** — Configure the extension toolbar, transcript window, subtitles, and additional learning panels.
+
+### 💾 Data Management & Synchronization
+- 💾 **Import & Export** — Back up and restore structured local learning data.
+- 🔄 **GitHub Data Synchronization** — Compare and synchronize local data with the configured GitHub repository when enabled.
+- 📚 **Metadata Database Management** — Import, export, back up, restore, and synchronize categorization databases.
+- ⚙️ **Improved Data Sync Interface** — Use a more organized responsive layout, consistent action buttons, and clearer synchronization controls.
+
+### ⚡ Performance & Usability
+- ⚡ **On-Demand Performance Controls** — Keep optional services inactive until they are needed.
+- 🧹 **Simplified YT Transcript Pro Settings** — Remove the unnecessary Download Folder setting.
+- 📐 **Responsive Interface Improvements** — Improve layout consistency, alignment, and usability across extension panels.
+
 
 ## Latest Update --- 2026-10-25
 
