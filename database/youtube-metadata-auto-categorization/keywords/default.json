@@ -1,0 +1,240 @@
+{
+  "English Learning": [
+    "english",
+    "ielts",
+    "toefl",
+    "grammar",
+    "vocabulary",
+    "listening",
+    "speaking",
+    "pronunciation"
+  ],
+  "Programming": [
+    "programming",
+    "javascript",
+    "python",
+    "typescript",
+    "java",
+    "coding",
+    "developer",
+    "software",
+    "github"
+  ],
+  "AI & Machine Learning": [
+    "artificial intelligence",
+    "machine learning",
+    "deep learning",
+    "llm",
+    "neural network",
+    "ai"
+  ],
+  "DevOps & Cloud": [
+    "devops",
+    "docker",
+    "kubernetes",
+    "aws",
+    "azure",
+    "gcp",
+    "terraform",
+    "linux",
+    "cloud"
+  ],
+  "Science & Technology": [
+    "science",
+    "technology",
+    "physics",
+    "chemistry",
+    "biology",
+    "research",
+    "engineering"
+  ],
+  "History & Culture": [
+    "history",
+    "historical",
+    "culture",
+    "civilization",
+    "documentary"
+  ],
+  "Health & Fitness": [
+    "health",
+    "fitness",
+    "workout",
+    "nutrition",
+    "exercise"
+  ],
+  "Music Learning": [
+    "music theory",
+    "guitar",
+    "piano",
+    "singing",
+    "music lesson"
+  ],
+  "Travel": [
+    "travel",
+    "tourism",
+    "destination",
+    "trip",
+    "vlog",
+    "vacation"
+  ],
+  "Gaming": [
+    "gaming",
+    "gameplay",
+    "esports",
+    "walkthrough",
+    "minecraft",
+    "roblox"
+  ],
+  "Turkish Learning": [
+    "turkish",
+    "türkçe",
+    "turkce"
+  ],
+  "Arabic Learning": [
+    "arabic",
+    "عربي",
+    "العربية"
+  ],
+  "Urdu Learning": [
+    "urdu",
+    "اردو"
+  ],
+  "Travel Vlogger": [
+    "backpacker",
+    "budget travel",
+    "camping",
+    "city guide",
+    "country guide",
+    "couple travel",
+    "destination",
+    "family travel",
+    "hiking",
+    "luxury travel",
+    "road trip",
+    "solo traveler",
+    "tourism",
+    "travel blogger",
+    "travel vlogger",
+    "traveler",
+    "travelling",
+    "trekking",
+    "van life"
+  ],
+  "Travel Biker Vlogger": [
+    "bike touring",
+    "biker travel",
+    "biker vlogger",
+    "motorbike touring",
+    "motorcycle travel",
+    "motorcycle vlog",
+    "motorcycle vlogger",
+    "riding vlog",
+    "road trip biker"
+  ],
+  "Food Vlogger": [
+    "baking vlog",
+    "cafe review",
+    "chef vlogger",
+    "cooking vlog",
+    "dessert vlog",
+    "food blogger",
+    "food review",
+    "food travel",
+    "food vlogger",
+    "recipe vlog",
+    "restaurant guide",
+    "restaurant review",
+    "street food"
+  ],
+  "Family Vlogger": [
+    "family channel",
+    "family vlog",
+    "family vlogger",
+    "fatherhood vlog",
+    "motherhood vlog",
+    "parenting vlog"
+  ],
+  "Couple Vlogger": [
+    "couple vlog",
+    "couple vlogger",
+    "couples travel",
+    "husband wife vlog",
+    "relationship vlog"
+  ],
+  "Shopping Vlogger": [
+    "deal hunter",
+    "haul",
+    "product review",
+    "shopping guide",
+    "shopping haul",
+    "shopping vlog",
+    "shopping vlogger",
+    "unboxing"
+  ],
+  "Professor / Teacher": [
+    "classroom",
+    "course",
+    "educator",
+    "lecture",
+    "lecturer",
+    "professor",
+    "teacher",
+    "teaching",
+    "university professor"
+  ],
+  "National TV / Media": [
+    "broadcasting",
+    "media channel",
+    "national tv",
+    "news channel",
+    "news network",
+    "newspaper",
+    "public broadcasting",
+    "radio station",
+    "television station",
+    "tv station"
+  ],
+  "Drama / TV Series / Films": [
+    "cinema",
+    "drama",
+    "film",
+    "film studio",
+    "films",
+    "movie",
+    "movies",
+    "production company",
+    "television series",
+    "tv series",
+    "web series"
+  ],
+  "Chef Vlogger": [
+    "chef",
+    "chef vlog",
+    "cookery",
+    "cooking channel",
+    "culinary",
+    "home chef",
+    "professional chef",
+    "restaurant chef"
+  ],
+  "Lifestyle Vlogger": [
+    "daily vlog",
+    "daily vlogger",
+    "digital nomad",
+    "home vlog",
+    "lifestyle vlog",
+    "lifestyle vlogger",
+    "personal vlog",
+    "student vlogger"
+  ],
+  "Technology Reviewer": [
+    "gadget review",
+    "hardware review",
+    "laptop review",
+    "phone review",
+    "software review",
+    "tech review",
+    "tech reviewer",
+    "technology reviewer"
+  ]
+}

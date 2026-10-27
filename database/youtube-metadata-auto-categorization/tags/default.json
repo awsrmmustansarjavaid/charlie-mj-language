@@ -1,0 +1,148 @@
+{
+  "English Learning": [
+    "english-learning",
+    "language-learning",
+    "ielts",
+    "toefl",
+    "esl"
+  ],
+  "Programming": [
+    "code",
+    "coding",
+    "developer",
+    "software",
+    "web-development"
+  ],
+  "AI & Machine Learning": [
+    "ai",
+    "machine-learning",
+    "deep-learning",
+    "llm"
+  ],
+  "Travel": [
+    "travel-vlog",
+    "tourism",
+    "destination",
+    "vlog"
+  ],
+  "Gaming": [
+    "gaming",
+    "gameplay",
+    "esports"
+  ],
+  "Travel Vlogger": [
+    "backpacker",
+    "destination",
+    "road-trip",
+    "tourism",
+    "travel-blogger",
+    "travel-vlogger",
+    "traveler",
+    "travelling"
+  ],
+  "Travel Biker Vlogger": [
+    "bike-touring",
+    "biker-travel",
+    "biker-vlogger",
+    "motorbike-touring",
+    "motorcycle-travel",
+    "motorcycle-vlog",
+    "motorcycle-vlogger",
+    "riding-vlog"
+  ],
+  "Food Vlogger": [
+    "chef-vlogger",
+    "cooking-vlog",
+    "food-blogger",
+    "food-review",
+    "food-travel",
+    "food-vlogger",
+    "restaurant-review",
+    "street-food"
+  ],
+  "Family Vlogger": [
+    "family-channel",
+    "family-vlog",
+    "family-vlogger",
+    "fatherhood-vlog",
+    "motherhood-vlog",
+    "parenting-vlog"
+  ],
+  "Couple Vlogger": [
+    "couple-vlog",
+    "couple-vlogger",
+    "couples-travel",
+    "husband-wife-vlog",
+    "relationship-vlog"
+  ],
+  "Shopping Vlogger": [
+    "deal-hunter",
+    "haul",
+    "product-review",
+    "shopping-guide",
+    "shopping-haul",
+    "shopping-vlog",
+    "shopping-vlogger",
+    "unboxing"
+  ],
+  "Professor / Teacher": [
+    "classroom",
+    "educator",
+    "lecture",
+    "lecturer",
+    "professor",
+    "teacher",
+    "teaching",
+    "university-professor"
+  ],
+  "National TV / Media": [
+    "broadcasting",
+    "national-tv",
+    "news-channel",
+    "news-network",
+    "public-broadcasting",
+    "radio-station",
+    "television-station",
+    "tv-station"
+  ],
+  "Drama / TV Series / Films": [
+    "cinema",
+    "drama",
+    "film",
+    "films",
+    "movie",
+    "movies",
+    "television-series",
+    "tv-series"
+  ],
+  "Chef Vlogger": [
+    "chef",
+    "chef-vlog",
+    "cookery",
+    "cooking-channel",
+    "culinary",
+    "home-chef",
+    "professional-chef",
+    "restaurant-chef"
+  ],
+  "Lifestyle Vlogger": [
+    "daily-vlog",
+    "daily-vlogger",
+    "digital-nomad",
+    "home-vlog",
+    "lifestyle-vlog",
+    "lifestyle-vlogger",
+    "personal-vlog",
+    "student-vlogger"
+  ],
+  "Technology Reviewer": [
+    "gadget-review",
+    "hardware-review",
+    "laptop-review",
+    "phone-review",
+    "software-review",
+    "tech-review",
+    "tech-reviewer",
+    "technology-reviewer"
+  ]
+}

@@ -15,8 +15,14 @@
       bubble.textContent = '🌍 Translate with Charlie MJ';
       document.body.appendChild(bubble);
       bubble.onclick = async () => {
-        const r = await chrome.runtime.sendMessage({ type: 'CMJ_TRANSLATE', text, source: 'auto', target: 'en', provider: 'mymemory' });
-        showResult(r?.translation || 'Translation unavailable')
+        const r = await chrome.runtime.sendMessage({
+          type: 'CMJ_TRANSLATE',
+          text,
+          source: 'auto',
+          target: 'en',
+          provider: 'mymemory',
+        });
+        showResult(r?.translation || 'Translation unavailable');
       };
     }
     const rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
@@ -26,7 +32,7 @@
   });
   document.addEventListener('scroll', hide, { passive: true });
   function hide() {
-    if (bubble) bubble.hidden = true
+    if (bubble) bubble.hidden = true;
   }
   function showResult(text) {
     if (!bubble) return;
@@ -34,7 +40,7 @@
     bubble.classList.add('result');
     setTimeout(() => {
       bubble.textContent = '🌍 Translate with Charlie MJ';
-      bubble.classList.remove('result')
-    }, 5000)
+      bubble.classList.remove('result');
+    }, 5000);
   }
 })();

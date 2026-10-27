@@ -1,212 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1" name="viewport"/>
-  <title>
-   About Charlie MJ Language — User Guide
-  </title>
-  <link href="about.css" rel="stylesheet"/>
- </head>
- <body>
-  <header>
-   <div>
-    <div class="eyebrow">
-     CHARLIE MJ LANGUAGE
-    </div>
-    <h1>
-     About &amp; User Guide
-    </h1>
-    <p>
-     Lightweight, local-first YouTube language learning. This page explains how the extension works and what to do when something needs attention.
-    </p>
-   </div>
-   <a href="javascript:history.back()">
-    ← Back
-   </a>
-  </header>
-  <main>
-   <section>
-    <h2>
-     Getting Started
-    </h2>
-    <p>
-     Open a YouTube video, use the Charlie MJ toolbar, and choose Transcript, Dual Transcript, Word Learning, Sentence Learning, Focus Mode, or the other tools already available in your extension.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Dual Transcript — Original + Translation
-    </h2>
-    <p>
-     Dual Transcript uses YouTube's own caption-track information. It displays the original transcript together with the selected YouTube translation when that translation is available. The extension does not replace your existing transcript engine.
-    </p>
-    <p>
-     If YouTube temporarily rejects a caption request, the translated column may be unavailable until YouTube accepts the request again.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Reset YouTube Network / Caption Connection
-    </h2>
-    <ol>
-     <li>
-      Open the extension popup.
-     </li>
-     <li>
-      Click
-      <strong>
-       ↻ Reset YouTube Network
-      </strong>
-      .
-     </li>
-     <li>
-      The extension cancels its pending caption request, clears only the temporary Dual Transcript cache/request state, waits briefly, and performs one controlled retry.
-     </li>
-     <li>
-      After the retry, it becomes inactive again; it does not continuously retry.
-     </li>
-    </ol>
-    <p>
-     <strong>
-      Important:
-     </strong>
-     HTTP 429 is returned by YouTube's
-     <code>
-      /api/timedtext
-     </code>
-     server endpoint. The extension cannot remove a server-side rate limit. Reset only cleans the extension's local request state and gives YouTube one fresh attempt.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Lightweight Sleep Mode
-    </h2>
-    <p>
-     Use
-     <strong>
-      💤 Lightweight Sleep
-     </strong>
-     from the popup when you are not using Charlie MJ. It pauses optional Charlie MJ page activity, stops Dual Transcript activity, clears its temporary in-memory translation state, and prevents scheduled background refresh work while sleep is enabled.
-    </p>
-    <p>
-     It does not delete your library, settings, vocabulary, transcripts, bookmarks, favorites, or other saved data.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Translation Providers
-    </h2>
-    <p>
-     Charlie MJ keeps its existing provider system. Dual YouTube is an additional provider and does not replace YouTube Captions, Google, Microsoft, DeepL, MyMemory, LibreTranslate, Argos, or other configured providers.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Word Learning &amp; Sentence Learning
-    </h2>
-    <p>
-     When a successful sentence translation already exists, Charlie MJ can use that sentence context to resolve a word translation when the alignment is sufficiently safe. Otherwise the normal provider priority chain can continue.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Cache Management
-    </h2>
-    <p>
-     Dual Transcript has its own temporary cache. The Network Reset button clears that Dual Transcript cache so the next request starts clean. Other extension data is not deleted by Network Reset.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Troubleshooting HTTP 429
-    </h2>
-    <ol>
-     <li>
-      Check F12 → Network on the YouTube page.
-     </li>
-     <li>
-      Filter for
-      <code>
-       timedtext
-      </code>
-      .
-     </li>
-     <li>
-      Open the request and check the status code.
-     </li>
-     <li>
-      If YouTube's
-      <code>
-       www.youtube.com/api/timedtext
-      </code>
-      request shows
-      <strong>
-       429 Too Many Requests
-      </strong>
-      , YouTube is rejecting that caption request.
-     </li>
-     <li>
-      Try the extension's Network Reset once. Do not repeatedly press it.
-     </li>
-     <li>
-      If 429 continues, wait and test the same video in a fresh browser profile/Incognito session.
-     </li>
-    </ol>
-   </section>
-   <section>
-    <h2>
-     Settings &amp; Library
-    </h2>
-    <p>
-     Your existing Settings, My Learning Library, Collections, Favorites, Data Sync, transcript tools, vocabulary, sentence learning, bookmarks, notes, captures, and other systems remain separate from the two lightweight controls described here.
-    </p>
-   </section>
-   <section>
-    <h2>
-     Privacy &amp; Local-First Design
-    </h2>
-    <p>
-     Learning records are stored locally by the extension unless an existing feature/provider explicitly uses an external service. Network Reset does not upload or delete your learning library.
-    </p>
-   </section>
-   <section>
-    <h2>
-     FAQ
-    </h2>
-    <details>
-     <summary>
-      Does Network Reset remove YouTube's 429?
-     </summary>
-     <p>
-      No. It cannot control YouTube's server-side rate limiter. It only resets the extension's local request state and performs one controlled retry.
-     </p>
-    </details>
-    <details>
-     <summary>
-      Will Lightweight Sleep delete anything?
-     </summary>
-     <p>
-      No. It only pauses optional activity.
-     </p>
-    </details>
-    <details>
-     <summary>
-      Does Dual Transcript still show both columns?
-     </summary>
-     <p>
-      Yes. When YouTube provides the requested original and translated caption tracks, Dual Transcript continues to show both.
-     </p>
-    </details>
-   </section>
-   <section>
-    <h2>
-     Version
-    </h2>
-    <p>
-     Charlie MJ Language 2.0.0 — integrated YT Transcript Pro, transcript workspace, Network Reset, Lightweight Sleep, and About/User Guide functionality.
-    </p>
-   </section>
-  </main>
- </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>About Charlie MJ Language — User Guide</title>
+    <link href="about.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="eyebrow">CHARLIE MJ LANGUAGE</div>
+        <h1>About &amp; User Guide</h1>
+        <p>
+          Lightweight, local-first YouTube language learning. This page explains how the extension
+          works and what to do when something needs attention.
+        </p>
+      </div>
+      <a href="javascript:history.back()"> ← Back </a>
+    </header>
+    <main>
+      <section>
+        <h2>Getting Started</h2>
+        <p>
+          Open a YouTube video, use the Charlie MJ toolbar, and choose Transcript, Dual Transcript,
+          Word Learning, Sentence Learning, Focus Mode, or the other tools already available in your
+          extension.
+        </p>
+      </section>
+      <section>
+        <h2>Dual Transcript — Original + Translation</h2>
+        <p>
+          Dual Transcript uses YouTube's own caption-track information. It displays the original
+          transcript together with the selected YouTube translation when that translation is
+          available. The extension does not replace your existing transcript engine.
+        </p>
+        <p>
+          If YouTube temporarily rejects a caption request, the translated column may be unavailable
+          until YouTube accepts the request again.
+        </p>
+      </section>
+      <section>
+        <h2>Reset YouTube Network / Caption Connection</h2>
+        <ol>
+          <li>Open the extension popup.</li>
+          <li>
+            Click
+            <strong> ↻ Reset YouTube Network </strong>
+            .
+          </li>
+          <li>
+            The extension cancels its pending caption request, clears only the temporary Dual
+            Transcript cache/request state, waits briefly, and performs one controlled retry.
+          </li>
+          <li>After the retry, it becomes inactive again; it does not continuously retry.</li>
+        </ol>
+        <p>
+          <strong> Important: </strong>
+          HTTP 429 is returned by YouTube's
+          <code> /api/timedtext </code>
+          server endpoint. The extension cannot remove a server-side rate limit. Reset only cleans
+          the extension's local request state and gives YouTube one fresh attempt.
+        </p>
+      </section>
+      <section>
+        <h2>Lightweight Sleep Mode</h2>
+        <p>
+          Use
+          <strong> 💤 Lightweight Sleep </strong>
+          from the popup when you are not using Charlie MJ. It pauses optional Charlie MJ page
+          activity, stops Dual Transcript activity, clears its temporary in-memory translation
+          state, and prevents scheduled background refresh work while sleep is enabled.
+        </p>
+        <p>
+          It does not delete your library, settings, vocabulary, transcripts, bookmarks, favorites,
+          or other saved data.
+        </p>
+      </section>
+      <section>
+        <h2>Translation Providers</h2>
+        <p>
+          Charlie MJ keeps its existing provider system. Dual YouTube is an additional provider and
+          does not replace YouTube Captions, Google, Microsoft, DeepL, MyMemory, LibreTranslate,
+          Argos, or other configured providers.
+        </p>
+      </section>
+      <section>
+        <h2>Word Learning &amp; Sentence Learning</h2>
+        <p>
+          When a successful sentence translation already exists, Charlie MJ can use that sentence
+          context to resolve a word translation when the alignment is sufficiently safe. Otherwise
+          the normal provider priority chain can continue.
+        </p>
+      </section>
+      <section>
+        <h2>Cache Management</h2>
+        <p>
+          Dual Transcript has its own temporary cache. The Network Reset button clears that Dual
+          Transcript cache so the next request starts clean. Other extension data is not deleted by
+          Network Reset.
+        </p>
+      </section>
+      <section>
+        <h2>Troubleshooting HTTP 429</h2>
+        <ol>
+          <li>Check F12 → Network on the YouTube page.</li>
+          <li>
+            Filter for
+            <code> timedtext </code>
+            .
+          </li>
+          <li>Open the request and check the status code.</li>
+          <li>
+            If YouTube's
+            <code> www.youtube.com/api/timedtext </code>
+            request shows
+            <strong> 429 Too Many Requests </strong>
+            , YouTube is rejecting that caption request.
+          </li>
+          <li>Try the extension's Network Reset once. Do not repeatedly press it.</li>
+          <li>
+            If 429 continues, wait and test the same video in a fresh browser profile/Incognito
+            session.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>Settings &amp; Library</h2>
+        <p>
+          Your existing Settings, My Learning Library, Collections, Favorites, Data Sync, transcript
+          tools, vocabulary, sentence learning, bookmarks, notes, captures, and other systems remain
+          separate from the two lightweight controls described here.
+        </p>
+      </section>
+      <section>
+        <h2>Privacy &amp; Local-First Design</h2>
+        <p>
+          Learning records are stored locally by the extension unless an existing feature/provider
+          explicitly uses an external service. Network Reset does not upload or delete your learning
+          library.
+        </p>
+      </section>
+      <section>
+        <h2>FAQ</h2>
+        <details>
+          <summary>Does Network Reset remove YouTube's 429?</summary>
+          <p>
+            No. It cannot control YouTube's server-side rate limiter. It only resets the extension's
+            local request state and performs one controlled retry.
+          </p>
+        </details>
+        <details>
+          <summary>Will Lightweight Sleep delete anything?</summary>
+          <p>No. It only pauses optional activity.</p>
+        </details>
+        <details>
+          <summary>Does Dual Transcript still show both columns?</summary>
+          <p>
+            Yes. When YouTube provides the requested original and translated caption tracks, Dual
+            Transcript continues to show both.
+          </p>
+        </details>
+      </section>
+      <section>
+        <h2>Version</h2>
+        <p>
+          Charlie MJ Language 2.0.0 — integrated YT Transcript Pro, transcript workspace, Network
+          Reset, Lightweight Sleep, and About/User Guide functionality.
+        </p>
+      </section>
+    </main>
+  </body>
 </html>

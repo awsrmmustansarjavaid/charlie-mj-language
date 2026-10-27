@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "synonyms": {
+    "travel": [
+      "traveling",
+      "travelling",
+      "traveler",
+      "traveller",
+      "tourism",
+      "tourist",
+      "voyage"
+    ],
+    "biker": [
+      "motorcycle",
+      "motorbike",
+      "motorbiker",
+      "rider",
+      "biking"
+    ],
+    "food": [
+      "foodie",
+      "cooking",
+      "chef",
+      "recipe",
+      "restaurant",
+      "street food",
+      "cuisine"
+    ],
+    "vlogger": [
+      "vlog",
+      "vlogger",
+      "daily vlog",
+      "youtube vlog"
+    ],
+    "education": [
+      "teacher",
+      "professor",
+      "lecturer",
+      "academic",
+      "tutorial",
+      "course"
+    ],
+    "television": [
+      "tv",
+      "television",
+      "broadcast",
+      "station",
+      "national tv"
+    ],
+    "film": [
+      "film",
+      "films",
+      "movie",
+      "movies",
+      "cinema",
+      "series",
+      "drama"
+    ],
+    "shopping": [
+      "shopping",
+      "haul",
+      "unboxing",
+      "product review",
+      "consumer"
+    ]
+  }
+}

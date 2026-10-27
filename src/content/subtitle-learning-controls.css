@@ -13,6 +13,6 @@
 * Existing toolbar styling remains responsible for
 * the normal appearance.
 */
-.cmj-toolbar button[data-cmj-toolbar="replay-audio"][aria-pressed="true"] {
+.cmj-toolbar button[data-cmj-toolbar='replay-audio'][aria-pressed='true'] {
   opacity: 0.8;
 }

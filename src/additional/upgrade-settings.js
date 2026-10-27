@@ -1,62 +1,270 @@
 (() => {
   'use strict';
-  const $ = id => document.getElementById(id);
-  const escHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const send = message => new Promise(resolve => chrome.runtime.sendMessage(message, r => resolve(r || { ok: false, error: chrome.runtime.lastError?.message || 'No response' })));
+  const $ = (id) => document.getElementById(id);
+  const escHtml = (value) =>
+    String(value ?? '').replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+    );
+  const send = (message, attempt = 0) =>
+    new Promise((resolve) => {
+      chrome.runtime.sendMessage(message, (r) => {
+        const lastError = chrome.runtime.lastError?.message || '';
+        if (!r && attempt === 0 && /No SW|Receiving end does not exist/i.test(lastError)) {
+          setTimeout(() => send(message, 1).then(resolve), 180);
+          return;
+        }
+        resolve(r || { ok: false, error: lastError || 'No response from the service worker' });
+      });
+    });
   const DEFAULT_INTELLIGENCE = {
-    enabled: true, autoCategory: true, suggestExisting: true, suggestNew: true,
-    minConfidence: 0.72, preferExisting: true, autoApplyHighConfidence: false,
-    askBeforeCreating: true, sources: { metadata: true, title: true, description: true, tags: true, localCategories: true, jsonKnowledge: true },
-    learnAccepted: true, learnRejected: true
+    enabled: true,
+    autoCategory: true,
+    suggestExisting: true,
+    suggestNew: true,
+    minConfidence: 0.72,
+    preferExisting: true,
+    autoApplyHighConfidence: false,
+    askBeforeCreating: true,
+    sources: {
+      metadata: true,
+      title: true,
+      description: true,
+      tags: true,
+      localCategories: true,
+      jsonKnowledge: true,
+    },
+    learnAccepted: true,
+    learnRejected: true,
   };
   const DEFAULT_PERFORMANCE = {
-    profile: 'lightweight', sleepEnabled: true, sleepTimeoutMs: 300000,
+    profile: 'lightweight',
+    sleepEnabled: true,
+    sleepTimeoutMs: 300000,
     startup: ['core', 'settings', 'lightweight-ui', 'small-indexes', 'essential'],
-    services: { youtubeSuggestions: 'on-demand', metadataRefresh: 'sleep', thumbnailRefresh: 'sleep', githubSync: 'on-demand', intelligence: 'on-demand' },
-    lazyLoading: true, smallCaches: true, backgroundTasks: false
+    services: {
+      youtubeSuggestions: 'on-demand',
+      metadataRefresh: 'sleep',
+      thumbnailRefresh: 'sleep',
+      githubSync: 'on-demand',
+      intelligence: 'on-demand',
+    },
+    lazyLoading: true,
+    smallCaches: true,
+    backgroundTasks: false,
   };
-  const DEFAULT_SYNC = { githubUrl: 'https://github.com/awsrmmustansarjavaid/charlie-mj-language', databasePath: 'database', branch: 'main', token: '', localDirectoryName: '', lastSync: null, scheduled: false, intervalHours: 24 };
+  const DEFAULT_SYNC = {
+    githubUrl: 'https://github.com/awsrmmustansarjavaid/charlie-mj-language',
+    databasePath: 'database',
+    branch: 'main',
+    token: '',
+    localDirectoryName: '',
+    lastSync: null,
+    scheduled: false,
+    intervalHours: 24,
+    duplicateProtection: true,
+  };
   function section(category, title, html) {
     const el = document.createElement('section');
     el.dataset.settingsCategory = category;
     el.className = 'additional-settings-section';
     el.innerHTML = `<h2>${title}</h2>${html}`;
-    return el
+    return el;
   }
   function field(id, label, value, type = 'text', extra = '') {
-    return `<label>${label}<input id="${id}" type="${type}" value="${String(value ?? '').replace(/"/g, '&quot;')}" ${extra}></label>`
+    return `<label>${label}<input id="${id}" type="${type}" value="${String(value ?? '').replace(/"/g, '&quot;')}" ${extra}></label>`;
   }
   function check(id, label, checked) {
-    return `<label class="check"><input id="${id}" type="checkbox" ${checked ? 'checked' : ''}> ${label}</label>`
+    return `<label class="check"><input id="${id}" type="checkbox" ${checked ? 'checked' : ''}> ${label}</label>`;
   }
   function select(id, label, options, value) {
-    return `<label>${label}<select id="${id}">${options.map(([v, n]) => `<option value="${v}" ${v === value ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`
+    return `<label>${label}<select id="${id}">${options.map(([v, n]) => `<option value="${v}" ${v === value ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
   }
   let building = false;
   async function build() {
     const root = document.getElementById('cmjUpgradeSettingsRoot');
     if (root || building) return;
     building = true;
-    const [intelStore, perfStore, syncStore, notifStore] = await Promise.all([chrome.storage.local.get('cmjExtensionIntelligence'), chrome.storage.local.get('cmjPerformance'), chrome.storage.local.get('cmjDataSync'), chrome.storage.local.get('cmjNotifications')]);
-    const intel = { ...DEFAULT_INTELLIGENCE, ...(intelStore.cmjExtensionIntelligence || {}), sources: { ...DEFAULT_INTELLIGENCE.sources, ...(intelStore.cmjExtensionIntelligence?.sources || {}) } };
-    const perf = { ...DEFAULT_PERFORMANCE, ...(perfStore.cmjPerformance || {}), services: { ...DEFAULT_PERFORMANCE.services, ...(perfStore.cmjPerformance?.services || {}) } };
+    const [intelStore, perfStore, syncStore, notifStore] = await Promise.all([
+      chrome.storage.local.get('cmjExtensionIntelligence'),
+      chrome.storage.local.get('cmjPerformance'),
+      chrome.storage.local.get('cmjDataSync'),
+      chrome.storage.local.get('cmjNotifications'),
+    ]);
+    const intel = {
+      ...DEFAULT_INTELLIGENCE,
+      ...(intelStore.cmjExtensionIntelligence || {}),
+      sources: {
+        ...DEFAULT_INTELLIGENCE.sources,
+        ...(intelStore.cmjExtensionIntelligence?.sources || {}),
+      },
+    };
+    const perf = {
+      ...DEFAULT_PERFORMANCE,
+      ...(perfStore.cmjPerformance || {}),
+      services: { ...DEFAULT_PERFORMANCE.services, ...(perfStore.cmjPerformance?.services || {}) },
+    };
     const sync = { ...DEFAULT_SYNC, ...(syncStore.cmjDataSync || {}) };
     if (!String(sync.githubUrl || '').trim()) sync.githubUrl = DEFAULT_SYNC.githubUrl;
-    const notif = { enabled: true, position: 'bottom-right', durationMs: 2500, level: 'all', showSuccess: true, showInfo: true, showWarning: true, showError: true, showActions: true, ...(notifStore.cmjNotifications || {}) };
+    const notif = {
+      enabled: true,
+      position: 'bottom-right',
+      durationMs: 2500,
+      level: 'all',
+      showSuccess: true,
+      showInfo: true,
+      showWarning: true,
+      showError: true,
+      showActions: true,
+      ...(notifStore.cmjNotifications || {}),
+    };
     const host = document.createElement('div');
     host.id = 'cmjUpgradeSettingsRoot';
     host.append(
-      section('UI Components', '▣ Additional Learning Window — Window behavior', `<div class="component-card"><h3>Matches Transcript window controls</h3><div class="two-col">${check('uWinRemember', 'Remember size and position', true)}${check('uWinResizable', 'Resizable width and height', true)}${check('uWinMin', 'Minimize button', true)}${check('uWinMax', 'Maximize button', true)}${check('uWinPin', 'Pin control', false)}${check('uWinClose', 'Close button', true)}</div><p class="note">Uses the same interaction model as Transcript windows. Browser-level always-on-top behavior is limited by Chrome; the control pins the extension panel within its supported UI surface.</p></div>`),
-      section('Extension Intelligence', '🧠 Extension Intelligence', `<div class="component-card"><h3>Category Intelligence</h3><div class="two-col">${check('eiEnabled', 'Enable Extension Intelligence', intel.enabled)}${check('eiAuto', 'Automatic category detection', intel.autoCategory)}${check('eiExisting', 'Suggest existing categories first', intel.suggestExisting)}${check('eiNew', 'Suggest new category when needed', intel.suggestNew)}${check('eiPrefer', 'Prefer existing categories', intel.preferExisting)}${check('eiAutoApply', 'Auto-apply high-confidence suggestions', intel.autoApplyHighConfidence)}${check('eiAskCreate', 'Ask before creating a new category', intel.askBeforeCreating)}${check('eiLearnAccepted', 'Learn from accepted suggestions', intel.learnAccepted)}${check('eiLearnRejected', 'Learn from rejected suggestions', intel.learnRejected)}</div><div class="two-col">${field('eiConfidence', 'Minimum confidence', intel.minConfidence, 'number', 'min="0.1" max="1" step="0.01"')}${field('eiSources', 'Enabled sources', 'metadata,title,description,tags,localCategories,jsonKnowledge')}</div><p class="note">When detection would otherwise return Uncategorized, existing local categories are scored before proposing a new category. New categories are never silently created when confirmation is enabled.</p></div>`),
-      section('Data Sync', '⇄ Data Sync', `<div class="component-card data-sync-card"><div class="sync-section-head"><div><h3>Local database ↔ GitHub</h3><p class="note">One clear Data Sync workspace. Use a user-selected local folder or the GitHub Contents API; the extension cannot write arbitrary PC paths without permission.</p></div><span class="sync-badge">LOCAL + GITHUB</span></div><div class="sync-overview"><div><b id="syncLocalTotal">—</b><span>Local total</span></div><div><b id="syncGithubTotal">—</b><span>GitHub total</span></div><div><b id="syncLocalChannels">—</b><span>Local channels</span></div><div><b id="syncGithubChannels">—</b><span>GitHub channels</span></div><div><b id="syncLocalPlaylists">—</b><span>Local playlists</span></div><div><b id="syncGithubPlaylists">—</b><span>GitHub playlists</span></div><div><b id="syncLocalCategories">—</b><span>Local categories</span></div><div><b id="syncGithubCategories">—</b><span>GitHub categories</span></div></div><div class="two-col">${field('syncGithubUrl', 'GitHub repository URL', sync.githubUrl, 'url', 'placeholder="https://github.com/owner/repo"')}${field('syncDatabasePath', 'Database directory in repository', sync.databasePath)}${field('syncBranch', 'Branch', sync.branch)}${field('syncToken', 'GitHub token (stored locally)', sync.token, 'password')}</div><div class="sync-actions"><button type="button" id="syncChooseFolder" class="secondary">Choose Local Folder</button><button type="button" id="syncReadLocal" class="secondary">Validate Local</button><button type="button" id="syncHealth" class="secondary">Health Check</button><button type="button" id="syncCompare" class="primary">Compare Local ↔ GitHub</button><button type="button" id="syncPull" class="secondary">Pull from GitHub</button><button type="button" id="syncBackup" class="primary">Prepare ZIP Backup</button></div><div id="syncCompareResult"></div><dialog id="syncCompareDialog" class="sync-compare-dialog"><div class="sync-modal-shell"><div class="sync-modal-header"><div><span class="sync-modal-eyebrow">ⓘ INFORMATIONAL RESULT</span><h3>Local ↔ GitHub Comparison</h3></div><button type="button" class="sync-modal-close" id="syncCompareClose" aria-label="Close">×</button></div><div id="syncCompareModalBody" class="sync-modal-body"></div><div class="sync-modal-footer"><button type="button" class="primary" id="syncCompareOkay">Okay</button></div></div></dialog><div id="syncStatus" class="sync-status-line"></div><div class="two-col">${check('syncScheduled', 'Scheduled sync', sync.scheduled)}${field('syncInterval', 'Sync interval (hours)', sync.intervalHours, 'number', 'min="1" max="720"')}</div><p class="note">Database files are split by resource type and category. Indexes remain small for fast startup. “Prepare ZIP Backup” creates one ZIP containing the database JSON structure.</p></div>`),
-      section('Notifications', '🔔 Notifications', `<div class="component-card notification-settings-card"><h3>Popup notifications</h3><p class="note">All Charlie MJ status popups can use the same bottom-right notification style. These settings are local to this browser.</p><div class="two-col">${check('notifEnabled', 'Enable popup notifications', notif.enabled)}${select('notifPosition', 'Popup position', [['bottom-right', 'Bottom right'], ['bottom-left', 'Bottom left'], ['top-right', 'Top right'], ['top-left', 'Top left'], ['subtitle-center', 'Center below subtitles']], notif.position)}${select('notifDuration', 'Display duration', [['1500', '1.5 seconds'], ['2500', '2.5 seconds'], ['3500', '3.5 seconds'], ['5000', '5 seconds'], ['8000', '8 seconds']], String(notif.durationMs))}${select('notifLevel', 'Notification level', [['all', 'All notifications'], ['success-error', 'Success + errors'], ['errors', 'Errors only']], notif.level)}</div>${check('notifSuccess', 'Show success notifications', notif.showSuccess)}${check('notifInfo', 'Show information notifications', notif.showInfo)}${check('notifWarning', 'Show warning notifications', notif.showWarning)}${check('notifError', 'Show error notifications', notif.showError)}${check('notifActions', 'Show action/download confirmations', notif.showActions)}<div class="row"><button type="button" class="secondary" id="notifTest">Test notification</button><span id="notifTestStatus" class="note"></span></div></div>`),
-      section('Performance', '⚡ Performance', `<div class="component-card"><h3>Lightweight service lifecycle</h3><div class="two-col">${select('perfProfile', 'Startup profile', [['lightweight', 'Lightweight — Recommended'], ['balanced', 'Balanced'], ['performance', 'Performance']], perf.profile)}${select('perfSleep', 'Sleep timeout', [['0', 'Never'], ['60000', '1 minute'], ['300000', '5 minutes'], ['600000', '10 minutes'], ['900000', '15 minutes'], ['1800000', '30 minutes'], ['3600000', '1 hour']], String(perf.sleepTimeoutMs))}</div>${check('perfSleepEnabled', 'Enable service sleep mode', perf.sleepEnabled)}${check('perfLazy', 'Lazy-load feature panels, cards and thumbnails', perf.lazyLoading)}${check('perfCaches', 'Use small expiring caches', perf.smallCaches)}${check('perfBackground', 'Allow optional background tasks', perf.backgroundTasks)}<h3>Service control</h3><div class="two-col">${select('svcSuggest', 'YouTube Suggestions', [['startup', 'Startup'], ['on-demand', 'On Demand'], ['sleep', 'Sleep']], perf.services.youtubeSuggestions)}${select('svcMeta', 'Metadata Refresh', [['startup', 'Startup'], ['on-demand', 'On Demand'], ['sleep', 'Sleep']], perf.services.metadataRefresh)}${select('svcThumb', 'Thumbnail Refresh', [['startup', 'Startup'], ['on-demand', 'On Demand'], ['sleep', 'Sleep']], perf.services.thumbnailRefresh)}${select('svcGithub', 'GitHub Sync', [['startup', 'Startup'], ['on-demand', 'On Demand'], ['sleep', 'Sleep']], perf.services.githubSync)}${select('svcIntel', 'Background Intelligence', [['startup', 'Startup'], ['on-demand', 'On Demand'], ['sleep', 'Sleep']], perf.services.intelligence)}</div><p class="note"><strong>Startup loads only:</strong> Core, Settings, lightweight UI, small indexes and existing essential functionality. Expensive services are event-driven and may transition IDLE → ACTIVE → INACTIVE → SLEEPING → WAKE.</p></div>`)
+      section(
+        'UI Components',
+        '▣ Additional Learning Window — Window behavior',
+        `<div class="component-card"><h3>Matches Transcript window controls</h3><div class="two-col">${check('uWinRemember', 'Remember size and position', true)}${check('uWinResizable', 'Resizable width and height', true)}${check('uWinMin', 'Minimize button', true)}${check('uWinMax', 'Maximize button', true)}${check('uWinPin', 'Pin control', false)}${check('uWinClose', 'Close button', true)}</div><p class="note">Uses the same interaction model as Transcript windows. Browser-level always-on-top behavior is limited by Chrome; the control pins the extension panel within its supported UI surface.</p></div>`
+      ),
+      section(
+        'Extension Intelligence',
+        '🧠 Extension Intelligence',
+        `<div class="component-card"><h3>Category Intelligence</h3><div class="two-col">${check('eiEnabled', 'Enable Extension Intelligence', intel.enabled)}${check('eiAuto', 'Automatic category detection', intel.autoCategory)}${check('eiExisting', 'Suggest existing categories first', intel.suggestExisting)}${check('eiNew', 'Suggest new category when needed', intel.suggestNew)}${check('eiPrefer', 'Prefer existing categories', intel.preferExisting)}${check('eiAutoApply', 'Auto-apply high-confidence suggestions', intel.autoApplyHighConfidence)}${check('eiAskCreate', 'Ask before creating a new category', intel.askBeforeCreating)}${check('eiLearnAccepted', 'Learn from accepted suggestions', intel.learnAccepted)}${check('eiLearnRejected', 'Learn from rejected suggestions', intel.learnRejected)}</div><div class="two-col">${field('eiConfidence', 'Minimum confidence', intel.minConfidence, 'number', 'min="0.1" max="1" step="0.01"')}${field('eiSources', 'Enabled sources', 'metadata,title,description,tags,localCategories,jsonKnowledge')}</div><p class="note">When detection would otherwise return Uncategorized, existing local categories are scored before proposing a new category. New categories are never silently created when confirmation is enabled.</p></div>`
+      ),
+      section(
+        'Data Sync',
+        '⇄ Data Sync',
+        `<div class="component-card data-sync-card"><div class="sync-section-head"><div><h3>Local database ↔ GitHub</h3><p class="note">One clear Data Sync workspace. Use a user-selected local folder or the GitHub Contents API; the extension cannot write arbitrary PC paths without permission.</p></div><span class="sync-badge">LOCAL + GITHUB</span></div><div class="sync-overview"><div><b id="syncLocalTotal">—</b><span>Local total</span></div><div><b id="syncGithubTotal">—</b><span>GitHub total</span></div><div><b id="syncLocalChannels">—</b><span>Local channels</span></div><div><b id="syncGithubChannels">—</b><span>GitHub channels</span></div><div><b id="syncLocalPlaylists">—</b><span>Local playlists</span></div><div><b id="syncGithubPlaylists">—</b><span>GitHub playlists</span></div><div><b id="syncLocalCategories">—</b><span>Local categories</span></div><div><b id="syncGithubCategories">—</b><span>GitHub categories</span></div></div><div class="two-col">${field('syncGithubUrl', 'GitHub repository URL', sync.githubUrl, 'url', 'placeholder="https://github.com/owner/repo"')}${field('syncDatabasePath', 'Database directory in repository', sync.databasePath)}${field('syncBranch', 'Branch', sync.branch)}${field('syncToken', 'GitHub token (stored locally)', sync.token, 'password')}</div><div class="sync-actions"><button type="button" id="syncChooseFolder" class="secondary">Choose Local Folder</button><button type="button" id="syncReadLocal" class="secondary">Validate Local</button><button type="button" id="syncHealth" class="secondary">Health Check</button><button type="button" id="syncCompare" class="primary">Compare Local ↔ GitHub</button><button type="button" id="syncPull" class="secondary">Pull from GitHub</button><button type="button" id="syncBackup" class="primary">Prepare ZIP Backup</button></div><div id="syncCompareResult"></div><dialog id="syncCompareDialog" class="sync-compare-dialog"><div class="sync-modal-shell"><div class="sync-modal-header"><div><span class="sync-modal-eyebrow">ⓘ INFORMATIONAL RESULT</span><h3>Local ↔ GitHub Comparison</h3></div><button type="button" class="sync-modal-close" id="syncCompareClose" aria-label="Close">×</button></div><div id="syncCompareModalBody" class="sync-modal-body"></div><div class="sync-modal-footer"><button type="button" class="primary" id="syncCompareOkay">Okay</button></div></div></dialog><div id="syncStatus" class="sync-status-line"></div><div class="two-col">${check('syncScheduled', 'Scheduled sync', sync.scheduled)}${check('syncDuplicateProtection', 'Duplicate protection', sync.duplicateProtection !== false)}${field('syncInterval', 'Sync interval (hours)', sync.intervalHours, 'number', 'min="1" max="720"')}</div><div class="component-card">
+  <h3>🧠 YouTube Metadata Auto-Categorization</h3>
+  <p class="note">Manage the lightweight local keyword, tag, label and rule database without AI.</p>
+  <div class="sync-actions">
+    <button type="button" class="secondary" id="metadataRulesExport">Export Rules Bundle</button>
+    <button type="button" class="secondary" id="metadataRulesImport">Import Rules Bundle</button>
+    <button type="button" class="primary" id="metadataRulesDownload">Download Complete Rules JSON</button>
+    <button type="button" class="secondary" id="metadataRulesZip">Download Directory ZIP</button>
+    <button type="button" class="secondary" id="metadataRulesRestore">Restore Default Rules</button>
+    <button type="button" class="primary" id="metadataRulesCompare">Compare with GitHub</button>
+    <input id="metadataRulesFile" type="file" accept=".json" hidden />
+  </div>
+  <div id="metadataRulesStatus" class="sync-status-line"></div>
+</div>
+<p class="note">Database files are split by resource type and category. Indexes remain small for fast startup. “Prepare ZIP Backup” creates one ZIP containing the database JSON structure.</p></div>`
+      ),
+      section(
+        'Notifications',
+        '🔔 Notifications',
+        `<div class="component-card notification-settings-card"><h3>Popup notifications</h3><p class="note">All Charlie MJ status popups can use the same bottom-right notification style. These settings are local to this browser.</p><div class="two-col">${check('notifEnabled', 'Enable popup notifications', notif.enabled)}${select(
+          'notifPosition',
+          'Popup position',
+          [
+            ['bottom-right', 'Bottom right'],
+            ['bottom-left', 'Bottom left'],
+            ['top-right', 'Top right'],
+            ['top-left', 'Top left'],
+            ['subtitle-center', 'Center below subtitles'],
+          ],
+          notif.position
+        )}${select(
+          'notifDuration',
+          'Display duration',
+          [
+            ['1500', '1.5 seconds'],
+            ['2500', '2.5 seconds'],
+            ['3500', '3.5 seconds'],
+            ['5000', '5 seconds'],
+            ['8000', '8 seconds'],
+          ],
+          String(notif.durationMs)
+        )}${select(
+          'notifLevel',
+          'Notification level',
+          [
+            ['all', 'All notifications'],
+            ['success-error', 'Success + errors'],
+            ['errors', 'Errors only'],
+          ],
+          notif.level
+        )}</div>${check('notifSuccess', 'Show success notifications', notif.showSuccess)}${check('notifInfo', 'Show information notifications', notif.showInfo)}${check('notifWarning', 'Show warning notifications', notif.showWarning)}${check('notifError', 'Show error notifications', notif.showError)}${check('notifActions', 'Show action/download confirmations', notif.showActions)}<div class="row"><button type="button" class="secondary" id="notifTest">Test notification</button><span id="notifTestStatus" class="note"></span></div></div>`
+      ),
+      section(
+        'Performance',
+        '⚡ Performance',
+        `<div class="component-card"><h3>Lightweight service lifecycle</h3><div class="two-col">${select(
+          'perfProfile',
+          'Startup profile',
+          [
+            ['lightweight', 'Lightweight — Recommended'],
+            ['balanced', 'Balanced'],
+            ['performance', 'Performance'],
+          ],
+          perf.profile
+        )}${select(
+          'perfSleep',
+          'Sleep timeout',
+          [
+            ['0', 'Never'],
+            ['60000', '1 minute'],
+            ['300000', '5 minutes'],
+            ['600000', '10 minutes'],
+            ['900000', '15 minutes'],
+            ['1800000', '30 minutes'],
+            ['3600000', '1 hour'],
+          ],
+          String(perf.sleepTimeoutMs)
+        )}</div>${check('perfSleepEnabled', 'Enable service sleep mode', perf.sleepEnabled)}${check('perfLazy', 'Lazy-load feature panels, cards and thumbnails', perf.lazyLoading)}${check('perfCaches', 'Use small expiring caches', perf.smallCaches)}${check('perfBackground', 'Allow optional background tasks', perf.backgroundTasks)}<h3>Service control</h3><div class="two-col">${select(
+          'svcSuggest',
+          'YouTube Suggestions',
+          [
+            ['startup', 'Startup'],
+            ['on-demand', 'On Demand'],
+            ['sleep', 'Sleep'],
+          ],
+          perf.services.youtubeSuggestions
+        )}${select(
+          'svcMeta',
+          'Metadata Refresh',
+          [
+            ['startup', 'Startup'],
+            ['on-demand', 'On Demand'],
+            ['sleep', 'Sleep'],
+          ],
+          perf.services.metadataRefresh
+        )}${select(
+          'svcThumb',
+          'Thumbnail Refresh',
+          [
+            ['startup', 'Startup'],
+            ['on-demand', 'On Demand'],
+            ['sleep', 'Sleep'],
+          ],
+          perf.services.thumbnailRefresh
+        )}${select(
+          'svcGithub',
+          'GitHub Sync',
+          [
+            ['startup', 'Startup'],
+            ['on-demand', 'On Demand'],
+            ['sleep', 'Sleep'],
+          ],
+          perf.services.githubSync
+        )}${select(
+          'svcIntel',
+          'Background Intelligence',
+          [
+            ['startup', 'Startup'],
+            ['on-demand', 'On Demand'],
+            ['sleep', 'Sleep'],
+          ],
+          perf.services.intelligence
+        )}</div><p class="note"><strong>Startup loads only:</strong> Core, Settings, lightweight UI, small indexes and existing essential functionality. Expensive services are event-driven and may transition IDLE → ACTIVE → INACTIVE → SLEEPING → WAKE.</p></div>`
+      )
     );
     const main = document.querySelector('main');
     main.appendChild(host);
     wireIntel(intel);
     wirePerformance(perf);
     wireSync(sync);
+    wireMetadataRules();
     wireCompareDialog();
     wireNotifications(notif);
     wireAdditionalWindow();
@@ -65,27 +273,104 @@
   }
   function wireIntel(current) {
     const save = async () => {
-      const next = { enabled: $('eiEnabled').checked, autoCategory: $('eiAuto').checked, suggestExisting: $('eiExisting').checked, suggestNew: $('eiNew').checked, minConfidence: Number($('eiConfidence').value) || .72, preferExisting: $('eiPrefer').checked, autoApplyHighConfidence: $('eiAutoApply').checked, askBeforeCreating: $('eiAskCreate').checked, sources: { metadata: true, title: true, description: true, tags: true, localCategories: true, jsonKnowledge: true }, learnAccepted: $('eiLearnAccepted').checked, learnRejected: $('eiLearnRejected').checked };
+      const next = {
+        enabled: $('eiEnabled').checked,
+        autoCategory: $('eiAuto').checked,
+        suggestExisting: $('eiExisting').checked,
+        suggestNew: $('eiNew').checked,
+        minConfidence: Number($('eiConfidence').value) || 0.72,
+        preferExisting: $('eiPrefer').checked,
+        autoApplyHighConfidence: $('eiAutoApply').checked,
+        askBeforeCreating: $('eiAskCreate').checked,
+        sources: {
+          metadata: true,
+          title: true,
+          description: true,
+          tags: true,
+          localCategories: true,
+          jsonKnowledge: true,
+        },
+        learnAccepted: $('eiLearnAccepted').checked,
+        learnRejected: $('eiLearnRejected').checked,
+      };
       await chrome.storage.local.set({ cmjExtensionIntelligence: next });
       toastSettings('Extension Intelligence saved.');
     };
-    ['eiEnabled', 'eiAuto', 'eiExisting', 'eiNew', 'eiConfidence', 'eiPrefer', 'eiAutoApply', 'eiAskCreate', 'eiLearnAccepted', 'eiLearnRejected'].forEach(id => $(id)?.addEventListener('change', save));
+    [
+      'eiEnabled',
+      'eiAuto',
+      'eiExisting',
+      'eiNew',
+      'eiConfidence',
+      'eiPrefer',
+      'eiAutoApply',
+      'eiAskCreate',
+      'eiLearnAccepted',
+      'eiLearnRejected',
+    ].forEach((id) => $(id)?.addEventListener('change', save));
   }
   function wirePerformance(current) {
     const save = async () => {
-      const next = { profile: $('perfProfile').value, sleepEnabled: $('perfSleepEnabled').checked, sleepTimeoutMs: Number($('perfSleep').value) || 0, lazyLoading: $('perfLazy').checked, smallCaches: $('perfCaches').checked, backgroundTasks: $('perfBackground').checked, startup: ['core', 'settings', 'lightweight-ui', 'small-indexes', 'essential'], services: { youtubeSuggestions: $('svcSuggest').value, metadataRefresh: $('svcMeta').value, thumbnailRefresh: $('svcThumb').value, githubSync: $('svcGithub').value, intelligence: $('svcIntel').value } };
+      const next = {
+        profile: $('perfProfile').value,
+        sleepEnabled: $('perfSleepEnabled').checked,
+        sleepTimeoutMs: Number($('perfSleep').value) || 0,
+        lazyLoading: $('perfLazy').checked,
+        smallCaches: $('perfCaches').checked,
+        backgroundTasks: $('perfBackground').checked,
+        startup: ['core', 'settings', 'lightweight-ui', 'small-indexes', 'essential'],
+        services: {
+          youtubeSuggestions: $('svcSuggest').value,
+          metadataRefresh: $('svcMeta').value,
+          thumbnailRefresh: $('svcThumb').value,
+          githubSync: $('svcGithub').value,
+          intelligence: $('svcIntel').value,
+        },
+      };
       await chrome.storage.local.set({ cmjPerformance: next });
       toastSettings('Performance settings saved.');
     };
-    ['perfProfile', 'perfSleep', 'perfSleepEnabled', 'perfLazy', 'perfCaches', 'perfBackground', 'svcSuggest', 'svcMeta', 'svcThumb', 'svcGithub', 'svcIntel'].forEach(id => $(id)?.addEventListener('change', save));
+    [
+      'perfProfile',
+      'perfSleep',
+      'perfSleepEnabled',
+      'perfLazy',
+      'perfCaches',
+      'perfBackground',
+      'svcSuggest',
+      'svcMeta',
+      'svcThumb',
+      'svcGithub',
+      'svcIntel',
+    ].forEach((id) => $(id)?.addEventListener('change', save));
   }
   function wireNotifications(current) {
     const save = async () => {
-      const next = { enabled: $('notifEnabled').checked, position: $('notifPosition').value, durationMs: Number($('notifDuration').value) || 2500, level: $('notifLevel').value, showSuccess: $('notifSuccess').checked, showInfo: $('notifInfo').checked, showWarning: $('notifWarning').checked, showError: $('notifError').checked, showActions: $('notifActions').checked };
+      const next = {
+        enabled: $('notifEnabled').checked,
+        position: $('notifPosition').value,
+        durationMs: Number($('notifDuration').value) || 2500,
+        level: $('notifLevel').value,
+        showSuccess: $('notifSuccess').checked,
+        showInfo: $('notifInfo').checked,
+        showWarning: $('notifWarning').checked,
+        showError: $('notifError').checked,
+        showActions: $('notifActions').checked,
+      };
       await chrome.storage.local.set({ cmjNotifications: next });
       toastSettings('Notification settings saved.');
     };
-    ['notifEnabled', 'notifPosition', 'notifDuration', 'notifLevel', 'notifSuccess', 'notifInfo', 'notifWarning', 'notifError', 'notifActions'].forEach(id => $(id)?.addEventListener('change', save));
+    [
+      'notifEnabled',
+      'notifPosition',
+      'notifDuration',
+      'notifLevel',
+      'notifSuccess',
+      'notifInfo',
+      'notifWarning',
+      'notifError',
+      'notifActions',
+    ].forEach((id) => $(id)?.addEventListener('change', save));
     $('notifTest')?.addEventListener('click', async () => {
       await save();
       showNotificationToast('Charlie MJ notification test — settings are working.', 'success');
@@ -110,7 +395,15 @@
   async function wireAdditionalWindow() {
     const stored = await chrome.storage.local.get('cmjAdditionalSettings');
     const current = stored.cmjAdditionalSettings || {};
-    const win = { width: 560, height: 620, minWidth: 360, minHeight: 280, pinned: false, rememberPosition: true, ...(current.window || {}) };
+    const win = {
+      width: 560,
+      height: 620,
+      minWidth: 360,
+      minHeight: 280,
+      pinned: false,
+      rememberPosition: true,
+      ...(current.window || {}),
+    };
     $('uWinRemember').checked = win.rememberPosition !== false;
     $('uWinResizable').checked = win.resizable !== false;
     $('uWinMin').checked = win.minimize !== false;
@@ -118,11 +411,24 @@
     $('uWinPin').checked = !!win.pinned;
     $('uWinClose').checked = win.close !== false;
     const save = async () => {
-      const next = { ...current, window: { ...win, rememberPosition: $('uWinRemember').checked, resizable: $('uWinResizable').checked, minimize: $('uWinMin').checked, maximize: $('uWinMax').checked, pinned: $('uWinPin').checked, close: $('uWinClose').checked } };
+      const next = {
+        ...current,
+        window: {
+          ...win,
+          rememberPosition: $('uWinRemember').checked,
+          resizable: $('uWinResizable').checked,
+          minimize: $('uWinMin').checked,
+          maximize: $('uWinMax').checked,
+          pinned: $('uWinPin').checked,
+          close: $('uWinClose').checked,
+        },
+      };
       await chrome.storage.local.set({ cmjAdditionalSettings: next });
       toastSettings('Additional Learning Window settings saved.');
     };
-    ['uWinRemember', 'uWinResizable', 'uWinMin', 'uWinMax', 'uWinPin', 'uWinClose'].forEach(id => $(id)?.addEventListener('change', save));
+    ['uWinRemember', 'uWinResizable', 'uWinMin', 'uWinMax', 'uWinPin', 'uWinClose'].forEach((id) =>
+      $(id)?.addEventListener('change', save)
+    );
   }
   const DB_NAME = 'cmjDataSyncHandles';
   const DB_STORE = 'handles';
@@ -131,8 +437,8 @@
       const r = indexedDB.open(DB_NAME, 1);
       r.onupgradeneeded = () => r.result.createObjectStore(DB_STORE);
       r.onsuccess = () => resolve(r.result);
-      r.onerror = () => reject(r.error)
-    })
+      r.onerror = () => reject(r.error);
+    });
   }
   async function saveDirectoryHandle(handle) {
     const db = await openHandleDb();
@@ -140,9 +446,9 @@
       const tx = db.transaction(DB_STORE, 'readwrite');
       tx.objectStore(DB_STORE).put(handle, 'databaseRoot');
       tx.oncomplete = res;
-      tx.onerror = () => rej(tx.error)
+      tx.onerror = () => rej(tx.error);
     });
-    db.close()
+    db.close();
   }
   async function getDirectoryHandle() {
     const db = await openHandleDb();
@@ -150,16 +456,23 @@
       const tx = db.transaction(DB_STORE, 'readonly');
       const q = tx.objectStore(DB_STORE).get('databaseRoot');
       q.onsuccess = () => res(q.result);
-      q.onerror = () => rej(q.error)
+      q.onerror = () => rej(q.error);
     });
     db.close();
-    return h
+    return h;
   }
   async function writeLocalDatabase() {
     const handle = await getDirectoryHandle();
     if (!handle) throw new Error('Choose the local database folder first.');
-    if (handle.queryPermission && await handle.queryPermission({ mode: 'readwrite' }) !== 'granted') {
-      if (!handle.requestPermission || await handle.requestPermission({ mode: 'readwrite' }) !== 'granted') throw new Error('Local database folder permission is not granted.');
+    if (
+      handle.queryPermission &&
+      (await handle.queryPermission({ mode: 'readwrite' })) !== 'granted'
+    ) {
+      if (
+        !handle.requestPermission ||
+        (await handle.requestPermission({ mode: 'readwrite' })) !== 'granted'
+      )
+        throw new Error('Local database folder permission is not granted.');
     }
     const root = await handle.getDirectoryHandle('database', { create: true });
     const snap = await send({ type: 'CMJ_DATABASE_SNAPSHOT' });
@@ -168,19 +481,24 @@
     for (const file of files) {
       const parts = file.path.split('/');
       let dir = root;
-      for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part, { create: true });
+      for (const part of parts.slice(0, -1))
+        dir = await dir.getDirectoryHandle(part, { create: true });
       const fh = await dir.getFileHandle(parts.at(-1), { create: true });
       const w = await fh.createWritable();
       await w.write(JSON.stringify(file.data, null, 2));
       await w.close();
     }
-    return files.length
+    return files.length;
   }
   async function readLocalDatabase() {
     const handle = await getDirectoryHandle();
     if (!handle) throw new Error('Choose the local database folder first.');
-    if (handle.queryPermission && await handle.queryPermission({ mode: 'read' }) !== 'granted') {
-      if (!handle.requestPermission || await handle.requestPermission({ mode: 'read' }) !== 'granted') throw new Error('Local database folder permission is not granted.');
+    if (handle.queryPermission && (await handle.queryPermission({ mode: 'read' })) !== 'granted') {
+      if (
+        !handle.requestPermission ||
+        (await handle.requestPermission({ mode: 'read' })) !== 'granted'
+      )
+        throw new Error('Local database folder permission is not granted.');
     }
     const root = await handle.getDirectoryHandle('database');
     const files = [];
@@ -206,24 +524,304 @@
       const r = await send({ type: 'CMJ_DATABASE_SNAPSHOT' });
       if (!r.ok) return;
       const counts = { channels: 0, playlists: 0, categories: 0 };
-      for (const f of (r.files || [])) {
+      for (const f of r.files || []) {
         const n = Array.isArray(f.data) ? f.data.length : 0;
         if (f.path.startsWith('channels/')) counts.channels += n;
         else if (f.path.startsWith('playlists/')) counts.playlists += n;
         else if (f.path.startsWith('categories/')) counts.categories += n;
       }
       const total = counts.channels + counts.playlists + counts.categories;
-      for (const [id, v] of Object.entries({ syncLocalTotal: total, syncLocalChannels: counts.channels, syncLocalPlaylists: counts.playlists, syncLocalCategories: counts.categories })) $(id).textContent = String(v);
-    } catch (_) {
-    }
+      for (const [id, v] of Object.entries({
+        syncLocalTotal: total,
+        syncLocalChannels: counts.channels,
+        syncLocalPlaylists: counts.playlists,
+        syncLocalCategories: counts.categories,
+      }))
+        $(id).textContent = String(v);
+    } catch (_) {}
   }
+  async function getMetadataRulesBundle() {
+    const base = chrome.runtime.getURL('database/youtube-metadata-auto-categorization/');
+    const get = async (path, fallback) => {
+      const response = await fetch(base + path, { cache: 'no-store' });
+      return response.ok ? response.json() : fallback;
+    };
+    const stored = await chrome.storage.local.get('cmjYoutubeMetadataRules');
+    const local = stored.cmjYoutubeMetadataRules || {};
+    return {
+      version: 1,
+      directory: 'database/youtube-metadata-auto-categorization',
+      keywords: { ...(await get('keywords/default.json', {})), ...(local.keywords || {}) },
+      tags: { ...(await get('tags/default.json', {})), ...(local.tags || {}) },
+      labels: { ...(await get('labels/default.json', {})), ...(local.labels || {}) },
+      categories: await get('categories.json', { categories: [] }),
+      countries: await get('countries.json', { countries: [] }),
+      languages: await get('languages.json', { languages: [] }),
+      countryLanguageMap: await get('country-language-map.json', { countries: {} }),
+      countryKeywords: await get('country-keywords.json', { keywords: {} }),
+      rules: {
+        rules: [
+          ...((await get('rules/default.json', { rules: [] })).rules || []),
+          ...(local.rules?.rules || []),
+        ],
+      },
+    };
+  }
+
+  async function downloadMetadataRules() {
+    const bundle = await getMetadataRulesBundle();
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'youtube-metadata-auto-categorization.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    $('metadataRulesStatus').textContent = '✓ Metadata categorization rules downloaded.';
+  }
+
+  /** Files that make up the categorization directory, relative to database/youtube-metadata-auto-categorization/. */
+  const METADATA_FILES = [
+    'countries.json',
+    'languages.json',
+    'country-language-map.json',
+    'country-keywords.json',
+    'categories.json',
+    'synonyms.json',
+    'priority-rules.json',
+    'keywords/default.json',
+    'tags/default.json',
+    'labels/default.json',
+    'rules/default.json',
+  ];
+
+  /** CRC-32 for the store-only ZIP writer below. */
+  function crc32(bytes) {
+    let crc = -1;
+    for (const byte of bytes) {
+      crc ^= byte;
+      for (let k = 0; k < 8; k += 1) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+    return (crc ^ -1) >>> 0;
+  }
+
+  /** Minimal uncompressed ZIP: enough to download the whole directory without a library. */
+  function makeZip(files) {
+    const encoder = new TextEncoder();
+    const chunks = [];
+    const central = [];
+    let offset = 0;
+    const u16 = (n) => [n & 255, (n >>> 8) & 255];
+    const u32 = (n) => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+    for (const file of files) {
+      const name = encoder.encode(file.path);
+      const data = encoder.encode(file.text);
+      const crc = crc32(data);
+      const head = [
+        ...u32(0x04034b50),
+        ...u16(20),
+        ...u16(0x0800),
+        ...u16(0),
+        ...u16(0),
+        ...u16(0x21),
+        ...u32(crc),
+        ...u32(data.length),
+        ...u32(data.length),
+        ...u16(name.length),
+        ...u16(0),
+      ];
+      chunks.push(new Uint8Array(head), name, data);
+      central.push({ name, crc, size: data.length, offset });
+      offset += head.length + name.length + data.length;
+    }
+    const start = offset;
+    for (const entry of central) {
+      const record = [
+        ...u32(0x02014b50),
+        ...u16(20),
+        ...u16(20),
+        ...u16(0x0800),
+        ...u16(0),
+        ...u16(0),
+        ...u16(0x21),
+        ...u32(entry.crc),
+        ...u32(entry.size),
+        ...u32(entry.size),
+        ...u16(entry.name.length),
+        ...u16(0),
+        ...u16(0),
+        ...u16(0),
+        ...u16(0),
+        ...u32(0),
+        ...u32(entry.offset),
+      ];
+      chunks.push(new Uint8Array(record), entry.name);
+      offset += record.length + entry.name.length;
+    }
+    const end = [
+      ...u32(0x06054b50),
+      ...u16(0),
+      ...u16(0),
+      ...u16(central.length),
+      ...u16(central.length),
+      ...u32(offset - start),
+      ...u32(start),
+      ...u16(0),
+    ];
+    chunks.push(new Uint8Array(end));
+    return new Blob(chunks, { type: 'application/zip' });
+  }
+
+  async function downloadMetadataZip() {
+    const base = chrome.runtime.getURL('database/youtube-metadata-auto-categorization/');
+    const stored = await chrome.storage.local.get('cmjYoutubeMetadataRules');
+    const local = stored.cmjYoutubeMetadataRules || {};
+    const files = [];
+    for (const path of METADATA_FILES) {
+      const response = await fetch(base + path, { cache: 'no-store' });
+      if (!response.ok) continue;
+      let data = await response.json();
+      // Imported rules are merged in so the ZIP reflects what the extension really uses.
+      const group = path.split('/')[0].replace('.json', '');
+      if (path === 'rules/default.json' && local.rules?.rules)
+        data = { ...data, rules: [...(data.rules || []), ...local.rules.rules] };
+      else if (['keywords', 'tags', 'labels'].includes(group) && local[group])
+        data = { ...data, ...local[group] };
+      files.push({
+        path: `youtube-metadata-auto-categorization/${path}`,
+        text: JSON.stringify(data, null, 2),
+      });
+    }
+    const url = URL.createObjectURL(makeZip(files));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'youtube-metadata-auto-categorization.zip';
+    link.click();
+    URL.revokeObjectURL(url);
+    $('metadataRulesStatus').textContent = `✓ Directory ZIP downloaded (${files.length} files).`;
+  }
+
+  /** Drop imported overrides; the packaged default rules are used again. */
+  async function restoreMetadataDefaults() {
+    await chrome.storage.local.remove('cmjYoutubeMetadataRules');
+    await send({ type: 'CMJ_RELOAD_CATEGORY_KNOWLEDGE' });
+    $('metadataRulesStatus').textContent = '✓ Default categorization rules restored.';
+    showNotificationToast('Default metadata categorization rules restored.', 'success');
+  }
+
+  /** Item count of a rules file: rules[], categories[] or the number of keys. */
+  function countEntries(data) {
+    if (!data || typeof data !== 'object') return 0;
+    const list = data.rules || data.categories || data.countries || data.languages;
+    return Array.isArray(list) ? list.length : Object.keys(data.keywords || data).length;
+  }
+
+  /** Compare packaged/imported rules with the GitHub copy (read-only, no changes are made). */
+  async function compareMetadataWithGithub() {
+    const status = $('metadataRulesStatus');
+    const sync = (await chrome.storage.local.get('cmjDataSync')).cmjDataSync || {};
+    const match = String(sync.githubUrl || '').match(/github\.com\/([^/]+)\/([^/#?]+)/i);
+    if (!match) throw new Error('Set the GitHub repository URL above first.');
+    const [, owner, repo] = match;
+    const dir = `${(sync.databasePath || 'database').replace(/^\/|\/$/g, '')}/youtube-metadata-auto-categorization`;
+    const headers = { Accept: 'application/vnd.github+json' };
+    if (sync.token) headers.Authorization = `Bearer ${sync.token}`;
+    const base = chrome.runtime.getURL('database/youtube-metadata-auto-categorization/');
+    const rows = [];
+    status.textContent = 'Comparing with GitHub…';
+    for (const path of [
+      'rules/default.json',
+      'keywords/default.json',
+      'tags/default.json',
+      'labels/default.json',
+      'categories.json',
+    ]) {
+      const local = await (await fetch(base + path, { cache: 'no-store' })).json();
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}/${path}?ref=${encodeURIComponent(sync.branch || 'main')}`;
+      const response = await fetch(url, { headers });
+      if (!response.ok) {
+        rows.push(`${path}: not on GitHub (local ${countEntries(local)})`);
+        continue;
+      }
+      const remote = JSON.parse(
+        decodeURIComponent(escape(atob((await response.json()).content.replace(/\s/g, ''))))
+      );
+      const same = JSON.stringify(local) === JSON.stringify(remote);
+      rows.push(
+        `${path}: local ${countEntries(local)} · GitHub ${countEntries(remote)} · ${same ? 'identical' : 'different'}`
+      );
+    }
+    status.textContent = `✓ ${rows.join('  |  ')}`;
+  }
+
+  function wireMetadataRules() {
+    $('metadataRulesZip')?.addEventListener('click', () =>
+      downloadMetadataZip().catch((e) => ($('metadataRulesStatus').textContent = `✗ ${e.message}`))
+    );
+    $('metadataRulesRestore')?.addEventListener('click', () =>
+      restoreMetadataDefaults().catch(
+        (e) => ($('metadataRulesStatus').textContent = `✗ ${e.message}`)
+      )
+    );
+    $('metadataRulesCompare')?.addEventListener('click', () =>
+      compareMetadataWithGithub().catch(
+        (e) => ($('metadataRulesStatus').textContent = `✗ ${e.message}`)
+      )
+    );
+    $('metadataRulesExport')?.addEventListener('click', downloadMetadataRules);
+    $('metadataRulesDownload')?.addEventListener('click', downloadMetadataRules);
+    $('metadataRulesImport')?.addEventListener('click', () => $('metadataRulesFile')?.click());
+    $('metadataRulesFile')?.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const bundle = JSON.parse(await file.text());
+        if (!bundle || typeof bundle !== 'object') {
+          throw new Error('Invalid metadata rules bundle.');
+        }
+        await chrome.storage.local.set({
+          cmjYoutubeMetadataRules: {
+            keywords: bundle.keywords && typeof bundle.keywords === 'object' ? bundle.keywords : {},
+            tags: bundle.tags && typeof bundle.tags === 'object' ? bundle.tags : {},
+            labels: bundle.labels && typeof bundle.labels === 'object' ? bundle.labels : {},
+            rules: bundle.rules && typeof bundle.rules === 'object' ? bundle.rules : { rules: [] },
+          },
+        });
+        await send({ type: 'CMJ_RELOAD_CATEGORY_KNOWLEDGE' });
+        $('metadataRulesStatus').textContent = '✓ Metadata categorization rules imported.';
+        showNotificationToast('YouTube Metadata Auto-Categorization rules imported.', 'success');
+      } catch (error) {
+        $('metadataRulesStatus').textContent = `✗ ${error.message}`;
+        showNotificationToast(error.message, 'error');
+      } finally {
+        event.target.value = '';
+      }
+    });
+  }
+
   function wireSync(current) {
     const save = async () => {
-      const next = { githubUrl: $('syncGithubUrl').value.trim(), databasePath: $('syncDatabasePath').value.trim() || 'database', branch: $('syncBranch').value.trim() || 'main', token: $('syncToken').value.trim(), localDirectoryName: current.localDirectoryName || '', lastSync: current.lastSync, scheduled: $('syncScheduled').checked, intervalHours: Number($('syncInterval').value) || 24 };
+      const next = {
+        githubUrl: $('syncGithubUrl').value.trim(),
+        databasePath: $('syncDatabasePath').value.trim() || 'database',
+        branch: $('syncBranch').value.trim() || 'main',
+        token: $('syncToken').value.trim(),
+        localDirectoryName: current.localDirectoryName || '',
+        lastSync: current.lastSync,
+        scheduled: $('syncScheduled').checked,
+        intervalHours: Number($('syncInterval').value) || 24,
+      };
       await chrome.storage.local.set({ cmjDataSync: next });
       return next;
     };
-    ['syncGithubUrl', 'syncDatabasePath', 'syncBranch', 'syncToken', 'syncScheduled', 'syncInterval'].forEach(id => $(id)?.addEventListener('change', save));
+    [
+      'syncGithubUrl',
+      'syncDatabasePath',
+      'syncBranch',
+      'syncToken',
+      'syncScheduled',
+      'syncInterval',
+    ].forEach((id) => $(id)?.addEventListener('change', save));
     refreshLocalSyncCounts();
     const run = async (messageType, successText) => {
       try {
@@ -233,8 +831,16 @@
         if (messageType === 'CMJ_DATA_SYNC_COMPARE') {
           renderSyncCompare(r.summary || {});
         } else if (messageType === 'CMJ_DATA_SYNC_BACKUP') {
-          showNotificationToast(`GitHub backup ZIP prepared: ${r.filename || 'Charlie-MJ-GitHub-Backup.zip'}`, 'success');
+          showNotificationToast(
+            `GitHub backup ZIP prepared: ${r.filename || 'Charlie-MJ-GitHub-Backup.zip'}`,
+            'success'
+          );
           $('syncStatus').textContent = `✓ ${successText}`;
+        } else if (messageType === 'CMJ_DATA_SYNC_PULL' && r.library) {
+          const l = r.library;
+          const libraryText = `GitHub library restored — ${l.channels} channels, ${l.playlists} playlists, ${l.categories} categories, ${l.collections} collections, ${l.videos} videos, ${l.favorites} favorites.`;
+          $('syncStatus').textContent = `✓ ${libraryText}`;
+          showNotificationToast(libraryText, 'success');
         } else {
           $('syncStatus').textContent = `✓ ${successText}`;
           showNotificationToast(successText, 'success');
@@ -244,16 +850,27 @@
         showNotificationToast(e.message || 'Data Sync operation failed.', 'error');
       }
     };
-    $('syncHealth')?.addEventListener('click', () => run('CMJ_DATA_SYNC_HEALTH', 'GitHub connection is healthy.'));
-    $('syncCompare')?.addEventListener('click', () => run('CMJ_DATA_SYNC_COMPARE', 'Comparison complete.'));
-    $('syncPull')?.addEventListener('click', () => run('CMJ_DATA_SYNC_PULL', 'GitHub data pulled and merged.'));
-    $('syncBackup')?.addEventListener('click', () => run('CMJ_DATA_SYNC_BACKUP', 'Backup ZIP downloaded.'));
+    $('syncHealth')?.addEventListener('click', () =>
+      run('CMJ_DATA_SYNC_HEALTH', 'GitHub connection is healthy.')
+    );
+    $('syncCompare')?.addEventListener('click', () =>
+      run('CMJ_DATA_SYNC_COMPARE', 'Comparison complete.')
+    );
+    $('syncPull')?.addEventListener('click', () =>
+      run('CMJ_DATA_SYNC_PULL', 'GitHub data pulled and merged.')
+    );
+    $('syncBackup')?.addEventListener('click', () =>
+      run('CMJ_DATA_SYNC_BACKUP', 'Backup ZIP downloaded.')
+    );
     $('syncReadLocal')?.addEventListener('click', async () => {
       try {
         const files = await readLocalDatabase();
-        const bad = files.filter(x => x.error);
-        const records = files.filter(x => !x.error).reduce((n, x) => n + (Array.isArray(x.data) ? x.data.length : 0), 0);
-        $('syncStatus').textContent = `✓ Read ${files.length} JSON files (${records} array records). ${bad.length ? bad.length + ' invalid JSON file(s).' : 'All JSON files are valid.'}`;
+        const bad = files.filter((x) => x.error);
+        const records = files
+          .filter((x) => !x.error)
+          .reduce((n, x) => n + (Array.isArray(x.data) ? x.data.length : 0), 0);
+        $('syncStatus').textContent =
+          `✓ Read ${files.length} JSON files (${records} array records). ${bad.length ? bad.length + ' invalid JSON file(s).' : 'All JSON files are valid.'}`;
         showNotificationToast('Local database validation completed.', 'success');
       } catch (e) {
         $('syncStatus').textContent = `✗ ${e.message}`;
@@ -262,16 +879,22 @@
     });
     $('syncChooseFolder')?.addEventListener('click', async () => {
       if (!window.showDirectoryPicker) {
-        $('syncStatus').textContent = 'This Chrome build does not expose the directory picker here. Use Backup/Export instead.';
-        showNotificationToast('Directory picker is unavailable in this Chrome settings page.', 'warning');
-        return
+        $('syncStatus').textContent =
+          'This Chrome build does not expose the directory picker here. Use Backup/Export instead.';
+        showNotificationToast(
+          'Directory picker is unavailable in this Chrome settings page.',
+          'warning'
+        );
+        return;
       }
       try {
         const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
         await handle.getDirectoryHandle('database', { create: true });
         current.localDirectoryName = handle.name;
         await saveDirectoryHandle(handle);
-        await chrome.storage.local.set({ cmjDataSync: { ...current, localDirectoryName: handle.name } });
+        await chrome.storage.local.set({
+          cmjDataSync: { ...current, localDirectoryName: handle.name },
+        });
         $('syncStatus').textContent = `✓ Local folder connected: ${handle.name}`;
         showNotificationToast(`Local folder connected: ${handle.name}`, 'success');
       } catch (e) {
@@ -281,32 +904,92 @@
     });
   }
   function renderSyncCompare(summary) {
-    const local = summary.local || {}, github = summary.github || {};
+    const local = summary.local || {},
+      github = summary.github || {};
     const host = document.getElementById('syncCompareResult');
     const dialog = document.getElementById('syncCompareDialog');
     const body = document.getElementById('syncCompareModalBody');
     if (!host || !dialog || !body) return;
-    const row = (label, a, b) => `<div class="sync-result-row"><span>${escHtml(label)}</span><strong>${a}</strong><strong>${b}</strong></div>`;
-    for (const [id, v] of Object.entries({ syncLocalTotal: local.total ?? 0, syncGithubTotal: github.total ?? 0, syncLocalChannels: local.channels ?? 0, syncGithubChannels: github.channels ?? 0, syncLocalPlaylists: local.playlists ?? 0, syncGithubPlaylists: github.playlists ?? 0, syncLocalCategories: local.categories ?? 0, syncGithubCategories: github.categories ?? 0 })) $(id).textContent = String(v);
+    const row = (label, a, b) =>
+      `<div class="sync-result-row"><span>${escHtml(label)}</span><strong>${a}</strong><strong>${b}</strong></div>`;
+    for (const [id, v] of Object.entries({
+      syncLocalTotal: local.total ?? 0,
+      syncGithubTotal: github.total ?? 0,
+      syncLocalChannels: local.channels ?? 0,
+      syncGithubChannels: github.channels ?? 0,
+      syncLocalPlaylists: local.playlists ?? 0,
+      syncGithubPlaylists: github.playlists ?? 0,
+      syncLocalCategories: local.categories ?? 0,
+      syncGithubCategories: github.categories ?? 0,
+    }))
+      $(id).textContent = String(v);
     const diff = summary.differences || {};
     const details = summary.details || {};
-    const typeLabels = { channels: 'Channels', playlists: 'Playlists', categories: 'Categories', suggestions: 'Suggestions' };
-    const listItems = (items) => items.length ? `<ul class="sync-diff-list">${items.slice(0, 100).map(x => `<li><strong>${escHtml(x.name || x.id || 'Unnamed')}</strong><small>${escHtml(x.id || '')}</small>${x.url ? `<small>${escHtml(x.url)}</small>` : ''}</li>`).join('')}</ul>${items.length > 100 ? `<p class="note">Showing first 100 of ${items.length}.</p>` : ''}` : '<p class="sync-empty">None</p>';
-    const detailBlocks = Object.entries(typeLabels).map(([key, label]) => {
-      const d = details[key] || { localCount: 0, githubCount: 0, onlyLocal: [], onlyGithub: [], changed: [] };
-      const changed = d.changed || [];
-      const changedHtml = changed.length ? `<ul class="sync-diff-list">${changed.slice(0, 100).map(x => `<li><strong>${escHtml(x.name || x.id || 'Changed record')}</strong><small>${escHtml(x.id || '')}</small><div class="sync-field-changes">${(x.fields || []).slice(0, 20).map(f => `<div><b>${escHtml(f.field)}</b><span>Local: ${escHtml(f.local)}</span><span>GitHub: ${escHtml(f.github)}</span></div>`).join('')}</div></li>`).join('')}</ul>${changed.length > 100 ? `<p class="note">Showing first 100 of ${changed.length} changed records.</p>` : ''}` : '<p class="sync-empty">None</p>';
-      const count = (d.onlyLocal?.length || 0) + (d.onlyGithub?.length || 0) + changed.length;
-      return `<details class="sync-diff-group" ${count ? 'open' : ''}><summary><span><strong>${label}</strong><small>${d.localCount ?? 0} local · ${d.githubCount ?? 0} GitHub</small></span><b>${count} difference${count === 1 ? '' : 's'}</b></summary><div class="sync-diff-columns"><div class="sync-diff-panel"><h4>Only in Local</h4>${listItems(d.onlyLocal || [])}</div><div class="sync-diff-panel"><h4>Only on GitHub</h4>${listItems(d.onlyGithub || [])}</div></div><div class="sync-changed-panel"><h4>Changed records</h4>${changedHtml}</div></details>`;
-    }).join('');
+    const typeLabels = {
+      channels: 'Channels',
+      playlists: 'Playlists',
+      categories: 'Categories',
+      suggestions: 'Suggestions',
+      collections: 'Collections',
+      libraryVideos: 'Library Videos',
+    };
+    const listItems = (items) =>
+      items.length
+        ? `<ul class="sync-diff-list">${items
+            .slice(0, 100)
+            .map(
+              (x) =>
+                `<li><strong>${escHtml(x.name || x.id || 'Unnamed')}</strong><small>${escHtml(x.id || '')}</small>${x.url ? `<small>${escHtml(x.url)}</small>` : ''}</li>`
+            )
+            .join(
+              ''
+            )}</ul>${items.length > 100 ? `<p class="note">Showing first 100 of ${items.length}.</p>` : ''}`
+        : '<p class="sync-empty">None</p>';
+    const detailBlocks = Object.entries(typeLabels)
+      .map(([key, label]) => {
+        const d = details[key] || {
+          localCount: 0,
+          githubCount: 0,
+          onlyLocal: [],
+          onlyGithub: [],
+          changed: [],
+        };
+        const changed = d.changed || [];
+        const changedHtml = changed.length
+          ? `<ul class="sync-diff-list">${changed
+              .slice(0, 100)
+              .map(
+                (x) =>
+                  `<li><strong>${escHtml(x.name || x.id || 'Changed record')}</strong><small>${escHtml(x.id || '')}</small><div class="sync-field-changes">${(
+                    x.fields || []
+                  )
+                    .slice(0, 20)
+                    .map(
+                      (f) =>
+                        `<div><b>${escHtml(f.field)}</b><span>Local: ${escHtml(f.local)}</span><span>GitHub: ${escHtml(f.github)}</span></div>`
+                    )
+                    .join('')}</div></li>`
+              )
+              .join(
+                ''
+              )}</ul>${changed.length > 100 ? `<p class="note">Showing first 100 of ${changed.length} changed records.</p>` : ''}`
+          : '<p class="sync-empty">None</p>';
+        const count = (d.onlyLocal?.length || 0) + (d.onlyGithub?.length || 0) + changed.length;
+        return `<details class="sync-diff-group" ${count ? 'open' : ''}><summary><span><strong>${label}</strong><small>${d.localCount ?? 0} local · ${d.githubCount ?? 0} GitHub</small></span><b>${count} difference${count === 1 ? '' : 's'}</b></summary><div class="sync-diff-columns"><div class="sync-diff-panel"><h4>Only in Local</h4>${listItems(d.onlyLocal || [])}</div><div class="sync-diff-panel"><h4>Only on GitHub</h4>${listItems(d.onlyGithub || [])}</div></div><div class="sync-changed-panel"><h4>Changed records</h4>${changedHtml}</div></details>`;
+      })
+      .join('');
     const statusClass = (diff.total || 0) > 0 ? 'warning' : 'success';
-    const statusText = (diff.total || 0) > 0 ? 'Differences found' : 'Local and GitHub are synchronized';
-    body.innerHTML = `<div class="sync-result-card sync-modal-result"><div class="sync-result-intro"><div><h4>Comparison completed</h4><p>${escHtml(summary.status || 'Local data and GitHub data have been compared.')}</p></div><span class="sync-status-pill ${statusClass}">${statusText}</span></div><div class="sync-count-grid"><div><b>${local.total ?? 0}</b><span>Local total</span></div><div><b>${github.total ?? 0}</b><span>GitHub total</span></div><div><b>${diff.onlyLocal ?? 0}</b><span>Only in Local</span></div><div><b>${diff.onlyGithub ?? 0}</b><span>Only on GitHub</span></div><div><b>${diff.changed ?? 0}</b><span>Changed records</span></div><div><b>${diff.total ?? 0}</b><span>Total differences</span></div></div><div class="sync-result-table"><div class="sync-result-row sync-result-row-head"><span>Resource</span><strong>Local</strong><strong>GitHub</strong></div>${row('Channels', local.channels ?? 0, github.channels ?? 0)}${row('Playlists', local.playlists ?? 0, github.playlists ?? 0)}${row('Categories', local.categories ?? 0, github.categories ?? 0)}${row('Suggestions', local.suggestions ?? 0, github.suggestions ?? 0)}</div><div class="sync-detailed-compare-section"><div class="sync-details-heading"><h4>Comparison Details</h4><span>Expand a section for full differences</span></div>${detailBlocks}</div>${(github.directories || []).length ? `<p class="note">GitHub database folders: ${escHtml((github.directories || []).join(', '))}</p>` : ''}</div>`;
+    const statusText =
+      (diff.total || 0) > 0 ? 'Differences found' : 'Local and GitHub are synchronized';
+    body.innerHTML = `<div class="sync-result-card sync-modal-result"><div class="sync-result-intro"><div><h4>Comparison completed</h4><p>${escHtml(summary.status || 'Local data and GitHub data have been compared.')}</p></div><span class="sync-status-pill ${statusClass}">${statusText}</span></div><div class="sync-count-grid"><div><b>${local.total ?? 0}</b><span>Local total</span></div><div><b>${github.total ?? 0}</b><span>GitHub total</span></div><div><b>${diff.onlyLocal ?? 0}</b><span>Only in Local</span></div><div><b>${diff.onlyGithub ?? 0}</b><span>Only on GitHub</span></div><div><b>${diff.changed ?? 0}</b><span>Changed records</span></div><div><b>${diff.total ?? 0}</b><span>Total differences</span></div></div><div class="sync-result-table"><div class="sync-result-row sync-result-row-head"><span>Resource</span><strong>Local</strong><strong>GitHub</strong></div>${row('Channels', local.channels ?? 0, github.channels ?? 0)}${row('Playlists', local.playlists ?? 0, github.playlists ?? 0)}${row('Categories', local.categories ?? 0, github.categories ?? 0)}${row('Collections', local.collections ?? 0, github.collections ?? 0)}${row('Library Videos', local.videos ?? 0, github.videos ?? 0)}${row('Favorites', local.favorites ?? 0, github.favorites ?? 0)}${row('Suggestions', local.suggestions ?? 0, github.suggestions ?? 0)}</div><div class="sync-detailed-compare-section"><div class="sync-details-heading"><h4>Comparison Details</h4><span>Expand a section for full differences</span></div>${detailBlocks}</div>${(github.directories || []).length ? `<p class="note">GitHub database folders: ${escHtml((github.directories || []).join(', '))}</p>` : ''}</div>`;
     // Keep the existing result host clean; the new dedicated informational window is the result surface.
     host.innerHTML = '';
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
-    showNotificationToast(`Compare complete — Local ${local.total ?? 0} · GitHub ${github.total ?? 0} · Differences ${diff.total ?? 0}`, 'success');
+    showNotificationToast(
+      `Compare complete — Local ${local.total ?? 0} · GitHub ${github.total ?? 0} · Differences ${diff.total ?? 0}`,
+      'success'
+    );
   }
   function closeCompareDialog() {
     const d = document.getElementById('syncCompareDialog');
@@ -317,7 +1000,7 @@
   function wireCompareDialog() {
     document.getElementById('syncCompareClose')?.addEventListener('click', closeCompareDialog);
     document.getElementById('syncCompareOkay')?.addEventListener('click', closeCompareDialog);
-    document.getElementById('syncCompareDialog')?.addEventListener('click', e => {
+    document.getElementById('syncCompareDialog')?.addEventListener('click', (e) => {
       if (e.target === e.currentTarget) closeCompareDialog();
     });
   }
@@ -326,8 +1009,8 @@
     if (status) {
       status.textContent = text;
       setTimeout(() => {
-        if (status.textContent === text) status.textContent = ''
-      }, 2200)
+        if (status.textContent === text) status.textContent = '';
+      }, 2200);
     }
   }
   new MutationObserver(build).observe(document.documentElement, { childList: true, subtree: true });

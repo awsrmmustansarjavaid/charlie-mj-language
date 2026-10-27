@@ -34,36 +34,53 @@
   const memoryCache = new Map();
   const pendingRequests = new Map();
   let listenerInstalled = false;
-  let serviceSettings = { enabled: true, sourceBehavior: 'selected-or-auto', cacheEnabled: true, timeoutMs: 6500, fallbackEnabled: true, sentenceEnabled: true, wordAlignment: 'safe-only' };
+  let serviceSettings = {
+    enabled: true,
+    sourceBehavior: 'selected-or-auto',
+    cacheEnabled: true,
+    timeoutMs: 6500,
+    fallbackEnabled: true,
+    sentenceEnabled: true,
+    wordAlignment: 'safe-only',
+  };
   async function loadServiceSettings() {
     try {
       const stored = await chrome.storage.local.get(SERVICE_KEY);
       serviceSettings = { ...serviceSettings, ...(stored[SERVICE_KEY] || {}) };
-    } catch (_) {
-    }
+    } catch (_) {}
     return serviceSettings;
   }
-  const normalise = value => String(value || '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  const languageBase = value => String(value || 'auto').split('-')[0].toLowerCase();
-  const normaliseWord = value => String(value || '')
-    .toLocaleLowerCase()
-    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu, '')
-    .trim();
+  const normalise = (value) =>
+    String(value || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  const languageBase = (value) =>
+    String(value || 'auto')
+      .split('-')[0]
+      .toLowerCase();
+  const normaliseWord = (value) =>
+    String(value || '')
+      .toLocaleLowerCase()
+      .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu, '')
+      .trim();
   const cacheKey = (videoId, sourceLanguage, targetLanguage) =>
-    `${String(videoId || '')}|${String(sourceLanguage || 'auto').trim().toLowerCase()}|${String(targetLanguage || 'en').trim().toLowerCase()}`;
+    `${String(videoId || '')}|${String(sourceLanguage || 'auto')
+      .trim()
+      .toLowerCase()}|${String(targetLanguage || 'en')
+      .trim()
+      .toLowerCase()}`;
   function currentVideoId() {
     try {
       const player = document.querySelector('#movie_player');
       const id = player?.getVideoData?.()?.video_id;
       if (id) return id;
-    } catch (_) {
-    }
+    } catch (_) {}
     try {
       const url = new URL(location.href);
-      return url.searchParams.get('v') ||
-        (url.pathname.startsWith('/shorts/') ? url.pathname.split('/')[2] : '');
+      return (
+        url.searchParams.get('v') ||
+        (url.pathname.startsWith('/shorts/') ? url.pathname.split('/')[2] : '')
+      );
     } catch (_) {
       return '';
     }
@@ -71,7 +88,7 @@
   function installListener() {
     if (listenerInstalled) return;
     listenerInstalled = true;
-    window.addEventListener('message', event => {
+    window.addEventListener('message', (event) => {
       const data = event.data;
       if (!data || data.source !== SOURCE) return;
       if (data.type === 'RESET_NETWORK') {
@@ -107,7 +124,7 @@
         translated: Array.isArray(data.translated) ? data.translated : [],
         translationAvailable: Boolean(data.translationAvailable),
         translationError: data.translationError || '',
-        receivedAt: Date.now()
+        receivedAt: Date.now(),
       };
       memoryCache.set(key, value);
       const pending = pendingRequests.get(key);
@@ -129,7 +146,11 @@
       const entry = cache[key];
       if (!entry) return null;
       const ttlHours = Number(serviceSettings.cacheTtlHours) || 24;
-      if (Number(entry.cachedAt || entry.receivedAt || 0) && Date.now() - Number(entry.cachedAt || entry.receivedAt) > ttlHours * 3600000) return null;
+      if (
+        Number(entry.cachedAt || entry.receivedAt || 0) &&
+        Date.now() - Number(entry.cachedAt || entry.receivedAt) > ttlHours * 3600000
+      )
+        return null;
       // The standalone Dual Transcript cache stores merged sentences as well
       // as cues. Convert them into the same shape used by live TRANSCRIPT_DATA.
       const value = {
@@ -140,17 +161,27 @@
         original: Array.isArray(entry.original)
           ? entry.original
           : Array.isArray(entry.cues)
-            ? entry.cues.map(x => ({ start: x.start, duration: x.duration, end: x.end, text: x.text || x.original || '' }))
+            ? entry.cues.map((x) => ({
+                start: x.start,
+                duration: x.duration,
+                end: x.end,
+                text: x.text || x.original || '',
+              }))
             : [],
         translated: Array.isArray(entry.translated)
           ? entry.translated
           : Array.isArray(entry.cues)
-            ? entry.cues.map(x => ({ start: x.start, duration: x.duration, end: x.end, text: x.translated || '' }))
+            ? entry.cues.map((x) => ({
+                start: x.start,
+                duration: x.duration,
+                end: x.end,
+                text: x.translated || '',
+              }))
             : [],
         sentences: Array.isArray(entry.sentences) ? entry.sentences : [],
         translationAvailable: Boolean(entry.translationAvailable),
         translationError: entry.translationError || '',
-        receivedAt: Number(entry.cachedAt || Date.now())
+        receivedAt: Number(entry.cachedAt || Date.now()),
       };
       if (value.original.length || value.sentences.length) memoryCache.set(key, value);
       return value.original.length || value.sentences.length ? value : null;
@@ -159,12 +190,15 @@
     }
   }
   function postRequest(targetLanguage, sourceLanguage) {
-    window.postMessage({
-      source: SOURCE,
-      type: 'REQUEST_TRANSCRIPT',
-      targetLanguage: targetLanguage || 'en',
-      sourceLanguage: sourceLanguage || 'auto'
-    }, '*');
+    window.postMessage(
+      {
+        source: SOURCE,
+        type: 'REQUEST_TRANSCRIPT',
+        targetLanguage: targetLanguage || 'en',
+        sourceLanguage: sourceLanguage || 'auto',
+      },
+      '*'
+    );
   }
   async function requestData({ videoId, sourceLanguage, targetLanguage, force = false }) {
     installListener();
@@ -181,10 +215,13 @@
     }
     if (pendingRequests.has(key)) return pendingRequests.get(key).promise;
     const promise = new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        pendingRequests.delete(key);
-        reject(new Error('Dual YouTube transcript is unavailable for this video/language.'));
-      }, Math.max(1000, Number(serviceSettings.timeoutMs) || 6500));
+      const timer = setTimeout(
+        () => {
+          pendingRequests.delete(key);
+          reject(new Error('Dual YouTube transcript is unavailable for this video/language.'));
+        },
+        Math.max(1000, Number(serviceSettings.timeoutMs) || 6500)
+      );
       pendingRequests.set(key, { resolve, reject, timer });
     });
     postRequest(target, source);
@@ -197,7 +234,7 @@
         start: Number(row.start || 0),
         end: Number(row.end || row.start || 0),
         original: normalise(row.original || row.text || ''),
-        translated: normalise(row.translated || '')
+        translated: normalise(row.translated || ''),
       }));
     }
     const original = Array.isArray(data?.original) ? data.original : [];
@@ -205,9 +242,9 @@
     return original.map((row, index) => ({
       index,
       start: Number(row?.start || 0),
-      end: Number(row?.end || (Number(row?.start || 0) + Number(row?.duration || 0))),
+      end: Number(row?.end || Number(row?.start || 0) + Number(row?.duration || 0)),
       original: normalise(row?.text || ''),
-      translated: normalise(translated[index]?.text || '')
+      translated: normalise(translated[index]?.text || ''),
     }));
   }
   function findBestSentence(data, start, text) {
@@ -232,20 +269,27 @@
       if (best) return best;
     }
     if (wantedText) {
-      const exact = rows.find(row => row.original.toLocaleLowerCase() === wantedText && row.translated);
+      const exact = rows.find(
+        (row) => row.original.toLocaleLowerCase() === wantedText && row.translated
+      );
       if (exact) return exact;
-      const partial = rows.find(row => row.original.toLocaleLowerCase().includes(wantedText) && row.translated);
+      const partial = rows.find(
+        (row) => row.original.toLocaleLowerCase().includes(wantedText) && row.translated
+      );
       if (partial) return partial;
     }
     return null;
   }
   async function getSentenceTranslation(options = {}) {
     await loadServiceSettings();
-    if (serviceSettings.sentenceEnabled === false) throw new Error('Dual YouTube sentence translation is disabled.');
+    if (serviceSettings.sentenceEnabled === false)
+      throw new Error('Dual YouTube sentence translation is disabled.');
     const data = await requestData(options);
     const row = findBestSentence(data, options.start, options.text);
     if (!row?.translated) {
-      throw new Error(data.translationError || 'Dual YouTube has no translated sentence for this cue.');
+      throw new Error(
+        data.translationError || 'Dual YouTube has no translated sentence for this cue.'
+      );
     }
     return {
       translation: row.translated,
@@ -256,7 +300,7 @@
       targetLanguage: data.targetLanguage,
       start: row.start,
       sentence: row.original,
-      confidence: 1
+      confidence: 1,
     };
   }
   function alignWord(sourceSentence, targetSentence, word) {
@@ -288,15 +332,18 @@
     if (!wanted) return null;
     const sourceTokens = normalise(sourceSentence).split(/\s+/).filter(Boolean);
     const targetTokens = normalise(targetSentence).split(/\s+/).filter(Boolean);
-    const sourceIndex = sourceTokens.findIndex(x => normaliseWord(x) === wanted);
+    const sourceIndex = sourceTokens.findIndex((x) => normaliseWord(x) === wanted);
     if (sourceIndex < 0 || !targetTokens.length) return null;
     // Exact lexical carry-over is safe for names, numbers and shared terms.
-    const exact = targetTokens.find(x => normaliseWord(x) === wanted);
-    if (exact) return { translation: exact, confidence: 0.90 };
+    const exact = targetTokens.find((x) => normaliseWord(x) === wanted);
+    if (exact) return { translation: exact, confidence: 0.9 };
     // Single-word sentence remains unambiguous.
     if (sourceTokens.length === 1) return { translation: targetTokens.join(' '), confidence: 0.95 };
     // Safe same-position alignment is an optional service mode.
-    if (serviceSettings.wordAlignment === 'same-position' && sourceTokens.length === targetTokens.length) {
+    if (
+      serviceSettings.wordAlignment === 'same-position' &&
+      sourceTokens.length === targetTokens.length
+    ) {
       return { translation: targetTokens[sourceIndex], confidence: 0.86 };
     }
     return null;
@@ -306,15 +353,35 @@
     const data = await requestData(options);
     const row = findBestSentence(data, options.start, options.sentence || options.text);
     if (!row?.translated) {
-      throw new Error(data.translationError || 'Dual YouTube has no translated sentence for this word.');
+      throw new Error(
+        data.translationError || 'Dual YouTube has no translated sentence for this word.'
+      );
     }
     const aligned = alignWord(row.original, row.translated, options.word || options.text);
     if (!aligned) {
-      const fallback = deriveWordFromSentence(row.original, row.translated, options.word || options.text);
-      if (fallback) return { translation: fallback.translation, provider: 'dual-youtube', source: 'dual-youtube', videoId: data.videoId, sourceLanguage: data.sourceLanguage, targetLanguage: data.targetLanguage, start: row.start, sentence: row.original, sentenceTranslation: row.translated, confidence: fallback.confidence };
+      const fallback = deriveWordFromSentence(
+        row.original,
+        row.translated,
+        options.word || options.text
+      );
+      if (fallback)
+        return {
+          translation: fallback.translation,
+          provider: 'dual-youtube',
+          source: 'dual-youtube',
+          videoId: data.videoId,
+          sourceLanguage: data.sourceLanguage,
+          targetLanguage: data.targetLanguage,
+          start: row.start,
+          sentence: row.original,
+          sentenceTranslation: row.translated,
+          confidence: fallback.confidence,
+        };
     }
     if (!aligned || aligned.confidence < 0.85) {
-      throw new Error('Dual YouTube sentence is available, but safe word-level alignment is unavailable.');
+      throw new Error(
+        'Dual YouTube sentence is available, but safe word-level alignment is unavailable.'
+      );
     }
     return {
       translation: aligned.translation,
@@ -326,17 +393,23 @@
       start: row.start,
       sentence: row.original,
       sentenceTranslation: row.translated,
-      confidence: aligned.confidence
+      confidence: aligned.confidence,
     };
   }
-  chrome?.storage?.onChanged?.addListener?.(changes => {
-    if (changes[SERVICE_KEY]) serviceSettings = { ...serviceSettings, ...(changes[SERVICE_KEY].newValue || {}) };
+  chrome?.storage?.onChanged?.addListener?.((changes) => {
+    if (changes[SERVICE_KEY])
+      serviceSettings = { ...serviceSettings, ...(changes[SERVICE_KEY].newValue || {}) };
   });
   window.CMJ_DUAL_YOUTUBE_TRANSLATION = Object.freeze({
     getSentenceTranslation,
     getWordTranslation,
-    getCachedData: options => readStoredCache(options?.videoId || currentVideoId(), options?.sourceLanguage, options?.targetLanguage),
-    clearMemoryCache: () => memoryCache.clear()
+    getCachedData: (options) =>
+      readStoredCache(
+        options?.videoId || currentVideoId(),
+        options?.sourceLanguage,
+        options?.targetLanguage
+      ),
+    clearMemoryCache: () => memoryCache.clear(),
   });
   installListener();
 })();

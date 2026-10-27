@@ -27,7 +27,7 @@
     sourceLanguage: 'auto',
     sentenceMerging: true,
     cacheEnabled: true,
-    cacheLimit: 20
+    cacheLimit: 20,
   };
   const state = {
     settings: { ...DEFAULTS },
@@ -58,19 +58,24 @@
     dualManualScrollUntil: 0,
     dualProgrammaticScroll: false,
     dualLastAutoScrollAt: 0,
-    dualManualResumeDelayMs: 1800
+    dualManualResumeDelayMs: 1800,
+    dualRestoreActiveOnOpen: false,
   };
   const $ = (s, root = document) => root.querySelector(s);
-  const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const post = (type, payload = {}) => window.postMessage({ source: SOURCE, type, ...payload }, '*');
+  const esc = (value) =>
+    String(value ?? '').replace(
+      /[&<>'"]/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[c]
+    );
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const post = (type, payload = {}) =>
+    window.postMessage({ source: SOURCE, type, ...payload }, '*');
   async function loadSettings() {
     try {
       const stored = await chrome.storage.local.get([SETTINGS_KEY, SERVICE_KEY]);
       state.settings = { ...DEFAULTS, ...(stored[SETTINGS_KEY] || {}) };
       state.serviceSettings = { enabled: true, ...(stored[SERVICE_KEY] || {}) };
-    } catch (_) {
-    }
+    } catch (_) {}
     state.targetLanguage = state.settings.targetLanguage || 'en';
     state.sourceLanguage = state.settings.sourceLanguage || 'auto';
   }
@@ -78,14 +83,16 @@
     if (!state.settings.cacheEnabled) return;
     try {
       const stored = await chrome.storage.local.get(CACHE_KEY);
-      const cache = stored[CACHE_KEY] && typeof stored[CACHE_KEY] === 'object' ? stored[CACHE_KEY] : {};
+      const cache =
+        stored[CACHE_KEY] && typeof stored[CACHE_KEY] === 'object' ? stored[CACHE_KEY] : {};
       const key = `${value.videoId}|${value.sourceLanguage}|${value.targetLanguage}`;
       cache[key] = { ...value, cachedAt: Date.now() };
-      const entries = Object.entries(cache).sort((a, b) => Number(b[1]?.cachedAt || 0) - Number(a[1]?.cachedAt || 0));
+      const entries = Object.entries(cache).sort(
+        (a, b) => Number(b[1]?.cachedAt || 0) - Number(a[1]?.cachedAt || 0)
+      );
       const limit = Math.max(1, Math.min(100, Number(state.settings.cacheLimit) || 20));
       await chrome.storage.local.set({ [CACHE_KEY]: Object.fromEntries(entries.slice(0, limit)) });
-    } catch (_) {
-    }
+    } catch (_) {}
   }
   async function getCache(videoId, sourceLanguage, targetLanguage) {
     if (!state.settings.cacheEnabled) return null;
@@ -102,11 +109,13 @@
       const player = document.querySelector('#movie_player');
       const id = player?.getVideoData?.()?.video_id;
       if (id) return id;
-    } catch (_) {
-    }
+    } catch (_) {}
     try {
       const u = new URL(location.href);
-      return u.searchParams.get('v') || (u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : '');
+      return (
+        u.searchParams.get('v') ||
+        (u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : '')
+      );
     } catch (_) {
       return '';
     }
@@ -114,14 +123,18 @@
   function ensureUI() {
     if (!state.settings.enabled || !location.hostname.includes('youtube.com')) return;
     const toolbar = $('.cmj-toolbar');
-    if (toolbar && state.settings.showToolbarButton !== false && !toolbar.querySelector('[data-cmj-dual-toolbar]')) {
+    if (
+      toolbar &&
+      state.settings.showToolbarButton !== false &&
+      !toolbar.querySelector('[data-cmj-dual-toolbar]')
+    ) {
       const button = document.createElement('button');
       button.type = 'button';
       button.dataset.cmjDualToolbar = '1';
       button.title = 'Open Dual Transcript';
       button.innerHTML = '🌐 <span>Dual Transcript</span>';
       button.className = 'cmj-dual-toolbar-button';
-      button.addEventListener('click', event => {
+      button.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
         openDualTab();
@@ -165,7 +178,7 @@
       tab.dataset.cmjDualTab = '1';
       tab.textContent = 'Dual Transcript';
       tab.title = 'Original + YouTube auto-translated transcript';
-      tab.addEventListener('click', event => {
+      tab.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
         openDualTab();
@@ -180,8 +193,9 @@
     if (panel) panel.hidden = false;
     state.panelOpen = true;
     state.dualActive = true;
+    state.dualRestoreActiveOnOpen = true;
     panel?.classList.add('cmj-panel-dual-active');
-    document.querySelectorAll('[data-cmj-tab]').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('[data-cmj-tab]').forEach((x) => x.classList.remove('active'));
     const tab = $('[data-cmj-dual-tab]');
     tab?.classList.add('active');
     renderPanel();
@@ -189,14 +203,23 @@
   }
   function requestTranscript(force = false) {
     const id = videoId();
-    if (!id || state.lightweightSleep || !state.settings.enabled || state.serviceSettings?.enabled === false) return;
+    if (
+      !id ||
+      state.lightweightSleep ||
+      !state.settings.enabled ||
+      state.serviceSettings?.enabled === false
+    )
+      return;
     state.videoId = id;
     state.targetLanguage = state.settings.targetLanguage || 'en';
     if (!force && state.lastRequestedVideo === id) return;
     state.lastRequestedVideo = id;
     state.status = 'loading';
     renderPanel();
-    post('REQUEST_TRANSCRIPT', { targetLanguage: state.targetLanguage, sourceLanguage: state.sourceLanguage || 'auto' });
+    post('REQUEST_TRANSCRIPT', {
+      targetLanguage: state.targetLanguage,
+      sourceLanguage: state.sourceLanguage || 'auto',
+    });
   }
   async function resetNetworkAndRetry() {
     state.status = 'loading';
@@ -209,8 +232,7 @@
     renderPanel();
     try {
       await chrome.storage.local.remove(CACHE_KEY);
-    } catch (_) {
-    }
+    } catch (_) {}
     post('RESET_NETWORK');
     setTimeout(() => {
       if (!state.lightweightSleep) requestTranscript(true);
@@ -222,8 +244,7 @@
     state.requestTimer = null;
     if (state.lightweightSleep) {
       post('SET_LIGHTWEIGHT_SLEEP', { enabled: true });
-      chrome.storage.local.set({ cmjLightweightSleepMode: true }).catch(() => {
-      });
+      chrome.storage.local.set({ cmjLightweightSleepMode: true }).catch(() => {});
       if (state.syncTimer) {
         clearInterval(state.syncTimer);
         state.syncTimer = null;
@@ -233,13 +254,15 @@
       if (state.panelOpen) renderPanel();
     } else {
       post('SET_LIGHTWEIGHT_SLEEP', { enabled: false });
-      chrome.storage.local.set({ cmjLightweightSleepMode: false }).catch(() => {
-      });
+      chrome.storage.local.set({ cmjLightweightSleepMode: false }).catch(() => {});
       startSync();
     }
   }
   function normaliseLanguageCode(value) {
-    return String(value || '').trim().toLowerCase().split('-')[0];
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .split('-')[0];
   }
   function uniqueLanguages(rows = []) {
     const seen = new Set();
@@ -250,21 +273,29 @@
       const key = normaliseLanguageCode(code);
       if (!key || seen.has(key)) continue;
       seen.add(key);
-      out.push({ languageCode: code, name: String(row?.name || code).trim() || code, kind: row?.kind || '' });
+      out.push({
+        languageCode: code,
+        name: String(row?.name || code).trim() || code,
+        kind: row?.kind || '',
+      });
     }
     return out;
   }
   function languageLabel(row) {
     const code = String(row?.languageCode || '').trim();
     const name = String(row?.name || '').trim();
-    return name && normaliseLanguageCode(name) !== normaliseLanguageCode(code) ? `${name} (${code})` : (name || code);
+    return name && normaliseLanguageCode(name) !== normaliseLanguageCode(code)
+      ? `${name} (${code})`
+      : name || code;
   }
   function renderLanguageSelect(kind, value, rows, allowAuto = false) {
     const options = [];
     if (allowAuto) options.push(`<option value="auto">Auto (YouTube)</option>`);
     for (const row of uniqueLanguages(rows)) {
       const code = String(row.languageCode);
-      options.push(`<option value="${esc(code)}"${normaliseLanguageCode(value) === normaliseLanguageCode(code) ? ' selected' : ''}>${esc(languageLabel(row))}</option>`);
+      options.push(
+        `<option value="${esc(code)}"${normaliseLanguageCode(value) === normaliseLanguageCode(code) ? ' selected' : ''}>${esc(languageLabel(row))}</option>`
+      );
     }
     if (!options.length) {
       options.push(`<option value="${esc(value || 'en')}" selected>${esc(value || 'en')}</option>`);
@@ -274,12 +305,12 @@
   function renderLanguageControls() {
     const sources = uniqueLanguages([
       ...(state.sourceCatalog || []),
-      ...(state.translationCatalog || [])
+      ...(state.translationCatalog || []),
     ]);
     const targets = uniqueLanguages([
       ...(state.targetCatalog || []),
       ...(state.translationCatalog || []),
-      ...(state.sourceCatalog || [])
+      ...(state.sourceCatalog || []),
     ]);
     return `<div class="cmj-dual-language-controls">${renderLanguageSelect('source', state.sourceLanguage || 'auto', sources, true)}${renderLanguageSelect('target', state.targetLanguage || 'en', targets, false)}</div>`;
   }
@@ -291,8 +322,7 @@
     state.settings.targetLanguage = state.targetLanguage;
     try {
       await chrome.storage.local.set({ [SETTINGS_KEY]: state.settings });
-    } catch (_) {
-    }
+    } catch (_) {}
     state.lastRequestedVideo = '';
     state.cues = [];
     state.sentences = [];
@@ -302,59 +332,100 @@
     requestTranscript(true);
   }
   function renderStatus(extra = '') {
-    const status = state.status === 'ready' ? 'Ready' : state.status === 'loading' ? 'Fetching YouTube transcript…' : state.status === 'error' ? 'Error' : 'Waiting';
-    const detail = state.translationAvailable ? ` · ${state.sourceLanguage || 'source'} → ${state.targetLanguage}` : state.translationError ? ` · ${state.translationError}` : '';
+    const status =
+      state.status === 'ready'
+        ? 'Ready'
+        : state.status === 'loading'
+          ? 'Fetching YouTube transcript…'
+          : state.status === 'error'
+            ? 'Error'
+            : 'Waiting';
+    const detail = state.translationAvailable
+      ? ` · ${state.sourceLanguage || 'source'} → ${state.targetLanguage}`
+      : state.translationError
+        ? ` · ${state.translationError}`
+        : '';
     return `<div class="cmj-dual-status"><strong>${esc(status)}</strong><span>${esc(extra || detail)}</span><button type="button" data-dual-refresh>↻ Refresh</button></div>`;
   }
   function renderPanel() {
     if (!state.panelOpen) return;
     const body = $('.cmj-panel-body');
     if (!body) return;
-    body.style.setProperty('--cmj-dual-speaker-color', colorValue(state.settings.speakerIconColor, '#ffd54a'));
-    body.style.setProperty('--cmj-dual-speaker-size', `${Math.max(12, Math.min(32, Number(state.settings.speakerIconSize) || 18))}px`);
+    body.style.setProperty(
+      '--cmj-dual-speaker-color',
+      colorValue(state.settings.speakerIconColor, '#ffd54a')
+    );
+    body.style.setProperty(
+      '--cmj-dual-speaker-size',
+      `${Math.max(12, Math.min(32, Number(state.settings.speakerIconSize) || 18))}px`
+    );
     const hadRows = Boolean(body.querySelector('.cmj-dual-list .cmj-dual-row'));
     const keepTop = body.scrollTop;
     body.innerHTML = `<div data-cmj-dual-root="1" class="cmj-dual-root">${renderStatus()}
       ${renderLanguageControls()}
       <div class="cmj-dual-toolbar-row"><span>Original: <strong>${esc(state.sourceName || state.sourceLanguage || '—')}</strong></span><span>Target: <strong>${esc(state.targetLanguage)}</strong></span><span>${state.cues.length ? `${state.cues.length} cues` : ''}</span></div>
       <div class="cmj-dual-list" role="list">${state.sentences.length ? state.sentences.map((row, i) => renderRow(row, i)).join('') : `<div class="cmj-dual-empty">Select the YouTube caption languages above, then the transcript will be fetched from YouTube.</div>`}</div></div>`;
-    body.querySelector('[data-dual-refresh]')?.addEventListener('click', e => {
+    body.querySelector('[data-dual-refresh]')?.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       requestTranscript(true);
     });
-    body.querySelector('[data-dual-language="source"]')?.addEventListener('change', e => changeLanguage('source', e.target.value));
-    body.querySelector('[data-dual-language="target"]')?.addEventListener('change', e => changeLanguage('target', e.target.value));
-    body.querySelectorAll('[data-dual-seek]').forEach(el => el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      seek(Number(el.dataset.dualSeek || 0));
-    }));
-    body.querySelectorAll('[data-dual-save-sentence]').forEach(el => el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      saveSentence(Number(el.dataset.dualSaveSentence));
-    }));
-    body.querySelectorAll('[data-dual-save-word]').forEach(el => el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      saveWord(String(el.dataset.dualSaveWord || ''), Number(el.dataset.dualSaveTime || 0), String(el.dataset.dualSaveSentenceText || ''), String(el.dataset.dualSaveTranslation || ''));
-    }));
-    body.querySelectorAll('[data-dual-speak]').forEach(el => el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      playSentence(Number(el.dataset.dualSpeak || 0));
-    }));
+    body
+      .querySelector('[data-dual-language="source"]')
+      ?.addEventListener('change', (e) => changeLanguage('source', e.target.value));
+    body
+      .querySelector('[data-dual-language="target"]')
+      ?.addEventListener('change', (e) => changeLanguage('target', e.target.value));
+    body.querySelectorAll('[data-dual-seek]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        seek(Number(el.dataset.dualSeek || 0));
+      })
+    );
+    body.querySelectorAll('[data-dual-save-sentence]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        saveSentence(Number(el.dataset.dualSaveSentence));
+      })
+    );
+    body.querySelectorAll('[data-dual-save-word]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        saveWord(
+          String(el.dataset.dualSaveWord || ''),
+          Number(el.dataset.dualSaveTime || 0),
+          String(el.dataset.dualSaveSentenceText || ''),
+          String(el.dataset.dualSaveTranslation || '')
+        );
+      })
+    );
+    body.querySelectorAll('[data-dual-speak]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        playSentence(Number(el.dataset.dualSpeak || 0));
+      })
+    );
     const dualList = $('.cmj-dual-list', body);
     const follower = dualFollower();
     if (dualList) follower.bind(dualList);
     syncHighlight();
-    if (hadRows) {
+    if (state.dualRestoreActiveOnOpen && dualList) {
+      state.dualRestoreActiveOnOpen = false;
+      requestAnimationFrame(() =>
+        follower.follow(dualList.querySelector('.cmj-dual-live'), { hard: true, instant: true })
+      );
+    } else if (hadRows) {
       // The panel was refreshed with new data: keep the learner where they were.
       body.scrollTop = keepTop;
     } else if (dualList) {
       // Opening the tab / first transcript: show the sentence that is playing now.
-      requestAnimationFrame(() => follower.follow(dualList.querySelector('.cmj-dual-live'), { hard: true, instant: true }));
+      requestAnimationFrame(() =>
+        follower.follow(dualList.querySelector('.cmj-dual-live'), { hard: true, instant: true })
+      );
     }
   }
   function colorValue(value, fallback) {
@@ -362,9 +433,18 @@
     return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback;
   }
   function renderRow(row, index) {
-    const words = String(row.original || '').split(/\s+/).filter(Boolean).map(word => `<button type="button" class="cmj-dual-word" data-dual-save-word="${esc(word.replace(/[.,!?;:]+$/g, ''))}" data-dual-save-time="${Number(row.start) || 0}" data-dual-save-sentence-text="${esc(row.original)}" data-dual-save-translation="${esc(row.translated || '')}" title="Save word to Library">${esc(word)}</button>`).join(' ');
-    const speaker = state.settings.speakerIconEnabled !== false
-      ? `<button type="button" class="cmj-dual-speaker" data-dual-speak="${Number(row.start) || 0}" aria-label="Play current sentence" title="Play current sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>` : '';
+    const words = String(row.original || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(
+        (word) =>
+          `<button type="button" class="cmj-dual-word" data-dual-save-word="${esc(word.replace(/[.,!?;:]+$/g, ''))}" data-dual-save-time="${Number(row.start) || 0}" data-dual-save-sentence-text="${esc(row.original)}" data-dual-save-translation="${esc(row.translated || '')}" title="Save word to Library">${esc(word)}</button>`
+      )
+      .join(' ');
+    const speaker =
+      state.settings.speakerIconEnabled !== false
+        ? `<button type="button" class="cmj-dual-speaker" data-dual-speak="${Number(row.start) || 0}" aria-label="Play current sentence" title="Play current sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>`
+        : '';
     const originalColor = colorValue(state.settings.originalColor, '#ffffff');
     const translatedColor = colorValue(state.settings.translatedColor, '#8fd3ff');
     return `<article class="cmj-dual-row" data-dual-row="${index}" data-dual-start="${Number(row.start) || 0}" data-dual-end="${Number(row.end) || 0}">
@@ -375,8 +455,12 @@
   }
   function formatTime(seconds) {
     const s = Math.max(0, Math.floor(Number(seconds) || 0));
-    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-    return h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
+    const h = Math.floor(s / 3600),
+      m = Math.floor((s % 3600) / 60),
+      sec = s % 60;
+    return h
+      ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+      : `${m}:${String(sec).padStart(2, '0')}`;
   }
   function seek(time) {
     const video = document.querySelector('video');
@@ -387,8 +471,7 @@
     if (!video) return;
     video.currentTime = Math.max(0, Number(time) || 0);
     const play = video.play?.();
-    if (play?.catch) play.catch(() => {
-    });
+    if (play?.catch) play.catch(() => {});
   }
 
   // Scrolling is handled by the shared CMJScroll controller (src/lib/transcript-scroll.js).
@@ -401,7 +484,7 @@
         getActiveRow: () => {
           syncHighlight();
           return $('.cmj-dual-list .cmj-dual-live');
-        }
+        },
       });
     }
     return dualFollowerInstance;
@@ -413,7 +496,9 @@
     const list = $('.cmj-dual-list');
     if (!video || !list || !state.sentences.length) return;
     const t = Number(video.currentTime || 0);
-    let active = -1, lo = 0, hi = state.sentences.length - 1;
+    let active = -1,
+      lo = 0,
+      hi = state.sentences.length - 1;
     while (lo <= hi) {
       const mid = (lo + hi) >> 1;
       const row = state.sentences[mid];
@@ -448,7 +533,9 @@
     state.syncTimer = setInterval(() => syncHighlight(false), 120);
     if (!state.dualSeekBound) {
       state.dualSeekBound = true;
-      ['seeking', 'seeked'].forEach(type => document.addEventListener(type, () => syncHighlight(), true));
+      ['seeking', 'seeked'].forEach((type) =>
+        document.addEventListener(type, () => syncHighlight(), true)
+      );
     }
   }
   function applyTranscriptData(data) {
@@ -459,24 +546,57 @@
     state.targetLanguage = data.targetLanguage || state.targetLanguage;
     state.translationAvailable = !!data.translationAvailable;
     state.translationError = data.translationError || '';
-    state.cues = Array.isArray(data.original) ? data.original.map((c, i) => ({ ...c, id: i, translated: Array.isArray(data.translated) ? (data.translated[i]?.text || '') : '' })) : [];
+    state.cues = Array.isArray(data.original)
+      ? data.original.map((c, i) => ({
+          ...c,
+          id: i,
+          translated: Array.isArray(data.translated) ? data.translated[i]?.text || '' : '',
+        }))
+      : [];
     state.sentences = mergeSentences(state.cues);
     state.status = state.cues.length ? 'ready' : 'error';
-    saveCache({ videoId: state.videoId, sourceLanguage: state.sourceLanguage, targetLanguage: state.targetLanguage, cues: state.cues, sentences: state.sentences, translationAvailable: state.translationAvailable, translationError: state.translationError });
+    saveCache({
+      videoId: state.videoId,
+      sourceLanguage: state.sourceLanguage,
+      targetLanguage: state.targetLanguage,
+      cues: state.cues,
+      sentences: state.sentences,
+      translationAvailable: state.translationAvailable,
+      translationError: state.translationError,
+    });
     renderPanel();
   }
   function mergeSentences(cues) {
-    if (state.settings.sentenceMerging === false) return cues.map((c, i) => ({ ...c, id: i, original: c.text, translated: c.translated || '' }));
+    if (state.settings.sentenceMerging === false)
+      return cues.map((c, i) => ({
+        ...c,
+        id: i,
+        original: c.text,
+        translated: c.translated || '',
+      }));
     const out = [];
     let bucket = null;
     for (const cue of cues) {
-      if (!bucket) bucket = { id: out.length, start: cue.start, end: cue.end, original: cue.text, translated: cue.translated || '' };
+      if (!bucket)
+        bucket = {
+          id: out.length,
+          start: cue.start,
+          end: cue.end,
+          original: cue.text,
+          translated: cue.translated || '',
+        };
       else {
-        bucket.original += /[-—]$/.test(bucket.original) || /^[,.;:!?，。！？、]/.test(cue.text) ? cue.text : ` ${cue.text}`;
+        bucket.original +=
+          /[-—]$/.test(bucket.original) || /^[,.;:!?，。！？、]/.test(cue.text)
+            ? cue.text
+            : ` ${cue.text}`;
         if (cue.translated) bucket.translated += (bucket.translated ? ' ' : '') + cue.translated;
         bucket.end = cue.end;
       }
-      if (/[.!?。！？]+(?:['”’"»)]*)?$/.test(bucket.original.trim()) || bucket.original.length > 180) {
+      if (
+        /[.!?。！？]+(?:['”’"»)]*)?$/.test(bucket.original.trim()) ||
+        bucket.original.length > 180
+      ) {
         out.push(bucket);
         bucket = null;
       }
@@ -489,38 +609,83 @@
     if (!row) return;
     try {
       const stored = await chrome.storage.local.get(['vocabulary', 'sentenceLearning']);
-      const item = { id: crypto.randomUUID(), type: 'sentence', word: '', sentence: row.original, translation: row.translated || '', sentenceTranslation: row.translated || '', words: String(row.original).split(/\s+/).filter(Boolean).map(word => ({ word })), level: 'A1', levelLabel: 'Learner', stage: 'New', language: state.sourceLanguage || 'auto', videoId: state.videoId, videoTitle: document.title.replace(/\s*-\s*YouTube\s*$/i, ''), url: location.href, timestamp: Number(row.start) || 0, source: 'Dual Transcript', tags: ['YouTube', 'Dual Transcript'], createdAt: new Date().toISOString() };
-      const duplicate = (stored.vocabulary || []).some(x => x?.type === 'sentence' && x.videoId === item.videoId && String(x.sentence || '') === item.sentence && Math.abs(Number(x.timestamp || 0) - item.timestamp) < 1.5);
-      if (!duplicate) await chrome.storage.local.set({ vocabulary: [item, ...(stored.vocabulary || [])].slice(0, 5000), sentenceLearning: [item, ...(stored.sentenceLearning || [])].slice(0, 5000) });
+      const item = {
+        id: crypto.randomUUID(),
+        type: 'sentence',
+        word: '',
+        sentence: row.original,
+        translation: row.translated || '',
+        sentenceTranslation: row.translated || '',
+        words: String(row.original)
+          .split(/\s+/)
+          .filter(Boolean)
+          .map((word) => ({ word })),
+        level: 'A1',
+        levelLabel: 'Learner',
+        stage: 'New',
+        language: state.sourceLanguage || 'auto',
+        videoId: state.videoId,
+        videoTitle: document.title.replace(/\s*-\s*YouTube\s*$/i, ''),
+        url: location.href,
+        timestamp: Number(row.start) || 0,
+        source: 'Dual Transcript',
+        tags: ['YouTube', 'Dual Transcript'],
+        createdAt: new Date().toISOString(),
+      };
+      const duplicate = (stored.vocabulary || []).some(
+        (x) =>
+          x?.type === 'sentence' &&
+          x.videoId === item.videoId &&
+          String(x.sentence || '') === item.sentence &&
+          Math.abs(Number(x.timestamp || 0) - item.timestamp) < 1.5
+      );
+      if (!duplicate)
+        await chrome.storage.local.set({
+          vocabulary: [item, ...(stored.vocabulary || [])].slice(0, 5000),
+          sentenceLearning: [item, ...(stored.sentenceLearning || [])].slice(0, 5000),
+        });
       toast(duplicate ? 'Sentence is already in your Library.' : 'Sentence saved to your Library.');
     } catch (_) {
       toast('Could not save sentence.');
     }
   }
   function deriveWordTranslationFromSentence(word, sentence, sentenceTranslation) {
-    const wanted = String(word || '').trim(), source = String(sentence || '').trim(), target = String(sentenceTranslation || '').trim();
+    const wanted = String(word || '').trim(),
+      source = String(sentence || '').trim(),
+      target = String(sentenceTranslation || '').trim();
     if (!wanted || !source || !target) return null;
-    const clean = v => String(v || '').replace(/[“”\"'`]/g, '').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu, '').trim();
-    const norm = v => clean(v).toLocaleLowerCase();
-    const src = source.split(/\s+/).filter(Boolean), dst = target.split(/\s+/).filter(Boolean), wn = norm(wanted);
-    const exact = dst.find(t => norm(t) === wn);
+    const clean = (v) =>
+      String(v || '')
+        .replace(/[“”\"'`]/g, '')
+        .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}'’_-]+$/gu, '')
+        .trim();
+    const norm = (v) => clean(v).toLocaleLowerCase();
+    const src = source.split(/\s+/).filter(Boolean),
+      dst = target.split(/\s+/).filter(Boolean),
+      wn = norm(wanted);
+    const exact = dst.find((t) => norm(t) === wn);
     if (exact) return { translation: clean(exact), provider: 'sentence-derived' };
-    const si = src.findIndex(t => norm(t) === wn);
+    const si = src.findIndex((t) => norm(t) === wn);
     if (si < 0) return null;
     if (src.length === 1) return { translation: target, provider: 'sentence-derived' };
-    if (src.length === dst.length && dst[si]) return { translation: clean(dst[si]), provider: 'sentence-derived' };
+    if (src.length === dst.length && dst[si])
+      return { translation: clean(dst[si]), provider: 'sentence-derived' };
     const anchors = [];
     src.forEach((t, i) => {
-      const n = norm(t), ti = dst.findIndex(x => norm(x) === n);
+      const n = norm(t),
+        ti = dst.findIndex((x) => norm(x) === n);
       if (n && ti >= 0) anchors.push({ si: i, ti });
     });
-    let before = null, after = null;
+    let before = null,
+      after = null;
     for (const a of anchors) {
       if (a.si < si && (!before || a.si > before.si)) before = a;
       if (a.si > si && (!after || a.si < after.si)) after = a;
     }
     if (before && after) {
-      const lo = Math.min(before.ti, after.ti), hi = Math.max(before.ti, after.ti), span = dst.slice(lo + 1, hi);
+      const lo = Math.min(before.ti, after.ti),
+        hi = Math.max(before.ti, after.ti),
+        span = dst.slice(lo + 1, hi);
       if (span.length === 1) return { translation: clean(span[0]), provider: 'sentence-derived' };
     }
     return null;
@@ -539,10 +704,41 @@
           provider = d.provider;
         }
       }
-      const item = { id: crypto.randomUUID(), type: 'word', word: clean, translation: resolved, sentence, sentenceTranslation: translation, translationProvider: provider, level: 'A1', levelLabel: 'Learner', stage: 'New', language: state.sourceLanguage || 'auto', videoId: state.videoId, videoTitle: document.title.replace(/\s*-\s*YouTube\s*$/i, ''), url: location.href, timestamp: Number(time) || 0, source: 'Dual Transcript', tags: ['YouTube', 'Dual Transcript'], createdAt: new Date().toISOString() };
-      const duplicate = (stored.vocabulary || []).some(x => x?.type === 'word' && x.videoId === item.videoId && String(x.word || '').toLocaleLowerCase() === clean.toLocaleLowerCase() && Math.abs(Number(x.timestamp || 0) - item.timestamp) < 1.5);
-      if (!duplicate) await chrome.storage.local.set({ vocabulary: [item, ...(stored.vocabulary || [])].slice(0, 5000), wordLearning: [item, ...(stored.wordLearning || [])].slice(0, 5000) });
-      toast(duplicate ? `“${clean}” is already in your Library.` : `“${clean}” saved to your Library.`);
+      const item = {
+        id: crypto.randomUUID(),
+        type: 'word',
+        word: clean,
+        translation: resolved,
+        sentence,
+        sentenceTranslation: translation,
+        translationProvider: provider,
+        level: 'A1',
+        levelLabel: 'Learner',
+        stage: 'New',
+        language: state.sourceLanguage || 'auto',
+        videoId: state.videoId,
+        videoTitle: document.title.replace(/\s*-\s*YouTube\s*$/i, ''),
+        url: location.href,
+        timestamp: Number(time) || 0,
+        source: 'Dual Transcript',
+        tags: ['YouTube', 'Dual Transcript'],
+        createdAt: new Date().toISOString(),
+      };
+      const duplicate = (stored.vocabulary || []).some(
+        (x) =>
+          x?.type === 'word' &&
+          x.videoId === item.videoId &&
+          String(x.word || '').toLocaleLowerCase() === clean.toLocaleLowerCase() &&
+          Math.abs(Number(x.timestamp || 0) - item.timestamp) < 1.5
+      );
+      if (!duplicate)
+        await chrome.storage.local.set({
+          vocabulary: [item, ...(stored.vocabulary || [])].slice(0, 5000),
+          wordLearning: [item, ...(stored.wordLearning || [])].slice(0, 5000),
+        });
+      toast(
+        duplicate ? `“${clean}” is already in your Library.` : `“${clean}” saved to your Library.`
+      );
     } catch (_) {
       toast('Could not save word.');
     }
@@ -561,17 +757,31 @@
       el.hidden = true;
     }, 1800);
   }
-  window.addEventListener('message', event => {
+  window.addEventListener('message', (event) => {
     const data = event.data;
     if (!data || data.source !== SOURCE) return;
     if (data.type === 'TRACK_INFO') {
       state.videoId = data.videoId || state.videoId;
       state.sourceCatalog = uniqueLanguages(Array.isArray(data.tracks) ? data.tracks : []);
-      state.translationCatalog = uniqueLanguages(Array.isArray(data.translationLanguages) ? data.translationLanguages : []);
-      state.targetCatalog = uniqueLanguages([...(Array.isArray(data.translationLanguages) ? data.translationLanguages : []), ...(Array.isArray(data.tracks) ? data.tracks : [])]);
-      if (state.sourceLanguage === 'auto' && data.sourceLanguage) state.sourceName = data.sourceName || data.sourceLanguage;
-      chrome.storage.local.set({ [CATALOG_KEY]: { videoId: data.videoId || '', updatedAt: Date.now(), originals: Array.isArray(data.tracks) ? data.tracks : [], translations: Array.isArray(data.translationLanguages) ? data.translationLanguages : [] } }).catch(() => {
-      });
+      state.translationCatalog = uniqueLanguages(
+        Array.isArray(data.translationLanguages) ? data.translationLanguages : []
+      );
+      state.targetCatalog = uniqueLanguages([
+        ...(Array.isArray(data.translationLanguages) ? data.translationLanguages : []),
+        ...(Array.isArray(data.tracks) ? data.tracks : []),
+      ]);
+      if (state.sourceLanguage === 'auto' && data.sourceLanguage)
+        state.sourceName = data.sourceName || data.sourceLanguage;
+      chrome.storage.local
+        .set({
+          [CATALOG_KEY]: {
+            videoId: data.videoId || '',
+            updatedAt: Date.now(),
+            originals: Array.isArray(data.tracks) ? data.tracks : [],
+            translations: Array.isArray(data.translationLanguages) ? data.translationLanguages : [],
+          },
+        })
+        .catch(() => {});
       if (state.panelOpen) renderPanel();
     }
     if (data.type === 'FETCH_STATUS') {
@@ -628,7 +838,7 @@
     restore.title = 'Restore transcript window';
     restore.setAttribute('aria-label', 'Restore transcript window');
     restore.hidden = true;
-    restore.addEventListener('click', event => {
+    restore.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
       panel.querySelector('[data-cmj-action="maximize"]')?.click();
@@ -636,7 +846,7 @@
     });
     document.body.appendChild(restore);
     panel.__cmjDualRestoreButton = restore;
-    const update = event => {
+    const update = (event) => {
       const minimized = panel.classList.contains('cmj-panel-minimized') && !panel.hidden;
       if (!minimized) {
         restore.hidden = true;
@@ -644,8 +854,10 @@
       }
       const r = panel.getBoundingClientRect();
       const zone = 90;
-      const x = event?.clientX ?? -9999, y = event?.clientY ?? -9999;
-      const near = x >= r.left - zone && x <= r.right + zone && y >= r.top - zone && y <= r.bottom + zone;
+      const x = event?.clientX ?? -9999,
+        y = event?.clientY ?? -9999;
+      const near =
+        x >= r.left - zone && x <= r.right + zone && y >= r.top - zone && y <= r.bottom + zone;
       if (near) {
         restore.hidden = false;
         restore.style.left = `${Math.max(4, Math.min(window.innerWidth - 42, r.right - 38))}px`;
@@ -653,9 +865,13 @@
       } else if (!restore.matches(':hover')) restore.hidden = true;
     };
     document.addEventListener('pointermove', update, true);
-    window.addEventListener('resize', () => {
-      if (!restore.hidden) update();
-    }, { passive: true });
+    window.addEventListener(
+      'resize',
+      () => {
+        if (!restore.hidden) update();
+      },
+      { passive: true }
+    );
     const observer = new MutationObserver(() => {
       if (!panel.classList.contains('cmj-panel-minimized')) restore.hidden = true;
     });
@@ -670,36 +886,82 @@
     const toolbar = $('.cmj-toolbar');
     if (!toolbar || toolbar.__cmjDualFallbackReady) return;
     toolbar.__cmjDualFallbackReady = true;
-    toolbar.addEventListener('click', event => {
-      const button = event.target.closest?.('[data-cmj-toolbar]');
-      if (!button) return;
-      const action = button.dataset.cmjToolbar;
-      if (action !== 'bookmark' && action !== 'watch') return;
-      const id = videoId();
-      if (!id) return;
-      setTimeout(async () => {
-        try {
-          if (action === 'watch') {
-            const stored = await chrome.storage.local.get('watchLater');
-            const list = Array.isArray(stored.watchLater) ? stored.watchLater : [];
-            if (list.some(x => x?.videoId === id)) return;
-            const title = document.title.replace(/\s*[-|]\s*YouTube\s*$/i, '').trim() || 'YouTube video';
-            await chrome.storage.local.set({ watchLater: [{ id: crypto.randomUUID(), videoId: id, title, url: `https://www.youtube.com/watch?v=${id}`, thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, source: 'Watch Later', level: 'Not assessed', tags: ['Watch Later'], progress: 0, addedAt: new Date().toISOString() }, ...list].slice(0, 5000) });
-            toast('Added to Charlie MJ Watch Later.');
-          } else {
-            const video = document.querySelector('video');
-            const timestamp = Number(video?.currentTime || 0);
-            const stored = await chrome.storage.local.get('bookmarks');
-            const list = Array.isArray(stored.bookmarks) ? stored.bookmarks : [];
-            if (list.some(x => x?.videoId === id && Math.abs(Number(x.timestamp || 0) - timestamp) < 1.25)) return;
-            const title = document.title.replace(/\s*[-|]\s*YouTube\s*$/i, '').trim() || 'YouTube video';
-            await chrome.storage.local.set({ bookmarks: [{ id: crypto.randomUUID(), type: 'bookmark', title, videoTitle: title, url: location.href, videoId: id, thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, source: 'Bookmarks', timestamp, subtitle: '', translation: '', label: 'Learning moment', tags: ['YouTube'], createdAt: new Date().toISOString() }, ...list].slice(0, 5000) });
-            toast('Timeline bookmark saved to Bookmarks Library.');
-          }
-        } catch (_) {
-        }
-      }, 900);
-    }, true);
+    toolbar.addEventListener(
+      'click',
+      (event) => {
+        const button = event.target.closest?.('[data-cmj-toolbar]');
+        if (!button) return;
+        const action = button.dataset.cmjToolbar;
+        if (action !== 'bookmark' && action !== 'watch') return;
+        const id = videoId();
+        if (!id) return;
+        setTimeout(async () => {
+          try {
+            if (action === 'watch') {
+              const stored = await chrome.storage.local.get('watchLater');
+              const list = Array.isArray(stored.watchLater) ? stored.watchLater : [];
+              if (list.some((x) => x?.videoId === id)) return;
+              const title =
+                document.title.replace(/\s*[-|]\s*YouTube\s*$/i, '').trim() || 'YouTube video';
+              await chrome.storage.local.set({
+                watchLater: [
+                  {
+                    id: crypto.randomUUID(),
+                    videoId: id,
+                    title,
+                    url: `https://www.youtube.com/watch?v=${id}`,
+                    thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+                    source: 'Watch Later',
+                    level: 'Not assessed',
+                    tags: ['Watch Later'],
+                    progress: 0,
+                    addedAt: new Date().toISOString(),
+                  },
+                  ...list,
+                ].slice(0, 5000),
+              });
+              toast('Added to Charlie MJ Watch Later.');
+            } else {
+              const video = document.querySelector('video');
+              const timestamp = Number(video?.currentTime || 0);
+              const stored = await chrome.storage.local.get('bookmarks');
+              const list = Array.isArray(stored.bookmarks) ? stored.bookmarks : [];
+              if (
+                list.some(
+                  (x) => x?.videoId === id && Math.abs(Number(x.timestamp || 0) - timestamp) < 1.25
+                )
+              )
+                return;
+              const title =
+                document.title.replace(/\s*[-|]\s*YouTube\s*$/i, '').trim() || 'YouTube video';
+              await chrome.storage.local.set({
+                bookmarks: [
+                  {
+                    id: crypto.randomUUID(),
+                    type: 'bookmark',
+                    title,
+                    videoTitle: title,
+                    url: location.href,
+                    videoId: id,
+                    thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+                    source: 'Bookmarks',
+                    timestamp,
+                    subtitle: '',
+                    translation: '',
+                    label: 'Learning moment',
+                    tags: ['YouTube'],
+                    createdAt: new Date().toISOString(),
+                  },
+                  ...list,
+                ].slice(0, 5000),
+              });
+              toast('Timeline bookmark saved to Bookmarks Library.');
+            }
+          } catch (_) {}
+        }, 900);
+      },
+      true
+    );
   }
   function install() {
     ensureUI();
@@ -716,24 +978,41 @@
       }, 150);
     });
     state.observer.observe(document.documentElement, { childList: true, subtree: true });
-    document.addEventListener('yt-navigate-finish', () => {
-      state.lastRequestedVideo = '';
-      setTimeout(handleVideoChange, 700);
-    }, true);
-    document.addEventListener('click', event => {
-      const tab = event.target.closest?.('[data-cmj-tab]');
-      const toolbarAction = event.target.closest?.('[data-cmj-toolbar]')?.dataset?.cmjToolbar;
-      const windowAction = event.target.closest?.('[data-cmj-action]')?.dataset?.cmjAction;
-      if ((tab && !tab.hasAttribute('data-cmj-dual-tab')) || toolbarAction === 'transcript' || windowAction === 'close') {
-        state.panelOpen = false;
-        state.dualActive = false;
-        $('.cmj-panel')?.classList.remove('cmj-panel-dual-active');
-      }
-    }, true);
-    document.addEventListener('play', () => {
-      ensureUI();
-      if (!state.lightweightSleep && state.settings.autoFetchOnPlay !== false) requestTranscript(false);
-    }, true);
+    document.addEventListener(
+      'yt-navigate-finish',
+      () => {
+        state.lastRequestedVideo = '';
+        setTimeout(handleVideoChange, 700);
+      },
+      true
+    );
+    document.addEventListener(
+      'click',
+      (event) => {
+        const tab = event.target.closest?.('[data-cmj-tab]');
+        const toolbarAction = event.target.closest?.('[data-cmj-toolbar]')?.dataset?.cmjToolbar;
+        const windowAction = event.target.closest?.('[data-cmj-action]')?.dataset?.cmjAction;
+        if (
+          (tab && !tab.hasAttribute('data-cmj-dual-tab')) ||
+          toolbarAction === 'transcript' ||
+          windowAction === 'close'
+        ) {
+          state.panelOpen = false;
+          state.dualActive = false;
+          $('.cmj-panel')?.classList.remove('cmj-panel-dual-active');
+        }
+      },
+      true
+    );
+    document.addEventListener(
+      'play',
+      () => {
+        ensureUI();
+        if (!state.lightweightSleep && state.settings.autoFetchOnPlay !== false)
+          requestTranscript(false);
+      },
+      true
+    );
     setInterval(handleVideoChange, 3000);
   }
   (async () => {
@@ -741,8 +1020,7 @@
     try {
       const stored = await chrome.storage.local.get('cmjLightweightSleepMode');
       state.lightweightSleep = stored.cmjLightweightSleepMode === true;
-    } catch (_) {
-    }
+    } catch (_) {}
     install();
     if (state.lightweightSleep) setLightweightSleep(true);
   })();

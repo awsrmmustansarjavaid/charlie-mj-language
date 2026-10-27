@@ -1,5 +1,7 @@
 [
   {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCoqoGKtzMhk2-031Fnp4rzg",
     "category": "Learn Turkish",
     "categorySuggestion": {
       "confidence": 0.5454545454545454,
@@ -8,25 +10,152 @@
       "suggestedName": "English Learning"
     },
     "channelId": "UCoqoGKtzMhk2-031Fnp4rzg",
+    "channelPlaylists": [],
+    "channelPlaylistsComplete": false,
+    "channelPlaylistsFetchedAt": "2026-10-27T11:58:04.123Z",
+    "channelPlaylistsPages": 0,
+    "channelPlaylistsSource": "youtube-channel-playlists-page",
+    "country": "TR",
+    "countryCode": "TR",
+    "customUrl": "https://www.youtube.com/@turkishwithmaheen",
     "dateAdded": "2026-10-25T12:46:48.908Z",
     "description": "Learn Turkish with Me Welcome! I’m a Turkish tutor helping students learn Turkish in a simple, practical, and enjoyable way. On this channel, you’ll find: 🎵 Turkish learning songs 📚 A1–B1 Turkish lessons 🗣️ Everyday Turkish vocabulary & expressions 💬 Speaking and pronunciation practice 🇹🇷 Turkish culture and useful language tips I also offer 1-on-1 Turkish classes tailored to your level, goals, and learning style. 📩 Interested in 1-1 lessons? WhatsApp: +923204613019 or Fill in the form : https://forms.gle/RLV2CCU5NyC2TgEu7 Preply profile : Search Maheen A Send me a message with your Turkish level and what you’d like to learn, and we can arrange a lesson. Subscribe and let’s learn Turkish together! 🇹🇷 Follow on TikTok www.tiktok.com/@turkishwithmaheen",
     "handle": "@turkishwithmaheen",
+    "hiddenSubscriberCount": false,
     "id": "channel_6ce14511-1b31-4868-bef4-7045639b8ed6",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "video",
+      "sharing",
+      "camera phone",
+      "video phone",
+      "free",
+      "upload"
+    ],
     "kind": "channel",
-    "metadataLastChecked": "2026-10-25T12:46:48.896Z",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataHistory": [
+      {
+        "changed": 0,
+        "changes": [],
+        "fetchedAt": "2026-10-27T11:58:07.943Z"
+      },
+      {
+        "changed": 10,
+        "changes": [
+          {
+            "after": "",
+            "before": null,
+            "field": "banner"
+          },
+          {
+            "after": "TR",
+            "before": null,
+            "field": "country"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "language"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "publishedAt"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "viewCount"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "itemCount"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "privacy"
+          },
+          {
+            "after": false,
+            "before": null,
+            "field": "verified"
+          },
+          {
+            "after": [
+              "video",
+              "sharing",
+              "camera phone",
+              "video phone",
+              "free",
+              "upload"
+            ],
+            "before": null,
+            "field": "keywords"
+          },
+          {
+            "after": [
+              "video",
+              "sharing",
+              "camera phone",
+              "video phone",
+              "free",
+              "upload"
+            ],
+            "before": [],
+            "field": "tags"
+          }
+        ],
+        "fetchedAt": "2026-10-27T11:58:05.384Z"
+      }
+    ],
+    "metadataLastChecked": "2026-10-27T11:58:07.943Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
     "name": "Turkish with Maheen - YouTube",
     "notes": "",
     "owner": "",
+    "ownerChannelId": "",
     "playlistId": "",
+    "playlistItems": [],
+    "privacy": "",
+    "publishedAt": "",
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@turkishwithmaheen",
     "subscriberCount": "",
-    "tags": [],
+    "subscriberCountNumber": null,
+    "tags": [
+      "video",
+      "sharing",
+      "camera phone",
+      "video phone",
+      "free",
+      "upload"
+    ],
     "thumbnail": "https://yt3.googleusercontent.com/kFDYi1IlamEQfIB_ZJRmK9NHMLz0BVj0IATF8BcCr2Y7tokoVTTTLJJOLbm5_F46RlfQrKMHDw=s900-c-k-c0x00ffffff-no-rj",
-    "thumbnailChecked": "2026-10-25T12:46:48.896Z",
-    "updatedAt": "2026-10-25T12:46:48.908Z",
+    "thumbnailChecked": "2026-10-27T11:58:07.943Z",
+    "title": "Turkish with Maheen - YouTube",
+    "updatedAt": "2026-10-27T11:58:07.987Z",
     "url": "https://www.youtube.com/@turkishwithmaheen",
-    "videoCount": ""
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "viewCount": "",
+    "viewCountNumber": null
   },
   {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCSAJ7W0a8heVQrG-FTBCdyA",
     "category": "Learn Turkish",
     "categorySuggestion": {
       "confidence": 0.5882352941176471,
@@ -35,23 +164,232 @@
       "suggestedName": "History & Culture"
     },
     "channelId": "UCSAJ7W0a8heVQrG-FTBCdyA",
+    "country": "TR",
+    "countryCode": "TR",
+    "customUrl": "https://www.youtube.com/@talkingtoqamar",
     "dateAdded": "2026-10-17T13:07:37.221Z",
     "description": "Welcome to \"The Professor\" - Your Passport to Global Living and Wisdom. Are you ready to embark on an enlightening journey? Look no further than \"The Professor,\" your ultimate guide to moving to a foreign country and unlocking a treasure trove of general knowledge. Join us as we explore the world, unravel the mysteries of international relocation, and delve into a myriad of fascinating topics that will broaden your horizons. The Professor, your seasoned guide, shares personal experiences, insights, and a genuine passion for exploring new cultures. Discover what fuels this journey and why The Professor is your trusted source for global living. \"The Professor\" is a channel that evolves with you. Share your thoughts, suggest future topics, and participate in polls. Subscribe now to \"The Professor\" for an enriching blend of practical advice, cultural exploration, and a world of wisdom. Let's make every chapter of your global adventure unforgettable!",
     "handle": "@talkingtoqamar",
+    "hiddenSubscriberCount": false,
     "id": "channel_eb28a87c-4758-42e6-9679-38f91750505a",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn t...",
+      "japanese language",
+      "LanguageLearning",
+      "LearnLanguages",
+      "LanguageLessons",
+      "language",
+      "learn",
+      "learn japanese",
+      "how to learn japanese",
+      "japanese for beginners",
+      "learn turkish",
+      "how to learn turkish",
+      "turkish",
+      "turkish for beginners",
+      "german",
+      "learn german",
+      "how to learn german",
+      "arabic",
+      "learn arabic",
+      "how to learn arabic",
+      "spanish",
+      "learn spanish",
+      "how to learn spanish",
+      "easy japanese for travelers",
+      "arabic for travelers",
+      "spanish for travelers",
+      "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn turkish\" \"how to learn turkish\" turkish \"turkish for beginners\" german \"learn german\" \"how to learn german\" arabic \"learn arabic\" \"how to learn arabic\" spanish \"learn spanish\" \"how to learn spanish\" \"easy japanese for travelers\" \"arabic for travelers\" \"spanish for travelers\""
+    ],
     "kind": "channel",
-    "metadataLastChecked": "2026-10-17T13:07:37.207Z",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataHistory": [
+      {
+        "changed": 12,
+        "changes": [
+          {
+            "after": "",
+            "before": null,
+            "field": "banner"
+          },
+          {
+            "after": "TR",
+            "before": null,
+            "field": "country"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "language"
+          },
+          {
+            "after": "1 year ago",
+            "before": null,
+            "field": "publishedAt"
+          },
+          {
+            "after": "4.24K subscribers",
+            "before": "",
+            "field": "subscriberCount"
+          },
+          {
+            "after": "180 videos",
+            "before": "",
+            "field": "videoCount"
+          },
+          {
+            "after": "360 views",
+            "before": null,
+            "field": "viewCount"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "itemCount"
+          },
+          {
+            "after": "",
+            "before": null,
+            "field": "privacy"
+          },
+          {
+            "after": false,
+            "before": null,
+            "field": "verified"
+          },
+          {
+            "after": [
+              "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn t...",
+              "japanese language",
+              "LanguageLearning",
+              "LearnLanguages",
+              "LanguageLessons",
+              "language",
+              "learn",
+              "learn japanese",
+              "how to learn japanese",
+              "japanese for beginners",
+              "learn turkish",
+              "how to learn turkish",
+              "turkish",
+              "turkish for beginners",
+              "german",
+              "learn german",
+              "how to learn german",
+              "arabic",
+              "learn arabic",
+              "how to learn arabic",
+              "spanish",
+              "learn spanish",
+              "how to learn spanish",
+              "easy japanese for travelers",
+              "arabic for travelers",
+              "spanish for travelers",
+              "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn turkish\" \"how to learn turkish\" turkish \"turkish for beginners\" german \"learn german\" \"how to learn german\" arabic \"learn arabic\" \"how to learn arabic\" spanish \"learn spanish\" \"how to learn spanish\" \"easy japanese for travelers\" \"arabic for travelers\" \"spanish for travelers\""
+            ],
+            "before": null,
+            "field": "keywords"
+          },
+          {
+            "after": [
+              "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn t...",
+              "japanese language",
+              "LanguageLearning",
+              "LearnLanguages",
+              "LanguageLessons",
+              "language",
+              "learn",
+              "learn japanese",
+              "how to learn japanese",
+              "japanese for beginners",
+              "learn turkish",
+              "how to learn turkish",
+              "turkish",
+              "turkish for beginners",
+              "german",
+              "learn german",
+              "how to learn german",
+              "arabic",
+              "learn arabic",
+              "how to learn arabic",
+              "spanish",
+              "learn spanish",
+              "how to learn spanish",
+              "easy japanese for travelers",
+              "arabic for travelers",
+              "spanish for travelers",
+              "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn turkish\" \"how to learn turkish\" turkish \"turkish for beginners\" german \"learn german\" \"how to learn german\" arabic \"learn arabic\" \"how to learn arabic\" spanish \"learn spanish\" \"how to learn spanish\" \"easy japanese for travelers\" \"arabic for travelers\" \"spanish for travelers\""
+            ],
+            "before": [],
+            "field": "tags"
+          }
+        ],
+        "fetchedAt": "2026-10-27T11:58:30.192Z"
+      }
+    ],
+    "metadataLastChecked": "2026-10-27T11:58:30.192Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
     "name": "The Professor - YouTube",
     "notes": "",
     "owner": "",
+    "ownerChannelId": "",
     "playlistId": "",
-    "subscriberCount": "",
-    "tags": [],
+    "playlistItems": [],
+    "privacy": "",
+    "publishedAt": "1 year ago",
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@talkingtoqamar",
+    "subscriberCount": "4.24K subscribers",
+    "subscriberCountNumber": 4240,
+    "tags": [
+      "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn t...",
+      "japanese language",
+      "LanguageLearning",
+      "LearnLanguages",
+      "LanguageLessons",
+      "language",
+      "learn",
+      "learn japanese",
+      "how to learn japanese",
+      "japanese for beginners",
+      "learn turkish",
+      "how to learn turkish",
+      "turkish",
+      "turkish for beginners",
+      "german",
+      "learn german",
+      "how to learn german",
+      "arabic",
+      "learn arabic",
+      "how to learn arabic",
+      "spanish",
+      "learn spanish",
+      "how to learn spanish",
+      "easy japanese for travelers",
+      "arabic for travelers",
+      "spanish for travelers",
+      "\"japanese language\" LanguageLearning LearnLanguages LanguageLessons language learn \"learn japanese\" \"how to learn japanese\" \"japanese for beginners\" \"learn turkish\" \"how to learn turkish\" turkish \"turkish for beginners\" german \"learn german\" \"how to learn german\" arabic \"learn arabic\" \"how to learn arabic\" spanish \"learn spanish\" \"how to learn spanish\" \"easy japanese for travelers\" \"arabic for travelers\" \"spanish for travelers\""
+    ],
     "thumbnail": "https://yt3.googleusercontent.com/5PX-UjKCagXCh_ywtcpMfOVXQzq80348kc1Ybekm-D_Vwsz7GdbAsricmdFdx7lu57f9_PZAGek=s900-c-k-c0x00ffffff-no-rj",
-    "thumbnailChecked": "2026-10-17T13:07:37.207Z",
-    "updatedAt": "2026-10-17T13:07:37.221Z",
+    "thumbnailChecked": "2026-10-27T11:58:30.192Z",
+    "title": "The Professor - YouTube",
+    "updatedAt": "2026-10-27T11:58:30.243Z",
     "url": "https://www.youtube.com/@talkingtoqamar",
-    "videoCount": ""
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "180 videos",
+    "videoCountNumber": 180,
+    "viewCount": "360 views",
+    "viewCountNumber": 360
   },
   {
     "category": "Learn Turkish",

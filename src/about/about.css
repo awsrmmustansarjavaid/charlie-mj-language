@@ -1,97 +1,102 @@
 * {
-  box-sizing:border-box
+  box-sizing: border-box;
 }
 
 body {
-  margin:0;
-  background:#08101f;
-  color:#e5eefb;
-  font:15px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+  margin: 0;
+  background: #08101f;
+  color: #e5eefb;
+  font:
+    15px/1.65 system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 header {
-  padding:34px max(22px,calc((100vw - 980px)/2));
-  border-bottom:1px solid #ffffff16;
-  background:#0c1830
+  padding: 34px max(22px, calc((100vw - 980px) / 2));
+  border-bottom: 1px solid #ffffff16;
+  background: #0c1830;
 }
 
-header>div {
-  max-width:760px
+header > div {
+  max-width: 760px;
 }
 
 header a {
-  display:inline-block;
-  margin-top:16px;
-  color:#93c5fd;
-  text-decoration:none
+  display: inline-block;
+  margin-top: 16px;
+  color: #93c5fd;
+  text-decoration: none;
 }
 
 h1 {
-  margin:4px 0 8px;
-  font-size:36px;
-  line-height:1.15
+  margin: 4px 0 8px;
+  font-size: 36px;
+  line-height: 1.15;
 }
 
 .eyebrow {
-  font-size:11px;
-  letter-spacing:.16em;
-  color:#67e8f9;
-  font-weight:800
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #67e8f9;
+  font-weight: 800;
 }
 
 header p {
-  margin:0;
-  color:#a9b9cf
+  margin: 0;
+  color: #a9b9cf;
 }
 
 main {
-  max-width:980px;
-  margin:0 auto;
-  padding:24px 22px 60px
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 22px 60px;
 }
 
 section {
-  margin:0 0 16px;
-  padding:20px 22px;
-  border:1px solid #ffffff12;
-  border-radius:16px;
-  background:#0d182b
+  margin: 0 0 16px;
+  padding: 20px 22px;
+  border: 1px solid #ffffff12;
+  border-radius: 16px;
+  background: #0d182b;
 }
 
 h2 {
-  margin:0 0 8px;
-  font-size:20px
+  margin: 0 0 8px;
+  font-size: 20px;
 }
 
 p {
-  margin:8px 0
+  margin: 8px 0;
 }
 
 ol {
-  padding-left:24px
+  padding-left: 24px;
 }
 
 code {
-  padding:2px 5px;
-  border-radius:5px;
-  background:#0006;
-  color:#bae6fd
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #0006;
+  color: #bae6fd;
 }
 
 strong {
-  color:#fff
+  color: #fff;
 }
 
 details {
-  padding:10px 0;
-  border-top:1px solid #ffffff10
+  padding: 10px 0;
+  border-top: 1px solid #ffffff10;
 }
 
 details:first-of-type {
-  border-top:0
+  border-top: 0;
 }
 
 summary {
-  cursor:pointer;
-  font-weight:700
+  cursor: pointer;
+  font-weight: 700;
 }

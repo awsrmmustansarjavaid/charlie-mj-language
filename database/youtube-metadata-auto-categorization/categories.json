@@ -1,0 +1,1139 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "english-learning",
+      "name": "English Learning",
+      "keywords": [
+        "english",
+        "ielts",
+        "toefl",
+        "grammar",
+        "vocabulary",
+        "listening",
+        "speaking",
+        "pronunciation"
+      ]
+    },
+    {
+      "id": "programming",
+      "name": "Programming",
+      "keywords": [
+        "programming",
+        "javascript",
+        "python",
+        "typescript",
+        "java",
+        "coding",
+        "developer",
+        "software",
+        "github"
+      ]
+    },
+    {
+      "id": "ai-and-machine-learning",
+      "name": "AI & Machine Learning",
+      "keywords": [
+        "artificial intelligence",
+        "machine learning",
+        "deep learning",
+        "llm",
+        "neural network",
+        "ai"
+      ]
+    },
+    {
+      "id": "devops-and-cloud",
+      "name": "DevOps & Cloud",
+      "keywords": [
+        "devops",
+        "docker",
+        "kubernetes",
+        "aws",
+        "azure",
+        "gcp",
+        "terraform",
+        "linux",
+        "cloud"
+      ]
+    },
+    {
+      "id": "science-and-technology",
+      "name": "Science & Technology",
+      "keywords": [
+        "science",
+        "technology",
+        "physics",
+        "chemistry",
+        "biology",
+        "research",
+        "engineering"
+      ]
+    },
+    {
+      "id": "history-and-culture",
+      "name": "History & Culture",
+      "keywords": [
+        "history",
+        "historical",
+        "culture",
+        "civilization",
+        "documentary"
+      ]
+    },
+    {
+      "id": "health-and-fitness",
+      "name": "Health & Fitness",
+      "keywords": [
+        "health",
+        "fitness",
+        "workout",
+        "nutrition",
+        "exercise"
+      ]
+    },
+    {
+      "id": "music-learning",
+      "name": "Music Learning",
+      "keywords": [
+        "music theory",
+        "guitar",
+        "piano",
+        "singing",
+        "music lesson"
+      ]
+    },
+    {
+      "id": "travel",
+      "name": "Travel",
+      "keywords": [
+        "travel",
+        "tourism",
+        "destination",
+        "trip",
+        "vlog",
+        "vacation"
+      ]
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "keywords": [
+        "gaming",
+        "gameplay",
+        "esports",
+        "walkthrough",
+        "minecraft",
+        "roblox"
+      ]
+    },
+    {
+      "id": "turkish-learning",
+      "name": "Turkish Learning",
+      "keywords": [
+        "turkish",
+        "türkçe",
+        "turkce"
+      ]
+    },
+    {
+      "id": "arabic-learning",
+      "name": "Arabic Learning",
+      "keywords": [
+        "arabic",
+        "عربي",
+        "العربية"
+      ]
+    },
+    {
+      "id": "urdu-learning",
+      "name": "Urdu Learning",
+      "keywords": [
+        "urdu",
+        "اردو"
+      ]
+    },
+    {
+      "id": "travel-vlogger",
+      "name": "Travel Vlogger",
+      "keywords": [
+        "backpacker",
+        "budget travel",
+        "camping",
+        "city guide",
+        "country guide",
+        "couple travel",
+        "destination",
+        "family travel",
+        "hiking",
+        "luxury travel",
+        "road trip",
+        "solo traveler",
+        "tourism",
+        "travel blogger",
+        "travel vlogger",
+        "traveler",
+        "travelling",
+        "trekking",
+        "van life"
+      ]
+    },
+    {
+      "id": "travel-biker-vlogger",
+      "name": "Travel Biker Vlogger",
+      "keywords": [
+        "bike touring",
+        "biker travel",
+        "biker vlogger",
+        "motorbike touring",
+        "motorcycle travel",
+        "motorcycle vlog",
+        "motorcycle vlogger",
+        "riding vlog",
+        "road trip biker"
+      ]
+    },
+    {
+      "id": "food-vlogger",
+      "name": "Food Vlogger",
+      "keywords": [
+        "baking vlog",
+        "cafe review",
+        "chef vlogger",
+        "cooking vlog",
+        "dessert vlog",
+        "food blogger",
+        "food review",
+        "food travel",
+        "food vlogger",
+        "recipe vlog",
+        "restaurant guide",
+        "restaurant review",
+        "street food"
+      ]
+    },
+    {
+      "id": "family-vlogger",
+      "name": "Family Vlogger",
+      "keywords": [
+        "family channel",
+        "family vlog",
+        "family vlogger",
+        "fatherhood vlog",
+        "motherhood vlog",
+        "parenting vlog"
+      ]
+    },
+    {
+      "id": "couple-vlogger",
+      "name": "Couple Vlogger",
+      "keywords": [
+        "couple vlog",
+        "couple vlogger",
+        "couples travel",
+        "husband wife vlog",
+        "relationship vlog"
+      ]
+    },
+    {
+      "id": "shopping-vlogger",
+      "name": "Shopping Vlogger",
+      "keywords": [
+        "deal hunter",
+        "haul",
+        "product review",
+        "shopping guide",
+        "shopping haul",
+        "shopping vlog",
+        "shopping vlogger",
+        "unboxing"
+      ]
+    },
+    {
+      "id": "professor--teacher",
+      "name": "Professor / Teacher",
+      "keywords": [
+        "classroom",
+        "course",
+        "educator",
+        "lecture",
+        "lecturer",
+        "professor",
+        "teacher",
+        "teaching",
+        "university professor"
+      ]
+    },
+    {
+      "id": "national-tv--media",
+      "name": "National TV / Media",
+      "keywords": [
+        "broadcasting",
+        "media channel",
+        "national tv",
+        "news channel",
+        "news network",
+        "newspaper",
+        "public broadcasting",
+        "radio station",
+        "television station",
+        "tv station"
+      ]
+    },
+    {
+      "id": "drama--tv-series--films",
+      "name": "Drama / TV Series / Films",
+      "keywords": [
+        "cinema",
+        "drama",
+        "film",
+        "film studio",
+        "films",
+        "movie",
+        "movies",
+        "production company",
+        "television series",
+        "tv series",
+        "web series"
+      ]
+    },
+    {
+      "id": "chef-vlogger",
+      "name": "Chef Vlogger",
+      "keywords": [
+        "chef",
+        "chef vlog",
+        "cookery",
+        "cooking channel",
+        "culinary",
+        "home chef",
+        "professional chef",
+        "restaurant chef"
+      ]
+    },
+    {
+      "id": "lifestyle-vlogger",
+      "name": "Lifestyle Vlogger",
+      "keywords": [
+        "daily vlog",
+        "daily vlogger",
+        "digital nomad",
+        "home vlog",
+        "lifestyle vlog",
+        "lifestyle vlogger",
+        "personal vlog",
+        "student vlogger"
+      ]
+    },
+    {
+      "id": "technology-reviewer",
+      "name": "Technology Reviewer",
+      "keywords": [
+        "gadget review",
+        "hardware review",
+        "laptop review",
+        "phone review",
+        "software review",
+        "tech review",
+        "tech reviewer",
+        "technology reviewer"
+      ]
+    },
+    {
+      "id": "travel-blogger",
+      "name": "Travel Blogger",
+      "keywords": [
+        "travel",
+        "blogger"
+      ]
+    },
+    {
+      "id": "travel-guide",
+      "name": "Travel Guide",
+      "keywords": [
+        "travel",
+        "guide"
+      ]
+    },
+    {
+      "id": "adventure-travel",
+      "name": "Adventure Travel",
+      "keywords": [
+        "adventure",
+        "travel"
+      ]
+    },
+    {
+      "id": "backpacker",
+      "name": "Backpacker",
+      "keywords": [
+        "backpacker"
+      ]
+    },
+    {
+      "id": "solo-traveler",
+      "name": "Solo Traveler",
+      "keywords": [
+        "solo",
+        "traveler"
+      ]
+    },
+    {
+      "id": "family-travel",
+      "name": "Family Travel",
+      "keywords": [
+        "family",
+        "travel"
+      ]
+    },
+    {
+      "id": "couple-travel",
+      "name": "Couple Travel",
+      "keywords": [
+        "couple",
+        "travel"
+      ]
+    },
+    {
+      "id": "luxury-travel",
+      "name": "Luxury Travel",
+      "keywords": [
+        "luxury",
+        "travel"
+      ]
+    },
+    {
+      "id": "budget-travel",
+      "name": "Budget Travel",
+      "keywords": [
+        "budget",
+        "travel"
+      ]
+    },
+    {
+      "id": "road-trip",
+      "name": "Road Trip",
+      "keywords": [
+        "road",
+        "trip"
+      ]
+    },
+    {
+      "id": "van-life",
+      "name": "Van Life",
+      "keywords": [
+        "van",
+        "life"
+      ]
+    },
+    {
+      "id": "camping",
+      "name": "Camping",
+      "keywords": [
+        "camping"
+      ]
+    },
+    {
+      "id": "hiking",
+      "name": "Hiking",
+      "keywords": [
+        "hiking"
+      ]
+    },
+    {
+      "id": "trekking",
+      "name": "Trekking",
+      "keywords": [
+        "trekking"
+      ]
+    },
+    {
+      "id": "tourism",
+      "name": "Tourism",
+      "keywords": [
+        "tourism"
+      ]
+    },
+    {
+      "id": "city-guide",
+      "name": "City Guide",
+      "keywords": [
+        "city",
+        "guide"
+      ]
+    },
+    {
+      "id": "country-guide",
+      "name": "Country Guide",
+      "keywords": [
+        "country",
+        "guide"
+      ]
+    },
+    {
+      "id": "biker",
+      "name": "Biker",
+      "keywords": [
+        "biker"
+      ]
+    },
+    {
+      "id": "motorcycle-vlogger",
+      "name": "Motorcycle Vlogger",
+      "keywords": [
+        "motorcycle",
+        "vlogger"
+      ]
+    },
+    {
+      "id": "motorcycle-travel",
+      "name": "Motorcycle Travel",
+      "keywords": [
+        "motorcycle",
+        "travel"
+      ]
+    },
+    {
+      "id": "motorbike-touring",
+      "name": "Motorbike Touring",
+      "keywords": [
+        "motorbike",
+        "touring"
+      ]
+    },
+    {
+      "id": "bike-touring",
+      "name": "Bike Touring",
+      "keywords": [
+        "bike",
+        "touring"
+      ]
+    },
+    {
+      "id": "car-vlogger",
+      "name": "Car Vlogger",
+      "keywords": [
+        "car",
+        "vlogger"
+      ]
+    },
+    {
+      "id": "auto-vlogger",
+      "name": "Auto Vlogger",
+      "keywords": [
+        "auto",
+        "vlogger"
+      ]
+    },
+    {
+      "id": "car-reviews",
+      "name": "Car Reviews",
+      "keywords": [
+        "car",
+        "reviews"
+      ]
+    },
+    {
+      "id": "motorcycle-reviews",
+      "name": "Motorcycle Reviews",
+      "keywords": [
+        "motorcycle",
+        "reviews"
+      ]
+    },
+    {
+      "id": "motorsports",
+      "name": "Motorsports",
+      "keywords": [
+        "motorsports"
+      ]
+    },
+    {
+      "id": "racing",
+      "name": "Racing",
+      "keywords": [
+        "racing"
+      ]
+    },
+    {
+      "id": "driving",
+      "name": "Driving",
+      "keywords": [
+        "driving"
+      ]
+    },
+    {
+      "id": "road-trips",
+      "name": "Road Trips",
+      "keywords": [
+        "road",
+        "trips"
+      ]
+    },
+    {
+      "id": "food-blogger",
+      "name": "Food Blogger",
+      "keywords": [
+        "food",
+        "blogger"
+      ]
+    },
+    {
+      "id": "food-review",
+      "name": "Food Review",
+      "keywords": [
+        "food",
+        "review"
+      ]
+    },
+    {
+      "id": "restaurant-review",
+      "name": "Restaurant Review",
+      "keywords": [
+        "restaurant",
+        "review"
+      ]
+    },
+    {
+      "id": "street-food",
+      "name": "Street Food",
+      "keywords": [
+        "street",
+        "food"
+      ]
+    },
+    {
+      "id": "food-travel",
+      "name": "Food Travel",
+      "keywords": [
+        "food",
+        "travel"
+      ]
+    },
+    {
+      "id": "cooking",
+      "name": "Cooking",
+      "keywords": [
+        "cooking"
+      ]
+    },
+    {
+      "id": "chef",
+      "name": "Chef",
+      "keywords": [
+        "chef"
+      ]
+    },
+    {
+      "id": "recipe",
+      "name": "Recipe",
+      "keywords": [
+        "recipe"
+      ]
+    },
+    {
+      "id": "baking",
+      "name": "Baking",
+      "keywords": [
+        "baking"
+      ]
+    },
+    {
+      "id": "dessert",
+      "name": "Dessert",
+      "keywords": [
+        "dessert"
+      ]
+    },
+    {
+      "id": "cafe-review",
+      "name": "Cafe Review",
+      "keywords": [
+        "cafe",
+        "review"
+      ]
+    },
+    {
+      "id": "restaurant-guide",
+      "name": "Restaurant Guide",
+      "keywords": [
+        "restaurant",
+        "guide"
+      ]
+    },
+    {
+      "id": "daily-vlogger",
+      "name": "Daily Vlogger",
+      "keywords": [
+        "daily",
+        "vlogger"
+      ]
+    },
+    {
+      "id": "personal-vlog",
+      "name": "Personal Vlog",
+      "keywords": [
+        "personal",
+        "vlog"
+      ]
+    },
+    {
+      "id": "home-vlog",
+      "name": "Home Vlog",
+      "keywords": [
+        "home",
+        "vlog"
+      ]
+    },
+    {
+      "id": "parenting",
+      "name": "Parenting",
+      "keywords": [
+        "parenting"
+      ]
+    },
+    {
+      "id": "motherhood",
+      "name": "Motherhood",
+      "keywords": [
+        "motherhood"
+      ]
+    },
+    {
+      "id": "fatherhood",
+      "name": "Fatherhood",
+      "keywords": [
+        "fatherhood"
+      ]
+    },
+    {
+      "id": "student-vlogger",
+      "name": "Student Vlogger",
+      "keywords": [
+        "student",
+        "vlogger"
+      ]
+    },
+    {
+      "id": "digital-nomad",
+      "name": "Digital Nomad",
+      "keywords": [
+        "digital",
+        "nomad"
+      ]
+    },
+    {
+      "id": "shopping-guide",
+      "name": "Shopping Guide",
+      "keywords": [
+        "shopping",
+        "guide"
+      ]
+    },
+    {
+      "id": "product-review",
+      "name": "Product Review",
+      "keywords": [
+        "product",
+        "review"
+      ]
+    },
+    {
+      "id": "unboxing",
+      "name": "Unboxing",
+      "keywords": [
+        "unboxing"
+      ]
+    },
+    {
+      "id": "haul",
+      "name": "Haul",
+      "keywords": [
+        "haul"
+      ]
+    },
+    {
+      "id": "fashion",
+      "name": "Fashion",
+      "keywords": [
+        "fashion"
+      ]
+    },
+    {
+      "id": "beauty",
+      "name": "Beauty",
+      "keywords": [
+        "beauty"
+      ]
+    },
+    {
+      "id": "cosmetics",
+      "name": "Cosmetics",
+      "keywords": [
+        "cosmetics"
+      ]
+    },
+    {
+      "id": "technology-review",
+      "name": "Technology Review",
+      "keywords": [
+        "technology",
+        "review"
+      ]
+    },
+    {
+      "id": "gadget-review",
+      "name": "Gadget Review",
+      "keywords": [
+        "gadget",
+        "review"
+      ]
+    },
+    {
+      "id": "deal-hunter",
+      "name": "Deal Hunter",
+      "keywords": [
+        "deal",
+        "hunter"
+      ]
+    },
+    {
+      "id": "professor",
+      "name": "Professor",
+      "keywords": [
+        "professor"
+      ]
+    },
+    {
+      "id": "teacher",
+      "name": "Teacher",
+      "keywords": [
+        "teacher"
+      ]
+    },
+    {
+      "id": "lecturer",
+      "name": "Lecturer",
+      "keywords": [
+        "lecturer"
+      ]
+    },
+    {
+      "id": "university",
+      "name": "University",
+      "keywords": [
+        "university"
+      ]
+    },
+    {
+      "id": "school",
+      "name": "School",
+      "keywords": [
+        "school"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "keywords": [
+        "education"
+      ]
+    },
+    {
+      "id": "tutorial",
+      "name": "Tutorial",
+      "keywords": [
+        "tutorial"
+      ]
+    },
+    {
+      "id": "training",
+      "name": "Training",
+      "keywords": [
+        "training"
+      ]
+    },
+    {
+      "id": "course",
+      "name": "Course",
+      "keywords": [
+        "course"
+      ]
+    },
+    {
+      "id": "academic",
+      "name": "Academic",
+      "keywords": [
+        "academic"
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science",
+      "keywords": [
+        "science"
+      ]
+    },
+    {
+      "id": "history",
+      "name": "History",
+      "keywords": [
+        "history"
+      ]
+    },
+    {
+      "id": "language-learning",
+      "name": "Language Learning",
+      "keywords": [
+        "language",
+        "learning"
+      ]
+    },
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "keywords": [
+        "mathematics"
+      ]
+    },
+    {
+      "id": "national-tv",
+      "name": "National TV",
+      "keywords": [
+        "national",
+        "tv"
+      ]
+    },
+    {
+      "id": "tv-station",
+      "name": "TV Station",
+      "keywords": [
+        "tv",
+        "station"
+      ]
+    },
+    {
+      "id": "news-channel",
+      "name": "News Channel",
+      "keywords": [
+        "news",
+        "channel"
+      ]
+    },
+    {
+      "id": "news-network",
+      "name": "News Network",
+      "keywords": [
+        "news",
+        "network"
+      ]
+    },
+    {
+      "id": "radio-station",
+      "name": "Radio Station",
+      "keywords": [
+        "radio",
+        "station"
+      ]
+    },
+    {
+      "id": "newspaper",
+      "name": "Newspaper",
+      "keywords": [
+        "newspaper"
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Media",
+      "keywords": [
+        "media"
+      ]
+    },
+    {
+      "id": "broadcasting",
+      "name": "Broadcasting",
+      "keywords": [
+        "broadcasting"
+      ]
+    },
+    {
+      "id": "public-broadcasting",
+      "name": "Public Broadcasting",
+      "keywords": [
+        "public",
+        "broadcasting"
+      ]
+    },
+    {
+      "id": "government-media",
+      "name": "Government Media",
+      "keywords": [
+        "government",
+        "media"
+      ]
+    },
+    {
+      "id": "drama",
+      "name": "Drama",
+      "keywords": [
+        "drama"
+      ]
+    },
+    {
+      "id": "tv-series",
+      "name": "TV Series",
+      "keywords": [
+        "tv",
+        "series"
+      ]
+    },
+    {
+      "id": "films",
+      "name": "Films",
+      "keywords": [
+        "films"
+      ]
+    },
+    {
+      "id": "movies",
+      "name": "Movies",
+      "keywords": [
+        "movies"
+      ]
+    },
+    {
+      "id": "cinema",
+      "name": "Cinema",
+      "keywords": [
+        "cinema"
+      ]
+    },
+    {
+      "id": "film-studio",
+      "name": "Film Studio",
+      "keywords": [
+        "film",
+        "studio"
+      ]
+    },
+    {
+      "id": "production-company",
+      "name": "Production Company",
+      "keywords": [
+        "production",
+        "company"
+      ]
+    },
+    {
+      "id": "actor",
+      "name": "Actor",
+      "keywords": [
+        "actor"
+      ]
+    },
+    {
+      "id": "actress",
+      "name": "Actress",
+      "keywords": [
+        "actress"
+      ]
+    },
+    {
+      "id": "comedy",
+      "name": "Comedy",
+      "keywords": [
+        "comedy"
+      ]
+    },
+    {
+      "id": "music",
+      "name": "Music",
+      "keywords": [
+        "music"
+      ]
+    },
+    {
+      "id": "music-channel",
+      "name": "Music Channel",
+      "keywords": [
+        "music",
+        "channel"
+      ]
+    },
+    {
+      "id": "entertainment",
+      "name": "Entertainment",
+      "keywords": [
+        "entertainment"
+      ]
+    },
+    {
+      "id": "government",
+      "name": "Government",
+      "keywords": [
+        "government"
+      ]
+    },
+    {
+      "id": "government-agency",
+      "name": "Government Agency",
+      "keywords": [
+        "government",
+        "agency"
+      ]
+    },
+    {
+      "id": "embassy",
+      "name": "Embassy",
+      "keywords": [
+        "embassy"
+      ]
+    },
+    {
+      "id": "organization",
+      "name": "Organization",
+      "keywords": [
+        "organization"
+      ]
+    },
+    {
+      "id": "company",
+      "name": "Company",
+      "keywords": [
+        "company"
+      ]
+    },
+    {
+      "id": "brand",
+      "name": "Brand",
+      "keywords": [
+        "brand"
+      ]
+    },
+    {
+      "id": "official-channel",
+      "name": "Official Channel",
+      "keywords": [
+        "official",
+        "channel"
+      ]
+    },
+    {
+      "id": "sports-club",
+      "name": "Sports Club",
+      "keywords": [
+        "sports",
+        "club"
+      ]
+    },
+    {
+      "id": "sports-team",
+      "name": "Sports Team",
+      "keywords": [
+        "sports",
+        "team"
+      ]
+    }
+  ]
+}

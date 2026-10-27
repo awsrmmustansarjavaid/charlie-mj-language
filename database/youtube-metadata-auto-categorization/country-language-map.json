@@ -1,0 +1,2016 @@
+{
+  "version": 1,
+  "countries": {
+    "AW": [
+      "nl",
+      "pap",
+      "en"
+    ],
+    "AF": [
+      "fa",
+      "ps",
+      "haz",
+      "uz_Arab",
+      "tk",
+      "prd",
+      "bgn",
+      "kaa",
+      "ug",
+      "kk_Arab"
+    ],
+    "AO": [
+      "pt",
+      "umb",
+      "kmb",
+      "ln"
+    ],
+    "AI": [
+      "en"
+    ],
+    "AX": [
+      "sv"
+    ],
+    "AL": [
+      "sq",
+      "el",
+      "mk"
+    ],
+    "AD": [
+      "ca",
+      "es",
+      "fr"
+    ],
+    "AE": [
+      "ar",
+      "en",
+      "ml",
+      "ps",
+      "bal",
+      "fa"
+    ],
+    "AR": [
+      "es",
+      "en",
+      "cy",
+      "gn"
+    ],
+    "AM": [
+      "hy",
+      "ku",
+      "az"
+    ],
+    "AS": [
+      "sm",
+      "en"
+    ],
+    "AQ": [
+      "und"
+    ],
+    "TF": [
+      "fr"
+    ],
+    "AG": [
+      "en",
+      "pt"
+    ],
+    "AU": [
+      "en",
+      "zh_Hant",
+      "it",
+      "wbp",
+      "hnj"
+    ],
+    "AT": [
+      "de",
+      "bar",
+      "en",
+      "fr",
+      "it",
+      "hr",
+      "sl",
+      "hu"
+    ],
+    "AZ": [
+      "az",
+      "az_Cyrl",
+      "tly",
+      "ku",
+      "ttt",
+      "tkr"
+    ],
+    "BI": [
+      "rn",
+      "fr",
+      "sw",
+      "en"
+    ],
+    "BE": [
+      "en",
+      "nl",
+      "fr",
+      "de",
+      "vls",
+      "wa"
+    ],
+    "BJ": [
+      "fr",
+      "fon",
+      "yo",
+      "blo"
+    ],
+    "BQ": [
+      "pap",
+      "nl"
+    ],
+    "BF": [
+      "mos",
+      "dyu",
+      "fr",
+      "ff",
+      "ff_Adlm"
+    ],
+    "BD": [
+      "bn",
+      "en",
+      "rkt",
+      "syl",
+      "rhg",
+      "ccp",
+      "my",
+      "grt",
+      "mro",
+      "mni"
+    ],
+    "BG": [
+      "bg",
+      "en",
+      "ru",
+      "tr",
+      "de"
+    ],
+    "BH": [
+      "ar",
+      "ml"
+    ],
+    "BS": [
+      "en"
+    ],
+    "BA": [
+      "bs",
+      "bs_Cyrl",
+      "en",
+      "hr",
+      "sr",
+      "sr_Latn"
+    ],
+    "BL": [
+      "fr"
+    ],
+    "BY": [
+      "be",
+      "ru"
+    ],
+    "BZ": [
+      "en",
+      "es"
+    ],
+    "BM": [
+      "en"
+    ],
+    "BO": [
+      "es",
+      "qu",
+      "ay",
+      "gn",
+      "aro"
+    ],
+    "BR": [
+      "pt",
+      "en",
+      "de",
+      "it",
+      "vec",
+      "ja",
+      "es",
+      "kgp",
+      "ko",
+      "yrl",
+      "gub",
+      "xav"
+    ],
+    "BB": [
+      "en"
+    ],
+    "BN": [
+      "ms",
+      "zh_Hant",
+      "ms_Arab",
+      "en"
+    ],
+    "BT": [
+      "dz",
+      "ne",
+      "tsj",
+      "en",
+      "lep"
+    ],
+    "BV": [
+      "no"
+    ],
+    "BW": [
+      "en",
+      "tn",
+      "af"
+    ],
+    "CF": [
+      "sg",
+      "fr",
+      "ln"
+    ],
+    "CA": [
+      "en",
+      "fr",
+      "es",
+      "zh",
+      "pa",
+      "ar",
+      "hi",
+      "fil",
+      "yue",
+      "it",
+      "de",
+      "ur",
+      "pt",
+      "ru",
+      "ta",
+      "vi",
+      "fa",
+      "gu",
+      "ko",
+      "pl",
+      "el",
+      "uk",
+      "bn",
+      "ro",
+      "nl",
+      "ja",
+      "sr",
+      "tr",
+      "hr",
+      "hu",
+      "so",
+      "iu",
+      "iu_Latn",
+      "pdt",
+      "oj",
+      "ojs",
+      "crk",
+      "chp",
+      "moe",
+      "mic",
+      "atj",
+      "bla",
+      "cr",
+      "crl",
+      "csw",
+      "war",
+      "ojw",
+      "den",
+      "dgr",
+      "crg",
+      "moh",
+      "dak",
+      "hur",
+      "nsk",
+      "clc",
+      "kwk",
+      "pqm",
+      "oka",
+      "lil",
+      "gwi"
+    ],
+    "CC": [
+      "ms_Arab",
+      "en"
+    ],
+    "CH": [
+      "de",
+      "gsw",
+      "en",
+      "fr",
+      "it",
+      "lmo",
+      "pt",
+      "rm",
+      "rmo",
+      "wae"
+    ],
+    "CL": [
+      "es",
+      "en",
+      "arn"
+    ],
+    "CN": [
+      "zh",
+      "wuu",
+      "yue",
+      "yue_Hans",
+      "hsn",
+      "hak",
+      "nan",
+      "gan",
+      "ii",
+      "ug",
+      "za",
+      "mn_Mong",
+      "bo",
+      "ko",
+      "kk_Arab",
+      "lis",
+      "ky_Arab",
+      "nxq",
+      "khb",
+      "tdd",
+      "lcp",
+      "en",
+      "hnj",
+      "ru",
+      "vi",
+      "uz_Cyrl",
+      "lzh"
+    ],
+    "CI": [
+      "fr",
+      "bci",
+      "sef",
+      "dnj",
+      "kfo",
+      "bqv"
+    ],
+    "CM": [
+      "fr",
+      "en",
+      "bum",
+      "ff",
+      "ewo",
+      "ybb",
+      "bbj",
+      "nnh",
+      "bkm",
+      "bas",
+      "bax",
+      "byv",
+      "mua",
+      "maf",
+      "bfd",
+      "bss",
+      "kkj",
+      "dua",
+      "mgo",
+      "ar",
+      "jgo",
+      "ksf",
+      "ken",
+      "agq",
+      "ha_Arab",
+      "nmg",
+      "yav",
+      "ff_Adlm"
+    ],
+    "CD": [
+      "fr",
+      "sw",
+      "lua",
+      "ln",
+      "lu",
+      "kg",
+      "lol",
+      "rw"
+    ],
+    "CG": [
+      "fr",
+      "ln"
+    ],
+    "CK": [
+      "en"
+    ],
+    "CO": [
+      "es",
+      "guc",
+      "yrl"
+    ],
+    "KM": [
+      "ar",
+      "zdj",
+      "wni",
+      "fr"
+    ],
+    "CV": [
+      "kea",
+      "pt"
+    ],
+    "CR": [
+      "es"
+    ],
+    "CU": [
+      "es"
+    ],
+    "CW": [
+      "pap",
+      "nl",
+      "es"
+    ],
+    "CX": [
+      "en"
+    ],
+    "KY": [
+      "en"
+    ],
+    "CY": [
+      "el",
+      "en",
+      "tr",
+      "fr",
+      "hy",
+      "ar",
+      "ecy"
+    ],
+    "CZ": [
+      "cs",
+      "en",
+      "sk",
+      "de",
+      "pl"
+    ],
+    "DE": [
+      "de",
+      "en",
+      "fr",
+      "bar",
+      "nds",
+      "nl",
+      "it",
+      "es",
+      "ru",
+      "vmf",
+      "tr",
+      "gsw",
+      "da",
+      "swg",
+      "hr",
+      "ku",
+      "el",
+      "ksh",
+      "pl",
+      "hsb",
+      "frr",
+      "dsb",
+      "frs",
+      "stq",
+      "pfl"
+    ],
+    "DJ": [
+      "fr",
+      "aa",
+      "so",
+      "ar"
+    ],
+    "DM": [
+      "en"
+    ],
+    "DK": [
+      "da",
+      "en",
+      "de",
+      "sv",
+      "fo",
+      "kl",
+      "jut"
+    ],
+    "DO": [
+      "es",
+      "en"
+    ],
+    "DZ": [
+      "arq",
+      "ar",
+      "fr",
+      "kab",
+      "en"
+    ],
+    "EC": [
+      "es",
+      "qu",
+      "qug"
+    ],
+    "EG": [
+      "ar",
+      "arz",
+      "en",
+      "cop",
+      "el"
+    ],
+    "ER": [
+      "ti",
+      "en",
+      "tig",
+      "ar",
+      "aa",
+      "ssy",
+      "byn"
+    ],
+    "EH": [
+      "ar"
+    ],
+    "ES": [
+      "es",
+      "en",
+      "ca",
+      "gl",
+      "eu",
+      "ast",
+      "ext",
+      "an",
+      "oc"
+    ],
+    "EE": [
+      "et",
+      "ru",
+      "en",
+      "fi",
+      "vro",
+      "ie"
+    ],
+    "ET": [
+      "en",
+      "am",
+      "om",
+      "so",
+      "ti",
+      "sid",
+      "wal",
+      "aa",
+      "gez"
+    ],
+    "FI": [
+      "fi",
+      "en",
+      "sv",
+      "de",
+      "ru",
+      "et",
+      "rmf",
+      "se",
+      "smn",
+      "sms"
+    ],
+    "FJ": [
+      "en",
+      "hi",
+      "hif",
+      "fj",
+      "rtm"
+    ],
+    "FK": [
+      "en"
+    ],
+    "FR": [
+      "fr",
+      "en",
+      "es",
+      "de",
+      "oc",
+      "it",
+      "pt",
+      "pcd",
+      "gsw",
+      "br",
+      "co",
+      "hnj",
+      "ca",
+      "eu",
+      "nl",
+      "frp",
+      "ia"
+    ],
+    "FO": [
+      "fo"
+    ],
+    "FM": [
+      "en",
+      "chk",
+      "pon",
+      "kos",
+      "yap",
+      "uli"
+    ],
+    "GA": [
+      "fr",
+      "puu"
+    ],
+    "GB": [
+      "en",
+      "fr",
+      "de",
+      "es",
+      "pl",
+      "pa",
+      "ur",
+      "ta",
+      "gu",
+      "sco",
+      "cy",
+      "ro",
+      "bn",
+      "ar",
+      "zh_Hant",
+      "it",
+      "lt",
+      "pt",
+      "so",
+      "tr",
+      "ga",
+      "gd",
+      "kw",
+      "en_Shaw"
+    ],
+    "GE": [
+      "ka",
+      "xmf",
+      "ru",
+      "hy",
+      "ab",
+      "os",
+      "ku",
+      "lzz_Geor"
+    ],
+    "GG": [
+      "en"
+    ],
+    "GH": [
+      "ak",
+      "en",
+      "ee",
+      "abr",
+      "gur",
+      "ada",
+      "gaa",
+      "nzi",
+      "ha",
+      "saf",
+      "ff",
+      "ff_Adlm"
+    ],
+    "GI": [
+      "en",
+      "es"
+    ],
+    "GN": [
+      "fr",
+      "ff",
+      "man",
+      "man_Nkoo",
+      "sus",
+      "nqo",
+      "kpe",
+      "ff_Adlm"
+    ],
+    "GP": [
+      "fr"
+    ],
+    "GM": [
+      "en",
+      "man",
+      "man_Nkoo",
+      "ff",
+      "ff_Adlm"
+    ],
+    "GW": [
+      "pt",
+      "fr",
+      "knf",
+      "ff",
+      "ff_Adlm"
+    ],
+    "GQ": [
+      "es",
+      "fan",
+      "fr",
+      "bvb",
+      "pt"
+    ],
+    "GR": [
+      "el",
+      "en",
+      "fr",
+      "de",
+      "pnt",
+      "mk",
+      "tr",
+      "bg",
+      "sq",
+      "tsd",
+      "gmy",
+      "grc"
+    ],
+    "GD": [
+      "en"
+    ],
+    "GL": [
+      "kl",
+      "da"
+    ],
+    "GT": [
+      "es",
+      "quc"
+    ],
+    "GF": [
+      "fr",
+      "gcr",
+      "zh_Hant",
+      "hnj"
+    ],
+    "GU": [
+      "en",
+      "ch"
+    ],
+    "GY": [
+      "en"
+    ],
+    "HK": [
+      "zh_Hant",
+      "yue",
+      "en",
+      "zh"
+    ],
+    "HM": [
+      "und"
+    ],
+    "HN": [
+      "es",
+      "en"
+    ],
+    "HR": [
+      "hr",
+      "en",
+      "it",
+      "vec"
+    ],
+    "HT": [
+      "ht",
+      "fr"
+    ],
+    "HU": [
+      "hu",
+      "en",
+      "de",
+      "fr",
+      "ro",
+      "hr",
+      "sk",
+      "sl"
+    ],
+    "ID": [
+      "id",
+      "jv",
+      "su",
+      "mad",
+      "ms",
+      "min",
+      "bew",
+      "ban",
+      "bug",
+      "bjn",
+      "ace",
+      "ms_Arab",
+      "sas",
+      "bbc",
+      "zh_Hant",
+      "mak",
+      "ljp",
+      "rej",
+      "gor",
+      "nij",
+      "kge",
+      "aoz",
+      "kvr",
+      "lbw",
+      "gay",
+      "rob",
+      "mdr",
+      "sxn",
+      "sly",
+      "mwv",
+      "ban_Bali",
+      "kaw"
+    ],
+    "IM": [
+      "en",
+      "gv"
+    ],
+    "IN": [
+      "hi",
+      "en",
+      "bn",
+      "te",
+      "mr",
+      "ta",
+      "ur",
+      "gu",
+      "kn",
+      "ml",
+      "or",
+      "pa",
+      "bho",
+      "awa",
+      "as",
+      "bgc",
+      "mag",
+      "mai",
+      "mwr",
+      "hne",
+      "dcc",
+      "bjj",
+      "ne",
+      "sat",
+      "wtm",
+      "rkt",
+      "ks",
+      "knn",
+      "kok",
+      "swv",
+      "gbm",
+      "lmn",
+      "sd",
+      "gon",
+      "kfy",
+      "doi",
+      "kru",
+      "sck",
+      "wbq",
+      "xnr",
+      "khn",
+      "tcy",
+      "wbr",
+      "brx",
+      "sd_Deva",
+      "noe",
+      "bhb",
+      "mni",
+      "hi_Latn",
+      "raj",
+      "hoc",
+      "mtr",
+      "unr",
+      "bhi",
+      "hoj",
+      "kha",
+      "kfr",
+      "grt",
+      "unx",
+      "bfy",
+      "srx",
+      "saz",
+      "ccp",
+      "bfq",
+      "njo",
+      "ria",
+      "bo",
+      "bpy",
+      "bft",
+      "bra",
+      "lep",
+      "kxv",
+      "btv",
+      "lif",
+      "lah",
+      "sa",
+      "kht",
+      "dv",
+      "dz"
+    ],
+    "IO": [
+      "en"
+    ],
+    "IE": [
+      "en",
+      "ga",
+      "fr"
+    ],
+    "IR": [
+      "fa",
+      "az_Arab",
+      "mzn",
+      "glk",
+      "ckb",
+      "sdh",
+      "tk",
+      "lrc",
+      "ar",
+      "bal",
+      "rmt",
+      "bqi",
+      "luz",
+      "lki",
+      "kaa",
+      "bgn",
+      "prd",
+      "hy",
+      "ps",
+      "ka",
+      "gbz",
+      "kk_Arab"
+    ],
+    "IQ": [
+      "ar",
+      "en",
+      "ckb",
+      "az_Arab",
+      "fa",
+      "lrc",
+      "syr"
+    ],
+    "IS": [
+      "is",
+      "da"
+    ],
+    "IL": [
+      "he",
+      "en",
+      "ar",
+      "apc",
+      "ru",
+      "ro",
+      "yi",
+      "pl",
+      "lad",
+      "hu",
+      "am",
+      "ti",
+      "ml"
+    ],
+    "IT": [
+      "it",
+      "en",
+      "fr",
+      "lmo",
+      "sc",
+      "de",
+      "vec",
+      "nap",
+      "lij",
+      "scn",
+      "sdc",
+      "sl",
+      "fur",
+      "egl",
+      "lld",
+      "ca",
+      "el",
+      "pms",
+      "hr",
+      "mhn",
+      "rgn"
+    ],
+    "JM": [
+      "en",
+      "jam"
+    ],
+    "JE": [
+      "en"
+    ],
+    "JO": [
+      "ar",
+      "apc",
+      "en"
+    ],
+    "JP": [
+      "ja",
+      "ryu",
+      "ko"
+    ],
+    "KZ": [
+      "ru",
+      "kk",
+      "en",
+      "de",
+      "ug_Cyrl",
+      "kaa"
+    ],
+    "KE": [
+      "sw",
+      "en",
+      "ki",
+      "luy",
+      "luo",
+      "kam",
+      "kln",
+      "guz",
+      "mer",
+      "mas",
+      "ebu",
+      "so",
+      "dav",
+      "teo",
+      "pko",
+      "om",
+      "saq",
+      "ar",
+      "pa",
+      "gu"
+    ],
+    "KG": [
+      "ky",
+      "ru",
+      "kaa"
+    ],
+    "KH": [
+      "km",
+      "cja",
+      "kdt"
+    ],
+    "KI": [
+      "en",
+      "gil"
+    ],
+    "KN": [
+      "en"
+    ],
+    "KR": [
+      "ko"
+    ],
+    "KW": [
+      "ar"
+    ],
+    "LA": [
+      "lo",
+      "kjg",
+      "hnj",
+      "kdt"
+    ],
+    "LB": [
+      "apc",
+      "ar",
+      "en",
+      "fr",
+      "hy",
+      "ku_Arab"
+    ],
+    "LR": [
+      "en",
+      "kpe",
+      "vai",
+      "men",
+      "ff",
+      "ff_Adlm",
+      "vai_Latn"
+    ],
+    "LY": [
+      "ar"
+    ],
+    "LC": [
+      "en"
+    ],
+    "LI": [
+      "de",
+      "gsw",
+      "wae"
+    ],
+    "LK": [
+      "si",
+      "ta",
+      "en"
+    ],
+    "LS": [
+      "st",
+      "en",
+      "zu",
+      "ss",
+      "xh"
+    ],
+    "LT": [
+      "lt",
+      "ru",
+      "en",
+      "de",
+      "sgs"
+    ],
+    "LU": [
+      "fr",
+      "lb",
+      "de",
+      "en",
+      "pt"
+    ],
+    "LV": [
+      "lv",
+      "en",
+      "ru",
+      "ltg"
+    ],
+    "MO": [
+      "zh_Hant",
+      "yue",
+      "en",
+      "zh",
+      "nan",
+      "fil",
+      "pt"
+    ],
+    "MF": [
+      "fr"
+    ],
+    "MA": [
+      "ary",
+      "ar",
+      "fr",
+      "zgh",
+      "en",
+      "tzm",
+      "shi",
+      "shi_Latn",
+      "rif",
+      "rif_Tfng",
+      "es"
+    ],
+    "MC": [
+      "fr"
+    ],
+    "MD": [
+      "ro",
+      "uk",
+      "bg",
+      "gag",
+      "ru"
+    ],
+    "MG": [
+      "mg",
+      "fr",
+      "en"
+    ],
+    "MV": [
+      "dv",
+      "en"
+    ],
+    "MX": [
+      "es",
+      "en",
+      "yua",
+      "nhe",
+      "nhw",
+      "maz",
+      "nch",
+      "vec",
+      "sei"
+    ],
+    "MH": [
+      "en",
+      "mh"
+    ],
+    "MK": [
+      "mk",
+      "sq",
+      "tr"
+    ],
+    "ML": [
+      "bm",
+      "fr",
+      "ffm",
+      "snk",
+      "mwk",
+      "ses",
+      "tmh",
+      "bm_Nkoo",
+      "khq",
+      "dtm",
+      "kao",
+      "ar",
+      "bmq",
+      "bze"
+    ],
+    "MT": [
+      "mt",
+      "en",
+      "it",
+      "fr"
+    ],
+    "MM": [
+      "my",
+      "shn",
+      "kac",
+      "rhg",
+      "mnw",
+      "hnj",
+      "kht"
+    ],
+    "ME": [
+      "sr_Latn",
+      "sq",
+      "sr"
+    ],
+    "MN": [
+      "mn",
+      "kk_Arab",
+      "zh",
+      "ru",
+      "ug_Cyrl"
+    ],
+    "MP": [
+      "en",
+      "ch"
+    ],
+    "MZ": [
+      "pt",
+      "vmw",
+      "ndc",
+      "ts",
+      "ngl",
+      "seh",
+      "mgh",
+      "rng",
+      "ny",
+      "yao",
+      "sw",
+      "zu"
+    ],
+    "MR": [
+      "ar",
+      "fr",
+      "ff",
+      "wo",
+      "ff_Adlm"
+    ],
+    "MS": [
+      "en"
+    ],
+    "MQ": [
+      "fr"
+    ],
+    "MU": [
+      "mfe",
+      "fr",
+      "en",
+      "bho",
+      "ur",
+      "ta"
+    ],
+    "MW": [
+      "en",
+      "ny",
+      "tum",
+      "tog",
+      "zu"
+    ],
+    "MY": [
+      "ms",
+      "en",
+      "zh",
+      "ta",
+      "iba",
+      "jv",
+      "zmi",
+      "dtp",
+      "ml",
+      "bug",
+      "bjn"
+    ],
+    "YT": [
+      "swb",
+      "fr",
+      "buc",
+      "sw"
+    ],
+    "NA": [
+      "af",
+      "kj",
+      "ng",
+      "naq",
+      "hz",
+      "en",
+      "de",
+      "tn"
+    ],
+    "NC": [
+      "fr"
+    ],
+    "NE": [
+      "ha",
+      "dje",
+      "fr",
+      "fuq",
+      "tmh",
+      "ar",
+      "twq",
+      "ff",
+      "ff_Adlm"
+    ],
+    "NF": [
+      "en"
+    ],
+    "NG": [
+      "en",
+      "pcm",
+      "ha",
+      "ig",
+      "yo",
+      "fuv",
+      "tiv",
+      "efi",
+      "ibb",
+      "ha_Arab",
+      "bin",
+      "kaj",
+      "kcg",
+      "ar",
+      "cch",
+      "amo",
+      "ann",
+      "ff",
+      "ff_Adlm"
+    ],
+    "NI": [
+      "es"
+    ],
+    "NU": [
+      "en",
+      "niu"
+    ],
+    "NL": [
+      "nl",
+      "en",
+      "de",
+      "fr",
+      "nds",
+      "li",
+      "fy",
+      "gos",
+      "id",
+      "zea",
+      "rif",
+      "tr"
+    ],
+    "NO": [
+      "nb",
+      "no",
+      "nn",
+      "se"
+    ],
+    "NP": [
+      "ne",
+      "mai",
+      "bho",
+      "new",
+      "jml",
+      "en",
+      "dty",
+      "awa",
+      "thl",
+      "bap",
+      "tdg",
+      "thr",
+      "lif",
+      "mgp",
+      "thq",
+      "mrd",
+      "bfy",
+      "xsr",
+      "rjs",
+      "taj",
+      "hi",
+      "gvr",
+      "bo",
+      "tkt",
+      "tdh",
+      "bn",
+      "unr_Deva",
+      "lep"
+    ],
+    "NR": [
+      "en",
+      "na"
+    ],
+    "NZ": [
+      "en",
+      "mi"
+    ],
+    "OM": [
+      "ar",
+      "bal",
+      "fa"
+    ],
+    "PK": [
+      "ur",
+      "pa_Arab",
+      "en",
+      "lah",
+      "ps",
+      "sd",
+      "skr",
+      "bal",
+      "hno",
+      "brh",
+      "fa",
+      "bgn",
+      "hnd",
+      "tg_Arab",
+      "gju",
+      "bft",
+      "kvx",
+      "khw",
+      "mvy",
+      "gjk",
+      "kxp",
+      "ks",
+      "trw",
+      "btv"
+    ],
+    "PA": [
+      "es",
+      "en",
+      "zh_Hant"
+    ],
+    "PN": [
+      "en"
+    ],
+    "PE": [
+      "es",
+      "qu",
+      "ay"
+    ],
+    "PH": [
+      "en",
+      "fil",
+      "es",
+      "ceb",
+      "ilo",
+      "hil",
+      "bik",
+      "war",
+      "fbl",
+      "pam",
+      "pag",
+      "mdh",
+      "tsg",
+      "zh_Hant",
+      "cps",
+      "krj",
+      "bto",
+      "hnn",
+      "tbw",
+      "bku"
+    ],
+    "PW": [
+      "pau",
+      "en"
+    ],
+    "PG": [
+      "tpi",
+      "en",
+      "ho"
+    ],
+    "PL": [
+      "pl",
+      "en",
+      "de",
+      "ru",
+      "szl",
+      "be",
+      "uk",
+      "csb",
+      "sli",
+      "lt",
+      "prg"
+    ],
+    "PR": [
+      "es",
+      "en"
+    ],
+    "KP": [
+      "ko"
+    ],
+    "PT": [
+      "pt",
+      "en",
+      "fr",
+      "es",
+      "gl"
+    ],
+    "PY": [
+      "gn",
+      "es",
+      "de"
+    ],
+    "PS": [
+      "ar",
+      "apc"
+    ],
+    "PF": [
+      "fr",
+      "ty",
+      "zh_Hant"
+    ],
+    "QA": [
+      "ar",
+      "fa",
+      "ml"
+    ],
+    "RE": [
+      "fr",
+      "rcf",
+      "ta"
+    ],
+    "RO": [
+      "ro",
+      "en",
+      "fr",
+      "es",
+      "hu",
+      "de",
+      "tr",
+      "sr_Latn",
+      "bg",
+      "el",
+      "pl"
+    ],
+    "RU": [
+      "ru",
+      "tt",
+      "ba",
+      "cv",
+      "hy",
+      "ce",
+      "av",
+      "udm",
+      "chm",
+      "os",
+      "sah",
+      "kbd",
+      "myv",
+      "dar",
+      "bua",
+      "mdf",
+      "kum",
+      "kv",
+      "lez",
+      "krc",
+      "inh",
+      "tyv",
+      "az_Cyrl",
+      "ady",
+      "krl",
+      "lbe",
+      "koi",
+      "pnt_Cyrl",
+      "mrj",
+      "alt",
+      "fi",
+      "sr",
+      "vep",
+      "mn",
+      "kaa",
+      "izh",
+      "cu",
+      "vot"
+    ],
+    "RW": [
+      "rw",
+      "en",
+      "fr"
+    ],
+    "SA": [
+      "ar",
+      "ars"
+    ],
+    "SD": [
+      "apd",
+      "ar",
+      "en",
+      "bej",
+      "fvr",
+      "ha_Arab",
+      "mls",
+      "fia",
+      "zag"
+    ],
+    "SN": [
+      "wo",
+      "fr",
+      "ff",
+      "srr",
+      "dyo",
+      "sav",
+      "mfv",
+      "bjt",
+      "snf",
+      "knf",
+      "bsc",
+      "mey",
+      "tnr",
+      "ff_Adlm"
+    ],
+    "SG": [
+      "en",
+      "zh",
+      "ms",
+      "ta",
+      "ml",
+      "pa"
+    ],
+    "GS": [
+      "en"
+    ],
+    "SH": [
+      "en"
+    ],
+    "SJ": [
+      "nb",
+      "ru"
+    ],
+    "SB": [
+      "en",
+      "pis",
+      "rug"
+    ],
+    "SL": [
+      "kri",
+      "en",
+      "men",
+      "tem",
+      "ff",
+      "ff_Adlm"
+    ],
+    "SV": [
+      "es",
+      "ccr",
+      "ppl",
+      "len"
+    ],
+    "SM": [
+      "it",
+      "eo"
+    ],
+    "SO": [
+      "so",
+      "ar",
+      "sw",
+      "om"
+    ],
+    "PM": [
+      "fr",
+      "en"
+    ],
+    "RS": [
+      "sr",
+      "sr_Latn",
+      "sq",
+      "hu",
+      "ro",
+      "hr",
+      "sk",
+      "uk"
+    ],
+    "SS": [
+      "ar",
+      "en",
+      "nus"
+    ],
+    "ST": [
+      "pt",
+      "fr"
+    ],
+    "SR": [
+      "nl",
+      "srn",
+      "zh_Hant",
+      "hnj"
+    ],
+    "SK": [
+      "sk",
+      "cs",
+      "en",
+      "de",
+      "hu",
+      "uk",
+      "pl"
+    ],
+    "SI": [
+      "sl",
+      "hr",
+      "en",
+      "de",
+      "vec",
+      "hu",
+      "it"
+    ],
+    "SE": [
+      "sv",
+      "en",
+      "fi",
+      "fit",
+      "se",
+      "rmu",
+      "yi",
+      "smj",
+      "sma",
+      "ia"
+    ],
+    "SZ": [
+      "en",
+      "ss",
+      "zu",
+      "ts"
+    ],
+    "SX": [
+      "en",
+      "es",
+      "vic",
+      "nl"
+    ],
+    "SC": [
+      "crs",
+      "fr",
+      "en"
+    ],
+    "SY": [
+      "apc",
+      "ar",
+      "ku",
+      "fr",
+      "hy",
+      "syr"
+    ],
+    "TC": [
+      "en"
+    ],
+    "TD": [
+      "ar",
+      "fr"
+    ],
+    "TG": [
+      "fr",
+      "ee",
+      "ife",
+      "blo"
+    ],
+    "TH": [
+      "th",
+      "en",
+      "tts",
+      "nod",
+      "sou",
+      "mfa",
+      "zh_Hant",
+      "kxm",
+      "kdt",
+      "mnw",
+      "hnj",
+      "shn",
+      "lcp",
+      "lwl"
+    ],
+    "TJ": [
+      "tg",
+      "ru",
+      "fa",
+      "ar"
+    ],
+    "TK": [
+      "tkl",
+      "en",
+      "sm"
+    ],
+    "TM": [
+      "tk",
+      "ru",
+      "uz",
+      "ku",
+      "kaa"
+    ],
+    "TL": [
+      "pt",
+      "tet"
+    ],
+    "TO": [
+      "to",
+      "en"
+    ],
+    "TT": [
+      "en",
+      "es"
+    ],
+    "TN": [
+      "aeb",
+      "ar",
+      "fr"
+    ],
+    "TR": [
+      "tr",
+      "en",
+      "ku",
+      "apc",
+      "zza",
+      "kbd",
+      "az",
+      "az_Arab",
+      "ar",
+      "bgx",
+      "bg",
+      "ady",
+      "kiu",
+      "kaa",
+      "hy",
+      "ka",
+      "lzz",
+      "sr_Latn",
+      "sq",
+      "pnt_Latn",
+      "ab",
+      "el",
+      "tru",
+      "uz",
+      "ky_Latn",
+      "kk"
+    ],
+    "TV": [
+      "tvl",
+      "en"
+    ],
+    "TW": [
+      "zh_Hant",
+      "nan_Hant",
+      "hak_Hant",
+      "trv"
+    ],
+    "TZ": [
+      "sw",
+      "en",
+      "suk",
+      "nym",
+      "kde",
+      "bez",
+      "ksb",
+      "mas",
+      "mgy",
+      "asa",
+      "lag",
+      "jmc",
+      "rof",
+      "vun",
+      "rwk",
+      "sbp"
+    ],
+    "UG": [
+      "sw",
+      "lg",
+      "nyn",
+      "cgg",
+      "xog",
+      "en",
+      "teo",
+      "laj",
+      "ach",
+      "myx",
+      "rw",
+      "ttj",
+      "hi"
+    ],
+    "UA": [
+      "uk",
+      "ru",
+      "pl",
+      "yi",
+      "rue",
+      "be",
+      "crh",
+      "ro",
+      "bg",
+      "tr",
+      "hu",
+      "el"
+    ],
+    "UM": [
+      "en"
+    ],
+    "UY": [
+      "es"
+    ],
+    "US": [
+      "en",
+      "es",
+      "zh_Hant",
+      "fr",
+      "de",
+      "fil",
+      "it",
+      "vi",
+      "ko",
+      "ru",
+      "nv",
+      "yi",
+      "pdc",
+      "hnj",
+      "haw",
+      "frc",
+      "chr",
+      "esu",
+      "dak",
+      "cho",
+      "lkt",
+      "ik",
+      "mus",
+      "cad",
+      "cic",
+      "io",
+      "jbo",
+      "osa"
+    ],
+    "UZ": [
+      "uz",
+      "uz_Cyrl",
+      "ru",
+      "kaa",
+      "tr"
+    ],
+    "VA": [
+      "it",
+      "la"
+    ],
+    "VC": [
+      "en"
+    ],
+    "VE": [
+      "es",
+      "yrl"
+    ],
+    "VG": [
+      "en"
+    ],
+    "VI": [
+      "en"
+    ],
+    "VN": [
+      "vi",
+      "zh_Hant",
+      "blt",
+      "hnj",
+      "cjm"
+    ],
+    "VU": [
+      "bi",
+      "en",
+      "fr"
+    ],
+    "WF": [
+      "fr",
+      "wls",
+      "fud"
+    ],
+    "WS": [
+      "sm",
+      "en"
+    ],
+    "YE": [
+      "ar",
+      "en"
+    ],
+    "ZA": [
+      "en",
+      "zu",
+      "xh",
+      "af",
+      "nso",
+      "tn",
+      "st",
+      "ts",
+      "ss",
+      "ve",
+      "hi",
+      "nr",
+      "sw"
+    ],
+    "ZM": [
+      "bem",
+      "ny",
+      "en",
+      "toi",
+      "loz",
+      "nse",
+      "leb",
+      "tum",
+      "kqn",
+      "lun",
+      "lue"
+    ],
+    "ZW": [
+      "sn",
+      "en",
+      "nd",
+      "mxc",
+      "ndc",
+      "kck",
+      "ny",
+      "ve",
+      "tn"
+    ]
+  }
+}

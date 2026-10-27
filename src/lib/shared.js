@@ -20,15 +20,37 @@ export const DEFAULT_SETTINGS = {
   showToolbarUnderVideo: true,
   wordCardAutoCloseMs: 6000,
   theme: 'dark',
-  subtitleDisplayMode: 'both', originalFontSize: 28, translationFontSize: 22, originalBold: true, translationBold: false,
-  originalUnderline: false, translationUnderline: false, originalItalic: false, translationItalic: false, sentenceShowLevel: true,
-  replayCount: 1, playbackSpeed: 1, autoPauseAfterSubtitle: false, studyModeDefault: false, showWordPronunciation: true,
-  showWordTransliteration: false, markKnownStopsHighlight: true
+  subtitleDisplayMode: 'both',
+  originalFontSize: 28,
+  translationFontSize: 22,
+  originalBold: true,
+  translationBold: false,
+  originalUnderline: false,
+  translationUnderline: false,
+  originalItalic: false,
+  translationItalic: false,
+  sentenceShowLevel: true,
+  replayCount: 1,
+  playbackSpeed: 1,
+  autoPauseAfterSubtitle: false,
+  studyModeDefault: false,
+  showWordPronunciation: true,
+  showWordTransliteration: false,
+  markKnownStopsHighlight: true,
 };
 export const POS_COLORS = {
-  noun: '#7dd3fc', verb: '#fca5a5', adjective: '#c4b5fd', adverb: '#86efac', pronoun: '#fde68a',
-  preposition: '#f9a8d4', conjunction: '#fdba74', determiner: '#a5b4fc', particle: '#67e8f9',
-  interjection: '#f0abfc', numeral: '#bef264', other: '#e5e7eb'
+  noun: '#7dd3fc',
+  verb: '#fca5a5',
+  adjective: '#c4b5fd',
+  adverb: '#86efac',
+  pronoun: '#fde68a',
+  preposition: '#f9a8d4',
+  conjunction: '#fdba74',
+  determiner: '#a5b4fc',
+  particle: '#67e8f9',
+  interjection: '#f0abfc',
+  numeral: '#bef264',
+  other: '#e5e7eb',
 };
 export function getVideoId(url = location.href) {
   try {
@@ -62,5 +84,11 @@ export function downloadText(filename, text, mime = 'text/plain') {
   setTimeout(() => URL.revokeObjectURL(url), 15000);
 }
 export function sanitizeFilename(value) {
-  return String(value || 'untitled').replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, ' ').trim().slice(0, 150) || 'untitled';
+  return (
+    String(value || 'untitled')
+      .replace(/[\\/:*?"<>|]+/g, '_')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 150) || 'untitled'
+  );
 }

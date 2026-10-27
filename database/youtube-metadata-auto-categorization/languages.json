@@ -1,0 +1,5174 @@
+{
+  "version": 1,
+  "source": "CLDR/Babel territory language data",
+  "languages": [
+    {
+      "code": "aa",
+      "countryCodes": [
+        "DJ",
+        "ER",
+        "ET"
+      ]
+    },
+    {
+      "code": "ab",
+      "countryCodes": [
+        "GE",
+        "TR"
+      ]
+    },
+    {
+      "code": "abr",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "ace",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "ach",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "ada",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "ady",
+      "countryCodes": [
+        "RU",
+        "TR"
+      ]
+    },
+    {
+      "code": "aeb",
+      "countryCodes": [
+        "TN"
+      ]
+    },
+    {
+      "code": "af",
+      "countryCodes": [
+        "BW",
+        "NA",
+        "ZA"
+      ]
+    },
+    {
+      "code": "agq",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "ak",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "alt",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "am",
+      "countryCodes": [
+        "ET",
+        "IL"
+      ]
+    },
+    {
+      "code": "amo",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "an",
+      "countryCodes": [
+        "ES"
+      ]
+    },
+    {
+      "code": "ann",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "aoz",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "apc",
+      "countryCodes": [
+        "IL",
+        "JO",
+        "LB",
+        "PS",
+        "SY",
+        "TR"
+      ]
+    },
+    {
+      "code": "apd",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "ar",
+      "countryCodes": [
+        "AE",
+        "BH",
+        "CA",
+        "CM",
+        "KM",
+        "CY",
+        "DJ",
+        "DZ",
+        "EG",
+        "ER",
+        "EH",
+        "GB",
+        "IR",
+        "IQ",
+        "IL",
+        "JO",
+        "KE",
+        "KW",
+        "LB",
+        "LY",
+        "MA",
+        "ML",
+        "MR",
+        "NE",
+        "NG",
+        "OM",
+        "PS",
+        "QA",
+        "SA",
+        "SD",
+        "SO",
+        "SS",
+        "SY",
+        "TD",
+        "TJ",
+        "TN",
+        "TR",
+        "YE"
+      ]
+    },
+    {
+      "code": "arn",
+      "countryCodes": [
+        "CL"
+      ]
+    },
+    {
+      "code": "aro",
+      "countryCodes": [
+        "BO"
+      ]
+    },
+    {
+      "code": "arq",
+      "countryCodes": [
+        "DZ"
+      ]
+    },
+    {
+      "code": "ars",
+      "countryCodes": [
+        "SA"
+      ]
+    },
+    {
+      "code": "ary",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "arz",
+      "countryCodes": [
+        "EG"
+      ]
+    },
+    {
+      "code": "as",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "asa",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "ast",
+      "countryCodes": [
+        "ES"
+      ]
+    },
+    {
+      "code": "atj",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "av",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "awa",
+      "countryCodes": [
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "ay",
+      "countryCodes": [
+        "BO",
+        "PE"
+      ]
+    },
+    {
+      "code": "az",
+      "countryCodes": [
+        "AM",
+        "AZ",
+        "TR"
+      ]
+    },
+    {
+      "code": "az_Arab",
+      "countryCodes": [
+        "IR",
+        "IQ",
+        "TR"
+      ]
+    },
+    {
+      "code": "az_Cyrl",
+      "countryCodes": [
+        "AZ",
+        "RU"
+      ]
+    },
+    {
+      "code": "ba",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "bal",
+      "countryCodes": [
+        "AE",
+        "IR",
+        "OM",
+        "PK"
+      ]
+    },
+    {
+      "code": "ban",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "ban_Bali",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "bap",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "bar",
+      "countryCodes": [
+        "AT",
+        "DE"
+      ]
+    },
+    {
+      "code": "bas",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bax",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bbc",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "bbj",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bci",
+      "countryCodes": [
+        "CI"
+      ]
+    },
+    {
+      "code": "be",
+      "countryCodes": [
+        "BY",
+        "PL",
+        "UA"
+      ]
+    },
+    {
+      "code": "bej",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "bem",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "bew",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "bez",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "bfd",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bfq",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bft",
+      "countryCodes": [
+        "IN",
+        "PK"
+      ]
+    },
+    {
+      "code": "bfy",
+      "countryCodes": [
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "bg",
+      "countryCodes": [
+        "BG",
+        "GR",
+        "MD",
+        "RO",
+        "TR",
+        "UA"
+      ]
+    },
+    {
+      "code": "bgc",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bgn",
+      "countryCodes": [
+        "AF",
+        "IR",
+        "PK"
+      ]
+    },
+    {
+      "code": "bgx",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "bhb",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bhi",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bho",
+      "countryCodes": [
+        "IN",
+        "MU",
+        "NP"
+      ]
+    },
+    {
+      "code": "bi",
+      "countryCodes": [
+        "VU"
+      ]
+    },
+    {
+      "code": "bik",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "bin",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "bjj",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bjn",
+      "countryCodes": [
+        "ID",
+        "MY"
+      ]
+    },
+    {
+      "code": "bjt",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "bkm",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bku",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "bla",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "blo",
+      "countryCodes": [
+        "BJ",
+        "TG"
+      ]
+    },
+    {
+      "code": "blt",
+      "countryCodes": [
+        "VN"
+      ]
+    },
+    {
+      "code": "bm",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "bm_Nkoo",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "bmq",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "bn",
+      "countryCodes": [
+        "BD",
+        "CA",
+        "GB",
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "bo",
+      "countryCodes": [
+        "CN",
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "bpy",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bqi",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "bqv",
+      "countryCodes": [
+        "CI"
+      ]
+    },
+    {
+      "code": "br",
+      "countryCodes": [
+        "FR"
+      ]
+    },
+    {
+      "code": "bra",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "brh",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "brx",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "bs",
+      "countryCodes": [
+        "BA"
+      ]
+    },
+    {
+      "code": "bs_Cyrl",
+      "countryCodes": [
+        "BA"
+      ]
+    },
+    {
+      "code": "bsc",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "bss",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bto",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "btv",
+      "countryCodes": [
+        "IN",
+        "PK"
+      ]
+    },
+    {
+      "code": "bua",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "buc",
+      "countryCodes": [
+        "YT"
+      ]
+    },
+    {
+      "code": "bug",
+      "countryCodes": [
+        "ID",
+        "MY"
+      ]
+    },
+    {
+      "code": "bum",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bvb",
+      "countryCodes": [
+        "GQ"
+      ]
+    },
+    {
+      "code": "byn",
+      "countryCodes": [
+        "ER"
+      ]
+    },
+    {
+      "code": "byv",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "bze",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "ca",
+      "countryCodes": [
+        "AD",
+        "ES",
+        "FR",
+        "IT"
+      ]
+    },
+    {
+      "code": "cad",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "cch",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "ccp",
+      "countryCodes": [
+        "BD",
+        "IN"
+      ]
+    },
+    {
+      "code": "ccr",
+      "countryCodes": [
+        "SV"
+      ]
+    },
+    {
+      "code": "ce",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "ceb",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "cgg",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "ch",
+      "countryCodes": [
+        "GU",
+        "MP"
+      ]
+    },
+    {
+      "code": "chk",
+      "countryCodes": [
+        "FM"
+      ]
+    },
+    {
+      "code": "chm",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "cho",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "chp",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "chr",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "cic",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "cja",
+      "countryCodes": [
+        "KH"
+      ]
+    },
+    {
+      "code": "cjm",
+      "countryCodes": [
+        "VN"
+      ]
+    },
+    {
+      "code": "ckb",
+      "countryCodes": [
+        "IR",
+        "IQ"
+      ]
+    },
+    {
+      "code": "clc",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "co",
+      "countryCodes": [
+        "FR"
+      ]
+    },
+    {
+      "code": "cop",
+      "countryCodes": [
+        "EG"
+      ]
+    },
+    {
+      "code": "cps",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "cr",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "crg",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "crh",
+      "countryCodes": [
+        "UA"
+      ]
+    },
+    {
+      "code": "crk",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "crl",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "crs",
+      "countryCodes": [
+        "SC"
+      ]
+    },
+    {
+      "code": "cs",
+      "countryCodes": [
+        "CZ",
+        "SK"
+      ]
+    },
+    {
+      "code": "csb",
+      "countryCodes": [
+        "PL"
+      ]
+    },
+    {
+      "code": "csw",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "cu",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "cv",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "cy",
+      "countryCodes": [
+        "AR",
+        "GB"
+      ]
+    },
+    {
+      "code": "da",
+      "countryCodes": [
+        "DE",
+        "DK",
+        "GL",
+        "IS"
+      ]
+    },
+    {
+      "code": "dak",
+      "countryCodes": [
+        "CA",
+        "US"
+      ]
+    },
+    {
+      "code": "dar",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "dav",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "dcc",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "de",
+      "countryCodes": [
+        "AT",
+        "BE",
+        "BG",
+        "BR",
+        "CA",
+        "CH",
+        "CZ",
+        "DE",
+        "DK",
+        "FI",
+        "FR",
+        "GB",
+        "GR",
+        "HU",
+        "IT",
+        "KZ",
+        "LI",
+        "LT",
+        "LU",
+        "NA",
+        "NL",
+        "PL",
+        "PY",
+        "RO",
+        "SK",
+        "SI",
+        "US"
+      ]
+    },
+    {
+      "code": "den",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "dgr",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "dje",
+      "countryCodes": [
+        "NE"
+      ]
+    },
+    {
+      "code": "dnj",
+      "countryCodes": [
+        "CI"
+      ]
+    },
+    {
+      "code": "doi",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "dsb",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "dtm",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "dtp",
+      "countryCodes": [
+        "MY"
+      ]
+    },
+    {
+      "code": "dty",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "dua",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "dv",
+      "countryCodes": [
+        "IN",
+        "MV"
+      ]
+    },
+    {
+      "code": "dyo",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "dyu",
+      "countryCodes": [
+        "BF"
+      ]
+    },
+    {
+      "code": "dz",
+      "countryCodes": [
+        "BT",
+        "IN"
+      ]
+    },
+    {
+      "code": "ebu",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "ecy",
+      "countryCodes": [
+        "CY"
+      ]
+    },
+    {
+      "code": "ee",
+      "countryCodes": [
+        "GH",
+        "TG"
+      ]
+    },
+    {
+      "code": "efi",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "egl",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "el",
+      "countryCodes": [
+        "AL",
+        "CA",
+        "CY",
+        "DE",
+        "EG",
+        "GR",
+        "IT",
+        "RO",
+        "TR",
+        "UA"
+      ]
+    },
+    {
+      "code": "en",
+      "countryCodes": [
+        "AW",
+        "AI",
+        "AE",
+        "AR",
+        "AS",
+        "AG",
+        "AU",
+        "AT",
+        "BI",
+        "BE",
+        "BD",
+        "BG",
+        "BS",
+        "BA",
+        "BZ",
+        "BM",
+        "BR",
+        "BB",
+        "BN",
+        "BT",
+        "BW",
+        "CA",
+        "CC",
+        "CH",
+        "CL",
+        "CN",
+        "CM",
+        "CK",
+        "CX",
+        "KY",
+        "CY",
+        "CZ",
+        "DE",
+        "DM",
+        "DK",
+        "DO",
+        "DZ",
+        "EG",
+        "ER",
+        "ES",
+        "EE",
+        "ET",
+        "FI",
+        "FJ",
+        "FK",
+        "FR",
+        "FM",
+        "GB",
+        "GG",
+        "GH",
+        "GI",
+        "GM",
+        "GR",
+        "GD",
+        "GU",
+        "GY",
+        "HK",
+        "HN",
+        "HR",
+        "HU",
+        "IM",
+        "IN",
+        "IO",
+        "IE",
+        "IQ",
+        "IL",
+        "IT",
+        "JM",
+        "JE",
+        "JO",
+        "KZ",
+        "KE",
+        "KI",
+        "KN",
+        "LB",
+        "LR",
+        "LC",
+        "LK",
+        "LS",
+        "LT",
+        "LU",
+        "LV",
+        "MO",
+        "MA",
+        "MG",
+        "MV",
+        "MX",
+        "MH",
+        "MT",
+        "MP",
+        "MS",
+        "MU",
+        "MW",
+        "MY",
+        "NA",
+        "NF",
+        "NG",
+        "NU",
+        "NL",
+        "NP",
+        "NR",
+        "NZ",
+        "PK",
+        "PA",
+        "PN",
+        "PH",
+        "PW",
+        "PG",
+        "PL",
+        "PR",
+        "PT",
+        "RO",
+        "RW",
+        "SD",
+        "SG",
+        "GS",
+        "SH",
+        "SB",
+        "SL",
+        "PM",
+        "SS",
+        "SK",
+        "SI",
+        "SE",
+        "SZ",
+        "SX",
+        "SC",
+        "TC",
+        "TH",
+        "TK",
+        "TO",
+        "TT",
+        "TR",
+        "TV",
+        "TZ",
+        "UG",
+        "UM",
+        "US",
+        "VC",
+        "VG",
+        "VI",
+        "VU",
+        "WS",
+        "YE",
+        "ZA",
+        "ZM",
+        "ZW"
+      ]
+    },
+    {
+      "code": "en_Shaw",
+      "countryCodes": [
+        "GB"
+      ]
+    },
+    {
+      "code": "eo",
+      "countryCodes": [
+        "SM"
+      ]
+    },
+    {
+      "code": "es",
+      "countryCodes": [
+        "AD",
+        "AR",
+        "BZ",
+        "BO",
+        "BR",
+        "CA",
+        "CL",
+        "CO",
+        "CR",
+        "CU",
+        "CW",
+        "DE",
+        "DO",
+        "EC",
+        "ES",
+        "FR",
+        "GB",
+        "GI",
+        "GQ",
+        "GT",
+        "HN",
+        "MA",
+        "MX",
+        "NI",
+        "PA",
+        "PE",
+        "PH",
+        "PR",
+        "PT",
+        "PY",
+        "RO",
+        "SV",
+        "SX",
+        "TT",
+        "UY",
+        "US",
+        "VE"
+      ]
+    },
+    {
+      "code": "esu",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "et",
+      "countryCodes": [
+        "EE",
+        "FI"
+      ]
+    },
+    {
+      "code": "eu",
+      "countryCodes": [
+        "ES",
+        "FR"
+      ]
+    },
+    {
+      "code": "ewo",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "ext",
+      "countryCodes": [
+        "ES"
+      ]
+    },
+    {
+      "code": "fa",
+      "countryCodes": [
+        "AF",
+        "AE",
+        "CA",
+        "IR",
+        "IQ",
+        "OM",
+        "PK",
+        "QA",
+        "TJ"
+      ]
+    },
+    {
+      "code": "fan",
+      "countryCodes": [
+        "GQ"
+      ]
+    },
+    {
+      "code": "fbl",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "ff",
+      "countryCodes": [
+        "BF",
+        "CM",
+        "GH",
+        "GN",
+        "GM",
+        "GW",
+        "LR",
+        "MR",
+        "NE",
+        "NG",
+        "SN",
+        "SL"
+      ]
+    },
+    {
+      "code": "ff_Adlm",
+      "countryCodes": [
+        "BF",
+        "CM",
+        "GH",
+        "GN",
+        "GM",
+        "GW",
+        "LR",
+        "MR",
+        "NE",
+        "NG",
+        "SN",
+        "SL"
+      ]
+    },
+    {
+      "code": "ffm",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "fi",
+      "countryCodes": [
+        "EE",
+        "FI",
+        "RU",
+        "SE"
+      ]
+    },
+    {
+      "code": "fia",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "fil",
+      "countryCodes": [
+        "CA",
+        "MO",
+        "PH",
+        "US"
+      ]
+    },
+    {
+      "code": "fit",
+      "countryCodes": [
+        "SE"
+      ]
+    },
+    {
+      "code": "fj",
+      "countryCodes": [
+        "FJ"
+      ]
+    },
+    {
+      "code": "fo",
+      "countryCodes": [
+        "DK",
+        "FO"
+      ]
+    },
+    {
+      "code": "fon",
+      "countryCodes": [
+        "BJ"
+      ]
+    },
+    {
+      "code": "fr",
+      "countryCodes": [
+        "AD",
+        "TF",
+        "AT",
+        "BI",
+        "BE",
+        "BJ",
+        "BF",
+        "BL",
+        "CF",
+        "CA",
+        "CH",
+        "CI",
+        "CM",
+        "CD",
+        "CG",
+        "KM",
+        "CY",
+        "DE",
+        "DJ",
+        "DZ",
+        "FR",
+        "GA",
+        "GB",
+        "GN",
+        "GP",
+        "GW",
+        "GQ",
+        "GR",
+        "GF",
+        "HT",
+        "HU",
+        "IE",
+        "IT",
+        "LB",
+        "LU",
+        "MF",
+        "MA",
+        "MC",
+        "MG",
+        "ML",
+        "MT",
+        "MR",
+        "MQ",
+        "MU",
+        "YT",
+        "NC",
+        "NE",
+        "NL",
+        "PT",
+        "PF",
+        "RE",
+        "RO",
+        "RW",
+        "SN",
+        "PM",
+        "ST",
+        "SC",
+        "SY",
+        "TD",
+        "TG",
+        "TN",
+        "US",
+        "VU",
+        "WF"
+      ]
+    },
+    {
+      "code": "frc",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "frp",
+      "countryCodes": [
+        "FR"
+      ]
+    },
+    {
+      "code": "frr",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "frs",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "fud",
+      "countryCodes": [
+        "WF"
+      ]
+    },
+    {
+      "code": "fuq",
+      "countryCodes": [
+        "NE"
+      ]
+    },
+    {
+      "code": "fur",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "fuv",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "fvr",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "fy",
+      "countryCodes": [
+        "NL"
+      ]
+    },
+    {
+      "code": "ga",
+      "countryCodes": [
+        "GB",
+        "IE"
+      ]
+    },
+    {
+      "code": "gaa",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "gag",
+      "countryCodes": [
+        "MD"
+      ]
+    },
+    {
+      "code": "gan",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "gay",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "gbm",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "gbz",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "gcr",
+      "countryCodes": [
+        "GF"
+      ]
+    },
+    {
+      "code": "gd",
+      "countryCodes": [
+        "GB"
+      ]
+    },
+    {
+      "code": "gez",
+      "countryCodes": [
+        "ET"
+      ]
+    },
+    {
+      "code": "gil",
+      "countryCodes": [
+        "KI"
+      ]
+    },
+    {
+      "code": "gjk",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "gju",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "gl",
+      "countryCodes": [
+        "ES",
+        "PT"
+      ]
+    },
+    {
+      "code": "glk",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "gmy",
+      "countryCodes": [
+        "GR"
+      ]
+    },
+    {
+      "code": "gn",
+      "countryCodes": [
+        "AR",
+        "BO",
+        "PY"
+      ]
+    },
+    {
+      "code": "gon",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "gor",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "gos",
+      "countryCodes": [
+        "NL"
+      ]
+    },
+    {
+      "code": "grc",
+      "countryCodes": [
+        "GR"
+      ]
+    },
+    {
+      "code": "grt",
+      "countryCodes": [
+        "BD",
+        "IN"
+      ]
+    },
+    {
+      "code": "gsw",
+      "countryCodes": [
+        "CH",
+        "DE",
+        "FR",
+        "LI"
+      ]
+    },
+    {
+      "code": "gu",
+      "countryCodes": [
+        "CA",
+        "GB",
+        "IN",
+        "KE"
+      ]
+    },
+    {
+      "code": "gub",
+      "countryCodes": [
+        "BR"
+      ]
+    },
+    {
+      "code": "guc",
+      "countryCodes": [
+        "CO"
+      ]
+    },
+    {
+      "code": "gur",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "guz",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "gv",
+      "countryCodes": [
+        "IM"
+      ]
+    },
+    {
+      "code": "gvr",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "gwi",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "ha",
+      "countryCodes": [
+        "GH",
+        "NE",
+        "NG"
+      ]
+    },
+    {
+      "code": "ha_Arab",
+      "countryCodes": [
+        "CM",
+        "NG",
+        "SD"
+      ]
+    },
+    {
+      "code": "hak",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "hak_Hant",
+      "countryCodes": [
+        "TW"
+      ]
+    },
+    {
+      "code": "haw",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "haz",
+      "countryCodes": [
+        "AF"
+      ]
+    },
+    {
+      "code": "he",
+      "countryCodes": [
+        "IL"
+      ]
+    },
+    {
+      "code": "hi",
+      "countryCodes": [
+        "CA",
+        "FJ",
+        "IN",
+        "NP",
+        "UG",
+        "ZA"
+      ]
+    },
+    {
+      "code": "hi_Latn",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "hif",
+      "countryCodes": [
+        "FJ"
+      ]
+    },
+    {
+      "code": "hil",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "hnd",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "hne",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "hnj",
+      "countryCodes": [
+        "AU",
+        "CN",
+        "FR",
+        "GF",
+        "LA",
+        "MM",
+        "SR",
+        "TH",
+        "US",
+        "VN"
+      ]
+    },
+    {
+      "code": "hnn",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "hno",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "ho",
+      "countryCodes": [
+        "PG"
+      ]
+    },
+    {
+      "code": "hoc",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "hoj",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "hr",
+      "countryCodes": [
+        "AT",
+        "BA",
+        "CA",
+        "DE",
+        "HR",
+        "HU",
+        "IT",
+        "RS",
+        "SI"
+      ]
+    },
+    {
+      "code": "hsb",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "hsn",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "ht",
+      "countryCodes": [
+        "HT"
+      ]
+    },
+    {
+      "code": "hu",
+      "countryCodes": [
+        "AT",
+        "CA",
+        "HU",
+        "IL",
+        "RO",
+        "RS",
+        "SK",
+        "SI",
+        "UA"
+      ]
+    },
+    {
+      "code": "hur",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "hy",
+      "countryCodes": [
+        "AM",
+        "CY",
+        "GE",
+        "IR",
+        "LB",
+        "RU",
+        "SY",
+        "TR"
+      ]
+    },
+    {
+      "code": "hz",
+      "countryCodes": [
+        "NA"
+      ]
+    },
+    {
+      "code": "ia",
+      "countryCodes": [
+        "FR",
+        "SE"
+      ]
+    },
+    {
+      "code": "iba",
+      "countryCodes": [
+        "MY"
+      ]
+    },
+    {
+      "code": "ibb",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "id",
+      "countryCodes": [
+        "ID",
+        "NL"
+      ]
+    },
+    {
+      "code": "ie",
+      "countryCodes": [
+        "EE"
+      ]
+    },
+    {
+      "code": "ife",
+      "countryCodes": [
+        "TG"
+      ]
+    },
+    {
+      "code": "ig",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "ii",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "ik",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "ilo",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "inh",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "io",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "is",
+      "countryCodes": [
+        "IS"
+      ]
+    },
+    {
+      "code": "it",
+      "countryCodes": [
+        "AU",
+        "AT",
+        "BR",
+        "CA",
+        "CH",
+        "DE",
+        "FR",
+        "GB",
+        "HR",
+        "IT",
+        "MT",
+        "SM",
+        "SI",
+        "US",
+        "VA"
+      ]
+    },
+    {
+      "code": "iu",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "iu_Latn",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "izh",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "ja",
+      "countryCodes": [
+        "BR",
+        "CA",
+        "JP"
+      ]
+    },
+    {
+      "code": "jam",
+      "countryCodes": [
+        "JM"
+      ]
+    },
+    {
+      "code": "jbo",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "jgo",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "jmc",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "jml",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "jut",
+      "countryCodes": [
+        "DK"
+      ]
+    },
+    {
+      "code": "jv",
+      "countryCodes": [
+        "ID",
+        "MY"
+      ]
+    },
+    {
+      "code": "ka",
+      "countryCodes": [
+        "GE",
+        "IR",
+        "TR"
+      ]
+    },
+    {
+      "code": "kaa",
+      "countryCodes": [
+        "AF",
+        "IR",
+        "KZ",
+        "KG",
+        "RU",
+        "TM",
+        "TR",
+        "UZ"
+      ]
+    },
+    {
+      "code": "kab",
+      "countryCodes": [
+        "DZ"
+      ]
+    },
+    {
+      "code": "kac",
+      "countryCodes": [
+        "MM"
+      ]
+    },
+    {
+      "code": "kaj",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "kam",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "kao",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "kaw",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "kbd",
+      "countryCodes": [
+        "RU",
+        "TR"
+      ]
+    },
+    {
+      "code": "kcg",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "kck",
+      "countryCodes": [
+        "ZW"
+      ]
+    },
+    {
+      "code": "kde",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "kdt",
+      "countryCodes": [
+        "KH",
+        "LA",
+        "TH"
+      ]
+    },
+    {
+      "code": "kea",
+      "countryCodes": [
+        "CV"
+      ]
+    },
+    {
+      "code": "ken",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "kfo",
+      "countryCodes": [
+        "CI"
+      ]
+    },
+    {
+      "code": "kfr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "kfy",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "kg",
+      "countryCodes": [
+        "CD"
+      ]
+    },
+    {
+      "code": "kge",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "kgp",
+      "countryCodes": [
+        "BR"
+      ]
+    },
+    {
+      "code": "kha",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "khb",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "khn",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "khq",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "kht",
+      "countryCodes": [
+        "IN",
+        "MM"
+      ]
+    },
+    {
+      "code": "khw",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "ki",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "kiu",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "kj",
+      "countryCodes": [
+        "NA"
+      ]
+    },
+    {
+      "code": "kjg",
+      "countryCodes": [
+        "LA"
+      ]
+    },
+    {
+      "code": "kk",
+      "countryCodes": [
+        "KZ",
+        "TR"
+      ]
+    },
+    {
+      "code": "kk_Arab",
+      "countryCodes": [
+        "AF",
+        "CN",
+        "IR",
+        "MN"
+      ]
+    },
+    {
+      "code": "kkj",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "kl",
+      "countryCodes": [
+        "DK",
+        "GL"
+      ]
+    },
+    {
+      "code": "kln",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "km",
+      "countryCodes": [
+        "KH"
+      ]
+    },
+    {
+      "code": "kmb",
+      "countryCodes": [
+        "AO"
+      ]
+    },
+    {
+      "code": "kn",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "knf",
+      "countryCodes": [
+        "GW",
+        "SN"
+      ]
+    },
+    {
+      "code": "knn",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "ko",
+      "countryCodes": [
+        "BR",
+        "CA",
+        "CN",
+        "JP",
+        "KR",
+        "KP",
+        "US"
+      ]
+    },
+    {
+      "code": "koi",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "kok",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "kos",
+      "countryCodes": [
+        "FM"
+      ]
+    },
+    {
+      "code": "kpe",
+      "countryCodes": [
+        "GN",
+        "LR"
+      ]
+    },
+    {
+      "code": "kqn",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "krc",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "kri",
+      "countryCodes": [
+        "SL"
+      ]
+    },
+    {
+      "code": "krj",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "krl",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "kru",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "ks",
+      "countryCodes": [
+        "IN",
+        "PK"
+      ]
+    },
+    {
+      "code": "ksb",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "ksf",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "ksh",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "ku",
+      "countryCodes": [
+        "AM",
+        "AZ",
+        "DE",
+        "GE",
+        "SY",
+        "TM",
+        "TR"
+      ]
+    },
+    {
+      "code": "ku_Arab",
+      "countryCodes": [
+        "LB"
+      ]
+    },
+    {
+      "code": "kum",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "kv",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "kvr",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "kvx",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "kw",
+      "countryCodes": [
+        "GB"
+      ]
+    },
+    {
+      "code": "kwk",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "kxm",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "kxp",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "kxv",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "ky",
+      "countryCodes": [
+        "KG"
+      ]
+    },
+    {
+      "code": "ky_Arab",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "ky_Latn",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "la",
+      "countryCodes": [
+        "VA"
+      ]
+    },
+    {
+      "code": "lad",
+      "countryCodes": [
+        "IL"
+      ]
+    },
+    {
+      "code": "lag",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "lah",
+      "countryCodes": [
+        "IN",
+        "PK"
+      ]
+    },
+    {
+      "code": "laj",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "lb",
+      "countryCodes": [
+        "LU"
+      ]
+    },
+    {
+      "code": "lbe",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "lbw",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "lcp",
+      "countryCodes": [
+        "CN",
+        "TH"
+      ]
+    },
+    {
+      "code": "leb",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "len",
+      "countryCodes": [
+        "SV"
+      ]
+    },
+    {
+      "code": "lep",
+      "countryCodes": [
+        "BT",
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "lez",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "lg",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "li",
+      "countryCodes": [
+        "NL"
+      ]
+    },
+    {
+      "code": "lif",
+      "countryCodes": [
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "lij",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "lil",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "lis",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "ljp",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "lki",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "lkt",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "lld",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "lmn",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "lmo",
+      "countryCodes": [
+        "CH",
+        "IT"
+      ]
+    },
+    {
+      "code": "ln",
+      "countryCodes": [
+        "AO",
+        "CF",
+        "CD",
+        "CG"
+      ]
+    },
+    {
+      "code": "lo",
+      "countryCodes": [
+        "LA"
+      ]
+    },
+    {
+      "code": "lol",
+      "countryCodes": [
+        "CD"
+      ]
+    },
+    {
+      "code": "loz",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "lrc",
+      "countryCodes": [
+        "IR",
+        "IQ"
+      ]
+    },
+    {
+      "code": "lt",
+      "countryCodes": [
+        "GB",
+        "LT",
+        "PL"
+      ]
+    },
+    {
+      "code": "ltg",
+      "countryCodes": [
+        "LV"
+      ]
+    },
+    {
+      "code": "lu",
+      "countryCodes": [
+        "CD"
+      ]
+    },
+    {
+      "code": "lua",
+      "countryCodes": [
+        "CD"
+      ]
+    },
+    {
+      "code": "lue",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "lun",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "luo",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "luy",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "luz",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "lv",
+      "countryCodes": [
+        "LV"
+      ]
+    },
+    {
+      "code": "lwl",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "lzh",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "lzz",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "lzz_Geor",
+      "countryCodes": [
+        "GE"
+      ]
+    },
+    {
+      "code": "mad",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "maf",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "mag",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "mai",
+      "countryCodes": [
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "mak",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "man",
+      "countryCodes": [
+        "GN",
+        "GM"
+      ]
+    },
+    {
+      "code": "man_Nkoo",
+      "countryCodes": [
+        "GN",
+        "GM"
+      ]
+    },
+    {
+      "code": "mas",
+      "countryCodes": [
+        "KE",
+        "TZ"
+      ]
+    },
+    {
+      "code": "maz",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "mdf",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "mdh",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "mdr",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "men",
+      "countryCodes": [
+        "LR",
+        "SL"
+      ]
+    },
+    {
+      "code": "mer",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "mey",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "mfa",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "mfe",
+      "countryCodes": [
+        "MU"
+      ]
+    },
+    {
+      "code": "mfv",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "mg",
+      "countryCodes": [
+        "MG"
+      ]
+    },
+    {
+      "code": "mgh",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "mgo",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "mgp",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "mgy",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "mh",
+      "countryCodes": [
+        "MH"
+      ]
+    },
+    {
+      "code": "mhn",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "mi",
+      "countryCodes": [
+        "NZ"
+      ]
+    },
+    {
+      "code": "mic",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "min",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "mk",
+      "countryCodes": [
+        "AL",
+        "GR",
+        "MK"
+      ]
+    },
+    {
+      "code": "ml",
+      "countryCodes": [
+        "AE",
+        "BH",
+        "IN",
+        "IL",
+        "MY",
+        "QA",
+        "SG"
+      ]
+    },
+    {
+      "code": "mls",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "mn",
+      "countryCodes": [
+        "MN",
+        "RU"
+      ]
+    },
+    {
+      "code": "mn_Mong",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "mni",
+      "countryCodes": [
+        "BD",
+        "IN"
+      ]
+    },
+    {
+      "code": "mnw",
+      "countryCodes": [
+        "MM",
+        "TH"
+      ]
+    },
+    {
+      "code": "moe",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "moh",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "mos",
+      "countryCodes": [
+        "BF"
+      ]
+    },
+    {
+      "code": "mr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "mrd",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "mrj",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "mro",
+      "countryCodes": [
+        "BD"
+      ]
+    },
+    {
+      "code": "ms",
+      "countryCodes": [
+        "BN",
+        "ID",
+        "MY",
+        "SG"
+      ]
+    },
+    {
+      "code": "ms_Arab",
+      "countryCodes": [
+        "BN",
+        "CC",
+        "ID"
+      ]
+    },
+    {
+      "code": "mt",
+      "countryCodes": [
+        "MT"
+      ]
+    },
+    {
+      "code": "mtr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "mua",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "mus",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "mvy",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "mwk",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "mwr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "mwv",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "mxc",
+      "countryCodes": [
+        "ZW"
+      ]
+    },
+    {
+      "code": "my",
+      "countryCodes": [
+        "BD",
+        "MM"
+      ]
+    },
+    {
+      "code": "myv",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "myx",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "mzn",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "na",
+      "countryCodes": [
+        "NR"
+      ]
+    },
+    {
+      "code": "nan",
+      "countryCodes": [
+        "CN",
+        "MO"
+      ]
+    },
+    {
+      "code": "nan_Hant",
+      "countryCodes": [
+        "TW"
+      ]
+    },
+    {
+      "code": "nap",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "naq",
+      "countryCodes": [
+        "NA"
+      ]
+    },
+    {
+      "code": "nb",
+      "countryCodes": [
+        "NO",
+        "SJ"
+      ]
+    },
+    {
+      "code": "nch",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "nd",
+      "countryCodes": [
+        "ZW"
+      ]
+    },
+    {
+      "code": "ndc",
+      "countryCodes": [
+        "MZ",
+        "ZW"
+      ]
+    },
+    {
+      "code": "nds",
+      "countryCodes": [
+        "DE",
+        "NL"
+      ]
+    },
+    {
+      "code": "ne",
+      "countryCodes": [
+        "BT",
+        "IN",
+        "NP"
+      ]
+    },
+    {
+      "code": "new",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "ng",
+      "countryCodes": [
+        "NA"
+      ]
+    },
+    {
+      "code": "ngl",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "nhe",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "nhw",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "nij",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "niu",
+      "countryCodes": [
+        "NU"
+      ]
+    },
+    {
+      "code": "njo",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "nl",
+      "countryCodes": [
+        "AW",
+        "BE",
+        "BQ",
+        "CA",
+        "CW",
+        "DE",
+        "FR",
+        "NL",
+        "SR",
+        "SX"
+      ]
+    },
+    {
+      "code": "nmg",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "nn",
+      "countryCodes": [
+        "NO"
+      ]
+    },
+    {
+      "code": "nnh",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "no",
+      "countryCodes": [
+        "BV",
+        "NO"
+      ]
+    },
+    {
+      "code": "nod",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "noe",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "nqo",
+      "countryCodes": [
+        "GN"
+      ]
+    },
+    {
+      "code": "nr",
+      "countryCodes": [
+        "ZA"
+      ]
+    },
+    {
+      "code": "nse",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "nsk",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "nso",
+      "countryCodes": [
+        "ZA"
+      ]
+    },
+    {
+      "code": "nus",
+      "countryCodes": [
+        "SS"
+      ]
+    },
+    {
+      "code": "nv",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "nxq",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "ny",
+      "countryCodes": [
+        "MZ",
+        "MW",
+        "ZM",
+        "ZW"
+      ]
+    },
+    {
+      "code": "nym",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "nyn",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "nzi",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "oc",
+      "countryCodes": [
+        "ES",
+        "FR"
+      ]
+    },
+    {
+      "code": "oj",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "ojs",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "ojw",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "oka",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "om",
+      "countryCodes": [
+        "ET",
+        "KE",
+        "SO"
+      ]
+    },
+    {
+      "code": "or",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "os",
+      "countryCodes": [
+        "GE",
+        "RU"
+      ]
+    },
+    {
+      "code": "osa",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "pa",
+      "countryCodes": [
+        "CA",
+        "GB",
+        "IN",
+        "KE",
+        "SG"
+      ]
+    },
+    {
+      "code": "pa_Arab",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "pag",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "pam",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "pap",
+      "countryCodes": [
+        "AW",
+        "BQ",
+        "CW"
+      ]
+    },
+    {
+      "code": "pau",
+      "countryCodes": [
+        "PW"
+      ]
+    },
+    {
+      "code": "pcd",
+      "countryCodes": [
+        "FR"
+      ]
+    },
+    {
+      "code": "pcm",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "pdc",
+      "countryCodes": [
+        "US"
+      ]
+    },
+    {
+      "code": "pdt",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "pfl",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "pis",
+      "countryCodes": [
+        "SB"
+      ]
+    },
+    {
+      "code": "pko",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "pl",
+      "countryCodes": [
+        "CA",
+        "CZ",
+        "DE",
+        "GB",
+        "IL",
+        "PL",
+        "RO",
+        "SK",
+        "UA"
+      ]
+    },
+    {
+      "code": "pms",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "pnt",
+      "countryCodes": [
+        "GR"
+      ]
+    },
+    {
+      "code": "pnt_Cyrl",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "pnt_Latn",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "pon",
+      "countryCodes": [
+        "FM"
+      ]
+    },
+    {
+      "code": "ppl",
+      "countryCodes": [
+        "SV"
+      ]
+    },
+    {
+      "code": "pqm",
+      "countryCodes": [
+        "CA"
+      ]
+    },
+    {
+      "code": "prd",
+      "countryCodes": [
+        "AF",
+        "IR"
+      ]
+    },
+    {
+      "code": "prg",
+      "countryCodes": [
+        "PL"
+      ]
+    },
+    {
+      "code": "ps",
+      "countryCodes": [
+        "AF",
+        "AE",
+        "IR",
+        "PK"
+      ]
+    },
+    {
+      "code": "pt",
+      "countryCodes": [
+        "AO",
+        "AG",
+        "BR",
+        "CA",
+        "CH",
+        "CV",
+        "FR",
+        "GB",
+        "GW",
+        "GQ",
+        "LU",
+        "MO",
+        "MZ",
+        "PT",
+        "ST",
+        "TL"
+      ]
+    },
+    {
+      "code": "puu",
+      "countryCodes": [
+        "GA"
+      ]
+    },
+    {
+      "code": "qu",
+      "countryCodes": [
+        "BO",
+        "EC",
+        "PE"
+      ]
+    },
+    {
+      "code": "quc",
+      "countryCodes": [
+        "GT"
+      ]
+    },
+    {
+      "code": "qug",
+      "countryCodes": [
+        "EC"
+      ]
+    },
+    {
+      "code": "raj",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "rcf",
+      "countryCodes": [
+        "RE"
+      ]
+    },
+    {
+      "code": "rej",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "rgn",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "rhg",
+      "countryCodes": [
+        "BD",
+        "MM"
+      ]
+    },
+    {
+      "code": "ria",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "rif",
+      "countryCodes": [
+        "MA",
+        "NL"
+      ]
+    },
+    {
+      "code": "rif_Tfng",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "rjs",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "rkt",
+      "countryCodes": [
+        "BD",
+        "IN"
+      ]
+    },
+    {
+      "code": "rm",
+      "countryCodes": [
+        "CH"
+      ]
+    },
+    {
+      "code": "rmf",
+      "countryCodes": [
+        "FI"
+      ]
+    },
+    {
+      "code": "rmo",
+      "countryCodes": [
+        "CH"
+      ]
+    },
+    {
+      "code": "rmt",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "rmu",
+      "countryCodes": [
+        "SE"
+      ]
+    },
+    {
+      "code": "rn",
+      "countryCodes": [
+        "BI"
+      ]
+    },
+    {
+      "code": "rng",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "ro",
+      "countryCodes": [
+        "CA",
+        "GB",
+        "HU",
+        "IL",
+        "MD",
+        "RO",
+        "RS",
+        "UA"
+      ]
+    },
+    {
+      "code": "rob",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "rof",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "rtm",
+      "countryCodes": [
+        "FJ"
+      ]
+    },
+    {
+      "code": "ru",
+      "countryCodes": [
+        "BG",
+        "BY",
+        "CA",
+        "CN",
+        "DE",
+        "EE",
+        "FI",
+        "GE",
+        "IL",
+        "KZ",
+        "KG",
+        "LT",
+        "LV",
+        "MD",
+        "MN",
+        "PL",
+        "RU",
+        "SJ",
+        "TJ",
+        "TM",
+        "UA",
+        "US",
+        "UZ"
+      ]
+    },
+    {
+      "code": "rue",
+      "countryCodes": [
+        "UA"
+      ]
+    },
+    {
+      "code": "rug",
+      "countryCodes": [
+        "SB"
+      ]
+    },
+    {
+      "code": "rw",
+      "countryCodes": [
+        "CD",
+        "RW",
+        "UG"
+      ]
+    },
+    {
+      "code": "rwk",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "ryu",
+      "countryCodes": [
+        "JP"
+      ]
+    },
+    {
+      "code": "sa",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "saf",
+      "countryCodes": [
+        "GH"
+      ]
+    },
+    {
+      "code": "sah",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "saq",
+      "countryCodes": [
+        "KE"
+      ]
+    },
+    {
+      "code": "sas",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "sat",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "sav",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "saz",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "sbp",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "sc",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "sck",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "scn",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "sco",
+      "countryCodes": [
+        "GB"
+      ]
+    },
+    {
+      "code": "sd",
+      "countryCodes": [
+        "IN",
+        "PK"
+      ]
+    },
+    {
+      "code": "sd_Deva",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "sdc",
+      "countryCodes": [
+        "IT"
+      ]
+    },
+    {
+      "code": "sdh",
+      "countryCodes": [
+        "IR"
+      ]
+    },
+    {
+      "code": "se",
+      "countryCodes": [
+        "FI",
+        "NO",
+        "SE"
+      ]
+    },
+    {
+      "code": "sef",
+      "countryCodes": [
+        "CI"
+      ]
+    },
+    {
+      "code": "seh",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "sei",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "ses",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "sg",
+      "countryCodes": [
+        "CF"
+      ]
+    },
+    {
+      "code": "sgs",
+      "countryCodes": [
+        "LT"
+      ]
+    },
+    {
+      "code": "shi",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "shi_Latn",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "shn",
+      "countryCodes": [
+        "MM",
+        "TH"
+      ]
+    },
+    {
+      "code": "si",
+      "countryCodes": [
+        "LK"
+      ]
+    },
+    {
+      "code": "sid",
+      "countryCodes": [
+        "ET"
+      ]
+    },
+    {
+      "code": "sk",
+      "countryCodes": [
+        "CZ",
+        "HU",
+        "RS",
+        "SK"
+      ]
+    },
+    {
+      "code": "skr",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "sl",
+      "countryCodes": [
+        "AT",
+        "HU",
+        "IT",
+        "SI"
+      ]
+    },
+    {
+      "code": "sli",
+      "countryCodes": [
+        "PL"
+      ]
+    },
+    {
+      "code": "sly",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "sm",
+      "countryCodes": [
+        "AS",
+        "TK",
+        "WS"
+      ]
+    },
+    {
+      "code": "sma",
+      "countryCodes": [
+        "SE"
+      ]
+    },
+    {
+      "code": "smj",
+      "countryCodes": [
+        "SE"
+      ]
+    },
+    {
+      "code": "smn",
+      "countryCodes": [
+        "FI"
+      ]
+    },
+    {
+      "code": "sms",
+      "countryCodes": [
+        "FI"
+      ]
+    },
+    {
+      "code": "sn",
+      "countryCodes": [
+        "ZW"
+      ]
+    },
+    {
+      "code": "snf",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "snk",
+      "countryCodes": [
+        "ML"
+      ]
+    },
+    {
+      "code": "so",
+      "countryCodes": [
+        "CA",
+        "DJ",
+        "ET",
+        "GB",
+        "KE",
+        "SO"
+      ]
+    },
+    {
+      "code": "sou",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "sq",
+      "countryCodes": [
+        "AL",
+        "GR",
+        "MK",
+        "ME",
+        "RS",
+        "TR"
+      ]
+    },
+    {
+      "code": "sr",
+      "countryCodes": [
+        "BA",
+        "CA",
+        "ME",
+        "RU",
+        "RS"
+      ]
+    },
+    {
+      "code": "sr_Latn",
+      "countryCodes": [
+        "BA",
+        "ME",
+        "RO",
+        "RS",
+        "TR"
+      ]
+    },
+    {
+      "code": "srn",
+      "countryCodes": [
+        "SR"
+      ]
+    },
+    {
+      "code": "srr",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "srx",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "ss",
+      "countryCodes": [
+        "LS",
+        "SZ",
+        "ZA"
+      ]
+    },
+    {
+      "code": "ssy",
+      "countryCodes": [
+        "ER"
+      ]
+    },
+    {
+      "code": "st",
+      "countryCodes": [
+        "LS",
+        "ZA"
+      ]
+    },
+    {
+      "code": "stq",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "su",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "suk",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "sus",
+      "countryCodes": [
+        "GN"
+      ]
+    },
+    {
+      "code": "sv",
+      "countryCodes": [
+        "AX",
+        "DK",
+        "FI",
+        "SE"
+      ]
+    },
+    {
+      "code": "sw",
+      "countryCodes": [
+        "BI",
+        "CD",
+        "KE",
+        "MZ",
+        "YT",
+        "SO",
+        "TZ",
+        "UG",
+        "ZA"
+      ]
+    },
+    {
+      "code": "swb",
+      "countryCodes": [
+        "YT"
+      ]
+    },
+    {
+      "code": "swg",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "swv",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "sxn",
+      "countryCodes": [
+        "ID"
+      ]
+    },
+    {
+      "code": "syl",
+      "countryCodes": [
+        "BD"
+      ]
+    },
+    {
+      "code": "syr",
+      "countryCodes": [
+        "IQ",
+        "SY"
+      ]
+    },
+    {
+      "code": "szl",
+      "countryCodes": [
+        "PL"
+      ]
+    },
+    {
+      "code": "ta",
+      "countryCodes": [
+        "CA",
+        "GB",
+        "IN",
+        "LK",
+        "MU",
+        "MY",
+        "RE",
+        "SG"
+      ]
+    },
+    {
+      "code": "taj",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "tbw",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "tcy",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "tdd",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "tdg",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "tdh",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "te",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "tem",
+      "countryCodes": [
+        "SL"
+      ]
+    },
+    {
+      "code": "teo",
+      "countryCodes": [
+        "KE",
+        "UG"
+      ]
+    },
+    {
+      "code": "tet",
+      "countryCodes": [
+        "TL"
+      ]
+    },
+    {
+      "code": "tg",
+      "countryCodes": [
+        "TJ"
+      ]
+    },
+    {
+      "code": "tg_Arab",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "th",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "thl",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "thq",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "thr",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "ti",
+      "countryCodes": [
+        "ER",
+        "ET",
+        "IL"
+      ]
+    },
+    {
+      "code": "tig",
+      "countryCodes": [
+        "ER"
+      ]
+    },
+    {
+      "code": "tiv",
+      "countryCodes": [
+        "NG"
+      ]
+    },
+    {
+      "code": "tk",
+      "countryCodes": [
+        "AF",
+        "IR",
+        "TM"
+      ]
+    },
+    {
+      "code": "tkl",
+      "countryCodes": [
+        "TK"
+      ]
+    },
+    {
+      "code": "tkr",
+      "countryCodes": [
+        "AZ"
+      ]
+    },
+    {
+      "code": "tkt",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "tly",
+      "countryCodes": [
+        "AZ"
+      ]
+    },
+    {
+      "code": "tmh",
+      "countryCodes": [
+        "ML",
+        "NE"
+      ]
+    },
+    {
+      "code": "tn",
+      "countryCodes": [
+        "BW",
+        "NA",
+        "ZA",
+        "ZW"
+      ]
+    },
+    {
+      "code": "tnr",
+      "countryCodes": [
+        "SN"
+      ]
+    },
+    {
+      "code": "to",
+      "countryCodes": [
+        "TO"
+      ]
+    },
+    {
+      "code": "tog",
+      "countryCodes": [
+        "MW"
+      ]
+    },
+    {
+      "code": "toi",
+      "countryCodes": [
+        "ZM"
+      ]
+    },
+    {
+      "code": "tpi",
+      "countryCodes": [
+        "PG"
+      ]
+    },
+    {
+      "code": "tr",
+      "countryCodes": [
+        "BG",
+        "CA",
+        "CY",
+        "DE",
+        "GB",
+        "GR",
+        "MK",
+        "NL",
+        "RO",
+        "TR",
+        "UA",
+        "UZ"
+      ]
+    },
+    {
+      "code": "tru",
+      "countryCodes": [
+        "TR"
+      ]
+    },
+    {
+      "code": "trv",
+      "countryCodes": [
+        "TW"
+      ]
+    },
+    {
+      "code": "trw",
+      "countryCodes": [
+        "PK"
+      ]
+    },
+    {
+      "code": "ts",
+      "countryCodes": [
+        "MZ",
+        "SZ",
+        "ZA"
+      ]
+    },
+    {
+      "code": "tsd",
+      "countryCodes": [
+        "GR"
+      ]
+    },
+    {
+      "code": "tsg",
+      "countryCodes": [
+        "PH"
+      ]
+    },
+    {
+      "code": "tsj",
+      "countryCodes": [
+        "BT"
+      ]
+    },
+    {
+      "code": "tt",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "ttj",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "tts",
+      "countryCodes": [
+        "TH"
+      ]
+    },
+    {
+      "code": "ttt",
+      "countryCodes": [
+        "AZ"
+      ]
+    },
+    {
+      "code": "tum",
+      "countryCodes": [
+        "MW",
+        "ZM"
+      ]
+    },
+    {
+      "code": "tvl",
+      "countryCodes": [
+        "TV"
+      ]
+    },
+    {
+      "code": "twq",
+      "countryCodes": [
+        "NE"
+      ]
+    },
+    {
+      "code": "ty",
+      "countryCodes": [
+        "PF"
+      ]
+    },
+    {
+      "code": "tyv",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "tzm",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "udm",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "ug",
+      "countryCodes": [
+        "AF",
+        "CN"
+      ]
+    },
+    {
+      "code": "ug_Cyrl",
+      "countryCodes": [
+        "KZ",
+        "MN"
+      ]
+    },
+    {
+      "code": "uk",
+      "countryCodes": [
+        "CA",
+        "MD",
+        "PL",
+        "RS",
+        "SK",
+        "UA"
+      ]
+    },
+    {
+      "code": "uli",
+      "countryCodes": [
+        "FM"
+      ]
+    },
+    {
+      "code": "umb",
+      "countryCodes": [
+        "AO"
+      ]
+    },
+    {
+      "code": "und",
+      "countryCodes": [
+        "AQ",
+        "HM"
+      ]
+    },
+    {
+      "code": "unr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "unr_Deva",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "unx",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "ur",
+      "countryCodes": [
+        "CA",
+        "GB",
+        "IN",
+        "MU",
+        "PK"
+      ]
+    },
+    {
+      "code": "uz",
+      "countryCodes": [
+        "TM",
+        "TR",
+        "UZ"
+      ]
+    },
+    {
+      "code": "uz_Arab",
+      "countryCodes": [
+        "AF"
+      ]
+    },
+    {
+      "code": "uz_Cyrl",
+      "countryCodes": [
+        "CN",
+        "UZ"
+      ]
+    },
+    {
+      "code": "vai",
+      "countryCodes": [
+        "LR"
+      ]
+    },
+    {
+      "code": "vai_Latn",
+      "countryCodes": [
+        "LR"
+      ]
+    },
+    {
+      "code": "ve",
+      "countryCodes": [
+        "ZA",
+        "ZW"
+      ]
+    },
+    {
+      "code": "vec",
+      "countryCodes": [
+        "BR",
+        "HR",
+        "IT",
+        "MX",
+        "SI"
+      ]
+    },
+    {
+      "code": "vep",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "vi",
+      "countryCodes": [
+        "CA",
+        "CN",
+        "US",
+        "VN"
+      ]
+    },
+    {
+      "code": "vic",
+      "countryCodes": [
+        "SX"
+      ]
+    },
+    {
+      "code": "vls",
+      "countryCodes": [
+        "BE"
+      ]
+    },
+    {
+      "code": "vmf",
+      "countryCodes": [
+        "DE"
+      ]
+    },
+    {
+      "code": "vmw",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "vot",
+      "countryCodes": [
+        "RU"
+      ]
+    },
+    {
+      "code": "vro",
+      "countryCodes": [
+        "EE"
+      ]
+    },
+    {
+      "code": "vun",
+      "countryCodes": [
+        "TZ"
+      ]
+    },
+    {
+      "code": "wa",
+      "countryCodes": [
+        "BE"
+      ]
+    },
+    {
+      "code": "wae",
+      "countryCodes": [
+        "CH",
+        "LI"
+      ]
+    },
+    {
+      "code": "wal",
+      "countryCodes": [
+        "ET"
+      ]
+    },
+    {
+      "code": "war",
+      "countryCodes": [
+        "CA",
+        "PH"
+      ]
+    },
+    {
+      "code": "wbp",
+      "countryCodes": [
+        "AU"
+      ]
+    },
+    {
+      "code": "wbq",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "wbr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "wls",
+      "countryCodes": [
+        "WF"
+      ]
+    },
+    {
+      "code": "wni",
+      "countryCodes": [
+        "KM"
+      ]
+    },
+    {
+      "code": "wo",
+      "countryCodes": [
+        "MR",
+        "SN"
+      ]
+    },
+    {
+      "code": "wtm",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "wuu",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "xav",
+      "countryCodes": [
+        "BR"
+      ]
+    },
+    {
+      "code": "xh",
+      "countryCodes": [
+        "LS",
+        "ZA"
+      ]
+    },
+    {
+      "code": "xmf",
+      "countryCodes": [
+        "GE"
+      ]
+    },
+    {
+      "code": "xnr",
+      "countryCodes": [
+        "IN"
+      ]
+    },
+    {
+      "code": "xog",
+      "countryCodes": [
+        "UG"
+      ]
+    },
+    {
+      "code": "xsr",
+      "countryCodes": [
+        "NP"
+      ]
+    },
+    {
+      "code": "yao",
+      "countryCodes": [
+        "MZ"
+      ]
+    },
+    {
+      "code": "yap",
+      "countryCodes": [
+        "FM"
+      ]
+    },
+    {
+      "code": "yav",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "ybb",
+      "countryCodes": [
+        "CM"
+      ]
+    },
+    {
+      "code": "yi",
+      "countryCodes": [
+        "IL",
+        "SE",
+        "UA",
+        "US"
+      ]
+    },
+    {
+      "code": "yo",
+      "countryCodes": [
+        "BJ",
+        "NG"
+      ]
+    },
+    {
+      "code": "yrl",
+      "countryCodes": [
+        "BR",
+        "CO",
+        "VE"
+      ]
+    },
+    {
+      "code": "yua",
+      "countryCodes": [
+        "MX"
+      ]
+    },
+    {
+      "code": "yue",
+      "countryCodes": [
+        "CA",
+        "CN",
+        "HK",
+        "MO"
+      ]
+    },
+    {
+      "code": "yue_Hans",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "za",
+      "countryCodes": [
+        "CN"
+      ]
+    },
+    {
+      "code": "zag",
+      "countryCodes": [
+        "SD"
+      ]
+    },
+    {
+      "code": "zdj",
+      "countryCodes": [
+        "KM"
+      ]
+    },
+    {
+      "code": "zea",
+      "countryCodes": [
+        "NL"
+      ]
+    },
+    {
+      "code": "zgh",
+      "countryCodes": [
+        "MA"
+      ]
+    },
+    {
+      "code": "zh",
+      "countryCodes": [
+        "CA",
+        "CN",
+        "HK",
+        "MO",
+        "MN",
+        "MY",
+        "SG"
+      ]
+    },
+    {
+      "code": "zh_Hant",
+      "countryCodes": [
+        "AU",
+        "BN",
+        "GB",
+        "GF",
+        "HK",
+        "ID",
+        "MO",
+        "PA",
+        "PH",
+        "PF",
+        "SR",
+        "TH",
+        "TW",
+        "US",
+        "VN"
+      ]
+    },
+    {
+      "code": "zmi",
+      "countryCodes": [
+        "MY"
+      ]
+    },
+    {
+      "code": "zu",
+      "countryCodes": [
+        "LS",
+        "MZ",
+        "MW",
+        "SZ",
+        "ZA"
+      ]
+    },
+    {
+      "code": "zza",
+      "countryCodes": [
+        "TR"
+      ]
+    }
+  ]
+}

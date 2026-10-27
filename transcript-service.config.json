@@ -16,10 +16,6 @@
       "implementation": "src/content/youtube.js#fetchYouTubeCaptionBundle"
     }
   ],
-  "trackPreferenceOptions": [
-    "original-first",
-    "manual-first",
-    "auto-first"
-  ],
+  "trackPreferenceOptions": ["original-first", "manual-first", "auto-first"],
   "notes": "Configuration contract for future transcript providers. Existing fetch implementation remains authoritative; do not switch engine IDs until a provider adapter is implemented and tested."
 }

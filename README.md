@@ -12,14 +12,21 @@ controls, vocabulary and sentence learning, automatic subtitle pausing,
 audio replay, Favorites, Categories, Learning Groups, YouTube metadata
 and thumbnails, Suggestions, and local data synchronization.
 
+## What's new in the latest v2.0.0 build
+
+- Focus Modes, delayed Video Info / Description hiding and Restore-on-end (Settings > Productivity & Focus Intelligence).
+- Rule-based, country-first category suggestions with a "Why was this category suggested?" explanation.
+- Metadata rules Data Sync: export, import, directory ZIP, restore defaults, compare with GitHub.
+- Details: `docs/37-update-2026-10-27-focus-categorization-final.md`.
+
 ## Download
 
 <p align="center">
-  <a href="downloads/charlie-mj-language/charlie-mj-language v1.0.0/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
+  <a href="downloads/charliemj-language-v1.0.0-youtube-language-catalog-2026-10-20.zip">
     <img src="https://img.shields.io/badge/Language%20Catalog-v1.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v1.0.0">
   </a>
   &nbsp;
-  <a href="downloads/charlie-mj-language/charlie-mj-language v2.0.0/CharlieMJ-Language-v2.0.0-20261025-170712.zip">
+  <a href="downloads/CharlieMJ-Language-v2.0.0.zip">
     <img src="https://img.shields.io/badge/Language%20Catalog-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
@@ -109,6 +116,73 @@ Learning, Sentence Learning and all existing Library data are untouched.
         longer blank the result list.
     -   Refresh and tab changes keep an active search instead of
         clearing it.
+
+### Fixed: mouse-wheel scrolling in YT Transcript Pro, export bugs, clean code
+
+-   **Mouse wheel in YT Transcript Pro (inside the Transcript window).**
+    Two fixes, both tested with the real extension loaded in Chromium:
+    1.  *Layout* (`src/content/youtube.css`, section *YT Transcript Pro
+        integration*): the list had no height limit, so it could never
+        scroll itself and the wheel scrolled the whole panel body (header,
+        languages and search scrolled away). The tab now fills the panel
+        body and the list is a real scroller (at least 300 px high). In a
+        very small window the panel body scrolls so nothing is clipped.
+    2.  *Safety net* (`src/transcript-pro/ytp-content.js`, right after
+        `proFollower().bind(els.lines)`): if the page swallows the wheel
+        event so that neither the list, the panel body nor the page moves,
+        the list is scrolled smoothly by the extension itself. When the
+        browser scrolls normally this code does nothing.
+-   **My Library exports / CSV import.** A stale second copy of the
+    export helpers in `src/dashboard/dashboard.js` overrode the correct
+    ones and wrote the literal text `\n` instead of line breaks (TXT / CSV
+    export, CSV import, download helper). The stale copy was removed and
+    the Anki (TSV) and SRT / VTT export lines that had the same escaping
+    mistake were corrected.
+-   **Caption discovery.** `discoverCaptionTracksFromPlayer()` in
+    `src/content/youtube.js` referenced an undefined variable (`root`) and
+    always failed silently before reading the player response. Fixed.
+-   **Settings page HTML.** Removed two invalid `</input>` end tags in
+    `src/options/options.html`.
+
+### Code style
+
+All `.js`, `.css`, `.html` and `.json` source files are formatted with
+Prettier (2 spaces, single quotes, semicolons, 100 columns). The rules
+are stored in `.prettierrc.json` and `.editorconfig`; `database/`, `data/`
+and `assets/` are ignored (`.prettierignore`). To keep the code clean
+after your own edits run:
+
+```
+npx prettier --write "src/**/*.{js,css,html,json}" "*.json"
+```
+
+### Fixed: transcript scroll sync, tab order and Dock / Float
+
+-   **YT Transcript Pro and Dual Transcript now follow the video.** The
+    highlighted line always matches the current video subtitle and the
+    list scrolls to it whenever the subtitle changes -- while playing,
+    and also when you seek (timeline click, arrow keys, clicking a
+    transcript line) even if the video is paused.
+    -   Scrolling now moves **only the transcript list**; the YouTube
+        page itself no longer jumps (the old `scrollIntoView` call moved
+        the whole page).
+    -   **Manual scrolling works anywhere** (mouse wheel, touch,
+        scrollbar drag, keyboard). Following pauses while you browse
+        (YT Transcript Pro: *Resume Scroll Delay*, default 4 s; Dual
+        Transcript: ~1.8 s) and then catches up to the current subtitle.
+        Seeking the video cancels that pause and jumps straight to the
+        right line.
+    -   A search in YT Transcript Pro is never overridden by auto-scroll,
+        and *Auto Scroll* works even when *Highlight Current* is off.
+-   **Transcript window tab order** is now: *Transcript, Dual
+    Transcript, YT Transcript Pro, Vocabulary, Bookmarks, Watch Later,
+    Notes*.
+-   **Dock / Float button (YT Transcript Pro header) works inside the
+    Transcript window.** *Float* detaches YT Transcript Pro into its own
+    draggable, resizable window (position and size are remembered) and
+    leaves a "Dock it back here" button in the tab; *Dock* returns it to
+    the Transcript window. A floating window stays open when you switch
+    to another Transcript-window tab.
 
 ### New: Subtitle Learning (My Library)
 
@@ -950,6 +1024,18 @@ Features include:
 The feature operates on existing timestamped transcript segments and
 does not replace the transcript-fetching engine.
 
+## Transcript Windows Scroll
+
+One shared scroll controller (`src/lib/transcript-scroll.js`) drives all three transcript tabs: **Transcript**, **Dual Transcript** and **YT Transcript Pro**.
+
+-   While the video **plays**, the list follows the current subtitle.
+-   While the video is **paused**, the list stays still.
+-   **Seeking** (YouTube timeline, clicking a line, replay) always jumps the list to the new subtitle, paused or playing.
+-   **Manual scrolling** (wheel, touch, scrollbar, keys) holds following; it resumes after the configured delay while playing, or when you seek, click a line or press Play.
+-   Only the transcript scroll container moves. The YouTube page itself is never scrolled.
+
+Configure it in **Settings → Subtitles & Timeline → Transcript Windows Scroll**: master switch, per-tab switches, subtitle position (center/top/bottom), smooth or instant animation, manual-scroll respect, resume delay and jump-on-seek.
+
 ## Notifications and Save Reliability
 
 Save operations should report success only after the underlying storage
@@ -1524,3 +1610,10 @@ When modifying this project:
 This project is distributed under the MIT License.
 
 See [`LICENSE`](LICENSE) for details.
+
+## v2.0.0 Additive Intelligence Layer
+
+This build also includes local Modes, Focus Profiles, Productivity/Screen Time statistics,
+YouTube Metadata Auto-Categorization data, country-first multi-keyword classification,
+separate Tech profile JSON data, duplicate protection, and safer local/GitHub synchronization.
+YouTube native UI remains protected from Night Focus styling.

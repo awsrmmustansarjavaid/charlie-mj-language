@@ -8,22 +8,50 @@
   const KEY = 'cmjDualTranscriptSettings';
   const SERVICE_KEY = 'cmjDualYouTubeServiceSettings';
   const CATALOG_KEY = 'cmjDualTranscriptLanguageCatalog';
-  const DEFAULT = { enabled: true, showToolbarButton: true, autoFetchOnPlay: true, targetLanguage: 'en', sourceLanguage: 'auto', sentenceMerging: true, cacheEnabled: true, cacheLimit: 20, originalColor: '#ffffff', translatedColor: '#8fd3ff', speakerIconEnabled: true, speakerIconColor: '#ffd54a', speakerIconSize: 18 };
-  const SERVICE_DEFAULT = { enabled: true, sourceBehavior: 'selected-or-auto', cacheEnabled: true, cacheTtlHours: 24, timeoutMs: 6500, fallbackEnabled: true, sentenceEnabled: true, wordAlignment: 'safe-only' };
-  const $ = id => document.getElementById(id);
-  const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
+  const DEFAULT = {
+    enabled: true,
+    showToolbarButton: true,
+    autoFetchOnPlay: true,
+    targetLanguage: 'en',
+    sourceLanguage: 'auto',
+    sentenceMerging: true,
+    cacheEnabled: true,
+    cacheLimit: 20,
+    originalColor: '#ffffff',
+    translatedColor: '#8fd3ff',
+    speakerIconEnabled: true,
+    speakerIconColor: '#ffd54a',
+    speakerIconSize: 18,
+  };
+  const SERVICE_DEFAULT = {
+    enabled: true,
+    sourceBehavior: 'selected-or-auto',
+    cacheEnabled: true,
+    cacheTtlHours: 24,
+    timeoutMs: 6500,
+    fallbackEnabled: true,
+    sentenceEnabled: true,
+    wordAlignment: 'safe-only',
+  };
+  const $ = (id) => document.getElementById(id);
+  const esc = (value) =>
+    String(value ?? '').replace(
+      /[&<>'"]/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[c]
+    );
   function optionList(items, includeAuto = false, selected = '') {
     const rows = [];
     if (includeAuto) rows.push(`<option value="auto">Auto</option>`);
     const seen = new Set(includeAuto ? ['auto'] : []);
-    for (const item of (Array.isArray(items) ? items : [])) {
+    for (const item of Array.isArray(items) ? items : []) {
       const code = String(item?.languageCode || item?.code || '').trim();
       const name = String(item?.name || item?.languageName || code).trim();
       if (!code || seen.has(code)) continue;
       seen.add(code);
       rows.push(`<option value="${esc(code)}">${esc(name)}</option>`);
     }
-    if (selected && !seen.has(selected)) rows.push(`<option value="${esc(selected)}">${esc(selected)}</option>`);
+    if (selected && !seen.has(selected))
+      rows.push(`<option value="${esc(selected)}">${esc(selected)}</option>`);
     return rows.join('');
   }
   async function readAll() {
@@ -31,7 +59,7 @@
     return {
       settings: { ...DEFAULT, ...(stored[KEY] || {}) },
       service: { ...SERVICE_DEFAULT, ...(stored[SERVICE_KEY] || {}) },
-      catalog: stored[CATALOG_KEY] || {}
+      catalog: stored[CATALOG_KEY] || {},
     };
   }
   function renderCatalog(catalog, settings) {
@@ -91,13 +119,15 @@
     $('cmjDualSave').addEventListener('click', save);
     $('cmjDualClearCache').addEventListener('click', clearCache);
     $('cmjDualServiceTest').addEventListener('click', testService);
-    chrome.storage.onChanged.addListener(changes => {
-      if (changes[CATALOG_KEY]) readAll().then(x => renderCatalog(x.catalog, x.settings));
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes[CATALOG_KEY]) readAll().then((x) => renderCatalog(x.catalog, x.settings));
     });
     document.dispatchEvent(new Event('cmj-rebuild-settings-nav'));
   }
   async function load() {
-    const all = await readAll(), s = all.settings, svc = all.service;
+    const all = await readAll(),
+      s = all.settings,
+      svc = all.service;
     $('cmjDualEnabled').checked = s.enabled !== false;
     $('cmjDualToolbar').checked = s.showToolbarButton !== false;
     $('cmjDualAuto').checked = s.autoFetchOnPlay !== false;
@@ -118,16 +148,43 @@
     $('cmjDualServiceFallback').checked = svc.fallbackEnabled !== false;
     $('cmjDualServiceSentence').checked = svc.sentenceEnabled !== false;
     $('cmjDualServiceWord').value = svc.wordAlignment || 'safe-only';
-    $('cmjDualServiceStatus').textContent = svc.enabled !== false ? 'Service enabled · ready' : 'Service disabled';
+    $('cmjDualServiceStatus').textContent =
+      svc.enabled !== false ? 'Service enabled · ready' : 'Service disabled';
   }
   async function save() {
-    const s = { enabled: $('cmjDualEnabled').checked, showToolbarButton: $('cmjDualToolbar').checked, autoFetchOnPlay: $('cmjDualAuto').checked, targetLanguage: $('cmjDualTarget').value || 'en', sourceLanguage: $('cmjDualSource').value || 'auto', sentenceMerging: $('cmjDualMerge').checked, cacheEnabled: $('cmjDualCache').checked, cacheLimit: Math.max(1, Math.min(100, Number($('cmjDualCacheLimit').value) || 20)), originalColor: $('cmjDualOriginalColor').value, translatedColor: $('cmjDualTranslatedColor').value, speakerIconEnabled: $('cmjDualSpeakerEnabled').checked, speakerIconColor: $('cmjDualSpeakerColor').value, speakerIconSize: Math.max(12, Math.min(32, Number($('cmjDualSpeakerSize').value) || 18)) };
-    const svc = { enabled: $('cmjDualServiceEnabled').checked, sourceBehavior: $('cmjDualServiceSourceBehavior').value, cacheEnabled: $('cmjDualServiceCache').checked, cacheTtlHours: Math.max(1, Math.min(720, Number($('cmjDualServiceCacheTtl').value) || 24)), timeoutMs: Math.max(1000, Math.min(30000, Number($('cmjDualServiceTimeout').value) || 6500)), fallbackEnabled: $('cmjDualServiceFallback').checked, sentenceEnabled: $('cmjDualServiceSentence').checked, wordAlignment: $('cmjDualServiceWord').value };
+    const s = {
+      enabled: $('cmjDualEnabled').checked,
+      showToolbarButton: $('cmjDualToolbar').checked,
+      autoFetchOnPlay: $('cmjDualAuto').checked,
+      targetLanguage: $('cmjDualTarget').value || 'en',
+      sourceLanguage: $('cmjDualSource').value || 'auto',
+      sentenceMerging: $('cmjDualMerge').checked,
+      cacheEnabled: $('cmjDualCache').checked,
+      cacheLimit: Math.max(1, Math.min(100, Number($('cmjDualCacheLimit').value) || 20)),
+      originalColor: $('cmjDualOriginalColor').value,
+      translatedColor: $('cmjDualTranslatedColor').value,
+      speakerIconEnabled: $('cmjDualSpeakerEnabled').checked,
+      speakerIconColor: $('cmjDualSpeakerColor').value,
+      speakerIconSize: Math.max(12, Math.min(32, Number($('cmjDualSpeakerSize').value) || 18)),
+    };
+    const svc = {
+      enabled: $('cmjDualServiceEnabled').checked,
+      sourceBehavior: $('cmjDualServiceSourceBehavior').value,
+      cacheEnabled: $('cmjDualServiceCache').checked,
+      cacheTtlHours: Math.max(1, Math.min(720, Number($('cmjDualServiceCacheTtl').value) || 24)),
+      timeoutMs: Math.max(1000, Math.min(30000, Number($('cmjDualServiceTimeout').value) || 6500)),
+      fallbackEnabled: $('cmjDualServiceFallback').checked,
+      sentenceEnabled: $('cmjDualServiceSentence').checked,
+      wordAlignment: $('cmjDualServiceWord').value,
+    };
     await chrome.storage.local.set({ [KEY]: s, [SERVICE_KEY]: svc });
-    $('cmjDualSaveStatus').textContent = '✓ Saved. Refresh YouTube to apply transcript/service changes.';
-    $('cmjDualServiceStatus').textContent = svc.enabled ? 'Service enabled · ready' : 'Service disabled';
+    $('cmjDualSaveStatus').textContent =
+      '✓ Saved. Refresh YouTube to apply transcript/service changes.';
+    $('cmjDualServiceStatus').textContent = svc.enabled
+      ? 'Service enabled · ready'
+      : 'Service disabled';
     setTimeout(() => {
-      if ($('cmjDualSaveStatus')) $('cmjDualSaveStatus').textContent = ''
+      if ($('cmjDualSaveStatus')) $('cmjDualSaveStatus').textContent = '';
     }, 2200);
   }
   async function clearCache() {
@@ -135,7 +192,8 @@
       await chrome.storage.local.remove('cmjDualTranscriptCache');
       $('cmjDualServiceStatus').textContent = '✓ Dual YouTube cache cleared.';
       setTimeout(() => {
-        if ($('cmjDualServiceStatus')) $('cmjDualServiceStatus').textContent = 'Service cache ready'
+        if ($('cmjDualServiceStatus'))
+          $('cmjDualServiceStatus').textContent = 'Service cache ready';
       }, 2200);
     } catch (e) {
       $('cmjDualServiceStatus').textContent = 'Could not clear cache.';
@@ -143,9 +201,13 @@
   }
   async function testService() {
     const all = await readAll();
-    const text = all.service.enabled !== false ? '✓ Service configuration is enabled and ready.' : 'Service is disabled.';
+    const text =
+      all.service.enabled !== false
+        ? '✓ Service configuration is enabled and ready.'
+        : 'Service is disabled.';
     $('cmjDualServiceStatus').textContent = text;
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build, { once: true });
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', build, { once: true });
   else build();
 })();

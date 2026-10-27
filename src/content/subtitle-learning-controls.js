@@ -5,7 +5,7 @@
     autoPauseAfterSubtitle: false,
     subtitleLearningAutoResumeDelay: 3,
     subtitleLearningKeepSubtitleVisible: true,
-    subtitleLearningReplayAudioCount: 2
+    subtitleLearningReplayAudioCount: 2,
   };
   let api = null;
   let lastVideo = null;
@@ -23,7 +23,7 @@
   function getSettings() {
     return {
       ...DEFAULTS,
-      ...(api?.getSettings?.() || {})
+      ...(api?.getSettings?.() || {}),
     };
   }
   function getVideo() {
@@ -46,10 +46,7 @@
     if (!settings.autoPauseAfterSubtitle) return;
     const delaySeconds = Math.max(
       0.1,
-      Math.min(
-        60,
-        Number(settings.subtitleLearningAutoResumeDelay) || 3
-      )
+      Math.min(60, Number(settings.subtitleLearningAutoResumeDelay) || 3)
     );
     autoPausedKey = captionKey;
     if (settings.subtitleLearningKeepSubtitleVisible !== false) {
@@ -65,18 +62,12 @@
       if (!currentVideo || currentVideo !== video || !currentVideo.paused) {
         return;
       }
-      if (
-        !getSettings().autoPauseAfterSubtitle ||
-        currentKey !== captionKey
-      ) {
+      if (!getSettings().autoPauseAfterSubtitle || currentKey !== captionKey) {
         return;
       }
-      currentVideo.play().catch(() => {
-      });
+      currentVideo.play().catch(() => {});
       autoPausedKey = '';
-      getLayer()?.classList.remove(
-        'cmj-subtitle-learning-hidden'
-      );
+      getLayer()?.classList.remove('cmj-subtitle-learning-hidden');
     }, delaySeconds * 1000);
   }
   function updateAutoPauseState() {
@@ -85,19 +76,11 @@
       clearAutoResume();
     }
     const toolbar = document.querySelector('.cmj-toolbar');
-    const button = toolbar?.querySelector(
-      '[data-cmj-toolbar="auto-pause"]'
-    );
+    const button = toolbar?.querySelector('[data-cmj-toolbar="auto-pause"]');
     if (button) {
       const active = Boolean(settings.autoPauseAfterSubtitle);
-      button.classList.toggle(
-        'cmj-toolbar-active',
-        active
-      );
-      button.setAttribute(
-        'aria-pressed',
-        String(active)
-      );
+      button.classList.toggle('cmj-toolbar-active', active);
+      button.setAttribute('aria-pressed', String(active));
     }
   }
   async function toggleAutoPause() {
@@ -105,15 +88,15 @@
     const enabled = !settings.autoPauseAfterSubtitle;
     if (api?.updateSettings) {
       await api.updateSettings({
-        autoPauseAfterSubtitle: enabled
+        autoPauseAfterSubtitle: enabled,
       });
     } else {
       const stored = await chrome.storage.local.get('settings');
       await chrome.storage.local.set({
         settings: {
           ...(stored.settings || {}),
-          autoPauseAfterSubtitle: enabled
-        }
+          autoPauseAfterSubtitle: enabled,
+        },
       });
     }
     if (!enabled) {
@@ -123,82 +106,49 @@
       startFallback();
     }
     updateAutoPauseState();
-    api?.showToast?.(
-      enabled
-        ? 'Auto-Pause enabled.'
-        : 'Auto-Pause disabled.'
-    );
+    api?.showToast?.(enabled ? 'Auto-Pause enabled.' : 'Auto-Pause disabled.');
   }
   function markReplayButton(active) {
-    document
-      .querySelectorAll(
-        '[data-cmj-toolbar="replay-audio"]'
-      )
-      .forEach(button => {
-        button.classList.toggle(
-          'cmj-toolbar-action-complete',
-          active
-        );
-        button.setAttribute(
-          'aria-pressed',
-          String(active)
-        );
-      });
+    document.querySelectorAll('[data-cmj-toolbar="replay-audio"]').forEach((button) => {
+      button.classList.toggle('cmj-toolbar-action-complete', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
   }
   function replayCurrentAudio() {
     if (replaySession) {
-      api?.showToast?.(
-        'Replay Audio is already running.'
-      );
+      api?.showToast?.('Replay Audio is already running.');
       return;
     }
     const video = getVideo();
-    const bounds =
-      api?.getCurrentCaptionBounds?.();
+    const bounds = api?.getCurrentCaptionBounds?.();
     if (!video || !bounds) {
-      api?.showToast?.(
-        'No active subtitle is available.'
-      );
+      api?.showToast?.('No active subtitle is available.');
       return;
     }
-    const start = Math.max(
-      0,
-      Number(bounds.start) || 0
-    );
+    const start = Math.max(0, Number(bounds.start) || 0);
     const end = Math.min(
-      Number.isFinite(video.duration) &&
-        video.duration > 0
+      Number.isFinite(video.duration) && video.duration > 0
         ? video.duration
         : Number(bounds.end) || start + 2,
       Number(bounds.end) || start + 2
     );
     if (!(end > start)) {
-      api?.showToast?.(
-        'The current subtitle has no playable audio segment.'
-      );
+      api?.showToast?.('The current subtitle has no playable audio segment.');
       return;
     }
     const settings = getSettings();
     const repeats = Math.max(
       1,
-      Math.min(
-        3,
-        Number(
-          settings.subtitleLearningReplayAudioCount
-        ) || 2
-      )
+      Math.min(3, Number(settings.subtitleLearningReplayAudioCount) || 2)
     );
     const previousPaused = video.paused;
     const previousRate = video.playbackRate;
-    const pendingAutoResume = Boolean(
-      autoResumeTimer &&
-      autoPausedKey === bounds.key
-    );
+    const pendingAutoResume = Boolean(autoResumeTimer && autoPausedKey === bounds.key);
     clearAutoResume();
     replaySession = {
       video,
       key: bounds.key,
-      cancelled: false
+      cancelled: false,
     };
     video.pause();
     video.playbackRate = previousRate;
@@ -218,33 +168,17 @@
       replaySession = null;
       video.pause();
       video.playbackRate = previousRate;
-      video.removeEventListener(
-        'seeking',
-        cancel
-      );
-      if (
-        !previousPaused &&
-        !session.cancelled
-      ) {
-        video.play().catch(() => {
-        });
+      video.removeEventListener('seeking', cancel);
+      if (!previousPaused && !session.cancelled) {
+        video.play().catch(() => {});
       }
-      if (
-        pendingAutoResume &&
-        getSettings().autoPauseAfterSubtitle
-      ) {
-        scheduleAutoResume(
-          video,
-          bounds.key
-        );
+      if (pendingAutoResume && getSettings().autoPauseAfterSubtitle) {
+        scheduleAutoResume(video, bounds.key);
       }
       markReplayButton(false);
     };
     const playSegment = () => {
-      if (
-        !replaySession ||
-        replaySession.cancelled
-      ) {
+      if (!replaySession || replaySession.cancelled) {
         return;
       }
       replaySeeking = true;
@@ -252,19 +186,12 @@
       setTimeout(() => {
         replaySeeking = false;
       }, 0);
-      video.play().catch(() => {
-      });
+      video.play().catch(() => {});
       const watch = () => {
-        if (
-          !replaySession ||
-          replaySession.cancelled
-        ) {
+        if (!replaySession || replaySession.cancelled) {
           return;
         }
-        if (
-          video.currentTime >= end - 0.03 ||
-          video.ended
-        ) {
+        if (video.currentTime >= end - 0.03 || video.ended) {
           completed += 1;
           if (completed >= repeats) {
             finish();
@@ -277,28 +204,18 @@
       };
       raf = requestAnimationFrame(watch);
     };
-    video.addEventListener(
-      'seeking',
-      cancel
-    );
+    video.addEventListener('seeking', cancel);
     markReplayButton(true);
-    api?.showToast?.(
-      `Replay Audio ${repeats}×.`
-    );
+    api?.showToast?.(`Replay Audio ${repeats}×.`);
     playSegment();
   }
   function onToolbarClick(event) {
-    const button =
-      event.target.closest?.(
-        '[data-cmj-toolbar]'
-      );
+    const button = event.target.closest?.('[data-cmj-toolbar]');
     if (!button) return;
-    const action =
-      button.dataset.cmjToolbar;
+    const action = button.dataset.cmjToolbar;
     if (action === 'auto-pause') {
       event.preventDefault();
-      toggleAutoPause().catch(() => {
-      });
+      toggleAutoPause().catch(() => {});
     }
     if (action === 'replay-audio') {
       event.preventDefault();
@@ -366,26 +283,13 @@
     video.addEventListener('ended', clearAutoResume);
     video.addEventListener('seeking', clearAutoResume);
   }
-  document.addEventListener(
-    'cmj-subtitle-changed',
-    handleSubtitleChanged,
-    true
-  );
-  document.addEventListener(
-    'click',
-    onToolbarClick,
-    true
-  );
-  chrome.storage.onChanged.addListener(
-    (changes, area) => {
-      if (
-        area === 'local' &&
-        changes.settings
-      ) {
-        updateAutoPauseState();
-      }
+  document.addEventListener('cmj-subtitle-changed', handleSubtitleChanged, true);
+  document.addEventListener('click', onToolbarClick, true);
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.settings) {
+      updateAutoPauseState();
     }
-  );
+  });
   attachVideoLifecycle(getVideo());
   updateAutoPauseState();
 })();

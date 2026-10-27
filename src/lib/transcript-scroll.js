@@ -14,45 +14,64 @@
  * Settings live in the main Charlie MJ settings object (Settings > Subtitles & Timeline > Transcript Windows Scroll).
  */
 (() => {
-  "use strict";
+  'use strict';
   if (window.CMJScroll) return;
 
-  const num = (v, d) => (Number.isFinite(Number(v)) && v !== "" && v !== null ? Number(v) : d);
+  const num = (v, d) => (Number.isFinite(Number(v)) && v !== '' && v !== null ? Number(v) : d);
   const fromSettings = (s = {}) => ({
     enabled: (s.transcriptScrollEnabled ?? s.liveTranscriptAutoScroll) !== false,
     transcript: s.transcriptScrollTranscript !== false,
     dual: s.transcriptScrollDual !== false,
     pro: s.transcriptScrollPro !== false,
-    position: s.transcriptScrollPosition || s.liveTranscriptScrollPosition || "center",
-    behavior: s.transcriptScrollBehavior === "instant" ? "instant" : "smooth",
-    respectManual: (s.transcriptScrollRespectManual ?? s.liveTranscriptRespectManualScroll) !== false,
+    position: s.transcriptScrollPosition || s.liveTranscriptScrollPosition || 'center',
+    behavior: s.transcriptScrollBehavior === 'instant' ? 'instant' : 'smooth',
+    respectManual:
+      (s.transcriptScrollRespectManual ?? s.liveTranscriptRespectManualScroll) !== false,
     resumeSec: Math.max(0, num(s.transcriptScrollResumeSec, 5)),
-    onSeek: s.transcriptScrollOnSeek !== false
+    onSeek: s.transcriptScrollOnSeek !== false,
   });
   let cfg = fromSettings({});
-  const alive = () => { try { return Boolean(chrome.runtime?.id); } catch { return false; } };
+  const alive = () => {
+    try {
+      return Boolean(chrome.runtime?.id);
+    } catch {
+      return false;
+    }
+  };
   try {
-    chrome.storage.local.get("settings").then((r) => { cfg = fromSettings(r.settings); }).catch(() => {});
+    chrome.storage.local
+      .get('settings')
+      .then((r) => {
+        cfg = fromSettings(r.settings);
+      })
+      .catch(() => {});
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === "local" && changes.settings) cfg = fromSettings(changes.settings.newValue || {});
+      if (area === 'local' && changes.settings) cfg = fromSettings(changes.settings.newValue || {});
     });
-  } catch { /* extension context not available */ }
+  } catch {
+    /* extension context not available */
+  }
 
   /** Nearest ancestor that really scrolls. The list itself, or an outer panel body, depending on layout. */
   function scroller(el) {
     for (let n = el && el.parentElement; n && n !== document.documentElement; n = n.parentElement) {
       const o = getComputedStyle(n).overflowY;
-      if ((o === "auto" || o === "scroll" || o === "overlay") && n.scrollHeight > n.clientHeight + 1) return n;
+      if (
+        (o === 'auto' || o === 'scroll' || o === 'overlay') &&
+        n.scrollHeight > n.clientHeight + 1
+      )
+        return n;
     }
     return null;
   }
 
   function targetTop(sc, row, position) {
-    const sr = sc.getBoundingClientRect(), rr = row.getBoundingClientRect();
+    const sr = sc.getBoundingClientRect(),
+      rr = row.getBoundingClientRect();
     const rowTop = rr.top - sr.top + sc.scrollTop - sc.clientTop;
     let top;
-    if (position === "top") top = rowTop - 8;
-    else if (position === "bottom") top = rowTop - sc.clientHeight + rr.height + 8;
+    if (position === 'top') top = rowTop - 8;
+    else if (position === 'bottom') top = rowTop - sc.clientHeight + rr.height + 8;
     else top = rowTop - (sc.clientHeight - rr.height) / 2;
     return Math.max(0, Math.min(Math.max(0, sc.scrollHeight - sc.clientHeight), Math.round(top)));
   }
@@ -64,9 +83,13 @@
    * extraAllowed(): optional extra gate, e.g. the Pro tab's own Auto-scroll switch
    */
   function create({ key, getVideo, getActiveRow, extraAllowed }) {
-    let holdUntil = 0, progUntil = 0, resumeTimer = 0, videoBound = null;
+    let holdUntil = 0,
+      progUntil = 0,
+      resumeTimer = 0,
+      videoBound = null;
     const bound = new WeakSet();
-    const allowed = () => cfg.enabled && cfg[key] !== false && (!extraAllowed || extraAllowed() !== false);
+    const allowed = () =>
+      cfg.enabled && cfg[key] !== false && (!extraAllowed || extraAllowed() !== false);
 
     function userMoved() {
       if (!cfg.respectManual) return;
@@ -79,13 +102,32 @@
     function bindEl(el) {
       if (!el || bound.has(el)) return;
       bound.add(el);
-      el.addEventListener("wheel", userMoved, { passive: true });
-      el.addEventListener("touchmove", userMoved, { passive: true });
-      el.addEventListener("keydown", (e) => { if (["PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown", " "].includes(e.key)) userMoved(); }, true);
+      el.addEventListener('wheel', userMoved, { passive: true });
+      el.addEventListener('touchmove', userMoved, { passive: true });
+      el.addEventListener(
+        'keydown',
+        (e) => {
+          if (['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', ' '].includes(e.key))
+            userMoved();
+        },
+        true
+      );
       // A press on the scroll container itself (not on a row) is a scrollbar drag.
-      el.addEventListener("pointerdown", (e) => { if (e.target === el) userMoved(); }, { passive: true });
+      el.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (e.target === el) userMoved();
+        },
+        { passive: true }
+      );
       // Scrolling that we did not start (scrollbar, keyboard, middle-click drag).
-      el.addEventListener("scroll", () => { if (Date.now() > progUntil) userMoved(); }, { passive: true });
+      el.addEventListener(
+        'scroll',
+        () => {
+          if (Date.now() > progUntil) userMoved();
+        },
+        { passive: true }
+      );
     }
     function bind(list) {
       if (!list) return;
@@ -99,13 +141,19 @@
       if (!v || v === videoBound) return;
       videoBound = v;
       const resync = () => {
-        if (!allowed() || !cfg.onSeek) { getActiveRow(); return; }
+        if (!allowed() || !cfg.onSeek) {
+          getActiveRow();
+          return;
+        }
         const row = getActiveRow();
         if (row) follow(row, { hard: true });
       };
-      v.addEventListener("seeking", resync);
-      v.addEventListener("seeked", resync);
-      v.addEventListener("play", () => { holdUntil = 0; catchUp(); });
+      v.addEventListener('seeking', resync);
+      v.addEventListener('seeked', resync);
+      v.addEventListener('play', () => {
+        holdUntil = 0;
+        catchUp();
+      });
     }
 
     /** Hold expired (or Play pressed): move to the line that is active now, only while playing. */
@@ -136,9 +184,17 @@
       const top = targetTop(sc, row, cfg.position);
       const dist = Math.abs(top - sc.scrollTop);
       if (dist < 2) return false;
-      const smooth = !instant && cfg.behavior !== "instant" && dist < sc.clientHeight * 4;
+
+      // When the active cue is outside the viewport, reveal it immediately.
+      // Smooth scrolling is retained for small in-viewport adjustments.
+      const sr = sc.getBoundingClientRect();
+      const rr = row.getBoundingClientRect();
+      const outsideViewport = rr.bottom < sr.top || rr.top > sr.bottom;
+      const smooth =
+        !instant && !outsideViewport && cfg.behavior !== 'instant' && dist < sc.clientHeight * 4;
+
       progUntil = Date.now() + (smooth ? 1100 : 250);
-      sc.scrollTo({ top, behavior: smooth ? "smooth" : "instant" });
+      sc.scrollTo({ top, behavior: smooth ? 'smooth' : 'instant' });
       return true;
     }
 
