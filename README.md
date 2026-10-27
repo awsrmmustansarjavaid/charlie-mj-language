@@ -92,7 +92,6 @@ and thumbnails, Suggestions, and local data synchronization.
 
 ### ⚡ Performance & Usability
 - ⚡ **On-Demand Performance Controls** — Keep optional services inactive until they are needed.
-- 🧹 **Simplified YT Transcript Pro Settings** — Remove the unnecessary Download Folder setting.
 - 📐 **Responsive Interface Improvements** — Improve layout consistency, alignment, and usability across extension panels.
 
 
