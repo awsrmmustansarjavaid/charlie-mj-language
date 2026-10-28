@@ -43,7 +43,31 @@ and thumbnails, Suggestions, and local data synchronization.
   </a>
 </p>
 
+## Charlie MJ Language Installer
 
+`charlie-mj-language.exe` is the Windows application installed on your PC by the **Charlie MJ Language Installer**. It allows you to launch YouTube using your selected Google Chrome profile.
+
+The installer handles the required setup steps automatically. If you run the application with the `--setup` argument, it will repeat the clipboard configuration and Chrome Extensions-page setup process.
+
+### ⚠️ Important Notes
+
+- **Windows SmartScreen:** Windows may display an **"Unknown publisher"** warning because the installer is not currently code-signed. If you trust the source, select **More info → Run anyway** to continue.
+- **Extension folder version:** The extension folder inside the package is named `v2.0.0`, while the extension's `manifest.json` specifies version `2.1.0`. Chrome uses the version declared in `manifest.json`, so this folder naming difference does **not** affect the installed extension.
+- **Reinstalling or updating:** If you reinstall or update the extension, open `chrome://extensions` and click the **Reload** icon for Charlie MJ Language to load the latest files.
+
+---
+
+## Download
+
+<p align="center">
+  <a href="downloads/charlie-mj-language-installer/charlie-mj-language-installer.exe">
+    <img src="https://img.shields.io/badge/Charlie%20MJ%20Language%20Installer?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download Charlie MJ Language Installer">
+  </a>
+  &nbsp;
+  <a href="/charlie-mj-language-installer-source/README-charlie-mj-language-installer.md">
+    <img src="https://img.shields.io/badge/Main%20README-0969da?style=for-the-badge&logo=readme&logoColor=white" alt="Main README">
+  </a>
+</p>
 
 ## Key Features
 
