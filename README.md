@@ -47,49 +47,6 @@ and thumbnails, Suggestions, and local data synchronization.
 
 ## Key Features
 
-<<<<<<< HEAD
--   ⚡ **Quick Fetch Complete Transcript** --- quickly fetch the
-    complete available YouTube caption track with timestamps.
--   🌐 **Dual Transcript** --- view original and YouTube-native
-    translated subtitles/transcripts together.
--   ⏸️ **Auto Pause on Each Subtitle** --- pause playback at each
-    subtitle/cue for reading and practice.
--   🔁 **Replay Audio** --- replay the current subtitle or sentence for
-    listening and pronunciation practice.
--   🎯 **Click-to-Seek Transcript** --- click transcript rows to jump to
-    the matching video timestamp.
--   🔄 **Live Transcript Synchronization** --- keep transcript position
-    synchronized with playback.
--   🗣️ **Original + Translated Subtitles** --- control subtitle display,
-    layout, typography, opacity, and translation.
--   🌍 **YouTube Language Catalog** --- use caption and translation
-    language availability supplied by YouTube for the current video.
--   ❤️ **Favorite Channels** --- save channels using stable YouTube
-    Channel IDs and fetch their details.
--   📚 **Favorite Playlists** --- save playlists using stable YouTube
-    Playlist IDs and fetch their details.
--   🖼️ **YouTube Metadata & Thumbnails** --- retrieve available titles,
-    descriptions, channel/playlist information, URLs, IDs, and
-    thumbnails.
--   🏷️ **Categories** --- organize channels and playlists into
-    searchable learning categories.
--   👥 **Learning Groups** --- organize saved resources into custom
-    groups.
--   💡 **YouTube Suggestions** --- fetch Suggested Channels and
-    Suggested Playlists and decide what to save.
--   🔎 **Search & Filtering** --- search channels, playlists,
-    categories, suggestions, names, descriptions, tags, and categories.
--   📝 **Learning Library** --- save vocabulary, sentences, notes,
-    bookmarks, and Watch Later records.
--   💾 **Import / Export** --- back up and restore structured local
-    learning data.
--   🔄 **Data Sync** --- compare and synchronize local data with the
-    configured GitHub repository when enabled.
--   ⚡ **Performance Controls** --- optional services remain on-demand
-    instead of continuously running.
--   🎛️ **Custom Learning UI** --- configurable toolbar, transcript
-    window, subtitles, and additional learning windows.
-=======
 ### 🎬 Transcript & Subtitle Tools
 - ⚡ **Quick Fetch Complete Transcript** — Fetch the complete available YouTube caption track with or without timestamps.
 - 🌐 **Dual Transcript** — Display original and YouTube-native translated transcripts together.
@@ -143,7 +100,6 @@ and thumbnails, Suggestions, and local data synchronization.
 - ⚡ **On-Demand Performance Controls** — Keep optional services inactive until they are needed.
 - 📐 **Responsive Interface Improvements** — Improve layout consistency, alignment, and usability across extension panels.
 
->>>>>>> ac25532c5be85a7b368ac9aef36525d05b81c22b
 
 ## Latest Update --- 2026-10-25
 
