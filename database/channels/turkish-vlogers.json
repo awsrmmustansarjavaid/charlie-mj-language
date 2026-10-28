@@ -1,6 +1,189 @@
 [
   {
     "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCR2zAJ9OBsiYEVkhjrn5OdQ",
+    "category": "Turkish vlogers",
+    "categoryConfidence": 0.9400000000000001,
+    "categoryEvidence": [
+      {
+        "confidence": 0.8583690987124463,
+        "keywords": [
+          "paylasim",
+          "kamerali",
+          "telefon",
+          "videofon",
+          "ucretsiz",
+          "yukleme"
+        ],
+        "matchedRules": [],
+        "name": "Turkish vlogers",
+        "score": 30,
+        "source": "learned"
+      },
+      {
+        "confidence": 0.44382022471910115,
+        "keywords": [
+          "koy",
+          "hayati"
+        ],
+        "matchedRules": [],
+        "name": "TR köy vlogers",
+        "score": 3.95,
+        "source": "existing-category"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.8583690987124463,
+          "keywords": [
+            "paylasim",
+            "kamerali",
+            "telefon",
+            "videofon",
+            "ucretsiz",
+            "yukleme"
+          ],
+          "matchedRules": [],
+          "name": "Turkish vlogers",
+          "score": 30,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.44382022471910115,
+          "keywords": [
+            "koy",
+            "hayati"
+          ],
+          "matchedRules": [],
+          "name": "TR köy vlogers",
+          "score": 3.95,
+          "source": "existing-category"
+        }
+      ],
+      "confidence": 0.9400000000000001,
+      "countryCode": "",
+      "countryName": "",
+      "evidence": [
+        {
+          "confidence": 0.8583690987124463,
+          "keywords": [
+            "paylasim",
+            "kamerali",
+            "telefon",
+            "videofon",
+            "ucretsiz",
+            "yukleme"
+          ],
+          "matchedRules": [],
+          "name": "Turkish vlogers",
+          "score": 30,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.44382022471910115,
+          "keywords": [
+            "koy",
+            "hayati"
+          ],
+          "matchedRules": [],
+          "name": "TR köy vlogers",
+          "score": 3.95,
+          "source": "existing-category"
+        }
+      ],
+      "keywords": [
+        "paylasim",
+        "kamerali",
+        "telefon",
+        "videofon",
+        "ucretsiz",
+        "yukleme"
+      ],
+      "languageCode": "",
+      "languageName": "",
+      "level": "High",
+      "matchedRules": [],
+      "name": "Turkish vlogers",
+      "reasons": [
+        "Turkish vlogers: paylasim, kamerali, telefon, videofon, ucretsiz, yukleme",
+        "TR köy vlogers: koy, hayati"
+      ],
+      "source": "learned",
+      "strength": 11.95,
+      "suggestNew": false,
+      "suggestedName": "Turkish vlogers"
+    },
+    "channelId": "UCR2zAJ9OBsiYEVkhjrn5OdQ",
+    "country": "",
+    "countryCode": "",
+    "countryName": "",
+    "customUrl": "https://www.youtube.com/@sehirdeng%C3%B6%C3%A7t%C3%BCmk%C3%B6ye",
+    "dateAdded": "2026-10-28T10:54:52.416Z",
+    "description": "Betonun içinden toprağa, kornalardan horoz sesine… Şehirden göçtüm köye. Aradığım huzuru, anlamı, yavaşlığı burada buluyorum — kimi zaman ellerimle ektiğim bir domateste, kimi zaman kızlarımın kahkahasında, kimi zaman da sessizliğin sesinde. Bu kanal, şehrin gürültüsünü ardında bırakıp doğayla yeniden tanışan bir kadının yolculuğu. Günlük köy yaşamı, sadeleşme, üretim, çocuklarla doğa içinde yaşam, bazen de iç dökmeli geceler… Kısacası: hayatın filtresiz hali. Hoş geldin. Terliklerini çıkar, çayı koy, biraz toprakla,denizle konuşacağız 🌿",
+    "detectedLanguageCode": "",
+    "handle": "@sehirdeng%C3%B6%C3%A7t%C3%BCmk%C3%B6ye",
+    "hiddenSubscriberCount": false,
+    "id": "channel_3df27f76-f02a-42ce-a2bc-e2b3d338b205",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "video",
+      "paylaşım",
+      "kameralı telefon",
+      "videofon",
+      "ücretsiz",
+      "yükleme"
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataLastChecked": "2026-10-28T10:54:52.378Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": false
+    },
+    "name": "Şehirden Göçtüm Köye - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@sehirdeng%C3%B6%C3%A7t%C3%BCmk%C3%B6ye",
+    "subscriberCount": "",
+    "subscriberCountNumber": null,
+    "tags": [
+      "video",
+      "paylaşım",
+      "kameralı telefon",
+      "videofon",
+      "ücretsiz",
+      "yükleme"
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/rEhXsGUEvazLnEzTqBvEPHBHcBqts42i-TQwe4h3s2q6jDNS9wow6WTmsdMDqYRfDq-3ea7w=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-28T10:54:52.378Z",
+    "title": "Şehirden Göçtüm Köye - YouTube",
+    "updatedAt": "2026-10-28T10:54:52.416Z",
+    "url": "https://www.youtube.com/@sehirdeng%C3%B6%C3%A7t%C3%BCmk%C3%B6ye",
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
     "canonicalUrl": "https://www.youtube.com/channel/UCsQDGYfXPkrVAQJ57HCa8hQ",
     "category": "Turkish vlogers",
     "categoryConfidence": 0.5,

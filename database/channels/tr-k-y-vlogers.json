@@ -1,6 +1,190 @@
 [
   {
     "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UC8RdPK01kuoMaUyJpGlDv_Q",
+    "category": "TR köy vlogers",
+    "categoryConfidence": 0.9400000000000001,
+    "categoryEvidence": [
+      {
+        "confidence": 0.8526315789473684,
+        "keywords": [
+          "koy"
+        ],
+        "matchedRules": [],
+        "name": "TR köy vlogers",
+        "score": 20.25,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.4166666666666667,
+        "keywords": [
+          "dair",
+          "seyirler"
+        ],
+        "matchedRules": [],
+        "name": "Turkish vlogers",
+        "score": 2.5,
+        "source": "learned"
+      },
+      {
+        "confidence": 0.20454545454545453,
+        "keywords": [
+          "tarifler"
+        ],
+        "matchedRules": [],
+        "name": "Food & Cooking",
+        "score": 0.9,
+        "source": "multilingual-keywords"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.8526315789473684,
+          "keywords": [
+            "koy"
+          ],
+          "matchedRules": [],
+          "name": "TR köy vlogers",
+          "score": 20.25,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4166666666666667,
+          "keywords": [
+            "dair",
+            "seyirler"
+          ],
+          "matchedRules": [],
+          "name": "Turkish vlogers",
+          "score": 2.5,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.20454545454545453,
+          "keywords": [
+            "tarifler"
+          ],
+          "matchedRules": [],
+          "name": "Food & Cooking",
+          "score": 0.9,
+          "source": "multilingual-keywords"
+        }
+      ],
+      "confidence": 0.9400000000000001,
+      "countryCode": "",
+      "countryName": "",
+      "evidence": [
+        {
+          "confidence": 0.8526315789473684,
+          "keywords": [
+            "koy"
+          ],
+          "matchedRules": [],
+          "name": "TR köy vlogers",
+          "score": 20.25,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4166666666666667,
+          "keywords": [
+            "dair",
+            "seyirler"
+          ],
+          "matchedRules": [],
+          "name": "Turkish vlogers",
+          "score": 2.5,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.20454545454545453,
+          "keywords": [
+            "tarifler"
+          ],
+          "matchedRules": [],
+          "name": "Food & Cooking",
+          "score": 0.9,
+          "source": "multilingual-keywords"
+        }
+      ],
+      "keywords": [
+        "koy"
+      ],
+      "languageCode": "",
+      "languageName": "",
+      "level": "High",
+      "matchedRules": [],
+      "name": "TR köy vlogers",
+      "reasons": [
+        "TR köy vlogers: koy",
+        "Turkish vlogers: dair, seyirler",
+        "Food & Cooking: tarifler"
+      ],
+      "source": "existing-category",
+      "strength": 11.4,
+      "suggestNew": false,
+      "suggestedName": "TR köy vlogers"
+    },
+    "channelId": "UC8RdPK01kuoMaUyJpGlDv_Q",
+    "country": "",
+    "countryCode": "",
+    "countryName": "",
+    "customUrl": "https://www.youtube.com/@koygibisiyok",
+    "dateAdded": "2026-10-28T10:54:02.722Z",
+    "description": "Köy Gibisi Yok youtube kanalında köy videoları, köy yemekleri tarifleri, doğada bushcraft kamp videoları ve köy hayatına dair birbirinden ilginç belgeseller bulabilirsiniz. İyi Seyirler.",
+    "detectedLanguageCode": "",
+    "handle": "@koygibisiyok",
+    "hiddenSubscriberCount": false,
+    "id": "channel_2a3dc24c-0594-4813-ac4b-4ba80e1d25f3",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"köy gibisi yok\" \"koy gıbısı yok\" köy \"köy hayatı\" \"köy belgeseli\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataLastChecked": "2026-10-28T10:54:02.685Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": false
+    },
+    "name": "Köy Gibisi Yok - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@koygibisiyok",
+    "subscriberCount": "",
+    "subscriberCountNumber": null,
+    "tags": [
+      "\"köy gibisi yok\" \"koy gıbısı yok\" köy \"köy hayatı\" \"köy belgeseli\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/Vd20B35rjscJsvU4nWXq7BTqxJpAsGVwel0v4rlKv0XhrBX4AKSN7E0iNn3swO43Bzp5nuDpDg=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-28T10:54:02.685Z",
+    "title": "Köy Gibisi Yok - YouTube",
+    "updatedAt": "2026-10-28T10:54:02.722Z",
+    "url": "https://www.youtube.com/@koygibisiyok",
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
     "canonicalUrl": "https://www.youtube.com/channel/UCcbvPs8FRxbs_32_ly828lg",
     "category": "TR köy vlogers",
     "categoryConfidence": 0,
