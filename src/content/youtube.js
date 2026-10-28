@@ -48,7 +48,6 @@
     focusUiRevealed: false,
     focusUiHideTimer: null,
     focusUiRevealTimer: null,
-    focusHudTimer: null,
     focusSessionTimer: null,
     focusBreakTimer: null,
     focusSessionStartedAt: 0,
@@ -56,6 +55,7 @@
     focusBreakEndsAt: 0,
     focusVideoHooked: false,
     focusPointerBound: false,
+    focusLayoutResizeBound: false,
     nightFocusMode: false,
     watchMenuInjected: false,
     nativeCaptionText: '',
@@ -126,7 +126,6 @@
     hideDescriptionCustomSec: 15,
     restoreHiddenOnFocusEnd: true,
     // Additive Focus UI controls. Existing Focus settings remain unchanged.
-    focusBrowserFullscreen: false,
     focusUiAutoHide: false,
     focusUiHideTrigger: 'video-start',
     focusUiHideDelaySec: 10,
@@ -157,8 +156,6 @@
     focusBreakMinutes: 5,
     focusSessionAutoRestart: false,
     focusSessionAutoStart: false,
-    focusHudEnabled: true,
-    focusHudPosition: 'top-right',
     nightFocusMode: false,
     posColors: true,
     boldPOS: true,
@@ -647,7 +644,15 @@
     updateLiveTranscriptHighlight(state.activeIndex, getVideo(), true);
   }
   /** Observe YouTube's SPA DOM and player changes. */
+  function installFocusLayoutGeometryListener() {
+    if (state.focusLayoutResizeBound) return;
+    state.focusLayoutResizeBound = true;
+    const refresh = () => requestAnimationFrame(syncFocusNativeSubtitleLayout);
+    window.addEventListener('resize', refresh, { passive: true });
+    window.addEventListener('scroll', refresh, { passive: true });
+  }
   function installObservers() {
+    installFocusLayoutGeometryListener();
     let queued = false;
     const observer = new MutationObserver(() => {
       if (queued) return;
@@ -696,6 +701,29 @@
       }
     } catch (error) {
       console.warn('Charlie MJ received invalid player response:', error);
+    }
+  }
+  // Compatibility guard for Focus Topic checks. The Focus Topic setting is optional;
+  // keeping this function local and side-effect free prevents an undefined callback
+  // from breaking the normal Focus flow when a new video starts.
+  function checkFocusTopic() {
+    if (!state.focusMode || !extensionContextAlive()) return;
+    const topic = cleanText(state.settings.focusTopic || '');
+    if (!topic) return;
+  }
+
+  async function recordDistractionSignal() {
+    if (!extensionContextAlive()) return;
+    try {
+      const store = await chrome.storage.local.get('cmjUsageStats');
+      const data = store.cmjUsageStats || { version: 1, days: {} };
+      const dayKey = new Date().toISOString().slice(0, 10);
+      const day = data.days[dayKey] || { seconds: 0, blocked: 0 };
+      day.blocked = Number(day.blocked || 0) + 1;
+      data.days[dayKey] = day;
+      await chrome.storage.local.set({ cmjUsageStats: data });
+    } catch (error) {
+      reportContextError(error);
     }
   }
   async function routeChanged() {
@@ -1383,6 +1411,7 @@
       below.prepend(host);
     }
     applyFocusMode();
+    syncFocusNativeSubtitleLayout();
     applySubtitlePosition($('.cmj-subtitle-layer'));
     applyTranscriptWindow($('.cmj-panel'));
     if (playerHost) {
@@ -4076,14 +4105,6 @@
     setInterval(scheduleNightFocusOverlayUpdate, 1000);
   }
 
-  function toggleFocusMode() {
-    state.focusMode = !state.focusMode;
-    state.settings.focusMode = state.focusMode;
-    storageSet({ settings: state.settings });
-    applyFocusMode();
-    showToast(state.focusMode ? 'Focus Mode enabled.' : 'Focus Mode disabled.');
-    updateToolbarButtonStates();
-  }
   /**
    * Focus profiles are additive. Existing General/Tech/Language/Productivity/Custom
    * behavior remains intact; the new profiles only add optional native-UI hiding.
@@ -4282,48 +4303,6 @@
     );
   }
 
-  function applyFocusHud() {
-    let hud = document.getElementById('cmj-focus-hud');
-    if (!state.focusMode || state.settings.focusHudEnabled === false) {
-      hud?.remove();
-      return;
-    }
-    if (!hud) {
-      hud = document.createElement('div');
-      hud.id = 'cmj-focus-hud';
-      hud.setAttribute('aria-live', 'polite');
-      document.documentElement.appendChild(hud);
-    }
-    hud.dataset.position = state.settings.focusHudPosition || 'top-right';
-    const now = Date.now();
-    let text = '🎯 FOCUS';
-    if (state.focusSessionEndsAt > now) {
-      const sec = Math.max(0, Math.ceil((state.focusSessionEndsAt - now) / 1000));
-      const m = Math.floor(sec / 60), s = sec % 60;
-      text += ` · ${m}:${String(s).padStart(2, '0')}`;
-    } else if (state.focusBreakEndsAt > now) {
-      const sec = Math.max(0, Math.ceil((state.focusBreakEndsAt - now) / 1000));
-      const m = Math.floor(sec / 60), s = sec % 60;
-      text = `☕ BREAK · ${m}:${String(s).padStart(2, '0')}`;
-    }
-    hud.textContent = text;
-  }
-
-  function requestFocusBrowserFullscreen() {
-    if (state.settings.focusBrowserFullscreen !== true) return;
-    if (document.fullscreenElement) return;
-    try {
-      const target = document.documentElement;
-      const request = target.requestFullscreen?.({ navigationUI: 'hide' });
-      if (request?.catch) request.catch(() => {});
-    } catch (_) {}
-  }
-
-  async function exitFocusBrowserFullscreen() {
-    if (!document.fullscreenElement) return;
-    try { await document.exitFullscreen(); } catch (_) {}
-  }
-
   function syncFocusSession() {
     const minutes = Number(state.settings.focusSessionMinutes) || 0;
     clearTimeout(state.focusSessionTimer);
@@ -4337,7 +4316,6 @@
     const breakMinutes = Math.max(0, Number(presetBreak) || 0);
     if (!state.focusMode || focusMinutes <= 0) {
       state.focusSessionEndsAt = 0;
-      applyFocusHud();
       return;
     }
     state.focusSessionStartedAt = state.focusSessionStartedAt || Date.now();
@@ -4353,8 +4331,7 @@
       updateToolbarButtonStates();
       if (breakMinutes > 0) {
         state.focusBreakEndsAt = Date.now() + breakMinutes * 60000;
-        applyFocusHud();
-        showToast(`Focus session complete. Break for ${breakMinutes} minutes.`);
+          showToast(`Focus session complete. Break for ${breakMinutes} minutes.`);
         state.focusBreakTimer = setTimeout(() => {
           state.focusBreakTimer = 0;
           state.focusBreakEndsAt = 0;
@@ -4364,17 +4341,14 @@
             state.focusSessionStartedAt = Date.now();
             storageSet({ settings: state.settings });
             applyFocusMode(true);
-            requestFocusBrowserFullscreen();
             showToast('Break complete. Focus Mode restarted.');
           } else {
-            applyFocusHud();
-          }
+                }
         }, breakMinutes * 60000);
       } else {
         showToast('Focus session complete. Focus Mode is off.');
       }
     }, remaining);
-    applyFocusHud();
   }
 
   function toggleFocusMode() {
@@ -4384,18 +4358,53 @@
       state.focusSessionStartedAt = Date.now();
       state.focusUiRevealed = false;
       bindFocusPointerReveal();
-      requestFocusBrowserFullscreen();
     } else {
       clearAllFocusUiClasses();
       state.focusSessionStartedAt = 0;
       state.focusSessionEndsAt = 0;
       state.focusBreakEndsAt = 0;
-      exitFocusBrowserFullscreen();
     }
     storageSet({ settings: state.settings });
     applyFocusMode(true);
     showToast(state.focusMode ? 'Focus Mode enabled.' : 'Focus Mode disabled.');
     updateToolbarButtonStates();
+  }
+
+  function syncFocusNativeSubtitleLayout() {
+    const player = document.querySelector('#movie_player');
+    const below = document.querySelector('#below, #below-the-fold');
+    const host = document.getElementById(BELOW_HOST_ID);
+    const focusLayout = document.documentElement.classList.contains('cmj-focus-mode') &&
+      document.documentElement.classList.contains('cmj-focus-hide-navbar');
+
+    if (!player || !below || !host) return;
+
+    const playerRect = player.getBoundingClientRect();
+    const belowRect = below.getBoundingClientRect();
+    if (!playerRect.width || !playerRect.height) return;
+
+    if (!focusLayout) {
+      host.style.removeProperty('width');
+      host.style.removeProperty('max-width');
+      host.style.removeProperty('margin-left');
+      host.style.removeProperty('transform');
+      host.style.removeProperty('margin-top');
+    } else {
+      const left = Math.max(0, playerRect.left - belowRect.left);
+      const verticalGap = Math.max(0, belowRect.top - playerRect.bottom);
+
+      // Move the existing Learning Mode host into the space directly below the
+      // video without changing YouTube's own DOM structure or removing anything.
+      host.style.width = `${Math.round(playerRect.width)}px`;
+      host.style.maxWidth = `${Math.round(playerRect.width)}px`;
+      host.style.marginLeft = `${Math.round(left)}px`;
+      host.style.marginTop = '8px';
+      // Keep a small, stable visual gap between the YouTube player and the
+      // Charlie MJ Learning Mode bar. The host is translated upward to reclaim
+      // the space created by hidden YouTube UI, so add the gap after that
+      // compensation rather than moving YouTube's own subtitle container.
+      host.style.transform = `translateY(${10 - Math.round(verticalGap)}px)`;
+    }
   }
 
   function applyFocusMode(restartHides = false) {
@@ -4447,7 +4456,7 @@
       restartHides
     );
     syncFocusSession();
-    applyFocusHud();
+    syncFocusNativeSubtitleLayout();
   }
   function openPanel(tab = 'transcript') {
     const panel = $('.cmj-panel');

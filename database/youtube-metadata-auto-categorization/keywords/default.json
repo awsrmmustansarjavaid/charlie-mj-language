@@ -141,10 +141,24 @@
     "food review",
     "food travel",
     "food vlogger",
+    "kitchen",
+    "kitchenware",
+    "lezzet",
+    "lokanta",
+    "mutfak",
+    "pisirme",
+    "pişirme",
     "recipe vlog",
     "restaurant guide",
     "restaurant review",
-    "street food"
+    "street food",
+    "tarif",
+    "tarifler",
+    "turkish food",
+    "turkish recipes",
+    "yemek",
+    "yemek tarifi",
+    "yemek tarifleri"
   ],
   "Family Vlogger": [
     "family channel",
@@ -208,14 +222,26 @@
     "web series"
   ],
   "Chef Vlogger": [
+    "asci",
+    "aşçı",
     "chef",
     "chef vlog",
     "cookery",
     "cooking channel",
     "culinary",
     "home chef",
+    "kitchen",
+    "lezzet",
+    "mutfak",
+    "pisirme",
+    "pişirme",
     "professional chef",
-    "restaurant chef"
+    "restaurant chef",
+    "tarif",
+    "tarifler",
+    "yemek",
+    "yemek tarifi",
+    "yemek tarifleri"
   ],
   "Lifestyle Vlogger": [
     "daily vlog",

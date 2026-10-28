@@ -1690,12 +1690,11 @@
             <h3>🖥️ Focus Screen &amp; YouTube UI</h3>
             <p class="note">
               Additional Focus controls. Existing toolbar, subtitle, transcript, Night Focus and
-              current distraction settings remain independent and continue to work. Browser chrome
-              can only be hidden through page fullscreen when Chrome permits it; the request is made
-              from a Focus button/gesture and may require the user to allow fullscreen.
+              current distraction settings remain independent and continue to work. This feature
+              only controls the YouTube page UI; Chrome's own tabs/address bar/bookmarks are not
+              modified and no browser fullscreen mode is used.
             </p>
             <div class="two-col">
-              <label class="check"><input id="focusBrowserFullscreen" type="checkbox" /> Request Browser Fullscreen when Focus starts</label>
               <label class="check"><input id="focusUiAutoHide" type="checkbox" /> Auto-hide selected YouTube UI</label>
               <label>Hide trigger
                 <select id="focusUiHideTrigger">
@@ -1731,8 +1730,6 @@
               <label class="check"><input id="focusToolbarRevealOnBottom" type="checkbox" /> Reveal Charlie MJ Toolbar near bottom</label>
               <label>Toolbar bottom reveal zone (px)<input id="focusToolbarRevealZonePx" type="number" min="20" max="300" step="1" /></label>
               <label>Toolbar re-hide delay (seconds)<input id="focusToolbarRehideDelaySec" type="number" min="1" max="120" step="1" /></label>
-              <label class="check"><input id="focusHudEnabled" type="checkbox" /> Show Focus HUD / session timer</label>
-              <label>Focus HUD position<select id="focusHudPosition"><option value="top-right">Top right</option><option value="top-left">Top left</option><option value="bottom-right">Bottom right</option><option value="bottom-left">Bottom left</option></select></label>
             </div>
           </div>
 

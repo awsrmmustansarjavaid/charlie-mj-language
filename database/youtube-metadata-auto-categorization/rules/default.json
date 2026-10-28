@@ -39,53 +39,87 @@
     {
       "id": "chef-vlogger",
       "keywords": [
-        "chef",
-        "cooking",
+        "asci",
+        "aşçı",
         "baking",
-        "recipe",
+        "chef",
         "cookery",
+        "cooking",
         "culinary",
         "gastronomy",
-        "restaurant"
+        "kitchen",
+        "kitchenware",
+        "lezzet",
+        "mutfak",
+        "pisirme",
+        "pişirme",
+        "recipe",
+        "restaurant",
+        "tarif",
+        "tarifler",
+        "yemek"
       ],
       "phrases": [
-        "lady chef",
-        "professional chef",
         "cooking and baking",
         "cooking channel",
-        "recipe channel"
+        "ev yemekleri",
+        "lady chef",
+        "professional chef",
+        "recipe channel",
+        "turkish cuisine",
+        "turkish recipes",
+        "yemek tarifi",
+        "yemek tarifleri"
       ],
       "category": "Chef Vlogger",
       "subcategory": "Food / Cooking",
-      "priority": 100,
-      "weight": 4,
-      "enabled": true
+      "priority": 105,
+      "weight": 3.2,
+      "enabled": true,
+      "part": "Chef Vlogger",
+      "group": "topic"
     },
     {
       "id": "food-vlogger",
       "keywords": [
-        "food",
-        "cooking",
         "baking",
+        "chef",
+        "cooking",
+        "cuisine",
+        "dessert",
+        "food",
+        "kitchen",
+        "lezzet",
+        "lokanta",
+        "mutfak",
+        "pisirme",
+        "pişirme",
         "recipe",
         "restaurant",
-        "cuisine",
-        "chef",
-        "dessert",
-        "street food"
+        "street food",
+        "tarif",
+        "tarifler",
+        "yemek"
       ],
       "phrases": [
-        "food vlogger",
+        "ev yemekleri",
         "food blogger",
+        "food vlogger",
         "recipe vlog",
         "restaurant review",
-        "street food"
+        "street food",
+        "turkish food",
+        "turkish recipes",
+        "yemek tarifi",
+        "yemek tarifleri"
       ],
       "category": "Food Vlogger",
       "subcategory": "Food",
-      "priority": 92,
-      "weight": 3.5,
-      "enabled": true
+      "priority": 102,
+      "weight": 4,
+      "enabled": true,
+      "part": "Food Vlogger",
+      "group": "topic"
     },
     {
       "id": "travel-biker-vlogger",
@@ -111,7 +145,9 @@
       "subcategory": "Travel / Biker",
       "priority": 100,
       "weight": 4,
-      "enabled": true
+      "enabled": true,
+      "part": "Travel Biker Vlogger",
+      "group": "topic"
     },
     {
       "id": "travel-vlogger",
@@ -137,7 +173,9 @@
       "subcategory": "Travel",
       "priority": 88,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Travel Vlogger",
+      "group": "topic"
     },
     {
       "id": "shopping-vlogger",
@@ -158,7 +196,9 @@
       "subcategory": "Shopping / Consumer",
       "priority": 85,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Shopping Vlogger",
+      "group": "topic"
     },
     {
       "id": "family-vlogger",
@@ -179,7 +219,9 @@
       "subcategory": "Lifestyle",
       "priority": 85,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Family Vlogger",
+      "group": "topic"
     },
     {
       "id": "couple-vlogger",
@@ -199,7 +241,9 @@
       "subcategory": "Lifestyle",
       "priority": 85,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Couple Vlogger",
+      "group": "topic"
     },
     {
       "id": "lifestyle-vlogger",
@@ -220,7 +264,9 @@
       "subcategory": "Lifestyle",
       "priority": 80,
       "weight": 2.8,
-      "enabled": true
+      "enabled": true,
+      "part": "Lifestyle Vlogger",
+      "group": "topic"
     },
     {
       "id": "professor-teacher",
@@ -241,7 +287,9 @@
       "subcategory": "Education",
       "priority": 85,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Professor / Teacher",
+      "group": "topic"
     },
     {
       "id": "national-tv-media",
@@ -264,7 +312,9 @@
       "subcategory": "Media / Broadcasting",
       "priority": 85,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "National TV / Media",
+      "group": "topic"
     },
     {
       "id": "drama-tv-films",
@@ -287,7 +337,9 @@
       "subcategory": "Entertainment",
       "priority": 80,
       "weight": 2.8,
-      "enabled": true
+      "enabled": true,
+      "part": "Drama / TV Series / Films",
+      "group": "topic"
     },
     {
       "id": "technology-reviewer",
@@ -310,7 +362,9 @@
       "subcategory": "Technology",
       "priority": 82,
       "weight": 3,
-      "enabled": true
+      "enabled": true,
+      "part": "Technology Reviewer",
+      "group": "topic"
     }
   ]
 }

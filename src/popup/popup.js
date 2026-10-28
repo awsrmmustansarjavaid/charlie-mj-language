@@ -125,6 +125,11 @@ async function loadLightweightState() {
 }
 $('#learn').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_OPEN_PANEL' }));
 $('#focus').addEventListener('click', () => sendToActiveTab({ type: 'CMJ_TOGGLE_FOCUS' }));
+$('#focusScreen').addEventListener('click', () =>
+  chrome.tabs.create({
+    url: `${chrome.runtime.getURL('src/options/options.html')}#Productivity%20%26%20Focus%20Intelligence`,
+  })
+);
 $('#nightFocus').addEventListener('click', async () => {
   const result = await sendToActiveTab({ type: 'CMJ_TOGGLE_NIGHT_FOCUS' });
   if (result?.ok === false)

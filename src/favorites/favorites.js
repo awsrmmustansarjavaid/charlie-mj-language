@@ -1742,46 +1742,40 @@ async function cmjFetchPlaylistContinuation(
     return null;
   }
 
-  const endpoint =
-    `https://www.youtube.com/youtubei/v1/browse?key=${encodeURIComponent(
-      apiKey
-    )}`;
-
-  const response =
-    await fetch(endpoint, {
-      method: 'POST',
-
-      credentials: 'omit',
-
-      cache: 'no-store',
-
-      headers: {
-        'content-type':
-          'application/json',
-
-        accept:
-          'application/json',
+  const payload = {
+    context: {
+      client: {
+        clientName: 'WEB',
+        clientVersion,
       },
-
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName: 'WEB',
-            clientVersion,
-          },
-        },
-
-        continuation: token,
-      }),
-    });
-
-  if (!response.ok) {
-    throw new Error(
-      `YouTube continuation HTTP ${response.status}`
-    );
+    },
+    continuation: token,
+  };
+  const endpoints = [
+    `https://www.youtube.com/youtubei/v1/next?key=${encodeURIComponent(apiKey)}`,
+    `https://www.youtube.com/youtubei/v1/browse?key=${encodeURIComponent(apiKey)}`,
+  ];
+  let lastStatus = 0;
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        credentials: 'omit',
+        cache: 'no-store',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      lastStatus = response.status;
+      if (response.ok) return response.json();
+      // YouTube can reject continuation calls with 403 even when the public
+      // playlist page itself is accessible. Try the alternate InnerTube route.
+      if (response.status !== 403) break;
+    } catch (_) {
+      // Try the alternate endpoint before giving up.
+    }
   }
-
-  return response.json();
+  if (lastStatus === 403) return null;
+  throw new Error(`YouTube continuation HTTP ${lastStatus || 0}`);
 }
 
 
@@ -1965,13 +1959,10 @@ async function cmjFetchPlaylistSupplement(
           token
         );
     } catch (error) {
-      console.warn(
-        '[Charlie MJ] Playlist continuation failed:',
-        error
-      );
-
+      console.warn('[Charlie MJ] Playlist continuation stopped:', error);
       break;
     }
+    if (!nextData) break;
 
     pagesFetched++;
 
@@ -2312,7 +2303,8 @@ async function cmjFetchChannelPlaylistsSupplement(x, options = {}) {
     seenTokens.add(token);
     let nextData;
     try { nextData = await cmjFetchPlaylistContinuation(cfg.apiKey, cfg.clientVersion, token); }
-    catch (error) { console.warn('[Charlie MJ] Channel playlist continuation failed:', error); break; }
+    catch (error) { console.warn('[Charlie MJ] Channel playlist continuation stopped:', error); break; }
+    if (!nextData) break;
     pagesFetched++;
     for (const playlist of cmjExtractChannelPlaylists(nextData)) {
       if (!seenPlaylists.has(playlist.playlistId)) { seenPlaylists.add(playlist.playlistId); allPlaylists.push(playlist); }
@@ -2334,14 +2326,18 @@ async function cmjFetchChannelPlaylistsSupplement(x, options = {}) {
         seenTokens.add(token);
         let nextData;
         try { nextData = await cmjFetchPlaylistContinuation(cfg.apiKey, cfg.clientVersion, token); }
-        catch (error) { console.warn('[Charlie MJ] Channel playlist browse continuation failed:', error); break; }
+        catch (error) { console.warn('[Charlie MJ] Channel playlist browse continuation stopped:', error); break; }
+        if (!nextData) break;
         pagesFetched++;
         for (const playlist of cmjExtractChannelPlaylists(nextData)) {
           if (!seenPlaylists.has(playlist.playlistId)) { seenPlaylists.add(playlist.playlistId); allPlaylists.push(playlist); }
         }
         for (const nextToken of cmjExtractContinuationTokens(nextData)) if (!seenTokens.has(nextToken)) queue.push(nextToken);
       }
-    } catch (error) { console.warn('[Charlie MJ] Channel playlist browse fallback failed:', error); }
+    } catch (error) {
+      if (!/HTTP 403\b/.test(String(error?.message || error)))
+        console.warn('[Charlie MJ] Channel playlist browse fallback failed:', error);
+    }
   }
 
   return {
