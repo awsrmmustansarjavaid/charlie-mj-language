@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>Charlie MJ — YouTube Library</title>
+    <link href="favorites.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="brand-icon">✦</div>
+        <div>
+          <strong> Charlie MJ — YouTube Library </strong>
+          <small> Additional learning resources — existing My Library remains untouched </small>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="openLibrary">📚 My Library</button>
+        <button id="settings">⚙ Settings</button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="side-title">YOUTUBE LIBRARY</div>
+        <button class="side-tab active" data-tab="channels">◉ Favorite Channels</button>
+        <button class="side-tab" data-tab="playlists">▣ Favorite Playlists</button>
+        <button class="side-tab" data-tab="groups">▦ Learning Groups</button>
+        <button class="side-tab" data-tab="categories"># Categories</button>
+        <button class="side-tab" data-tab="suggestions">✦ Suggestions</button>
+        <div class="side-divider"></div>
+        <button id="newGroup">＋ New Learning Group</button>
+        <button id="newCategory">＋ New Category</button>
+      </aside>
+      <main>
+        <section class="hero">
+          <div>
+            <span class="eyebrow"> ADDITIONAL LEARNING </span>
+            <h1>Channels &amp; Playlists</h1>
+            <p>
+              Save, organize and manage YouTube learning resources with metadata, thumbnails,
+              categories, groups and backups.
+            </p>
+          </div>
+          <button class="primary hero-add" id="add">＋ Add YouTube URL</button>
+        </section>
+        <section class="toolbar">
+          <div class="search-wrap">
+            <input
+              autocomplete="off"
+              id="search"
+              placeholder="Search names, descriptions, tags, categories…"
+            />
+            <div class="suggestions" hidden="" id="suggestions"></div>
+          </div>
+          <select id="categoryFilter">
+            <option value="">All categories</option>
+          </select>
+          <input hidden="" id="suggestionQuery" placeholder="Search YouTube suggestions…" />
+          <select hidden="" id="suggestionType">
+            <option value="channel">CHANNEL</option>
+            <option value="playlist">PLAYLIST</option>
+          </select>
+          <button hidden="" id="fetchSuggestions">Fetch Suggestions</button>
+          <button id="refresh">↻ Refresh</button>
+          <button id="backup">⇩ Backup</button>
+          <button id="restore">⇧ Restore</button>
+          <button id="txt">⬇ TXT</button>
+          <input accept=".json" hidden="" id="file" type="file" />
+        </section>
+        <div class="list-head">
+          <span id="resultCount"> </span>
+          <span class="view-hint"> Grid view · Use ⋮ for actions </span>
+        </div>
+        <section id="list"></section>
+      </main>
+    </div>
+    <dialog id="addDialog">
+      <form class="dialog-form" id="addForm" method="dialog">
+        <button class="close" data-close="" type="button">×</button>
+        <span class="eyebrow"> NEW RESOURCE </span>
+        <h2>Add YouTube Channel or Playlist</h2>
+        <label>
+          YouTube URL
+          <input
+            id="addUrl"
+            placeholder="https://www.youtube.com/@channel or https://www.youtube.com/playlist?list=..."
+            required=""
+          />
+        </label>
+        <label>
+          Category
+          <input
+            id="addCategory"
+            list="addCategoryOptions"
+            placeholder="Type to search existing categories…"
+            autocomplete="off"
+          />
+          <datalist id="addCategoryOptions"></datalist>
+          <button class="secondary small" id="addCreateCategory" type="button">
+            ＋ Create this category
+          </button>
+          <span class="form-note" id="addCategoryHint"
+            >Leave empty to use local YouTube metadata auto-categorization.</span
+          >
+        </label>
+        <label>
+          Tags
+          <input id="addTags" placeholder="english, listening" />
+        </label>
+        <label>
+          Personal notes
+          <textarea id="addNotes"></textarea>
+        </label>
+        <div class="add-suggestion" id="addCategorySuggestion" hidden></div>
+        <p class="form-note">
+          YouTube metadata and thumbnail are fetched automatically. Category can be changed later.
+        </p>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary">Save Resource</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="editDialog">
+      <form class="dialog-form" id="editForm" method="dialog">
+        <button class="close" data-close="" type="button">×</button>
+        <span class="eyebrow"> RESOURCE EDITOR </span>
+        <h2 id="editTitle">Edit Resource</h2>
+        <label>
+          Name
+          <input id="editName" readonly="" />
+        </label>
+        <label>
+          YouTube URL
+          <input id="editUrl" readonly="" />
+        </label>
+        <label>
+          Category
+          <input id="editCategory" list="categoryOptions" />
+        </label>
+        <datalist id="categoryOptions"> </datalist>
+        <label>
+          Tags
+          <input id="editTags" />
+        </label>
+        <label>
+          Personal notes
+          <textarea id="editNotes"></textarea>
+        </label>
+        <label class="check">
+          <input id="editPinned" type="checkbox" />
+          Pin this resource
+        </label>
+        <label>
+          Learning Group IDs
+          <input id="editGroupIds" placeholder="Optional IDs, comma separated" />
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary">Save Changes</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog aria-label="YouTube resource details" id="detailDialog">
+      <div class="dialog-form wide">
+        <button class="close" data-close="" type="button">×</button>
+        <span class="eyebrow"> RESOURCE DETAILS </span>
+        <div id="detailContent"></div>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Close</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="groupDialog">
+      <form class="dialog-form" id="groupForm" method="dialog">
+        <button class="close" data-close="" type="button">×</button>
+        <span class="eyebrow"> LEARNING GROUP </span>
+        <h2>Learning Group</h2>
+        <label>
+          Name
+          <input id="groupName" required="" />
+        </label>
+        <label>
+          Description
+          <textarea id="groupDescription"></textarea>
+        </label>
+        <label>
+          Tags
+          <input id="groupTags" />
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary">Save Group</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="categoryDialog">
+      <form class="dialog-form" id="categoryForm" method="dialog">
+        <button class="close" data-close="" type="button">×</button>
+        <span class="eyebrow"> CATEGORY </span>
+        <h2>Category</h2>
+        <label>
+          Name
+          <input id="categoryName" required="" />
+        </label>
+        <label>
+          Description
+          <textarea id="categoryDescription"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary">Save Category</button>
+        </div>
+      </form>
+    </dialog>
+    <div aria-live="polite" class="toast-host" id="toastHost"></div>
+    <script src="favorites.js?v=20261027-1" type="module"></script>
+  </body>
+</html>

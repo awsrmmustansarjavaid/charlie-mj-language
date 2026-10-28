@@ -3503,13 +3503,22 @@ async function suggestAddCategory() {
     suggestion.keywords?.length ? `Keywords: ${suggestion.keywords.map(esc).join(', ')}` : '',
   ].filter(Boolean);
   const why = (suggestion.reasons || []).map((line) => `<li>${esc(line)}</li>`).join('');
+  const candidates = (suggestion.candidates || []).map((candidate) => {
+    const pct = Math.round(Number(candidate.confidence || 0) * 100);
+    return `<button type="button" class="suggestion-candidate" data-suggestion-category="${esc(candidate.name)}">${esc(candidate.name)} <span>${pct}%</span></button>`;
+  }).join('');
   box.innerHTML =
     `<strong>Suggested:</strong> ${esc(name)} <span>(${confidence}% ${esc(suggestion.level || 'confidence')})</span>` +
     (suggestion.reason ? ` <small>${esc(suggestion.reason)}</small>` : '') +
     (detected.length ? `<div class="add-detected">${detected.join(' · ')}</div>` : '') +
+    (candidates ? `<div class="suggestion-candidates"><span>Top matches:</span>${candidates}</div>` : '') +
     (why
       ? `<details class="add-why"><summary>Why was this category suggested?</summary><ul>${why}<li>Confidence: ${confidence}%${suggestion.level ? ' (' + esc(suggestion.level) + ')' : ''}</li></ul></details>`
       : '');
+  box.querySelectorAll('[data-suggestion-category]').forEach((button) => button.addEventListener('click', () => {
+    $('#addCategory').value = button.dataset.suggestionCategory || '';
+    updateCreateCategoryButton();
+  }));
   if (!$('#addCategory').value && name !== 'Uncategorized') $('#addCategory').value = name;
   updateCreateCategoryButton();
 }
@@ -3745,6 +3754,27 @@ $('#search').addEventListener('input', () => {
 $('#categoryFilter').addEventListener('change', render);
 
 $('#refresh').addEventListener('click', () => load());
+
+$('#recategorize')?.addEventListener('click', async () => {
+  const button = $('#recategorize');
+  if (!confirm('Re-run the category engine only for resources currently marked Uncategorized? Manually categorized resources will not be changed.')) return;
+  button.disabled = true;
+  button.textContent = '🧠 Re-categorizing…';
+  try {
+    const [channels, playlists] = await Promise.all([
+      send({ type: 'CMJ_FAVORITES', action: 'recategorize', itemType: 'channel', onlyUncategorized: true, limit: 500 }),
+      send({ type: 'CMJ_FAVORITES', action: 'recategorize', itemType: 'playlist', onlyUncategorized: true, limit: 500 }),
+    ]);
+    if (!channels?.ok || !playlists?.ok) throw new Error(channels?.error || playlists?.error || 'Re-categorization failed.');
+    toast(`Re-categorized ${Number(channels.result?.changed || 0) + Number(playlists.result?.changed || 0)} resources.`, 'success');
+    await load();
+  } catch (error) {
+    toast(error.message || 'Re-categorization failed.', 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = '🧠 Re-categorize Uncategorized';
+  }
+});
 
 $('#addCreateCategory').addEventListener('click', createAddCategory);
 $('#addCategory').addEventListener('input', updateCreateCategoryButton);

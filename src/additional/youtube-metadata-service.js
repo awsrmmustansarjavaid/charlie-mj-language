@@ -296,6 +296,38 @@ function playlistTitleFromData(yt) {
   return '';
 }
 
+function extractRecentVideoTitles(yt, limit = 30) {
+  const renderers = collectValues(yt, ['videoRenderer', 'gridVideoRenderer', 'compactVideoRenderer'], limit * 3);
+  const out = [];
+  const seen = new Set();
+  for (const item of renderers) {
+    const title = textValue(item?.title || item?.headline || item?.metadata?.title);
+    if (!title) continue;
+    const key = title.toLocaleLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(title);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+function extractPlaylistTitles(yt, limit = 50) {
+  const renderers = collectValues(yt, ['playlistRenderer', 'gridPlaylistRenderer', 'compactPlaylistRenderer'], limit * 2);
+  const out = [];
+  const seen = new Set();
+  for (const item of renderers) {
+    const title = textValue(item?.title || item?.headline || item?.metadata?.title);
+    if (!title) continue;
+    const key = title.toLocaleLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(title);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 function extractPlaylistItems(yt) {
   const values = collectValues(yt, ['playlistVideoRenderer'], 150);
   const seen = new Set();
@@ -522,6 +554,8 @@ export function parseYouTubeMetadata(url, html, type = 'auto') {
     ...keywords,
     ...metaTags(sourceHtml, 'keywords').flatMap(splitKeywords),
   ]);
+  const recentVideoTitles = kind === 'channel' ? extractRecentVideoTitles(yt, 30) : [];
+  const playlistTitles = kind === 'channel' ? extractPlaylistTitles(yt, 50) : [];
 
   const itemCountText =
     kind === 'playlist'
@@ -555,6 +589,9 @@ export function parseYouTubeMetadata(url, html, type = 'auto') {
     languageCode: /^[a-z]{2,3}(?:[_-][A-Za-z0-9]+)?$/.test(language) ? language : '',
     keywords,
     tags,
+    recentVideoTitles,
+    videoTitles: recentVideoTitles,
+    playlistTitles,
     labels: [],
     publishedAt,
     subscriberCount: stats.subscriberCount,

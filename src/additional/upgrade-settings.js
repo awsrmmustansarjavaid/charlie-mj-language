@@ -36,6 +36,12 @@
     },
     learnAccepted: true,
     learnRejected: true,
+    useRecentVideos: true,
+    usePlaylistTitles: true,
+    compoundMatching: true,
+    multilingualKeywords: true,
+    topCandidates: 3,
+    autoRecategorizeUncategorized: true,
   };
   const DEFAULT_PERFORMANCE = {
     profile: 'lightweight',
@@ -129,7 +135,7 @@
       section(
         'Extension Intelligence',
         '🧠 Extension Intelligence',
-        `<div class="component-card"><h3>Category Intelligence</h3><div class="two-col">${check('eiEnabled', 'Enable Extension Intelligence', intel.enabled)}${check('eiAuto', 'Automatic category detection', intel.autoCategory)}${check('eiExisting', 'Suggest existing categories first', intel.suggestExisting)}${check('eiNew', 'Suggest new category when needed', intel.suggestNew)}${check('eiPrefer', 'Prefer existing categories', intel.preferExisting)}${check('eiAutoApply', 'Auto-apply high-confidence suggestions', intel.autoApplyHighConfidence)}${check('eiAskCreate', 'Ask before creating a new category', intel.askBeforeCreating)}${check('eiLearnAccepted', 'Learn from accepted suggestions', intel.learnAccepted)}${check('eiLearnRejected', 'Learn from rejected suggestions', intel.learnRejected)}</div><div class="two-col">${field('eiConfidence', 'Minimum confidence', intel.minConfidence, 'number', 'min="0.1" max="1" step="0.01"')}${field('eiSources', 'Enabled sources', 'metadata,title,description,tags,localCategories,jsonKnowledge')}</div><p class="note">When detection would otherwise return Uncategorized, existing local categories are scored before proposing a new category. New categories are never silently created when confirmation is enabled.</p></div>`
+        `<div class="component-card"><h3>Category Intelligence</h3><div class="two-col">${check('eiEnabled', 'Enable Extension Intelligence', intel.enabled)}${check('eiAuto', 'Automatic category detection', intel.autoCategory)}${check('eiExisting', 'Suggest existing categories first', intel.suggestExisting)}${check('eiNew', 'Suggest new category when needed', intel.suggestNew)}${check('eiPrefer', 'Prefer existing categories', intel.preferExisting)}${check('eiAutoApply', 'Auto-apply high-confidence suggestions', intel.autoApplyHighConfidence)}${check('eiAskCreate', 'Ask before creating a new category', intel.askBeforeCreating)}${check('eiLearnAccepted', 'Learn from accepted suggestions', intel.learnAccepted)}${check('eiLearnRejected', 'Learn from rejected suggestions', intel.learnRejected)}</div><div class="two-col">${field('eiConfidence', 'Minimum confidence', intel.minConfidence, 'number', 'min="0.1" max="1" step="0.01"')}${field('eiSources', 'Enabled sources', 'metadata,title,description,tags,localCategories,jsonKnowledge')}${check('eiUseRecentVideos', 'Use recent video titles', intel.useRecentVideos !== false)}${check('eiUsePlaylistTitles', 'Use playlist titles', intel.usePlaylistTitles !== false)}${check('eiCompoundMatching', 'Split compound names (e.g. TurkuazKitchen)', intel.compoundMatching !== false)}${check('eiMultilingual', 'Use multilingual keyword vocabulary', intel.multilingualKeywords !== false)}${field('eiTopCandidates', 'Number of candidates to show', intel.topCandidates || 3, 'number', 'min=1 max=5 step=1')}${check('eiAutoRecategorize', 'Allow bulk re-categorization of Uncategorized resources', intel.autoRecategorizeUncategorized === true)}</div><p class="note">When detection would otherwise return Uncategorized, existing local categories are scored before proposing a new category. New categories are never silently created when confirmation is enabled.</p><div class="category-rule-tester"><h4>Rule Tester</h4><p class="note">Test a channel/playlist without saving it. The engine returns the top candidates, matched keywords, language/country signals and reasons.</p><div class="two-col">${field('eiTestName', 'Channel / Playlist name', '')}${field('eiTestDescription', 'Description', '')}${field('eiTestVideos', 'Recent video titles (comma separated)', '')}${field('eiTestPlaylists', 'Playlist titles (comma separated)', '')}</div><div class="row"><button type="button" class="secondary" id="eiTestCategory">Test Categorization</button><button type="button" class="secondary" id="eiClearLearning">Clear Learned Category Signals</button></div><div id="eiTestResult" class="sync-status-line"></div></div></div>`
       ),
       section(
         'Data Sync',
@@ -292,6 +298,12 @@
         },
         learnAccepted: $('eiLearnAccepted').checked,
         learnRejected: $('eiLearnRejected').checked,
+        useRecentVideos: $('eiUseRecentVideos').checked,
+        usePlaylistTitles: $('eiUsePlaylistTitles').checked,
+        compoundMatching: $('eiCompoundMatching').checked,
+        multilingualKeywords: $('eiMultilingual').checked,
+        topCandidates: Math.max(1, Math.min(5, Number($('eiTopCandidates').value) || 3)),
+        autoRecategorizeUncategorized: $('eiAutoRecategorize').checked,
       };
       await chrome.storage.local.set({ cmjExtensionIntelligence: next });
       toastSettings('Extension Intelligence saved.');
@@ -307,7 +319,35 @@
       'eiAskCreate',
       'eiLearnAccepted',
       'eiLearnRejected',
+      'eiUseRecentVideos',
+      'eiUsePlaylistTitles',
+      'eiCompoundMatching',
+      'eiMultilingual',
+      'eiTopCandidates',
+      'eiAutoRecategorize',
     ].forEach((id) => $(id)?.addEventListener('change', save));
+    $('eiTestCategory')?.addEventListener('click', async () => {
+      const resultBox = $('eiTestResult');
+      resultBox.textContent = 'Testing local categorization engine…';
+      const metadata = {
+        name: $('eiTestName')?.value || '',
+        title: $('eiTestName')?.value || '',
+        description: $('eiTestDescription')?.value || '',
+        videoTitles: String($('eiTestVideos')?.value || '').split(',').map(x => x.trim()).filter(Boolean),
+        recentVideoTitles: String($('eiTestVideos')?.value || '').split(',').map(x => x.trim()).filter(Boolean),
+        playlistTitles: String($('eiTestPlaylists')?.value || '').split(',').map(x => x.trim()).filter(Boolean),
+        tags: [], keywords: [], labels: []
+      };
+      const response = await send({ type: 'CMJ_FAVORITES', action: 'testCategory', metadata });
+      if (!response?.ok) { resultBox.textContent = `✗ ${response?.error || 'Categorization test failed.'}`; return; }
+      const r = response.result || {};
+      const candidates = (r.candidates || []).map(c => `${c.name} ${Math.round(Number(c.confidence || 0) * 100)}% [${(c.keywords || []).join(', ')}]`).join(' · ');
+      resultBox.textContent = `${r.name || 'Uncategorized'} — ${Math.round(Number(r.confidence || 0) * 100)}%${candidates ? ` | Top: ${candidates}` : ''}${r.reasons?.length ? ` | ${r.reasons.join(' · ')}` : ''}`;
+    });
+    $('eiClearLearning')?.addEventListener('click', async () => {
+      await chrome.storage.local.remove('cmjCategoryLearning');
+      toastSettings('Learned category signals cleared.');
+    });
   }
   function wirePerformance(current) {
     const save = async () => {

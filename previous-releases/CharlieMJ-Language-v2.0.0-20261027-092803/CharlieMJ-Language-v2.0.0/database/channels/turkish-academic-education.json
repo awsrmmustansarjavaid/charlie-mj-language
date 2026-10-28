@@ -1,0 +1,58 @@
+[
+  {
+    "category": "Turkish Academic Education",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCukOz2G577aqx1A4v-XszDg",
+    "dateAdded": "2026-10-16T12:19:08.184Z",
+    "description": "",
+    "handle": "@inciis%C3%B6zl%C3%BCktv",
+    "id": "channel_26897843-5fab-4338-848b-6207fa029f4d",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-16T12:19:08.180Z",
+    "name": "İNCİ SÖZLÜK - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/mZy9hjRJGqWFdsbSHH8X8gnmrE2GXZa4lMQepGd0hgvnpo04oekfNROqdJA6vd58sY4QNQvF=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-16T12:19:08.180Z",
+    "updatedAt": "2026-10-16T12:19:08.184Z",
+    "url": "https://www.youtube.com/@inciis%C3%B6zl%C3%BCktv",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish Academic Education",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCqOcjhyS2YTZPc50ymIjk4g",
+    "collectionIds": [],
+    "dateAdded": "2026-10-16T11:01:54.810Z",
+    "description": "Nisan Kumru'dan diksiyon dersleri, şiir seslendirmeleri.",
+    "handle": "@nisankumru",
+    "id": "channel_98e3d842-2653-4921-87ea-f387fc6a5683",
+    "isPinned": false,
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-16T11:01:54.802Z",
+    "name": "Nisan Kumru - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "510 subscribers",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/zvr05CDqsuMRw6P7nPUZdMrYcNfM0P-eQ8ONydWkwE9WtRYVrPyM3YAZCFN75v8G0YmJr-z1=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-16T11:01:54.802Z",
+    "updatedAt": "2026-10-16T11:04:23.647Z",
+    "url": "https://www.youtube.com/@nisankumru",
+    "videoCount": "21 videos"
+  }
+]

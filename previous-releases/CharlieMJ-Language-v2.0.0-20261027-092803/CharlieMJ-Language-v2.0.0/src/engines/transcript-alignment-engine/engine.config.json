@@ -1,0 +1,6 @@
+{
+  "id": "transcript-alignment",
+  "enabled": true,
+  "default": false,
+  "implementation": "../../../additional/alignment.js"
+}

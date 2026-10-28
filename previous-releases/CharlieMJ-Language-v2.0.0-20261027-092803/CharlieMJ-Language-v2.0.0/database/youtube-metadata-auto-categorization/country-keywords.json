@@ -1,0 +1,894 @@
+{
+  "version": 2,
+  "keywords": {
+    "AW": [
+      "Aruba"
+    ],
+    "AF": [
+      "Afghanistan"
+    ],
+    "AO": [
+      "Angola"
+    ],
+    "AI": [
+      "Anguilla"
+    ],
+    "AX": [
+      "Åland Islands"
+    ],
+    "AL": [
+      "Albania"
+    ],
+    "AD": [
+      "Andorra"
+    ],
+    "AE": [
+      "UAE",
+      "United Arab Emirates",
+      "Emirati",
+      "Dubai",
+      "Abu Dhabi"
+    ],
+    "AR": [
+      "Argentina"
+    ],
+    "AM": [
+      "Armenia"
+    ],
+    "AS": [
+      "American Samoa"
+    ],
+    "AQ": [
+      "Antarctica"
+    ],
+    "TF": [
+      "French Southern Territories"
+    ],
+    "AG": [
+      "Antigua and Barbuda"
+    ],
+    "AU": [
+      "Australia",
+      "Australian",
+      "Sydney",
+      "Melbourne",
+      "Brisbane"
+    ],
+    "AT": [
+      "Austria"
+    ],
+    "AZ": [
+      "Azerbaijan"
+    ],
+    "BI": [
+      "Burundi"
+    ],
+    "BE": [
+      "Belgium"
+    ],
+    "BJ": [
+      "Benin"
+    ],
+    "BQ": [
+      "Bonaire, Sint Eustatius and Saba"
+    ],
+    "BF": [
+      "Burkina Faso"
+    ],
+    "BD": [
+      "Bangladesh"
+    ],
+    "BG": [
+      "Bulgaria"
+    ],
+    "BH": [
+      "Bahrain"
+    ],
+    "BS": [
+      "Bahamas"
+    ],
+    "BA": [
+      "Bosnia and Herzegovina"
+    ],
+    "BL": [
+      "Saint Barthélemy"
+    ],
+    "BY": [
+      "Belarus"
+    ],
+    "BZ": [
+      "Belize"
+    ],
+    "BM": [
+      "Bermuda"
+    ],
+    "BO": [
+      "Bolivia, Plurinational State of"
+    ],
+    "BR": [
+      "Brazil",
+      "Brazilian",
+      "Portuguese Brazil",
+      "São Paulo",
+      "Rio de Janeiro"
+    ],
+    "BB": [
+      "Barbados"
+    ],
+    "BN": [
+      "Brunei Darussalam"
+    ],
+    "BT": [
+      "Bhutan"
+    ],
+    "BV": [
+      "Bouvet Island"
+    ],
+    "BW": [
+      "Botswana"
+    ],
+    "CF": [
+      "Central African Republic"
+    ],
+    "CA": [
+      "Canada",
+      "Canadian",
+      "Toronto",
+      "Vancouver",
+      "Montreal",
+      "Québec"
+    ],
+    "CC": [
+      "Cocos (Keeling) Islands"
+    ],
+    "CH": [
+      "Switzerland"
+    ],
+    "CL": [
+      "Chile"
+    ],
+    "CN": [
+      "China",
+      "Chinese",
+      "中国",
+      "Beijing",
+      "Shanghai"
+    ],
+    "CI": [
+      "Côte d'Ivoire"
+    ],
+    "CM": [
+      "Cameroon"
+    ],
+    "CD": [
+      "Congo, The Democratic Republic of the"
+    ],
+    "CG": [
+      "Congo"
+    ],
+    "CK": [
+      "Cook Islands"
+    ],
+    "CO": [
+      "Colombia"
+    ],
+    "KM": [
+      "Comoros"
+    ],
+    "CV": [
+      "Cabo Verde"
+    ],
+    "CR": [
+      "Costa Rica"
+    ],
+    "CU": [
+      "Cuba"
+    ],
+    "CW": [
+      "Curaçao"
+    ],
+    "CX": [
+      "Christmas Island"
+    ],
+    "KY": [
+      "Cayman Islands"
+    ],
+    "CY": [
+      "Cyprus"
+    ],
+    "CZ": [
+      "Czech Republic",
+      "Czechia"
+    ],
+    "DE": [
+      "Germany",
+      "German",
+      "Deutsch",
+      "Berlin",
+      "Munich",
+      "München",
+      "Hamburg"
+    ],
+    "DJ": [
+      "Djibouti"
+    ],
+    "DM": [
+      "Dominica"
+    ],
+    "DK": [
+      "Denmark"
+    ],
+    "DO": [
+      "Dominican Republic"
+    ],
+    "DZ": [
+      "Algeria"
+    ],
+    "EC": [
+      "Ecuador"
+    ],
+    "EG": [
+      "Egypt",
+      "Egyptian",
+      "Arabic Egypt",
+      "Cairo",
+      "Alexandria"
+    ],
+    "ER": [
+      "Eritrea"
+    ],
+    "EH": [
+      "Western Sahara"
+    ],
+    "ES": [
+      "Spain",
+      "Spanish",
+      "Español",
+      "Madrid",
+      "Barcelona"
+    ],
+    "EE": [
+      "Estonia"
+    ],
+    "ET": [
+      "Ethiopia"
+    ],
+    "FI": [
+      "Finland"
+    ],
+    "FJ": [
+      "Fiji"
+    ],
+    "FK": [
+      "Falkland Islands (Malvinas)"
+    ],
+    "FR": [
+      "France",
+      "French",
+      "Français",
+      "Paris",
+      "Lyon",
+      "Marseille"
+    ],
+    "FO": [
+      "Faroe Islands"
+    ],
+    "FM": [
+      "Micronesia, Federated States of"
+    ],
+    "GA": [
+      "Gabon"
+    ],
+    "GB": [
+      "Britain",
+      "England",
+      "Great Britain",
+      "UK",
+      "United Kingdom",
+      "British",
+      "English",
+      "London",
+      "Manchester",
+      "Birmingham",
+      "Scotland",
+      "Wales"
+    ],
+    "GE": [
+      "Georgia"
+    ],
+    "GG": [
+      "Guernsey"
+    ],
+    "GH": [
+      "Ghana"
+    ],
+    "GI": [
+      "Gibraltar"
+    ],
+    "GN": [
+      "Guinea"
+    ],
+    "GP": [
+      "Guadeloupe"
+    ],
+    "GM": [
+      "Gambia"
+    ],
+    "GW": [
+      "Guinea-Bissau"
+    ],
+    "GQ": [
+      "Equatorial Guinea"
+    ],
+    "GR": [
+      "Greece"
+    ],
+    "GD": [
+      "Grenada"
+    ],
+    "GL": [
+      "Greenland"
+    ],
+    "GT": [
+      "Guatemala"
+    ],
+    "GF": [
+      "French Guiana"
+    ],
+    "GU": [
+      "Guam"
+    ],
+    "GY": [
+      "Guyana"
+    ],
+    "HK": [
+      "Hong Kong"
+    ],
+    "HM": [
+      "Heard Island and McDonald Islands"
+    ],
+    "HN": [
+      "Honduras"
+    ],
+    "HR": [
+      "Croatia"
+    ],
+    "HT": [
+      "Haiti"
+    ],
+    "HU": [
+      "Hungary"
+    ],
+    "ID": [
+      "Indonesia"
+    ],
+    "IM": [
+      "Isle of Man"
+    ],
+    "IN": [
+      "India",
+      "Indian",
+      "Hindi",
+      "Tamil",
+      "Telugu",
+      "Mumbai",
+      "Delhi",
+      "Kolkata",
+      "Bengaluru",
+      "Bangalore",
+      "Chennai",
+      "Hyderabad"
+    ],
+    "IO": [
+      "British Indian Ocean Territory"
+    ],
+    "IE": [
+      "Ireland"
+    ],
+    "IR": [
+      "Iran",
+      "Iran, Islamic Republic of",
+      "Islamic Republic of Iran"
+    ],
+    "IQ": [
+      "Iraq"
+    ],
+    "IS": [
+      "Iceland"
+    ],
+    "IL": [
+      "Israel"
+    ],
+    "IT": [
+      "Italy",
+      "Italian",
+      "Italiano",
+      "Rome",
+      "Roma",
+      "Milan",
+      "Milano"
+    ],
+    "JM": [
+      "Jamaica"
+    ],
+    "JE": [
+      "Jersey"
+    ],
+    "JO": [
+      "Jordan"
+    ],
+    "JP": [
+      "Japan",
+      "Japanese",
+      "日本",
+      "Tokyo",
+      "Osaka",
+      "京都",
+      "Kyoto"
+    ],
+    "KZ": [
+      "Kazakhstan"
+    ],
+    "KE": [
+      "Kenya"
+    ],
+    "KG": [
+      "Kyrgyzstan"
+    ],
+    "KH": [
+      "Cambodia"
+    ],
+    "KI": [
+      "Kiribati"
+    ],
+    "KN": [
+      "Saint Kitts and Nevis"
+    ],
+    "KR": [
+      "Korea",
+      "Korea, Republic of",
+      "Republic of Korea",
+      "South Korea",
+      "Korean",
+      "한국",
+      "Seoul",
+      "Busan"
+    ],
+    "KW": [
+      "Kuwait"
+    ],
+    "LA": [
+      "Lao People's Democratic Republic"
+    ],
+    "LB": [
+      "Lebanon"
+    ],
+    "LR": [
+      "Liberia"
+    ],
+    "LY": [
+      "Libya"
+    ],
+    "LC": [
+      "Saint Lucia"
+    ],
+    "LI": [
+      "Liechtenstein"
+    ],
+    "LK": [
+      "Sri Lanka"
+    ],
+    "LS": [
+      "Lesotho"
+    ],
+    "LT": [
+      "Lithuania"
+    ],
+    "LU": [
+      "Luxembourg"
+    ],
+    "LV": [
+      "Latvia"
+    ],
+    "MO": [
+      "Macao"
+    ],
+    "MF": [
+      "Saint Martin (French part)"
+    ],
+    "MA": [
+      "Morocco"
+    ],
+    "MC": [
+      "Monaco"
+    ],
+    "MD": [
+      "Moldova, Republic of"
+    ],
+    "MG": [
+      "Madagascar"
+    ],
+    "MV": [
+      "Maldives"
+    ],
+    "MX": [
+      "Mexico",
+      "Mexican",
+      "Spanish Mexico",
+      "Mexico City",
+      "Cancún",
+      "Cancun"
+    ],
+    "MH": [
+      "Marshall Islands"
+    ],
+    "MK": [
+      "North Macedonia"
+    ],
+    "ML": [
+      "Mali"
+    ],
+    "MT": [
+      "Malta"
+    ],
+    "MM": [
+      "Myanmar"
+    ],
+    "ME": [
+      "Montenegro"
+    ],
+    "MN": [
+      "Mongolia"
+    ],
+    "MP": [
+      "Northern Mariana Islands"
+    ],
+    "MZ": [
+      "Mozambique"
+    ],
+    "MR": [
+      "Mauritania"
+    ],
+    "MS": [
+      "Montserrat"
+    ],
+    "MQ": [
+      "Martinique"
+    ],
+    "MU": [
+      "Mauritius"
+    ],
+    "MW": [
+      "Malawi"
+    ],
+    "MY": [
+      "Malaysia"
+    ],
+    "YT": [
+      "Mayotte"
+    ],
+    "NA": [
+      "Namibia"
+    ],
+    "NC": [
+      "New Caledonia"
+    ],
+    "NE": [
+      "Niger"
+    ],
+    "NF": [
+      "Norfolk Island"
+    ],
+    "NG": [
+      "Nigeria"
+    ],
+    "NI": [
+      "Nicaragua"
+    ],
+    "NU": [
+      "Niue"
+    ],
+    "NL": [
+      "Netherlands"
+    ],
+    "NO": [
+      "Norway"
+    ],
+    "NP": [
+      "Nepal"
+    ],
+    "NR": [
+      "Nauru"
+    ],
+    "NZ": [
+      "New Zealand"
+    ],
+    "OM": [
+      "Oman"
+    ],
+    "PK": [
+      "Pakistan",
+      "Pakistani",
+      "Urdu",
+      "Urdu Pakistan",
+      "Karachi",
+      "Lahore",
+      "Islamabad",
+      "Rawalpindi",
+      "Punjab",
+      "Sindh"
+    ],
+    "PA": [
+      "Panama"
+    ],
+    "PN": [
+      "Pitcairn"
+    ],
+    "PE": [
+      "Peru"
+    ],
+    "PH": [
+      "Philippines"
+    ],
+    "PW": [
+      "Palau"
+    ],
+    "PG": [
+      "Papua New Guinea"
+    ],
+    "PL": [
+      "Poland"
+    ],
+    "PR": [
+      "Puerto Rico"
+    ],
+    "KP": [
+      "DPRK",
+      "Korea, Democratic People's Republic of",
+      "North Korea"
+    ],
+    "PT": [
+      "Portugal"
+    ],
+    "PY": [
+      "Paraguay"
+    ],
+    "PS": [
+      "Palestine, State of"
+    ],
+    "PF": [
+      "French Polynesia"
+    ],
+    "QA": [
+      "Qatar"
+    ],
+    "RE": [
+      "Réunion"
+    ],
+    "RO": [
+      "Romania"
+    ],
+    "RU": [
+      "Russia",
+      "Russian Federation"
+    ],
+    "RW": [
+      "Rwanda"
+    ],
+    "SA": [
+      "Saudi Arabia",
+      "Saudi",
+      "Arabic",
+      "Riyadh",
+      "Jeddah",
+      "Mecca",
+      "Makkah"
+    ],
+    "SD": [
+      "Sudan"
+    ],
+    "SN": [
+      "Senegal"
+    ],
+    "SG": [
+      "Singapore"
+    ],
+    "GS": [
+      "South Georgia and the South Sandwich Islands"
+    ],
+    "SH": [
+      "Saint Helena, Ascension and Tristan da Cunha"
+    ],
+    "SJ": [
+      "Svalbard and Jan Mayen"
+    ],
+    "SB": [
+      "Solomon Islands"
+    ],
+    "SL": [
+      "Sierra Leone"
+    ],
+    "SV": [
+      "El Salvador"
+    ],
+    "SM": [
+      "San Marino"
+    ],
+    "SO": [
+      "Somalia"
+    ],
+    "PM": [
+      "Saint Pierre and Miquelon"
+    ],
+    "RS": [
+      "Serbia"
+    ],
+    "SS": [
+      "South Sudan"
+    ],
+    "ST": [
+      "Sao Tome and Principe"
+    ],
+    "SR": [
+      "Suriname"
+    ],
+    "SK": [
+      "Slovakia"
+    ],
+    "SI": [
+      "Slovenia"
+    ],
+    "SE": [
+      "Sweden"
+    ],
+    "SZ": [
+      "Eswatini"
+    ],
+    "SX": [
+      "Sint Maarten (Dutch part)"
+    ],
+    "SC": [
+      "Seychelles"
+    ],
+    "SY": [
+      "Syrian Arab Republic"
+    ],
+    "TC": [
+      "Turks and Caicos Islands"
+    ],
+    "TD": [
+      "Chad"
+    ],
+    "TG": [
+      "Togo"
+    ],
+    "TH": [
+      "Thailand"
+    ],
+    "TJ": [
+      "Tajikistan"
+    ],
+    "TK": [
+      "Tokelau"
+    ],
+    "TM": [
+      "Turkmenistan"
+    ],
+    "TL": [
+      "Timor-Leste"
+    ],
+    "TO": [
+      "Tonga"
+    ],
+    "TT": [
+      "Trinidad and Tobago"
+    ],
+    "TN": [
+      "Tunisia"
+    ],
+    "TR": [
+      "Turkey",
+      "Turkiye",
+      "Türkei",
+      "Türkiye",
+      "Turkish",
+      "Türk",
+      "Türkçe",
+      "Turkce",
+      "Hatay",
+      "Istanbul",
+      "İstanbul",
+      "Ankara",
+      "Izmir",
+      "İzmir",
+      "Antalya",
+      "Bursa",
+      "Adana",
+      "Gaziantep",
+      "Konya",
+      "Cappadocia",
+      "Kapadokya"
+    ],
+    "TV": [
+      "Tuvalu"
+    ],
+    "TW": [
+      "Republic of China",
+      "Taiwan",
+      "Taiwan, Province of China"
+    ],
+    "TZ": [
+      "Tanzania, United Republic of"
+    ],
+    "UG": [
+      "Uganda"
+    ],
+    "UA": [
+      "Ukraine"
+    ],
+    "UM": [
+      "United States Minor Outlying Islands"
+    ],
+    "UY": [
+      "Uruguay"
+    ],
+    "US": [
+      "America",
+      "USA",
+      "United States",
+      "United States of America",
+      "US",
+      "American",
+      "New York",
+      "Los Angeles",
+      "California",
+      "Texas",
+      "Florida"
+    ],
+    "UZ": [
+      "Uzbekistan"
+    ],
+    "VA": [
+      "Holy See (Vatican City State)"
+    ],
+    "VC": [
+      "Saint Vincent and the Grenadines"
+    ],
+    "VE": [
+      "Venezuela, Bolivarian Republic of"
+    ],
+    "VG": [
+      "Virgin Islands, British"
+    ],
+    "VI": [
+      "Virgin Islands, U.S."
+    ],
+    "VN": [
+      "Viet Nam",
+      "Vietnam"
+    ],
+    "VU": [
+      "Vanuatu"
+    ],
+    "WF": [
+      "Wallis and Futuna"
+    ],
+    "WS": [
+      "Samoa"
+    ],
+    "YE": [
+      "Yemen"
+    ],
+    "ZA": [
+      "South Africa"
+    ],
+    "ZM": [
+      "Zambia"
+    ],
+    "ZW": [
+      "Zimbabwe"
+    ]
+  },
+  "updatedAt": "2026-10-27",
+  "notes": "Country-first public metadata signals. Explicit YouTube country metadata must outrank text keyword signals."
+}

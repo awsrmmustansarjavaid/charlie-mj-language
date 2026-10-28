@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "country-prefix",
+      "priority": 100,
+      "description": "Country code is always emitted before category."
+    },
+    {
+      "id": "multi-signal",
+      "priority": 95,
+      "description": "Combine compatible country, topic and content-type signals."
+    },
+    {
+      "id": "explicit-user-category",
+      "priority": 110,
+      "description": "Never replace an explicit user-selected category."
+    },
+    {
+      "id": "existing-category-first",
+      "priority": 90,
+      "description": "Prefer an existing matching category over creating a duplicate."
+    }
+  ]
+}

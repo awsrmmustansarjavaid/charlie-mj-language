@@ -1,0 +1,18 @@
+/* Charlie MJ Subtitle Learning Controls */
+/*
+* Only used when the learner explicitly disables
+* "Keep subtitle visible while paused".
+*
+* Existing subtitle styling remains untouched.
+*/
+.cmj-subtitle-layer.cmj-subtitle-learning-hidden {
+  display: none !important;
+}
+/*
+* Small visual indication while Replay Audio is running.
+* Existing toolbar styling remains responsible for
+* the normal appearance.
+*/
+.cmj-toolbar button[data-cmj-toolbar='replay-audio'][aria-pressed='true'] {
+  opacity: 0.8;
+}

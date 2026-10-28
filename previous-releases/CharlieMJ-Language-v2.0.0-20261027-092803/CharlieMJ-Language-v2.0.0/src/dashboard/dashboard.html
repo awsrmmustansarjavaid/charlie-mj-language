@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>Charlie MJ Language — Learning Library</title>
+    <link href="dashboard.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon"> 🌍 </span>
+        <div>
+          <strong> Charlie MJ Language </strong>
+          <small> Personal video language-learning workspace </small>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="youtubeFavorites" title="Favorite YouTube channels and playlists">
+          ⭐ YouTube Favorites
+        </button>
+        <button id="viewToggle" title="Switch grid/list">▦ Grid</button>
+        <button id="openOptions">⚙ Settings</button>
+        <button id="refresh">↻ Refresh</button>
+      </div>
+    </header>
+    <main class="workspace">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">LEARNING LIBRARY · v2.0</p>
+          <h1>My Learning Library</h1>
+          <p>
+            Continue videos, revisit exact sentences, organize collections, review vocabulary and
+            keep every learning moment linked to its YouTube timeline.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="primary" id="resumeTop">▶ Continue Learning</button>
+          <button class="secondary" id="addPage">＋ New Collection</button>
+        </div>
+      </section>
+      <section class="toolbar-card">
+        <div class="search-wrap">
+          <span> ⌕ </span>
+          <input
+            aria-label="Search library"
+            id="search"
+            placeholder="Search videos, words, sentences, translations, notes, tags…"
+          />
+        </div>
+        <div aria-label="Library filters" class="filters">
+          <select id="typeFilter">
+            <option value="">All types</option>
+            <option value="word">Word Learning</option>
+            <option value="sentence">Sentence Learning</option>
+            <option value="subtitle">Subtitle Learning</option>
+            <option value="video">Video</option>
+            <option value="checkpoint">Checkpoint</option>
+          </select>
+          <select id="levelFilter">
+            <option value="">All levels</option>
+            <option>A1</option>
+            <option>A2</option>
+            <option>B1</option>
+            <option>B2</option>
+            <option>C1</option>
+            <option>C2</option>
+          </select>
+          <input id="tagFilter" placeholder="Filter tag…" />
+          <select id="videoFilter">
+            <option value="">All videos</option>
+          </select>
+        </div>
+        <div class="bulk-actions">
+          <button id="copyPage">📋 Copy</button>
+          <button id="downloadPage">⬇ Download</button>
+          <button id="exportPage">⇩ Export</button>
+          <button id="importPage">⇧ Import</button>
+          <input accept=".json,.csv,.txt" hidden="" id="importFile" type="file" />
+        </div>
+      </section>
+      <div class="library-layout">
+        <aside aria-label="Library navigation" class="library-sidebar" id="libraryNav"></aside>
+        <div class="library-content">
+          <section class="overview-panel" hidden="" id="overview"></section>
+          <section class="stats-grid" id="stats"></section>
+          <section aria-live="polite" class="item-grid" id="items"></section>
+        </div>
+      </div>
+    </main>
+    <dialog id="pageDialog">
+      <form id="pageForm" method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2>Create collection</h2>
+        <p>
+          Create a reusable learning collection. A video or learning item can belong to more than
+          one collection.
+        </p>
+        <label>
+          Collection name
+          <input id="pageName" maxlength="60" placeholder="e.g. Turkish A1 Listening" required="" />
+        </label>
+        <label>
+          Tags
+          <input id="pageTags" maxlength="160" placeholder="turkish, a1, listening" />
+        </label>
+        <label>
+          Description
+          <textarea id="pageDescription" maxlength="300" placeholder="Learning goal…"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary" value="default">Create</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="exportDialog">
+      <form id="exportForm" method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2 id="exportTitle">Export library</h2>
+        <p id="exportDescription">
+          Select one or more Library sections, then choose the output format.
+        </p>
+        <div id="exportChoices"></div>
+        <label>
+          Format
+          <select id="exportFormat">
+            <option value="txt">TXT — Text</option>
+            <option value="md">MD — Markdown</option>
+            <option value="doc">DOC — Word document</option>
+            <option value="pdf">PDF — Document</option>
+            <option value="json">JSON</option>
+            <option value="csv">CSV</option>
+            <option value="srt">SRT</option>
+            <option value="vtt">VTT</option>
+            <option value="anki">Anki TSV</option>
+          </select>
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary" value="export">Export</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="pagePickerDialog">
+      <form id="pagePickerForm" method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2 id="pagePickerTitle">Add to collection</h2>
+        <p id="pagePickerDescription">
+          Keep this item here and add a copy to the selected collection.
+        </p>
+        <label>
+          Collection
+          <select id="pagePickerSelect"></select>
+        </label>
+        <input id="pickerItemId" type="hidden" />
+        <input id="pickerSource" type="hidden" />
+        <input id="pickerMode" type="hidden" value="copy" />
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary" id="pagePickerSubmit" value="add">Add</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="noteDialog">
+      <form id="noteForm" method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2>Add Library Note</h2>
+        <p>
+          Create a note directly from the Notes library. It is stored locally and does not alter
+          existing note records.
+        </p>
+        <label>
+          Title
+          <input id="noteTitle" maxlength="120" placeholder="e.g. Important grammar point" />
+        </label>
+        <label>
+          Note
+          <textarea
+            id="noteText"
+            maxlength="5000"
+            placeholder="Write your note…"
+            required=""
+            rows="8"
+          ></textarea>
+        </label>
+        <label>
+          YouTube URL (optional)
+          <input id="noteUrl" placeholder="https://www.youtube.com/watch?v=..." type="url" />
+        </label>
+        <label>
+          Timestamp in seconds (optional)
+          <input id="noteTimestamp" min="0" step="0.1" type="number" value="0" />
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary" value="add">Add Note</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="checkpointDialog">
+      <form id="checkpointForm" method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2>Add checkpoint</h2>
+        <label>
+          Label
+          <input id="checkpointLabel" maxlength="100" placeholder="Grammar lesson" />
+        </label>
+        <label>
+          Timestamp (seconds)
+          <input id="checkpointTime" min="0" step="0.1" type="number" />
+        </label>
+        <label>
+          Video ID
+          <input id="checkpointVideo" required="" />
+        </label>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Cancel</button>
+          <button class="primary" value="add">Save checkpoint</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="details-dialog" id="detailsDialog">
+      <form method="dialog">
+        <button class="dialog-close" data-close="" type="button">×</button>
+        <h2 id="detailsTitle">Learning Card</h2>
+        <div id="detailsBody"></div>
+        <div class="dialog-actions">
+          <button data-close="" type="button">Close</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="confirmDialog">
+      <form method="dialog">
+        <h2 id="confirmTitle">Delete collection?</h2>
+        <p id="confirmText"></p>
+        <div class="dialog-actions">
+          <button value="cancel">Cancel</button>
+          <button class="danger" id="confirmYes" value="yes">Delete</button>
+        </div>
+      </form>
+    </dialog>
+    <script src="dashboard.js"></script>
+    <script src="../additional/dashboard-link.js"></script>
+  </body>
+</html>

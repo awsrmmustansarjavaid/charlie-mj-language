@@ -1,0 +1,6 @@
+{
+  "id": "youtube-auto-translation",
+  "enabled": true,
+  "default": false,
+  "implementation": "youtubeAutoTranslationEngine.js"
+}

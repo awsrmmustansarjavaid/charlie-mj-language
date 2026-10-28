@@ -579,20 +579,63 @@ function loadMetadataExtras() {
 }
 
 /** Group metadata into weighted, folded text fields. */
-function buildMetadataFields(meta) {
-  const join = (...parts) => foldRuleText(parts.flat().filter(Boolean).join(' \n '));
+function splitCompoundWords(value) {
+  const text = foldRuleText(value);
+  if (!text) return '';
+  // Preserve normal whitespace/punctuation, then add boundaries for common camel-case
+  // and letter/digit transitions so TurkuazKitchen can match "kitchen".
+  return text
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([a-z]{3,})(kitchen|food|chef|travel|gaming|music|tech|vlog|recipes?|language|learn(?:ing)?|history|film|movie|news|review)(?=[a-z]|$)/gi, '$1 $2')
+    .replace(/([a-z])([0-9])/g, '$1 $2')
+    .replace(/([0-9])([a-z])/g, '$1 $2');
+}
+
+function normalizeRuleText(value) {
+  return splitCompoundWords(value)
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[^a-z0-9\u0600-\u06ff\u0900-\u097f\u3040-\u30ff\u4e00-\u9fff]+/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function ruleTerms(value) {
+  const normalized = normalizeRuleText(value);
+  if (!normalized) return [];
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const out = [normalized, ...tokens];
+  // Singular/plural and common English inflections improve recall without AI.
+  for (const token of tokens) {
+    if (token.length >= 5 && token.endsWith('ies')) out.push(token.slice(0, -3) + 'y');
+    if (token.length >= 5 && token.endsWith('es')) out.push(token.slice(0, -2));
+    if (token.length >= 5 && token.endsWith('s')) out.push(token.slice(0, -1));
+  }
+  return cmjUnique(out);
+}
+
+function buildMetadataFields(meta, options = {}) {
+  const join = (...parts) => {
+    const raw = parts.flat().filter(Boolean).join(' \n ');
+    return options.compoundMatching === false ? foldRuleText(raw) : normalizeRuleText(raw);
+  };
   return {
     title: join(meta.name, meta.title, meta.handle, meta.owner),
     tags: join(meta.tags || [], meta.keywords || [], meta.labels || [], meta.playlistTitles || []),
-    description: join(meta.description, meta.about, meta.videoTitles || []),
+    description: join(meta.description, meta.about, meta.videoTitles || [], meta.recentVideoTitles || []),
+    all: join(
+      meta.name, meta.title, meta.handle, meta.owner, meta.description, meta.about,
+      meta.tags || [], meta.keywords || [], meta.labels || [], meta.playlistTitles || [],
+      meta.videoTitles || [], meta.recentVideoTitles || []
+    ),
   };
 }
 
 const weightedHits = (fields, terms) => {
   let score = 0;
   const found = new Set();
+  const normalizedTerms = cmjUnique(terms.flatMap(ruleTerms));
   for (const [field, weight] of Object.entries(METADATA_FIELD_WEIGHTS)) {
-    const result = countTermHits(fields[field], terms);
+    const result = countTermHits(fields[field], normalizedTerms);
     score += result.hits * weight;
     result.found.forEach((term) => found.add(term));
   }
@@ -653,87 +696,125 @@ function detectMetadataLanguage(fields, extras, country) {
  * Combine matching rules into one category name.
  * Best rule per group (topic, sub, role) in group order, behind the country code.
  */
-async function categorizeFromMetadata(meta, knowledge, existing) {
+async function categorizeFromMetadata(meta, knowledge, existing, intelligence = {}) {
   const extras = await loadMetadataExtras();
-  const fields = buildMetadataFields(meta);
+  const sourceMeta = { ...meta };
+  if (intelligence.useRecentVideos === false) {
+    sourceMeta.videoTitles = [];
+    sourceMeta.recentVideoTitles = [];
+  }
+  if (intelligence.usePlaylistTitles === false) sourceMeta.playlistTitles = [];
+  const fields = buildMetadataFields(sourceMeta, intelligence);
   const countryResult = detectMetadataCountry(fields, knowledge.countries || [], extras);
   const language = detectMetadataLanguage(fields, extras, countryResult?.country);
-  const countryCode = countryResult?.country.code || '';
-  const languageCode = language?.code || '';
-  const matched = [];
+  const countryCode = countryResult?.country.code || meta.countryCode || '';
+  const languageCode = language?.code || meta.languageCode || '';
+  const learning = intelligence.learning || {};
+
+  const candidates = new Map();
+  const addCandidate = (name, score, source, found = [], ruleId = '') => {
+    const cleanName = String(name || '').trim();
+    if (!cleanName || cleanName.toLowerCase() === 'uncategorized' || !Number.isFinite(score) || score <= 0) return;
+    const current = candidates.get(cleanName) || { name: cleanName, score: 0, source, found: new Set(), rules: new Set() };
+    current.score += score;
+    current.source = current.source || source;
+    found.forEach((x) => current.found.add(x));
+    if (ruleId) current.rules.add(ruleId);
+    candidates.set(cleanName, current);
+  };
+
   for (const rule of knowledge.rules?.rules || []) {
-    if (!rule.part || rule.enabled === false) continue;
+    if (rule.enabled === false) continue;
     if (rule.countryCodes?.length && !rule.countryCodes.includes(countryCode)) continue;
     if (rule.languageCodes?.length && !rule.languageCodes.includes(languageCode)) continue;
-    const terms = [
-      ...(rule.keywords || []),
-      ...(rule.phrases || []),
-      ...(rule.tags || []),
-      ...(rule.labels || []),
-    ];
+    const name = rule.part || rule.category || rule.name || rule.label;
+    if (!name) continue;
+    const terms = [...(rule.keywords || []), ...(rule.phrases || []), ...(rule.tags || []), ...(rule.labels || [])];
     const { score, found } = weightedHits(fields, terms);
-    const total = score * Number(rule.weight || 1);
-    if (total >= 2) matched.push({ rule, score: total, found });
+    if (score >= 1) {
+      const weight = Math.max(0.1, Number(rule.weight || 1));
+      const priorityBoost = Math.max(0, Number(rule.priority || 0)) / 250;
+      addCandidate(name, score * weight + priorityBoost, 'metadata-rules', found, rule.id);
+    }
   }
-  // Best rule per group; priority breaks ties.
-  const byGroup = new Map();
-  for (const item of matched) {
-    const key = item.rule.group || 'topic';
-    const current = byGroup.get(key);
-    const rank = item.score + Number(item.rule.priority || 0) / 1000;
-    if (!current || rank > current.rank) byGroup.set(key, { ...item, rank });
+
+  // Existing local categories are first-class candidates. Their words are matched against
+  // all available metadata, not only the channel description.
+  for (const category of existing || []) {
+    const name = String(category?.name || '').trim();
+    if (!name) continue;
+    const terms = ruleTerms(name).filter((x) => x.length >= 3);
+    const { score, found } = weightedHits(fields, terms);
+    if (score >= 1) addCandidate(name, score * (intelligence.preferExisting !== false ? 1.35 : 1), 'existing-category', found);
   }
-  const parts = [...byGroup.values()].sort((a, b) => (a.rule.order || 0) - (b.rule.order || 0));
+
+  // Learned signals are deliberately separate from packaged rules and survive extension updates.
+  for (const [categoryName, data] of Object.entries(learning || {})) {
+    const terms = Array.isArray(data?.terms) ? data.terms : [];
+    const { score, found } = weightedHits(fields, terms);
+    if (score) addCandidate(categoryName, score * 1.25, 'learned', found);
+  }
+
+  // Multilingual fallback vocabulary. This is additive and deliberately small; users can extend it.
+  const multilingual = {
+    'Food & Cooking': ['food','cooking','cook','recipe','recipes','kitchen','chef','baking','cuisine','yemek','yemek tarifi','tarif','tarifler','mutfak','aşçı','pisirme','pişirme','lezzet'],
+    'Travel': ['travel','traveler','travelling','tourism','tourist','destination','trip','seyahat','gezmek','gezi','tatil','yolculuk'],
+    'Travel Biker Vlogger': ['motorcycle','motorbike','biker','rider','touring','motosiklet','motor','motorsiklet','sürüş','surus','motosiklet vlog'],
+    'Turkish Learning': ['turkish','türkçe','turkce','türk dili','türkçe öğren','turkce ogren'],
+    'Technology': ['technology','tech','software','hardware','gadget','bilgisayar','teknoloji','yazılım','yazilim','donanım','donanim'],
+    'History & Culture': ['history','historical','culture','civilization','tarih','tarihi','kültür','kultur','medeniyet'],
+  };
+  if (intelligence.multilingualKeywords !== false) {
+    for (const [name, terms] of Object.entries(multilingual)) {
+      const { score, found } = weightedHits(fields, terms);
+      if (score) addCandidate(name, score * 0.9, 'multilingual-keywords', found);
+    }
+  }
+
+  const ranked = [...candidates.values()]
+    .map((item) => ({ ...item, found: [...item.found], matchedRules: [...item.rules] }))
+    .sort((a, b) => b.score - a.score);
   const reasons = [];
-  if (countryResult)
-    reasons.push(`Country: ${countryResult.country.name} (${countryResult.found.join(', ')})`);
-  if (language)
-    reasons.push(
-      `Language: ${language.name}${language.via === 'country' ? ' (country default)' : ''}`
-    );
-  if (!parts.length) {
-    return {
-      name: 'Uncategorized',
-      confidence: 0,
-      level: 'Low',
-      countryCode,
-      countryName: countryResult?.country.name || '',
-      languageCode,
-      languageName: language?.name || '',
-      reasons: [...reasons, 'No keyword rule matched confidently - using Other/Uncategorized.'],
-      keywords: [],
-      matchedRules: [],
-    };
-  }
-  const keywords = [...new Set(parts.flatMap((item) => item.found))];
-  for (const item of parts) reasons.push(`Rule ${item.rule.id}: ${item.found.join(', ')}`);
-  const strength = parts.reduce((sum, item) => sum + Math.min(6, item.score), 0);
-  const confidence = Math.min(0.97, 0.3 + strength * 0.08 + (countryCode ? 0.1 : 0));
+  if (countryResult) reasons.push(`Country: ${countryResult.country.name} (${countryResult.found.join(', ')})`);
+  if (language) reasons.push(`Language: ${language.name}${language.via === 'country' ? ' (country default)' : ''}`);
+  const top = ranked[0];
+  const second = ranked[1]?.score || 0;
+  const totalStrength = ranked.slice(0, 3).reduce((sum, item) => sum + Math.min(8, item.score), 0);
+  const confidence = top
+    ? Math.min(0.98, Math.max(0.35, 0.5 + Math.min(0.32, top.score * 0.06) + (top.score > Math.max(1, second * 1.25) ? 0.12 : 0) + (countryCode ? 0.05 : 0)))
+    : 0;
   const level = confidence >= 0.8 ? 'High' : confidence >= 0.6 ? 'Medium' : 'Low';
-  const base = `${countryCode} ${parts.map((item) => item.rule.part).join(' ')}`.trim();
-  // Prefer an existing category with the same words, so no duplicate is created.
-  const wanted = foldRuleText(base).split(/\s+/);
-  const exact = existing.find((c) => foldRuleText(c.name) === foldRuleText(base));
-  const similar = existing.find((c) => {
-    const words = foldRuleText(c.name).split(/\s+/).filter(Boolean);
-    const common = words.filter((word) => wanted.includes(word)).length;
-    return words.length > 1 && common / Math.max(words.length, wanted.length) >= 0.85;
-  });
-  const match = exact || similar;
+  const topCandidates = ranked.slice(0, Math.max(1, Math.min(5, Number(intelligence.topCandidates || 3)))).map((item) => ({
+    name: item.name,
+    confidence: Math.min(0.98, Math.max(0.1, item.score / Math.max(item.score + second + 1, 1))),
+    score: Math.round(item.score * 100) / 100,
+    source: item.source,
+    keywords: item.found.slice(0, 12),
+    matchedRules: item.matchedRules,
+  }));
+  if (top) {
+    for (const candidate of topCandidates) reasons.push(`${candidate.name}: ${candidate.keywords.join(', ')}`);
+  }
+  const exact = top && existing.find((c) => foldRuleText(c?.name) === foldRuleText(top.name));
+  const selectedName = exact?.name || top?.name || 'Uncategorized';
+  const accepted = top && confidence >= Number(intelligence.minConfidence || 0.72);
   return {
-    name: confidence < METADATA_MIN_CONFIDENCE ? 'Uncategorized' : match?.name || base,
-    suggestedName: base,
+    name: accepted ? selectedName : 'Uncategorized',
+    suggestedName: top?.name || '',
     confidence,
     level,
-    source: match ? 'existing-category' : 'metadata-rules',
-    suggestNew: !match,
+    source: top?.source || 'none',
+    suggestNew: Boolean(top && !exact),
     countryCode,
-    countryName: countryResult?.country.name || '',
+    countryName: countryResult?.country.name || meta.country || '',
     languageCode,
-    languageName: language?.name || '',
-    keywords,
-    matchedRules: parts.map((item) => item.rule.id),
-    reasons,
+    languageName: language?.name || meta.language || '',
+    keywords: top?.found?.slice(0, 20) || [],
+    matchedRules: top?.matchedRules || [],
+    candidates: topCandidates,
+    reasons: reasons.length ? reasons : ['No category signal matched confidently.'],
+    evidence: topCandidates,
+    strength: totalStrength,
   };
 }
 
@@ -749,10 +830,52 @@ async function suggestCategory(meta = {}, options = {}) {
     result.reasons = hint.reasons;
     result.keywords = hint.keywords;
     result.matchedRules = hint.matchedRules;
+    result.candidates = hint.candidates || [];
+    result.evidence = hint.evidence || [];
     result.level = result.confidence >= 0.8 ? 'High' : result.confidence >= 0.6 ? 'Medium' : 'Low';
   }
   return result;
 }
+function extractLearningTerms(meta = {}) {
+  const fields = buildMetadataFields(meta);
+  const stop = new Set([
+    'the','and','for','with','from','this','that','your','you','channel','official','youtube',
+    'video','videos','www','com','https','http','about','more','new','how','what','when','where',
+    'bir','ve','ile','icin','için','bu','bir','olan','olarak','çok','cok','ben','sen','biz','siz',
+  ]);
+  const text = fields.all;
+  const counts = new Map();
+  for (const token of text.split(/\s+/)) {
+    if (!token || token.length < 4 || stop.has(token)) continue;
+    counts.set(token, (counts.get(token) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 60)
+    .map(([token]) => token);
+}
+
+async function learnCategoryFromMetadata(meta, category, mode = 'accepted') {
+  const name = String(category || '').trim();
+  if (!name || name.toLowerCase() === 'uncategorized') return;
+  const store = await chrome.storage.local.get('cmjCategoryLearning');
+  const learning = store.cmjCategoryLearning && typeof store.cmjCategoryLearning === 'object'
+    ? store.cmjCategoryLearning
+    : {};
+  const current = learning[name] || { terms: [], accepted: 0, rejected: 0, updatedAt: '' };
+  const terms = extractLearningTerms(meta);
+  if (mode === 'rejected') {
+    current.rejected = Number(current.rejected || 0) + 1;
+    current.rejectedTerms = cmjUnique([...(current.rejectedTerms || []), ...terms]).slice(0, 120);
+  } else {
+    current.accepted = Number(current.accepted || 0) + 1;
+    current.terms = cmjUnique([...(current.terms || []), ...terms]).slice(0, 120);
+  }
+  current.updatedAt = new Date().toISOString();
+  learning[name] = current;
+  await chrome.storage.local.set({ cmjCategoryLearning: learning });
+}
+
 async function suggestCategoryCore(meta = {}, options = {}) {
   const stored = await chrome.storage.local.get([
     'cmjFavCategories',
@@ -770,15 +893,26 @@ async function suggestCategoryCore(meta = {}, options = {}) {
     askBeforeCreating: true,
     learnAccepted: true,
     learnRejected: true,
+    useRecentVideos: true,
+    usePlaylistTitles: true,
+    compoundMatching: true,
+    multilingualKeywords: true,
+    topCandidates: 3,
+    autoRecategorizeUncategorized: true,
     ...(stored.cmjExtensionIntelligence || {}),
   };
   if (intelligence.enabled === false || intelligence.autoCategory === false)
     return { name: 'Uncategorized', confidence: 0, reason: 'disabled' };
   const existing = Array.isArray(stored.cmjFavCategories) ? stored.cmjFavCategories : [];
   const knowledge = await loadCategoryKnowledge();
-  // New rule-based engine first (country-first, multi-keyword). Falls back to the legacy scoring below.
+  const categoryLearning = stored.cmjCategoryLearning && typeof stored.cmjCategoryLearning === 'object'
+    ? stored.cmjCategoryLearning
+    : {};
   try {
-    const engine = await categorizeFromMetadata(meta, knowledge, existing);
+    const engine = await categorizeFromMetadata(meta, knowledge, existing, {
+      ...intelligence,
+      learning: categoryLearning,
+    });
     // Without a country signal, demand more evidence before overriding the legacy scoring.
     const needed = engine.countryCode ? METADATA_MIN_CONFIDENCE : 0.6;
     if (engine.name !== 'Uncategorized' && engine.confidence >= needed) return engine;
@@ -1489,7 +1623,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       let result;
       if (action === 'list') result = await listFavorites(type);
       else if (action === 'save') result = await saveFavorite(type, message.record || {});
-      else if (action === 'update') result = await updateFavorite(type, message.record || {});
+      else if (action === 'update') {
+        const beforeList = await listFavorites(type);
+        const incoming = message.record || {};
+        const identity = type === 'playlist' ? incoming.playlistId || incoming.url : incoming.channelId || incoming.handle || incoming.url;
+        const before = beforeList.find((x) => String(type === 'playlist' ? x.playlistId || x.url : x.channelId || x.handle || x.url).toLowerCase() === String(identity || '').toLowerCase());
+        result = await updateFavorite(type, incoming);
+        const intelStore = await chrome.storage.local.get('cmjExtensionIntelligence');
+        const intel = intelStore.cmjExtensionIntelligence || {};
+        const category = String(result?.category || '').trim();
+        if (category && category.toLowerCase() !== 'uncategorized' && category !== String(before?.category || '').trim() && intel.learnAccepted !== false)
+          await learnCategoryFromMetadata(result, category, 'accepted');
+      }
       else if (action === 'remove') result = await removeFavorite(type, message.id);
       else if (action === 'export') result = await exportFavorites();
       else if (action === 'import')
@@ -1507,7 +1652,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else if (action === 'suggest') {
         const metadata = await fetchYouTubeMetadata(message.url, type);
         result = await suggestCategory(metadata);
-            } else if (action === 'add') {
+            } else if (action === 'testCategory') {
+        const metadata = message.metadata && typeof message.metadata === 'object'
+          ? message.metadata
+          : await fetchYouTubeMetadata(message.url, message.itemType === 'playlist' ? 'playlist' : 'channel');
+        result = await suggestCategory(metadata, { forceDetailed: true });
+      } else if (action === 'recategorize') {
+        const intelligenceStore = await chrome.storage.local.get('cmjExtensionIntelligence');
+        if (intelligenceStore.cmjExtensionIntelligence?.autoRecategorizeUncategorized === false)
+          throw new Error('Bulk re-categorization is disabled in Extension Intelligence settings.');
+        const type = message.itemType === 'playlist' ? 'playlist' : 'channel';
+        const list = await listFavorites(type);
+        const onlyUncategorized = message.onlyUncategorized !== false;
+        const limit = Math.max(1, Math.min(1000, Number(message.limit) || 500));
+        const updated = [];
+        let changed = 0;
+        for (const item of list.slice(0, limit)) {
+          if (onlyUncategorized && String(item.category || '').trim() && String(item.category || '').trim().toLowerCase() !== 'uncategorized') {
+            updated.push(item);
+            continue;
+          }
+          try {
+            const metadata = item.metadataLastChecked ? item : await fetchYouTubeMetadata(item.url, type);
+            const suggestion = await suggestCategory(metadata);
+            const min = Number((await chrome.storage.local.get('cmjExtensionIntelligence')).cmjExtensionIntelligence?.minConfidence || 0.72);
+            if (suggestion.name !== 'Uncategorized' && Number(suggestion.confidence || 0) >= min) {
+              updated.push({ ...item, ...metadata, category: suggestion.name, categorySuggestion: suggestion, categoryConfidence: suggestion.confidence, categoryEvidence: suggestion.evidence || [], categoryMatchedRules: suggestion.matchedRules || [] });
+              changed += 1;
+              continue;
+            }
+          } catch (_) {}
+          updated.push(item);
+        }
+        await chrome.storage.local.set({ [type === 'playlist' ? 'cmjFavPlaylists' : 'cmjFavChannels']: updated });
+        result = { scanned: Math.min(list.length, limit), changed, remainingUncategorized: updated.filter((x) => !String(x.category || '').trim() || String(x.category).toLowerCase() === 'uncategorized').length };
+      } else if (action === 'add') {
         const url = String(message.url || '').trim();
         if (!url) throw new Error('YouTube URL is required.');
         const r = await fetchYouTubeMetadata(url, type);
@@ -1537,6 +1716,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (!explicit && suggestion.name !== 'Uncategorized' && suggestion.confidence >= 0.72) {
           result.categorySuggestion = suggestion;
         }
+        try {
+          const intelligenceStore = await chrome.storage.local.get('cmjExtensionIntelligence');
+          const intel = intelligenceStore.cmjExtensionIntelligence || {};
+          if (explicit && intel.learnAccepted !== false) await learnCategoryFromMetadata(r, explicit, 'accepted');
+          if (explicit && suggestion.suggestedName && suggestion.suggestedName !== explicit && intel.learnRejected !== false)
+            await learnCategoryFromMetadata(r, suggestion.suggestedName, 'rejected');
+          if (!explicit && suggestion.name !== 'Uncategorized' && intel.learnAccepted !== false)
+            await learnCategoryFromMetadata(r, suggestion.name, 'accepted');
+        } catch (_) {}
       } else throw new Error('Unknown favorites action.');
       sendResponse({ ok: true, result });
     })().catch((error) => sendResponse({ ok: false, error: error.message }));

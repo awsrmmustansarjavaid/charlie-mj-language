@@ -1548,6 +1548,9 @@
                     <option value="language">Language Learning</option>
                     <option value="productivity">Productivity</option>
                     <option value="custom">Custom</option>
+                    <option value="deep">Deep Focus</option>
+                    <option value="videoOnly">Video Only</option>
+                    <option value="minimal">Minimal</option>
                   </select>
                 </label>
                 <label
@@ -1564,9 +1567,25 @@
                 </label>
               </div>
               <p class="note">
-                General, Tech, Language Learning, Productivity and Custom focus. 0 minutes means no
-                session timer.
+                General, Tech, Language Learning, Productivity and Custom focus remain available.
+                The additional Deep Focus, Video Only and Minimal profiles only add optional
+                distraction-hiding behavior; they do not replace existing modes.
               </p>
+              <div class="two-col">
+                <label>Focus Session Preset
+                  <select id="focusSessionPreset">
+                    <option value="custom">Use Focus Session minutes</option>
+                    <option value="25-5">25 min focus / 5 min break</option>
+                    <option value="50-10">50 min focus / 10 min break</option>
+                    <option value="80-20">80 min focus / 20 min break</option>
+                  </select>
+                </label>
+                <label>Break Duration (minutes)
+                  <input id="focusBreakMinutes" type="number" min="0" max="120" step="1" />
+                </label>
+                <label class="check"><input id="focusSessionAutoRestart" type="checkbox" /> Automatically restart Focus after break</label>
+                <label class="check"><input id="focusSessionAutoStart" type="checkbox" /> Auto-start Focus session when Focus is enabled</label>
+              </div>
             </div>
 
             <div class="component-card">
@@ -1664,6 +1683,56 @@
                   Reset Local Stats
                 </button>
               </div>
+            </div>
+          </div>
+
+          <div class="component-card cmj-focus-native-ui-card">
+            <h3>🖥️ Focus Screen &amp; YouTube UI</h3>
+            <p class="note">
+              Additional Focus controls. Existing toolbar, subtitle, transcript, Night Focus and
+              current distraction settings remain independent and continue to work. Browser chrome
+              can only be hidden through page fullscreen when Chrome permits it; the request is made
+              from a Focus button/gesture and may require the user to allow fullscreen.
+            </p>
+            <div class="two-col">
+              <label class="check"><input id="focusBrowserFullscreen" type="checkbox" /> Request Browser Fullscreen when Focus starts</label>
+              <label class="check"><input id="focusUiAutoHide" type="checkbox" /> Auto-hide selected YouTube UI</label>
+              <label>Hide trigger
+                <select id="focusUiHideTrigger">
+                  <option value="video-start">When video starts</option>
+                  <option value="immediate">Immediately</option>
+                  <option value="inactivity">After inactivity</option>
+                  <option value="mouse-leaves-video">When mouse leaves video</option>
+                </select>
+              </label>
+              <label>Hide delay (seconds)<input id="focusUiHideDelaySec" type="number" min="0" max="3600" step="1" /></label>
+              <label class="check"><input id="focusUiRevealOnMouse" type="checkbox" /> Reveal hidden YouTube UI when mouse approaches top</label>
+              <label>Top reveal zone (px)<input id="focusUiRevealZonePx" type="number" min="8" max="300" step="1" /></label>
+              <label>Re-hide delay (seconds)<input id="focusUiRehideDelaySec" type="number" min="1" max="120" step="1" /></label>
+              <label>Hide animation
+                <select id="focusUiAnimation"><option value="fade">Fade</option><option value="instant">Instant</option></select>
+              </label>
+              <label>Animation duration (ms)<input id="focusUiAnimationMs" type="number" min="0" max="2000" step="50" /></label>
+              <label class="check"><input id="focusHideNavbar" type="checkbox" /> Hide YouTube Navbar</label>
+              <label class="check"><input id="focusHideSearch" type="checkbox" /> Hide Search</label>
+              <label class="check"><input id="focusHideLogo" type="checkbox" /> Hide YouTube Logo</label>
+              <label class="check"><input id="focusHideProfile" type="checkbox" /> Hide YouTube Profile</label>
+              <label class="check"><input id="focusHideNotifications" type="checkbox" /> Hide Notifications</label>
+              <label class="check"><input id="focusHideCreate" type="checkbox" /> Hide Create button</label>
+              <label class="check"><input id="focusHideSidebar" type="checkbox" /> Hide YouTube Sidebar</label>
+              <label class="check"><input id="focusHideRecommendations" type="checkbox" /> Hide Recommendations</label>
+              <label class="check"><input id="focusHideShorts" type="checkbox" /> Hide Shorts</label>
+              <label class="check"><input id="focusHideComments" type="checkbox" /> Hide Comments</label>
+              <label class="check"><input id="focusHideVideoActions" type="checkbox" /> Hide Video Actions</label>
+              <label class="check"><input id="focusHideRelated" type="checkbox" /> Hide Related Videos</label>
+              <label class="check"><input id="focusHideVideoInfo" type="checkbox" /> Hide Video Info in new Focus engine</label>
+              <label class="check"><input id="focusHideDescription" type="checkbox" /> Hide Description in new Focus engine</label>
+              <label class="check"><input id="focusHideToolbar" type="checkbox" /> Hide Charlie MJ Toolbar during Focus</label>
+              <label class="check"><input id="focusToolbarRevealOnBottom" type="checkbox" /> Reveal Charlie MJ Toolbar near bottom</label>
+              <label>Toolbar bottom reveal zone (px)<input id="focusToolbarRevealZonePx" type="number" min="20" max="300" step="1" /></label>
+              <label>Toolbar re-hide delay (seconds)<input id="focusToolbarRehideDelaySec" type="number" min="1" max="120" step="1" /></label>
+              <label class="check"><input id="focusHudEnabled" type="checkbox" /> Show Focus HUD / session timer</label>
+              <label>Focus HUD position<select id="focusHudPosition"><option value="top-right">Top right</option><option value="top-left">Top left</option><option value="bottom-right">Bottom right</option><option value="bottom-left">Bottom left</option></select></label>
             </div>
           </div>
 

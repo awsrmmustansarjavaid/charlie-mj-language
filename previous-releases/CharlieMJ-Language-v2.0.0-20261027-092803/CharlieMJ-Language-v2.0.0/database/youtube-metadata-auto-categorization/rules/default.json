@@ -1,0 +1,316 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "id": "prefer-explicit-category",
+      "priority": 110,
+      "type": "existing-category",
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "title-over-description",
+      "priority": 80,
+      "type": "title",
+      "weight": 2,
+      "enabled": true
+    },
+    {
+      "id": "description-support",
+      "priority": 50,
+      "type": "description",
+      "weight": 1,
+      "enabled": true
+    },
+    {
+      "id": "tag-support",
+      "priority": 60,
+      "type": "tag",
+      "weight": 1.5,
+      "enabled": true
+    },
+    {
+      "id": "label-support",
+      "priority": 60,
+      "type": "label",
+      "weight": 1.5,
+      "enabled": true
+    },
+    {
+      "id": "chef-vlogger",
+      "keywords": [
+        "chef",
+        "cooking",
+        "baking",
+        "recipe",
+        "cookery",
+        "culinary",
+        "gastronomy",
+        "restaurant"
+      ],
+      "phrases": [
+        "lady chef",
+        "professional chef",
+        "cooking and baking",
+        "cooking channel",
+        "recipe channel"
+      ],
+      "category": "Chef Vlogger",
+      "subcategory": "Food / Cooking",
+      "priority": 100,
+      "weight": 4,
+      "enabled": true
+    },
+    {
+      "id": "food-vlogger",
+      "keywords": [
+        "food",
+        "cooking",
+        "baking",
+        "recipe",
+        "restaurant",
+        "cuisine",
+        "chef",
+        "dessert",
+        "street food"
+      ],
+      "phrases": [
+        "food vlogger",
+        "food blogger",
+        "recipe vlog",
+        "restaurant review",
+        "street food"
+      ],
+      "category": "Food Vlogger",
+      "subcategory": "Food",
+      "priority": 92,
+      "weight": 3.5,
+      "enabled": true
+    },
+    {
+      "id": "travel-biker-vlogger",
+      "keywords": [
+        "travel",
+        "traveler",
+        "travelling",
+        "motorcycle",
+        "motorbike",
+        "biker",
+        "rider",
+        "touring"
+      ],
+      "phrases": [
+        "motorcycle travel",
+        "motorcycle vlog",
+        "biker travel",
+        "bike touring",
+        "riding vlog",
+        "road trip biker"
+      ],
+      "category": "Travel Biker Vlogger",
+      "subcategory": "Travel / Biker",
+      "priority": 100,
+      "weight": 4,
+      "enabled": true
+    },
+    {
+      "id": "travel-vlogger",
+      "keywords": [
+        "travel",
+        "traveler",
+        "travelling",
+        "tourism",
+        "tourist",
+        "destination",
+        "trip",
+        "vacation",
+        "vlog"
+      ],
+      "phrases": [
+        "travel vlogger",
+        "travel blogger",
+        "city guide",
+        "country guide",
+        "road trip"
+      ],
+      "category": "Travel Vlogger",
+      "subcategory": "Travel",
+      "priority": 88,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "shopping-vlogger",
+      "keywords": [
+        "shopping",
+        "haul",
+        "unboxing",
+        "consumer",
+        "review"
+      ],
+      "phrases": [
+        "shopping vlog",
+        "shopping haul",
+        "product review",
+        "shopping guide"
+      ],
+      "category": "Shopping Vlogger",
+      "subcategory": "Shopping / Consumer",
+      "priority": 85,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "family-vlogger",
+      "keywords": [
+        "family",
+        "parenting",
+        "motherhood",
+        "fatherhood"
+      ],
+      "phrases": [
+        "family vlog",
+        "family vlogger",
+        "parenting vlog",
+        "motherhood vlog",
+        "fatherhood vlog"
+      ],
+      "category": "Family Vlogger",
+      "subcategory": "Lifestyle",
+      "priority": 85,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "couple-vlogger",
+      "keywords": [
+        "couple",
+        "husband",
+        "wife",
+        "relationship"
+      ],
+      "phrases": [
+        "couple vlog",
+        "couple vlogger",
+        "husband wife vlog",
+        "relationship vlog"
+      ],
+      "category": "Couple Vlogger",
+      "subcategory": "Lifestyle",
+      "priority": 85,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "lifestyle-vlogger",
+      "keywords": [
+        "lifestyle",
+        "daily",
+        "home",
+        "student",
+        "nomad"
+      ],
+      "phrases": [
+        "daily vlog",
+        "lifestyle vlog",
+        "personal vlog",
+        "digital nomad"
+      ],
+      "category": "Lifestyle Vlogger",
+      "subcategory": "Lifestyle",
+      "priority": 80,
+      "weight": 2.8,
+      "enabled": true
+    },
+    {
+      "id": "professor-teacher",
+      "keywords": [
+        "teacher",
+        "professor",
+        "lecturer",
+        "educator",
+        "teaching",
+        "university"
+      ],
+      "phrases": [
+        "university professor",
+        "online course",
+        "classroom"
+      ],
+      "category": "Professor / Teacher",
+      "subcategory": "Education",
+      "priority": 85,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "national-tv-media",
+      "keywords": [
+        "broadcasting",
+        "media",
+        "television",
+        "radio",
+        "news",
+        "newspaper"
+      ],
+      "phrases": [
+        "national tv",
+        "news channel",
+        "news network",
+        "tv station",
+        "radio station"
+      ],
+      "category": "National TV / Media",
+      "subcategory": "Media / Broadcasting",
+      "priority": 85,
+      "weight": 3,
+      "enabled": true
+    },
+    {
+      "id": "drama-tv-films",
+      "keywords": [
+        "film",
+        "films",
+        "movie",
+        "movies",
+        "cinema",
+        "drama",
+        "series"
+      ],
+      "phrases": [
+        "tv series",
+        "web series",
+        "film studio",
+        "production company"
+      ],
+      "category": "Drama / TV Series / Films",
+      "subcategory": "Entertainment",
+      "priority": 80,
+      "weight": 2.8,
+      "enabled": true
+    },
+    {
+      "id": "technology-reviewer",
+      "keywords": [
+        "technology",
+        "tech",
+        "gadget",
+        "hardware",
+        "laptop",
+        "phone",
+        "software"
+      ],
+      "phrases": [
+        "tech review",
+        "gadget review",
+        "hardware review",
+        "technology reviewer"
+      ],
+      "category": "Technology Reviewer",
+      "subcategory": "Technology",
+      "priority": 82,
+      "weight": 3,
+      "enabled": true
+    }
+  ]
+}

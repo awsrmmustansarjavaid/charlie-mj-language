@@ -45,6 +45,17 @@
     settings: {},
     panelTab: 'transcript',
     focusMode: false,
+    focusUiRevealed: false,
+    focusUiHideTimer: null,
+    focusUiRevealTimer: null,
+    focusHudTimer: null,
+    focusSessionTimer: null,
+    focusBreakTimer: null,
+    focusSessionStartedAt: 0,
+    focusSessionEndsAt: 0,
+    focusBreakEndsAt: 0,
+    focusVideoHooked: false,
+    focusPointerBound: false,
     nightFocusMode: false,
     watchMenuInjected: false,
     nativeCaptionText: '',
@@ -114,6 +125,40 @@
     hideDescriptionAfter: '10',
     hideDescriptionCustomSec: 15,
     restoreHiddenOnFocusEnd: true,
+    // Additive Focus UI controls. Existing Focus settings remain unchanged.
+    focusBrowserFullscreen: false,
+    focusUiAutoHide: false,
+    focusUiHideTrigger: 'video-start',
+    focusUiHideDelaySec: 10,
+    focusUiRevealOnMouse: true,
+    focusUiRevealZonePx: 42,
+    focusUiRehideDelaySec: 3,
+    focusUiAnimation: 'fade',
+    focusUiAnimationMs: 250,
+    focusHideNavbar: false,
+    focusHideSearch: false,
+    focusHideLogo: false,
+    focusHideProfile: false,
+    focusHideNotifications: false,
+    focusHideCreate: false,
+    focusHideSidebar: false,
+    focusHideRecommendations: false,
+    focusHideShorts: false,
+    focusHideComments: false,
+    focusHideVideoActions: false,
+    focusHideRelated: false,
+    focusHideDescription: false,
+    focusHideVideoInfo: false,
+    focusHideToolbar: false,
+    focusToolbarRevealOnBottom: true,
+    focusToolbarRevealZonePx: 80,
+    focusToolbarRehideDelaySec: 3,
+    focusSessionPreset: 'custom',
+    focusBreakMinutes: 5,
+    focusSessionAutoRestart: false,
+    focusSessionAutoStart: false,
+    focusHudEnabled: true,
+    focusHudPosition: 'top-right',
     nightFocusMode: false,
     posColors: true,
     boldPOS: true,
@@ -1313,6 +1358,7 @@
         video.addEventListener('play', () => {
           if (!state.captions.length && state.settings.captionAutoFetch !== false)
             bootstrapCaptionDiscovery().catch(() => {});
+          if (state.focusMode) scheduleFocusUiHideFromPlayback();
         });
         video.addEventListener('loadedmetadata', () => {
           if (!state.captions.length && state.settings.captionAutoFetch !== false)
@@ -4039,9 +4085,8 @@
     updateToolbarButtonStates();
   }
   /**
-   * Focus profiles (local, rule-based): extra native areas each mode hides after its delay.
-   * Only YouTube's watch-metadata blocks are ever hidden; the player, subtitles, Charlie MJ
-   * toolbar and transcript windows are never touched.
+   * Focus profiles are additive. Existing General/Tech/Language/Productivity/Custom
+   * behavior remains intact; the new profiles only add optional native-UI hiding.
    */
   const FOCUS_PROFILES = {
     general: {},
@@ -4049,29 +4094,56 @@
     language: { description: true },
     productivity: { videoInfo: true, description: true },
     custom: {},
+    deep: {
+      navbar: true, search: true, logo: true, profile: true, notifications: true, create: true,
+      sidebar: true, recommendations: true, shorts: true, comments: true, videoActions: true,
+      related: true, videoInfo: true, description: true,
+    },
+    videoOnly: {
+      navbar: true, search: true, logo: true, profile: true, notifications: true, create: true,
+      sidebar: true, recommendations: true, shorts: true, comments: true, videoActions: true,
+      related: true, videoInfo: true, description: true,
+    },
+    minimal: {
+      navbar: true, search: true, logo: true, profile: true, notifications: true, create: true,
+      sidebar: true, recommendations: true, shorts: true, comments: true, videoActions: true,
+      related: true, videoInfo: true, description: true,
+    },
   };
+
   const FOCUS_HIDE_CLASSES = {
     videoInfo: 'cmj-hidden-videoinfo',
     description: 'cmj-hidden-description',
+    navbar: 'cmj-focus-hide-navbar',
+    search: 'cmj-focus-hide-search',
+    logo: 'cmj-focus-hide-logo',
+    profile: 'cmj-focus-hide-profile',
+    notifications: 'cmj-focus-hide-notifications',
+    create: 'cmj-focus-hide-create',
+    sidebar: 'cmj-focus-hide-sidebar',
+    recommendations: 'cmj-focus-hide-recommendations',
+    shorts: 'cmj-focus-hide-shorts',
+    comments: 'cmj-focus-hide-comments',
+    videoActions: 'cmj-focus-hide-video-actions',
+    related: 'cmj-focus-hide-related',
   };
   const focusHideTimers = {};
+  let focusPointerBound = false;
 
-  /** Delay select ("0", "5", ..., "custom") to milliseconds. */
   function focusDelayMs(value, customSeconds) {
     const seconds = value === 'custom' ? Number(customSeconds) || 10 : Number(value) || 0;
     return Math.max(0, seconds) * 1000;
   }
 
-  /** Hide or restore one native area; hiding waits for the configured delay. */
   function scheduleFocusHide(area, wanted, delayMs, restart) {
     const className = FOCUS_HIDE_CLASSES[area];
+    if (!className) return;
     const root = document.documentElement;
     if (restart || !wanted) {
       clearTimeout(focusHideTimers[area]);
       focusHideTimers[area] = 0;
     }
     if (!wanted) {
-      // "Restore hidden areas when Focus ends" (default on) brings the area back.
       if (state.settings.restoreHiddenOnFocusEnd !== false || state.focusMode)
         root.classList.remove(className);
       return;
@@ -4080,60 +4152,251 @@
     if (root.classList.contains(className) || focusHideTimers[area]) return;
     focusHideTimers[area] = setTimeout(() => {
       focusHideTimers[area] = 0;
-      if (state.focusMode) root.classList.add(className);
-    }, delayMs);
+      if (!state.focusMode) return;
+      const fade = state.settings.focusUiAnimation !== 'instant' && Number(state.settings.focusUiAnimationMs || 0) > 0;
+      if (!fade || !['navbar','search','logo','profile','notifications','create','sidebar','recommendations','shorts','comments','videoActions','related'].includes(area)) {
+        root.classList.add(className);
+        return;
+      }
+      const fadingClass = `cmj-focus-fading-${area}`;
+      root.classList.add(fadingClass);
+      setTimeout(() => {
+        root.classList.remove(fadingClass);
+        if (state.focusMode) root.classList.add(className);
+      }, Math.max(0, Number(state.settings.focusUiAnimationMs || 250)));
+    }, Math.max(0, delayMs));
   }
 
-  /** Focus session timer: ends Focus Mode after N minutes (0 = no timer). */
-  function syncFocusSession() {
-    const minutes = Number(state.settings.focusSessionMinutes) || 0;
-    if (!state.focusMode || minutes <= 0) {
-      clearTimeout(state.focusSessionTimer);
-      state.focusSessionTimer = 0;
+  function focusUiProfileValue(area, preset) {
+    if (!preset || typeof preset[area] === 'undefined') return state.settings[`focusHide${area[0].toUpperCase()}${area.slice(1)}`] !== false;
+    return preset[area] === true;
+  }
+
+  function clearAllFocusUiClasses() {
+    const root = document.documentElement;
+    for (const cls of Object.values(FOCUS_HIDE_CLASSES)) root.classList.remove(cls);
+  }
+
+  function revealFocusUiTemporarily() {
+    if (!state.focusMode || state.settings.focusUiRevealOnMouse === false) return;
+    const root = document.documentElement;
+    const revealClasses = [
+      'navbar','search','logo','profile','notifications','create','sidebar',
+      'recommendations','shorts','comments','videoActions','related','videoInfo','description'
+    ];
+    for (const area of revealClasses) {
+      const cls = FOCUS_HIDE_CLASSES[area];
+      if (cls) root.classList.remove(cls);
+    }
+    state.focusUiRevealed = true;
+    clearTimeout(state.focusUiRehideTimer);
+    state.focusUiRehideTimer = setTimeout(() => {
+      state.focusUiRevealed = false;
+      scheduleFocusUiHideFromPlayback(true);
+    }, Math.max(250, Number(state.settings.focusUiRehideDelaySec || 3) * 1000));
+  }
+
+  function bindFocusPointerReveal() {
+    if (focusPointerBound) return;
+    focusPointerBound = true;
+    document.addEventListener('pointermove', (event) => {
+      if (!state.focusMode) return;
+      if (state.settings.focusUiHideTrigger === 'inactivity' && state.settings.focusUiAutoHide !== false) {
+        clearTimeout(state.focusUiHideTimer);
+        state.focusUiHideTimer = setTimeout(() => scheduleFocusUiHideFromPlayback(true), Math.max(0, Number(state.settings.focusUiHideDelaySec || 10) * 1000));
+      }
+      if (state.settings.focusUiRevealOnMouse === false) return;
+      const topZone = Math.max(8, Number(state.settings.focusUiRevealZonePx || 42));
+      if (event.clientY <= topZone) revealFocusUiTemporarily();
+      const bottomZone = Math.max(20, Number(state.settings.focusToolbarRevealZonePx || 80));
+      if (state.settings.focusToolbarRevealOnBottom !== false && event.clientY >= window.innerHeight - bottomZone) {
+        const host = document.getElementById(PLAYER_HOST_ID);
+        const toolbar = host?.querySelector('.cmj-toolbar');
+        if (toolbar) {
+          document.documentElement.classList.remove('cmj-focus-hide-toolbar');
+          toolbar.classList.add('cmj-toolbar-revealed');
+          clearTimeout(host.__cmjFocusBottomHideTimer);
+          host.__cmjFocusBottomHideTimer = setTimeout(() => {
+            if (!toolbar.matches(':hover') && state.focusMode && state.settings.focusHideToolbar === true)
+              document.documentElement.classList.add('cmj-focus-hide-toolbar');
+            if (!toolbar.matches(':hover')) toolbar.classList.remove('cmj-toolbar-revealed');
+          }, Math.max(250, Number(state.settings.focusToolbarRehideDelaySec || 3) * 1000));
+        }
+      }
+    }, true);
+    const player = document.querySelector('#movie_player');
+    if (player && !player.dataset.cmjFocusLeaveHook) {
+      player.dataset.cmjFocusLeaveHook = '1';
+      player.addEventListener('pointerleave', () => {
+        if (state.focusMode && state.settings.focusUiHideTrigger === 'mouse-leaves-video')
+          scheduleFocusUiHideFromPlayback(true);
+      }, { passive: true });
+    }
+  }
+
+  function scheduleFocusUiHideFromPlayback(force = false) {
+    if (!state.focusMode) return;
+    const preset = {
+      ...(FOCUS_PROFILES[state.settings.focusActiveMode] || {}),
+      ...(FOCUS_PROFILES[state.settings.focusProfile] || {}),
+    };
+    const presetRequestsHide = Object.values(preset).some(Boolean);
+    const individualRequestsHide = [
+      'Navbar','Search','Logo','Profile','Notifications','Create','Sidebar','Recommendations',
+      'Shorts','Comments','VideoActions','Related','VideoInfo','Description'
+    ].some((area) => state.settings[`focusHide${area}`] === true);
+    if (state.settings.focusUiAutoHide === false && !presetRequestsHide && !individualRequestsHide) return;
+    const trigger = state.settings.focusUiHideTrigger || 'video-start';
+    const video = getVideo();
+    if (trigger === 'video-start' && (!video || video.paused) && !force) return;
+    if (trigger === 'video-start' && (!video || video.paused) && force) {
+      // A new video starts Focus in the clean state, but the hide timer waits for actual playback.
+      for (const area of ['navbar','search','logo','profile','notifications','create','sidebar','recommendations','shorts','comments','videoActions','related']) {
+        clearTimeout(focusHideTimers[area]);
+        focusHideTimers[area] = 0;
+      }
       return;
     }
-    if (state.focusSessionTimer) return;
+    const delay = Math.max(0, Number(state.settings.focusUiHideDelaySec ?? 10) * 1000);
+    const areas = [
+      'navbar','search','logo','profile','notifications','create','sidebar',
+      'recommendations','shorts','comments','videoActions','related'
+    ];
+    for (const area of areas) {
+      const settingKey = `focusHide${area[0].toUpperCase()}${area.slice(1)}`;
+      const wanted = state.focusMode && (preset[area] === true || state.settings[settingKey] === true);
+      if (state.focusUiRevealed && !force) continue;
+      scheduleFocusHide(area, wanted, delay, force);
+    }
+    scheduleFocusHide(
+      'videoInfo',
+      state.focusMode && (Boolean(state.settings.hideVideoInfo) || preset.videoInfo === true || state.settings.focusHideVideoInfo === true),
+      focusDelayMs(state.settings.hideVideoInfoAfter, state.settings.hideVideoInfoCustomSec),
+      force
+    );
+    scheduleFocusHide(
+      'description',
+      state.focusMode && (Boolean(state.settings.hideDescription) || preset.description === true || state.settings.focusHideDescription === true),
+      focusDelayMs(state.settings.hideDescriptionAfter, state.settings.hideDescriptionCustomSec),
+      force
+    );
+  }
+
+  function applyFocusHud() {
+    let hud = document.getElementById('cmj-focus-hud');
+    if (!state.focusMode || state.settings.focusHudEnabled === false) {
+      hud?.remove();
+      return;
+    }
+    if (!hud) {
+      hud = document.createElement('div');
+      hud.id = 'cmj-focus-hud';
+      hud.setAttribute('aria-live', 'polite');
+      document.documentElement.appendChild(hud);
+    }
+    hud.dataset.position = state.settings.focusHudPosition || 'top-right';
+    const now = Date.now();
+    let text = '🎯 FOCUS';
+    if (state.focusSessionEndsAt > now) {
+      const sec = Math.max(0, Math.ceil((state.focusSessionEndsAt - now) / 1000));
+      const m = Math.floor(sec / 60), s = sec % 60;
+      text += ` · ${m}:${String(s).padStart(2, '0')}`;
+    } else if (state.focusBreakEndsAt > now) {
+      const sec = Math.max(0, Math.ceil((state.focusBreakEndsAt - now) / 1000));
+      const m = Math.floor(sec / 60), s = sec % 60;
+      text = `☕ BREAK · ${m}:${String(s).padStart(2, '0')}`;
+    }
+    hud.textContent = text;
+  }
+
+  function requestFocusBrowserFullscreen() {
+    if (state.settings.focusBrowserFullscreen !== true) return;
+    if (document.fullscreenElement) return;
+    try {
+      const target = document.documentElement;
+      const request = target.requestFullscreen?.({ navigationUI: 'hide' });
+      if (request?.catch) request.catch(() => {});
+    } catch (_) {}
+  }
+
+  async function exitFocusBrowserFullscreen() {
+    if (!document.fullscreenElement) return;
+    try { await document.exitFullscreen(); } catch (_) {}
+  }
+
+  function syncFocusSession() {
+    const minutes = Number(state.settings.focusSessionMinutes) || 0;
+    clearTimeout(state.focusSessionTimer);
+    state.focusSessionTimer = 0;
+    clearTimeout(state.focusBreakTimer);
+    state.focusBreakTimer = 0;
+    const preset = String(state.settings.focusSessionPreset || 'custom');
+    const presetMap = { '25-5': [25,5], '50-10': [50,10], '80-20': [80,20] };
+    const [presetMinutes, presetBreak] = presetMap[preset] || [minutes, Number(state.settings.focusBreakMinutes) || 0];
+    const focusMinutes = Math.max(0, Number(presetMinutes) || 0);
+    const breakMinutes = Math.max(0, Number(presetBreak) || 0);
+    if (!state.focusMode || focusMinutes <= 0) {
+      state.focusSessionEndsAt = 0;
+      applyFocusHud();
+      return;
+    }
+    state.focusSessionStartedAt = state.focusSessionStartedAt || Date.now();
+    state.focusSessionEndsAt = state.focusSessionStartedAt + focusMinutes * 60000;
+    const remaining = Math.max(1000, state.focusSessionEndsAt - Date.now());
     state.focusSessionTimer = setTimeout(() => {
       state.focusSessionTimer = 0;
+      state.focusSessionEndsAt = 0;
       state.focusMode = false;
       state.settings.focusMode = false;
       storageSet({ settings: state.settings });
       applyFocusMode();
       updateToolbarButtonStates();
-      showToast('Focus session complete. Focus Mode is off.');
-    }, minutes * 60000);
+      if (breakMinutes > 0) {
+        state.focusBreakEndsAt = Date.now() + breakMinutes * 60000;
+        applyFocusHud();
+        showToast(`Focus session complete. Break for ${breakMinutes} minutes.`);
+        state.focusBreakTimer = setTimeout(() => {
+          state.focusBreakTimer = 0;
+          state.focusBreakEndsAt = 0;
+          if (state.settings.focusSessionAutoRestart === true) {
+            state.focusMode = true;
+            state.settings.focusMode = true;
+            state.focusSessionStartedAt = Date.now();
+            storageSet({ settings: state.settings });
+            applyFocusMode(true);
+            requestFocusBrowserFullscreen();
+            showToast('Break complete. Focus Mode restarted.');
+          } else {
+            applyFocusHud();
+          }
+        }, breakMinutes * 60000);
+      } else {
+        showToast('Focus session complete. Focus Mode is off.');
+      }
+    }, remaining);
+    applyFocusHud();
   }
 
-  /** Count one local "distraction signal" for today's Productivity statistics. */
-  async function recordDistractionSignal() {
-    try {
-      const store = await chrome.storage.local.get('cmjUsageStats');
-      const data = store.cmjUsageStats || { version: 1, days: {} };
-      const dayKey = new Date().toISOString().slice(0, 10);
-      const day = data.days[dayKey] || { seconds: 0, blocked: 0 };
-      day.blocked += 1;
-      data.days[dayKey] = day;
-      await chrome.storage.local.set({ cmjUsageStats: data });
-    } catch (_) {}
+  function toggleFocusMode() {
+    state.focusMode = !state.focusMode;
+    state.settings.focusMode = state.focusMode;
+    if (state.focusMode) {
+      state.focusSessionStartedAt = Date.now();
+      state.focusUiRevealed = false;
+      bindFocusPointerReveal();
+      requestFocusBrowserFullscreen();
+    } else {
+      clearAllFocusUiClasses();
+      state.focusSessionStartedAt = 0;
+      state.focusSessionEndsAt = 0;
+      state.focusBreakEndsAt = 0;
+      exitFocusBrowserFullscreen();
+    }
+    storageSet({ settings: state.settings });
+    applyFocusMode(true);
+    showToast(state.focusMode ? 'Focus Mode enabled.' : 'Focus Mode disabled.');
+    updateToolbarButtonStates();
   }
-
-  /** Temporary Focus Topic: warn once per video when its title shares no word with the topic. */
-  function checkFocusTopic() {
-    const topic = String(state.settings.focusTopic || '').trim();
-    if (!state.focusMode || !topic || !state.title) return;
-    const words = foldSearchText(topic)
-      .split(/\s+/)
-      .filter((word) => word.length > 2);
-    const title = foldSearchText(state.title);
-    if (!words.length || words.some((word) => title.includes(word))) return;
-    showToast(`Off-topic for your focus: ${topic}`);
-    recordDistractionSignal();
-  }
-  const foldSearchText = (value) =>
-    String(value || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
 
   function applyFocusMode(restartHides = false) {
     const root = document.documentElement;
@@ -4145,17 +4408,32 @@
     };
     for (const [name, enabled] of Object.entries(classMap))
       root.classList.toggle(name, Boolean(enabled && state.focusMode));
-    // Strictness 0-100% sets how strongly discovery areas fade (70% = the original look).
     const strictness = Math.max(0, Math.min(100, Number(state.settings.focusStrictness ?? 70)));
     root.style.setProperty(
       '--cmj-focus-fade',
       String(Math.max(0.02, ((100 - strictness) / 100) * 0.27))
     );
+    root.style.setProperty('--cmj-focus-ui-duration', `${Math.max(0, Number(state.settings.focusUiAnimationMs ?? 250))}ms`);
+    root.classList.toggle('cmj-focus-ui-instant', state.settings.focusUiAnimation === 'instant');
+    root.classList.toggle('cmj-focus-hide-toolbar', Boolean(state.settings.focusHideToolbar && state.focusMode));
+    const on = state.focusMode;
     const preset = {
       ...(FOCUS_PROFILES[state.settings.focusActiveMode] || {}),
       ...(FOCUS_PROFILES[state.settings.focusProfile] || {}),
     };
-    const on = state.focusMode;
+    const areas = [
+      'navbar','search','logo','profile','notifications','create','sidebar',
+      'recommendations','shorts','comments','videoActions','related'
+    ];
+    bindFocusPointerReveal();
+    if (!on) {
+      clearAllFocusUiClasses();
+      clearTimeout(state.focusUiRehideTimer);
+      state.focusUiRevealed = false;
+    } else {
+      scheduleFocusUiHideFromPlayback(restartHides);
+    }
+    // Existing video-info/description behavior is preserved; the new UI engine adds to it.
     scheduleFocusHide(
       'videoInfo',
       on && Boolean(state.settings.hideVideoInfo || preset.videoInfo),
@@ -4169,6 +4447,7 @@
       restartHides
     );
     syncFocusSession();
+    applyFocusHud();
   }
   function openPanel(tab = 'transcript') {
     const panel = $('.cmj-panel');

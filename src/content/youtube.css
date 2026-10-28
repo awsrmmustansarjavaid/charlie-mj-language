@@ -1250,3 +1250,98 @@ html.cmj-hidden-description ytd-watch-metadata ytd-text-inline-expander,
 html.cmj-hidden-description #above-the-fold #description {
   display: none !important;
 }
+
+/* -------------------------------------------------------------------------
+   Additive Focus UI engine
+   These rules are opt-in through Focus settings and do not alter the existing
+   Focus/Night Focus behavior when the new switches are disabled.
+   ------------------------------------------------------------------------- */
+html.cmj-focus-mode.cmj-focus-hide-navbar ytd-masthead,
+html.cmj-focus-mode.cmj-focus-hide-navbar #masthead-container { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-search #masthead #center,
+html.cmj-focus-mode.cmj-focus-hide-search ytd-searchbox { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-logo #masthead #logo,
+html.cmj-focus-mode.cmj-focus-hide-logo #masthead #logo-icon { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-profile #masthead #end ytd-topbar-menu-button-renderer,
+html.cmj-focus-mode.cmj-focus-hide-profile #masthead #avatar-btn,
+html.cmj-focus-mode.cmj-focus-hide-profile #masthead yt-img-shadow { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-notifications #masthead ytd-notification-topbar-button-renderer { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-create #masthead ytd-button-renderer,
+html.cmj-focus-mode.cmj-focus-hide-create #masthead #create-icon { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-sidebar ytd-guide-renderer,
+html.cmj-focus-mode.cmj-focus-hide-sidebar #guide,
+html.cmj-focus-mode.cmj-focus-hide-sidebar #guide-content,
+html.cmj-focus-mode.cmj-focus-hide-sidebar ytd-mini-guide-renderer { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-recommendations ytd-rich-grid-renderer,
+html.cmj-focus-mode.cmj-focus-hide-recommendations ytd-watch-next-secondary-results-renderer,
+html.cmj-focus-mode.cmj-focus-hide-recommendations #secondary { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-shorts ytd-reel-shelf-renderer,
+html.cmj-focus-mode.cmj-focus-hide-shorts ytd-rich-shelf-renderer,
+html.cmj-focus-mode.cmj-focus-hide-shorts ytd-grid-video-renderer:has(a[href*="/shorts/"]) { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-comments ytd-comments,
+html.cmj-focus-mode.cmj-focus-hide-comments #comments { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-video-actions ytd-watch-metadata #actions,
+html.cmj-focus-mode.cmj-focus-hide-video-actions ytd-watch-metadata #top-row #actions { display: none !important; }
+html.cmj-focus-mode.cmj-focus-hide-related #related { display: none !important; }
+
+/* Existing detail hiding remains independent. */
+html.cmj-focus-mode.cmj-hidden-videoinfo ytd-watch-metadata #title,
+html.cmj-focus-mode.cmj-hidden-videoinfo ytd-watch-metadata #top-row,
+html.cmj-focus-mode.cmj-hidden-videoinfo ytd-watch-metadata #owner,
+html.cmj-focus-mode.cmj-hidden-videoinfo ytd-watch-metadata #actions { display: none !important; }
+
+/* Clean layout: let the watch area reclaim hidden page chrome where YouTube permits it. */
+html.cmj-focus-mode.cmj-focus-hide-navbar #page-manager { margin-top: 0 !important; }
+html.cmj-focus-mode.cmj-focus-hide-sidebar #page-manager { margin-left: 0 !important; }
+
+#cmj-focus-hud {
+  position: fixed;
+  z-index: 2147483646;
+  top: 14px;
+  right: 18px;
+  padding: 7px 11px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px;
+  background: rgba(12,16,28,.82);
+  color: #fff;
+  font: 600 12px/1.2 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: .01em;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 5px 24px rgba(0,0,0,.22);
+}
+#cmj-focus-hud[data-position="top-left"] { left: 18px; right: auto; }
+#cmj-focus-hud[data-position="bottom-right"] { top: auto; bottom: 18px; }
+#cmj-focus-hud[data-position="bottom-left"] { top: auto; bottom: 18px; left: 18px; right: auto; }
+
+html.cmj-focus-mode.cmj-focus-hide-navbar,
+html.cmj-focus-mode.cmj-focus-hide-search,
+html.cmj-focus-mode.cmj-focus-hide-logo,
+html.cmj-focus-mode.cmj-focus-hide-profile,
+html.cmj-focus-mode.cmj-focus-hide-notifications,
+html.cmj-focus-mode.cmj-focus-hide-create,
+html.cmj-focus-mode.cmj-focus-hide-sidebar,
+html.cmj-focus-mode.cmj-focus-hide-recommendations,
+html.cmj-focus-mode.cmj-focus-hide-shorts,
+html.cmj-focus-mode.cmj-focus-hide-comments,
+html.cmj-focus-mode.cmj-focus-hide-video-actions,
+html.cmj-focus-mode.cmj-focus-hide-related {
+  transition: none;
+}
+/* Optional Focus toolbar hiding is separate from the existing toolbar auto-hide system. */
+html.cmj-focus-mode.cmj-focus-hide-toolbar #cmj-player-tools .cmj-toolbar { display: none !important; }
+html.cmj-focus-ui-instant #cmj-focus-hud { transition: none !important; }
+/* Fade-out stage used before the Focus engine removes an element from layout. */
+html.cmj-focus-mode[class*="cmj-focus-fading-"] ytd-masthead,
+html.cmj-focus-mode.cmj-focus-fading-navbar ytd-masthead,
+html.cmj-focus-mode.cmj-focus-fading-search #masthead #center,
+html.cmj-focus-mode.cmj-focus-fading-logo #masthead #logo,
+html.cmj-focus-mode.cmj-focus-fading-profile #masthead #end,
+html.cmj-focus-mode.cmj-focus-fading-notifications #masthead ytd-notification-topbar-button-renderer,
+html.cmj-focus-mode.cmj-focus-fading-sidebar ytd-guide-renderer,
+html.cmj-focus-mode.cmj-focus-fading-sidebar ytd-mini-guide-renderer,
+html.cmj-focus-mode.cmj-focus-fading-comments ytd-comments,
+html.cmj-focus-mode.cmj-focus-fading-related #related {
+  opacity: 0 !important;
+  transition: opacity var(--cmj-focus-ui-duration, 250ms) ease !important;
+}

@@ -1,38 +1,83 @@
 [
   {
-    "id": "UCuj5tx1LNPqpXUYKWA-CGNw",
-    "name": "Duygu Dilek - YouTube",
+    "id": "UCq80j7v6_AYXrp0YcKiv9_g",
+    "name": "Doğaya Bırak Beni - YouTube",
+    "category": "Turkish Travel vlogers"
+  },
+  {
+    "id": "UCw0G4Ne-lg8nnvLKNI9PFrw",
+    "name": "Sokak TV - YouTube",
     "category": "Aydin"
   },
   {
-    "id": "UC9v3n2prZllQtDZyD9CfxPA",
-    "name": "Fatma Kaya - YouTube",
-    "category": "Turkish Chef Vloger"
+    "id": "UCErv1rOmAFobb-VGljYbTwA",
+    "name": "İlişki Durumu Karışık - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCykctpvLa3SMRbpeNtTk9QQ",
-    "name": "Emre's - YouTube",
-    "category": "Turkish cuisine"
+    "id": "UCCoBQGBV2G4HmdwzNEpkt5g",
+    "name": "Aşk Emek İster - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UC199vdxLlzuiFf0onyQWhgg",
-    "name": "Elvanca Tarifler - YouTube",
-    "category": "Turkish cuisine"
+    "id": "UCEIhfu9gg2P-qakPCOJUYcw",
+    "name": "Çalıkuşu - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UC7ow90uYlS9myGFWrmcvqIg",
-    "name": "Chef Salim Recipes - YouTube",
-    "category": "Turkish Chef Vloger"
+    "id": "UCTisZBt7zFD_7s4M-Y7nGPQ",
+    "name": "Güneşin Kızları - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCONn3cHs5mqgCMqf_a4fcSg",
-    "name": "Refika's Kitchen - YouTube",
-    "category": "Turkish cuisine"
+    "id": "UC2B0TSLnivg5HiMCB8jzccg",
+    "name": "Dizi Mozaik - YouTube",
+    "category": "Türk dizisi"
   },
   {
-    "id": "UCnxYZ4oxpotJt31a7yenF6A",
-    "name": "Şef Hanım - YouTube",
-    "category": "Turkish Chef Vloger"
+    "id": "UCvwTpgKuImQZBFRXo8J3bXg",
+    "name": "Memleket Gibisi Yok - YouTube",
+    "category": "Turkiye Seyahat"
+  },
+  {
+    "id": "UCTn7kl5Ex5TzRPkmRR-okGQ",
+    "name": "İsmigül - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCYWwhdgFmZR0uWwaS-GURyg",
+    "name": "TRT Nostalji - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCcbvPs8FRxbs_32_ly828lg",
+    "name": "Selma Dağdelen - YouTube",
+    "category": "TR köy vlogers"
+  },
+  {
+    "id": "UCt_RorOSTPgNe-ZZPfFvbMw",
+    "name": "Balkan Ninnisi TRT - YouTube",
+    "category": "Turkish TV"
+  },
+  {
+    "id": "UCVrU-68ZY7BgdeVLnsLsyhg",
+    "name": "Damla Alkan - YouTube",
+    "category": "TR köy vlogers"
+  },
+  {
+    "id": "UCK4QYyRA0LLvFbJvVqqLFpA",
+    "name": "Bizim Kız - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCVGwn9HG9uV2lfOuK4d4jXg",
+    "name": "Varol Cangüzel - YouTube",
+    "category": "Turkish vlogers"
+  },
+  {
+    "id": "UCIGZbyRbeQyLML_w_JwHT-A",
+    "name": "AyşeMuro - YouTube",
+    "category": "Turkish vlogers"
   },
   {
     "id": "UCEhzR1lnrd9QmNdKMfYR8RQ",
@@ -53,6 +98,11 @@
     "id": "UCjHDpn7XD0_arH2xSnuZ8Kw",
     "name": "Tanju Ince - YouTube",
     "category": "Aydin YT Vlogers"
+  },
+  {
+    "id": "UCuj5tx1LNPqpXUYKWA-CGNw",
+    "name": "Duygu Dilek - YouTube",
+    "category": "Aydin"
   },
   {
     "id": "UCYT-ywSiWtPK_lf-dM-Kp9A",
@@ -550,6 +600,21 @@
     "category": "Turkish Bazaars Vloggers"
   },
   {
+    "id": "UC9v3n2prZllQtDZyD9CfxPA",
+    "name": "Fatma Kaya - YouTube",
+    "category": "Turkish Chef Vloger"
+  },
+  {
+    "id": "UC7ow90uYlS9myGFWrmcvqIg",
+    "name": "Chef Salim Recipes - YouTube",
+    "category": "Turkish Chef Vloger"
+  },
+  {
+    "id": "UCnxYZ4oxpotJt31a7yenF6A",
+    "name": "Şef Hanım - YouTube",
+    "category": "Turkish Chef Vloger"
+  },
+  {
     "id": "UCwVIj-OqEjXNqKpItChRrMQ",
     "name": "Turkish Food Travel - YouTube",
     "category": "Turkish Chef Vloger"
@@ -563,6 +628,21 @@
     "id": "UCJkjadFrBBxCOE_uoTKZicw",
     "name": "Aydemir Ailesi - YouTube",
     "category": "Turkish Couple Vlogs"
+  },
+  {
+    "id": "UCykctpvLa3SMRbpeNtTk9QQ",
+    "name": "Emre's - YouTube",
+    "category": "Turkish cuisine"
+  },
+  {
+    "id": "UC199vdxLlzuiFf0onyQWhgg",
+    "name": "Elvanca Tarifler - YouTube",
+    "category": "Turkish cuisine"
+  },
+  {
+    "id": "UCONn3cHs5mqgCMqf_a4fcSg",
+    "name": "Refika's Kitchen - YouTube",
+    "category": "Turkish cuisine"
   },
   {
     "id": "UCmSjL_yXPgXly31qJd7bHLw",

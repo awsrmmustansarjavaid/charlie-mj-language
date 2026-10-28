@@ -1,0 +1,58 @@
+[
+  {
+    "category": "Turkish müzik",
+    "categorySuggestion": {
+      "confidence": 0,
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "suggestedName": ""
+    },
+    "channelId": "UCaggh5Gw0ao-M8lLwLZQjrA",
+    "collectionIds": [],
+    "dateAdded": "2026-10-20T09:05:16.732Z",
+    "description": "Bu kanalda; yılların içinden süzülüp gelen türküler, samimiyet, özlem ve gerçek duygular var. Eğer sen de: * Eski günleri özlüyorsan * Türküyle teselli buluyorsan * Sözün temiz, duygunun gerçek olanını seviyorsan Bu kanal senin için… Bir çay koy, bir türkü dinle. Gönlümüz bir olsun 🤍",
+    "handle": "@Anadolunun%C5%9Eark%C4%B1lar%C4%B1",
+    "id": "channel_5d43b8cd-7976-44f2-8ea4-e539d8154840",
+    "isPinned": false,
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-20T09:05:16.722Z",
+    "name": "Anadolunun Şarkıları - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/ioCkaDk3tyH4A0gumj5P3pEGW7RMCIh6TDrHQ6ZbDDKCAM8nmUi_j8h93-DBzn3ISHh7JNNj-w=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-20T09:05:16.722Z",
+    "updatedAt": "2026-10-20T09:08:06.179Z",
+    "url": "https://www.youtube.com/@Anadolunun%C5%9Eark%C4%B1lar%C4%B1",
+    "videoCount": ""
+  },
+  {
+    "category": "Turkish müzik",
+    "categorySuggestion": {
+      "confidence": 0.8,
+      "name": "Turkish müzik",
+      "source": "existing-category",
+      "suggestNew": false
+    },
+    "channelId": "UCR5wZcXtOUka8jTA57flzMg",
+    "dateAdded": "2026-10-17T12:37:00.148Z",
+    "description": "netd müzik, anlaşmalı müzik yapım firmalarından sağladığı, Türkçe pop müzikten alternatif müziğe kadar çeşitli tarzlardaki müzik kliplerinin resmi yayın platformudur.",
+    "handle": "@netdmuzik",
+    "id": "channel_922ec5e9-e115-4067-bad1-22db821a673b",
+    "kind": "channel",
+    "metadataLastChecked": "2026-10-17T12:37:00.137Z",
+    "name": "netd müzik - YouTube",
+    "notes": "",
+    "owner": "",
+    "playlistId": "",
+    "subscriberCount": "",
+    "tags": [],
+    "thumbnail": "https://yt3.googleusercontent.com/RbxUCU-vLXu2DrPKbDd7QeuVMDwi9Kd7Vi9QZnPKW1KNjNPNVXqayAHFjSN_x20a7i9XFH9ORQ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-17T12:37:00.137Z",
+    "updatedAt": "2026-10-17T12:37:00.148Z",
+    "url": "https://www.youtube.com/@netdmuzik",
+    "videoCount": ""
+  }
+]

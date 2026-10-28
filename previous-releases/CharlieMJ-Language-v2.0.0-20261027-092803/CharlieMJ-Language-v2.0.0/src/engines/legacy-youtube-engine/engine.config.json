@@ -1,0 +1,6 @@
+{
+  "id": "legacy-youtube",
+  "enabled": true,
+  "default": true,
+  "implementation": "../../content/youtube.js#fetchYouTubeCaptionBundle"
+}

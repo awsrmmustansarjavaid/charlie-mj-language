@@ -1,0 +1,3779 @@
+{
+  "version": 1,
+  "source": "ISO 3166 + CLDR/Babel territory language data",
+  "countries": [
+    {
+      "code": "AW",
+      "name": "Aruba",
+      "languageCodes": [
+        "nl",
+        "pap",
+        "en"
+      ],
+      "aliases": [
+        "Aruba"
+      ]
+    },
+    {
+      "code": "AF",
+      "name": "Afghanistan",
+      "languageCodes": [
+        "fa",
+        "ps",
+        "haz",
+        "uz_Arab",
+        "tk",
+        "prd",
+        "bgn",
+        "kaa",
+        "ug",
+        "kk_Arab"
+      ],
+      "aliases": [
+        "Afghanistan"
+      ]
+    },
+    {
+      "code": "AO",
+      "name": "Angola",
+      "languageCodes": [
+        "pt",
+        "umb",
+        "kmb",
+        "ln"
+      ],
+      "aliases": [
+        "Angola"
+      ]
+    },
+    {
+      "code": "AI",
+      "name": "Anguilla",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Anguilla"
+      ]
+    },
+    {
+      "code": "AX",
+      "name": "Åland Islands",
+      "languageCodes": [
+        "sv"
+      ],
+      "aliases": [
+        "Åland Islands"
+      ]
+    },
+    {
+      "code": "AL",
+      "name": "Albania",
+      "languageCodes": [
+        "sq",
+        "el",
+        "mk"
+      ],
+      "aliases": [
+        "Albania"
+      ]
+    },
+    {
+      "code": "AD",
+      "name": "Andorra",
+      "languageCodes": [
+        "ca",
+        "es",
+        "fr"
+      ],
+      "aliases": [
+        "Andorra"
+      ]
+    },
+    {
+      "code": "AE",
+      "name": "United Arab Emirates",
+      "languageCodes": [
+        "ar",
+        "en",
+        "ml",
+        "ps",
+        "bal",
+        "fa"
+      ],
+      "aliases": [
+        "UAE",
+        "United Arab Emirates"
+      ]
+    },
+    {
+      "code": "AR",
+      "name": "Argentina",
+      "languageCodes": [
+        "es",
+        "en",
+        "cy",
+        "gn"
+      ],
+      "aliases": [
+        "Argentina"
+      ]
+    },
+    {
+      "code": "AM",
+      "name": "Armenia",
+      "languageCodes": [
+        "hy",
+        "ku",
+        "az"
+      ],
+      "aliases": [
+        "Armenia"
+      ]
+    },
+    {
+      "code": "AS",
+      "name": "American Samoa",
+      "languageCodes": [
+        "sm",
+        "en"
+      ],
+      "aliases": [
+        "American Samoa"
+      ]
+    },
+    {
+      "code": "AQ",
+      "name": "Antarctica",
+      "languageCodes": [
+        "und"
+      ],
+      "aliases": [
+        "Antarctica"
+      ]
+    },
+    {
+      "code": "TF",
+      "name": "French Southern Territories",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "French Southern Territories"
+      ]
+    },
+    {
+      "code": "AG",
+      "name": "Antigua and Barbuda",
+      "languageCodes": [
+        "en",
+        "pt"
+      ],
+      "aliases": [
+        "Antigua and Barbuda"
+      ]
+    },
+    {
+      "code": "AU",
+      "name": "Australia",
+      "languageCodes": [
+        "en",
+        "zh_Hant",
+        "it",
+        "wbp",
+        "hnj"
+      ],
+      "aliases": [
+        "Australia"
+      ]
+    },
+    {
+      "code": "AT",
+      "name": "Austria",
+      "languageCodes": [
+        "de",
+        "bar",
+        "en",
+        "fr",
+        "it",
+        "hr",
+        "sl",
+        "hu"
+      ],
+      "aliases": [
+        "Austria"
+      ]
+    },
+    {
+      "code": "AZ",
+      "name": "Azerbaijan",
+      "languageCodes": [
+        "az",
+        "az_Cyrl",
+        "tly",
+        "ku",
+        "ttt",
+        "tkr"
+      ],
+      "aliases": [
+        "Azerbaijan"
+      ]
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "languageCodes": [
+        "rn",
+        "fr",
+        "sw",
+        "en"
+      ],
+      "aliases": [
+        "Burundi"
+      ]
+    },
+    {
+      "code": "BE",
+      "name": "Belgium",
+      "languageCodes": [
+        "en",
+        "nl",
+        "fr",
+        "de",
+        "vls",
+        "wa"
+      ],
+      "aliases": [
+        "Belgium"
+      ]
+    },
+    {
+      "code": "BJ",
+      "name": "Benin",
+      "languageCodes": [
+        "fr",
+        "fon",
+        "yo",
+        "blo"
+      ],
+      "aliases": [
+        "Benin"
+      ]
+    },
+    {
+      "code": "BQ",
+      "name": "Bonaire, Sint Eustatius and Saba",
+      "languageCodes": [
+        "pap",
+        "nl"
+      ],
+      "aliases": [
+        "Bonaire, Sint Eustatius and Saba"
+      ]
+    },
+    {
+      "code": "BF",
+      "name": "Burkina Faso",
+      "languageCodes": [
+        "mos",
+        "dyu",
+        "fr",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Burkina Faso"
+      ]
+    },
+    {
+      "code": "BD",
+      "name": "Bangladesh",
+      "languageCodes": [
+        "bn",
+        "en",
+        "rkt",
+        "syl",
+        "rhg",
+        "ccp",
+        "my",
+        "grt",
+        "mro",
+        "mni"
+      ],
+      "aliases": [
+        "Bangladesh"
+      ]
+    },
+    {
+      "code": "BG",
+      "name": "Bulgaria",
+      "languageCodes": [
+        "bg",
+        "en",
+        "ru",
+        "tr",
+        "de"
+      ],
+      "aliases": [
+        "Bulgaria"
+      ]
+    },
+    {
+      "code": "BH",
+      "name": "Bahrain",
+      "languageCodes": [
+        "ar",
+        "ml"
+      ],
+      "aliases": [
+        "Bahrain"
+      ]
+    },
+    {
+      "code": "BS",
+      "name": "Bahamas",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Bahamas"
+      ]
+    },
+    {
+      "code": "BA",
+      "name": "Bosnia and Herzegovina",
+      "languageCodes": [
+        "bs",
+        "bs_Cyrl",
+        "en",
+        "hr",
+        "sr",
+        "sr_Latn"
+      ],
+      "aliases": [
+        "Bosnia and Herzegovina"
+      ]
+    },
+    {
+      "code": "BL",
+      "name": "Saint Barthélemy",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "Saint Barthélemy"
+      ]
+    },
+    {
+      "code": "BY",
+      "name": "Belarus",
+      "languageCodes": [
+        "be",
+        "ru"
+      ],
+      "aliases": [
+        "Belarus"
+      ]
+    },
+    {
+      "code": "BZ",
+      "name": "Belize",
+      "languageCodes": [
+        "en",
+        "es"
+      ],
+      "aliases": [
+        "Belize"
+      ]
+    },
+    {
+      "code": "BM",
+      "name": "Bermuda",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Bermuda"
+      ]
+    },
+    {
+      "code": "BO",
+      "name": "Bolivia, Plurinational State of",
+      "languageCodes": [
+        "es",
+        "qu",
+        "ay",
+        "gn",
+        "aro"
+      ],
+      "aliases": [
+        "Bolivia, Plurinational State of"
+      ]
+    },
+    {
+      "code": "BR",
+      "name": "Brazil",
+      "languageCodes": [
+        "pt",
+        "en",
+        "de",
+        "it",
+        "vec",
+        "ja",
+        "es",
+        "kgp",
+        "ko",
+        "yrl",
+        "gub",
+        "xav"
+      ],
+      "aliases": [
+        "Brazil"
+      ]
+    },
+    {
+      "code": "BB",
+      "name": "Barbados",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Barbados"
+      ]
+    },
+    {
+      "code": "BN",
+      "name": "Brunei Darussalam",
+      "languageCodes": [
+        "ms",
+        "zh_Hant",
+        "ms_Arab",
+        "en"
+      ],
+      "aliases": [
+        "Brunei Darussalam"
+      ]
+    },
+    {
+      "code": "BT",
+      "name": "Bhutan",
+      "languageCodes": [
+        "dz",
+        "ne",
+        "tsj",
+        "en",
+        "lep"
+      ],
+      "aliases": [
+        "Bhutan"
+      ]
+    },
+    {
+      "code": "BV",
+      "name": "Bouvet Island",
+      "languageCodes": [
+        "no"
+      ],
+      "aliases": [
+        "Bouvet Island"
+      ]
+    },
+    {
+      "code": "BW",
+      "name": "Botswana",
+      "languageCodes": [
+        "en",
+        "tn",
+        "af"
+      ],
+      "aliases": [
+        "Botswana"
+      ]
+    },
+    {
+      "code": "CF",
+      "name": "Central African Republic",
+      "languageCodes": [
+        "sg",
+        "fr",
+        "ln"
+      ],
+      "aliases": [
+        "Central African Republic"
+      ]
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "languageCodes": [
+        "en",
+        "fr",
+        "es",
+        "zh",
+        "pa",
+        "ar",
+        "hi",
+        "fil",
+        "yue",
+        "it",
+        "de",
+        "ur",
+        "pt",
+        "ru",
+        "ta",
+        "vi",
+        "fa",
+        "gu",
+        "ko",
+        "pl",
+        "el",
+        "uk",
+        "bn",
+        "ro",
+        "nl",
+        "ja",
+        "sr",
+        "tr",
+        "hr",
+        "hu",
+        "so",
+        "iu",
+        "iu_Latn",
+        "pdt",
+        "oj",
+        "ojs",
+        "crk",
+        "chp",
+        "moe",
+        "mic",
+        "atj",
+        "bla",
+        "cr",
+        "crl",
+        "csw",
+        "war",
+        "ojw",
+        "den",
+        "dgr",
+        "crg",
+        "moh",
+        "dak",
+        "hur",
+        "nsk",
+        "clc",
+        "kwk",
+        "pqm",
+        "oka",
+        "lil",
+        "gwi"
+      ],
+      "aliases": [
+        "Canada"
+      ]
+    },
+    {
+      "code": "CC",
+      "name": "Cocos (Keeling) Islands",
+      "languageCodes": [
+        "ms_Arab",
+        "en"
+      ],
+      "aliases": [
+        "Cocos (Keeling) Islands"
+      ]
+    },
+    {
+      "code": "CH",
+      "name": "Switzerland",
+      "languageCodes": [
+        "de",
+        "gsw",
+        "en",
+        "fr",
+        "it",
+        "lmo",
+        "pt",
+        "rm",
+        "rmo",
+        "wae"
+      ],
+      "aliases": [
+        "Switzerland"
+      ]
+    },
+    {
+      "code": "CL",
+      "name": "Chile",
+      "languageCodes": [
+        "es",
+        "en",
+        "arn"
+      ],
+      "aliases": [
+        "Chile"
+      ]
+    },
+    {
+      "code": "CN",
+      "name": "China",
+      "languageCodes": [
+        "zh",
+        "wuu",
+        "yue",
+        "yue_Hans",
+        "hsn",
+        "hak",
+        "nan",
+        "gan",
+        "ii",
+        "ug",
+        "za",
+        "mn_Mong",
+        "bo",
+        "ko",
+        "kk_Arab",
+        "lis",
+        "ky_Arab",
+        "nxq",
+        "khb",
+        "tdd",
+        "lcp",
+        "en",
+        "hnj",
+        "ru",
+        "vi",
+        "uz_Cyrl",
+        "lzh"
+      ],
+      "aliases": [
+        "China"
+      ]
+    },
+    {
+      "code": "CI",
+      "name": "Côte d'Ivoire",
+      "languageCodes": [
+        "fr",
+        "bci",
+        "sef",
+        "dnj",
+        "kfo",
+        "bqv"
+      ],
+      "aliases": [
+        "Côte d'Ivoire"
+      ]
+    },
+    {
+      "code": "CM",
+      "name": "Cameroon",
+      "languageCodes": [
+        "fr",
+        "en",
+        "bum",
+        "ff",
+        "ewo",
+        "ybb",
+        "bbj",
+        "nnh",
+        "bkm",
+        "bas",
+        "bax",
+        "byv",
+        "mua",
+        "maf",
+        "bfd",
+        "bss",
+        "kkj",
+        "dua",
+        "mgo",
+        "ar",
+        "jgo",
+        "ksf",
+        "ken",
+        "agq",
+        "ha_Arab",
+        "nmg",
+        "yav",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Cameroon"
+      ]
+    },
+    {
+      "code": "CD",
+      "name": "Congo, The Democratic Republic of the",
+      "languageCodes": [
+        "fr",
+        "sw",
+        "lua",
+        "ln",
+        "lu",
+        "kg",
+        "lol",
+        "rw"
+      ],
+      "aliases": [
+        "Congo, The Democratic Republic of the"
+      ]
+    },
+    {
+      "code": "CG",
+      "name": "Congo",
+      "languageCodes": [
+        "fr",
+        "ln"
+      ],
+      "aliases": [
+        "Congo"
+      ]
+    },
+    {
+      "code": "CK",
+      "name": "Cook Islands",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Cook Islands"
+      ]
+    },
+    {
+      "code": "CO",
+      "name": "Colombia",
+      "languageCodes": [
+        "es",
+        "guc",
+        "yrl"
+      ],
+      "aliases": [
+        "Colombia"
+      ]
+    },
+    {
+      "code": "KM",
+      "name": "Comoros",
+      "languageCodes": [
+        "ar",
+        "zdj",
+        "wni",
+        "fr"
+      ],
+      "aliases": [
+        "Comoros"
+      ]
+    },
+    {
+      "code": "CV",
+      "name": "Cabo Verde",
+      "languageCodes": [
+        "kea",
+        "pt"
+      ],
+      "aliases": [
+        "Cabo Verde"
+      ]
+    },
+    {
+      "code": "CR",
+      "name": "Costa Rica",
+      "languageCodes": [
+        "es"
+      ],
+      "aliases": [
+        "Costa Rica"
+      ]
+    },
+    {
+      "code": "CU",
+      "name": "Cuba",
+      "languageCodes": [
+        "es"
+      ],
+      "aliases": [
+        "Cuba"
+      ]
+    },
+    {
+      "code": "CW",
+      "name": "Curaçao",
+      "languageCodes": [
+        "pap",
+        "nl",
+        "es"
+      ],
+      "aliases": [
+        "Curaçao"
+      ]
+    },
+    {
+      "code": "CX",
+      "name": "Christmas Island",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Christmas Island"
+      ]
+    },
+    {
+      "code": "KY",
+      "name": "Cayman Islands",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Cayman Islands"
+      ]
+    },
+    {
+      "code": "CY",
+      "name": "Cyprus",
+      "languageCodes": [
+        "el",
+        "en",
+        "tr",
+        "fr",
+        "hy",
+        "ar",
+        "ecy"
+      ],
+      "aliases": [
+        "Cyprus"
+      ]
+    },
+    {
+      "code": "CZ",
+      "name": "Czechia",
+      "languageCodes": [
+        "cs",
+        "en",
+        "sk",
+        "de",
+        "pl"
+      ],
+      "aliases": [
+        "Czechia",
+        "Czech Republic"
+      ]
+    },
+    {
+      "code": "DE",
+      "name": "Germany",
+      "languageCodes": [
+        "de",
+        "en",
+        "fr",
+        "bar",
+        "nds",
+        "nl",
+        "it",
+        "es",
+        "ru",
+        "vmf",
+        "tr",
+        "gsw",
+        "da",
+        "swg",
+        "hr",
+        "ku",
+        "el",
+        "ksh",
+        "pl",
+        "hsb",
+        "frr",
+        "dsb",
+        "frs",
+        "stq",
+        "pfl"
+      ],
+      "aliases": [
+        "Germany"
+      ]
+    },
+    {
+      "code": "DJ",
+      "name": "Djibouti",
+      "languageCodes": [
+        "fr",
+        "aa",
+        "so",
+        "ar"
+      ],
+      "aliases": [
+        "Djibouti"
+      ]
+    },
+    {
+      "code": "DM",
+      "name": "Dominica",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Dominica"
+      ]
+    },
+    {
+      "code": "DK",
+      "name": "Denmark",
+      "languageCodes": [
+        "da",
+        "en",
+        "de",
+        "sv",
+        "fo",
+        "kl",
+        "jut"
+      ],
+      "aliases": [
+        "Denmark"
+      ]
+    },
+    {
+      "code": "DO",
+      "name": "Dominican Republic",
+      "languageCodes": [
+        "es",
+        "en"
+      ],
+      "aliases": [
+        "Dominican Republic"
+      ]
+    },
+    {
+      "code": "DZ",
+      "name": "Algeria",
+      "languageCodes": [
+        "arq",
+        "ar",
+        "fr",
+        "kab",
+        "en"
+      ],
+      "aliases": [
+        "Algeria"
+      ]
+    },
+    {
+      "code": "EC",
+      "name": "Ecuador",
+      "languageCodes": [
+        "es",
+        "qu",
+        "qug"
+      ],
+      "aliases": [
+        "Ecuador"
+      ]
+    },
+    {
+      "code": "EG",
+      "name": "Egypt",
+      "languageCodes": [
+        "ar",
+        "arz",
+        "en",
+        "cop",
+        "el"
+      ],
+      "aliases": [
+        "Egypt"
+      ]
+    },
+    {
+      "code": "ER",
+      "name": "Eritrea",
+      "languageCodes": [
+        "ti",
+        "en",
+        "tig",
+        "ar",
+        "aa",
+        "ssy",
+        "byn"
+      ],
+      "aliases": [
+        "Eritrea"
+      ]
+    },
+    {
+      "code": "EH",
+      "name": "Western Sahara",
+      "languageCodes": [
+        "ar"
+      ],
+      "aliases": [
+        "Western Sahara"
+      ]
+    },
+    {
+      "code": "ES",
+      "name": "Spain",
+      "languageCodes": [
+        "es",
+        "en",
+        "ca",
+        "gl",
+        "eu",
+        "ast",
+        "ext",
+        "an",
+        "oc"
+      ],
+      "aliases": [
+        "Spain"
+      ]
+    },
+    {
+      "code": "EE",
+      "name": "Estonia",
+      "languageCodes": [
+        "et",
+        "ru",
+        "en",
+        "fi",
+        "vro",
+        "ie"
+      ],
+      "aliases": [
+        "Estonia"
+      ]
+    },
+    {
+      "code": "ET",
+      "name": "Ethiopia",
+      "languageCodes": [
+        "en",
+        "am",
+        "om",
+        "so",
+        "ti",
+        "sid",
+        "wal",
+        "aa",
+        "gez"
+      ],
+      "aliases": [
+        "Ethiopia"
+      ]
+    },
+    {
+      "code": "FI",
+      "name": "Finland",
+      "languageCodes": [
+        "fi",
+        "en",
+        "sv",
+        "de",
+        "ru",
+        "et",
+        "rmf",
+        "se",
+        "smn",
+        "sms"
+      ],
+      "aliases": [
+        "Finland"
+      ]
+    },
+    {
+      "code": "FJ",
+      "name": "Fiji",
+      "languageCodes": [
+        "en",
+        "hi",
+        "hif",
+        "fj",
+        "rtm"
+      ],
+      "aliases": [
+        "Fiji"
+      ]
+    },
+    {
+      "code": "FK",
+      "name": "Falkland Islands (Malvinas)",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Falkland Islands (Malvinas)"
+      ]
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "languageCodes": [
+        "fr",
+        "en",
+        "es",
+        "de",
+        "oc",
+        "it",
+        "pt",
+        "pcd",
+        "gsw",
+        "br",
+        "co",
+        "hnj",
+        "ca",
+        "eu",
+        "nl",
+        "frp",
+        "ia"
+      ],
+      "aliases": [
+        "France"
+      ]
+    },
+    {
+      "code": "FO",
+      "name": "Faroe Islands",
+      "languageCodes": [
+        "fo"
+      ],
+      "aliases": [
+        "Faroe Islands"
+      ]
+    },
+    {
+      "code": "FM",
+      "name": "Micronesia, Federated States of",
+      "languageCodes": [
+        "en",
+        "chk",
+        "pon",
+        "kos",
+        "yap",
+        "uli"
+      ],
+      "aliases": [
+        "Micronesia, Federated States of"
+      ]
+    },
+    {
+      "code": "GA",
+      "name": "Gabon",
+      "languageCodes": [
+        "fr",
+        "puu"
+      ],
+      "aliases": [
+        "Gabon"
+      ]
+    },
+    {
+      "code": "GB",
+      "name": "United Kingdom",
+      "languageCodes": [
+        "en",
+        "fr",
+        "de",
+        "es",
+        "pl",
+        "pa",
+        "ur",
+        "ta",
+        "gu",
+        "sco",
+        "cy",
+        "ro",
+        "bn",
+        "ar",
+        "zh_Hant",
+        "it",
+        "lt",
+        "pt",
+        "so",
+        "tr",
+        "ga",
+        "gd",
+        "kw",
+        "en_Shaw"
+      ],
+      "aliases": [
+        "UK",
+        "United Kingdom",
+        "Britain",
+        "Great Britain",
+        "England"
+      ]
+    },
+    {
+      "code": "GE",
+      "name": "Georgia",
+      "languageCodes": [
+        "ka",
+        "xmf",
+        "ru",
+        "hy",
+        "ab",
+        "os",
+        "ku",
+        "lzz_Geor"
+      ],
+      "aliases": [
+        "Georgia"
+      ]
+    },
+    {
+      "code": "GG",
+      "name": "Guernsey",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Guernsey"
+      ]
+    },
+    {
+      "code": "GH",
+      "name": "Ghana",
+      "languageCodes": [
+        "ak",
+        "en",
+        "ee",
+        "abr",
+        "gur",
+        "ada",
+        "gaa",
+        "nzi",
+        "ha",
+        "saf",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Ghana"
+      ]
+    },
+    {
+      "code": "GI",
+      "name": "Gibraltar",
+      "languageCodes": [
+        "en",
+        "es"
+      ],
+      "aliases": [
+        "Gibraltar"
+      ]
+    },
+    {
+      "code": "GN",
+      "name": "Guinea",
+      "languageCodes": [
+        "fr",
+        "ff",
+        "man",
+        "man_Nkoo",
+        "sus",
+        "nqo",
+        "kpe",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Guinea"
+      ]
+    },
+    {
+      "code": "GP",
+      "name": "Guadeloupe",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "Guadeloupe"
+      ]
+    },
+    {
+      "code": "GM",
+      "name": "Gambia",
+      "languageCodes": [
+        "en",
+        "man",
+        "man_Nkoo",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Gambia"
+      ]
+    },
+    {
+      "code": "GW",
+      "name": "Guinea-Bissau",
+      "languageCodes": [
+        "pt",
+        "fr",
+        "knf",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Guinea-Bissau"
+      ]
+    },
+    {
+      "code": "GQ",
+      "name": "Equatorial Guinea",
+      "languageCodes": [
+        "es",
+        "fan",
+        "fr",
+        "bvb",
+        "pt"
+      ],
+      "aliases": [
+        "Equatorial Guinea"
+      ]
+    },
+    {
+      "code": "GR",
+      "name": "Greece",
+      "languageCodes": [
+        "el",
+        "en",
+        "fr",
+        "de",
+        "pnt",
+        "mk",
+        "tr",
+        "bg",
+        "sq",
+        "tsd",
+        "gmy",
+        "grc"
+      ],
+      "aliases": [
+        "Greece"
+      ]
+    },
+    {
+      "code": "GD",
+      "name": "Grenada",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Grenada"
+      ]
+    },
+    {
+      "code": "GL",
+      "name": "Greenland",
+      "languageCodes": [
+        "kl",
+        "da"
+      ],
+      "aliases": [
+        "Greenland"
+      ]
+    },
+    {
+      "code": "GT",
+      "name": "Guatemala",
+      "languageCodes": [
+        "es",
+        "quc"
+      ],
+      "aliases": [
+        "Guatemala"
+      ]
+    },
+    {
+      "code": "GF",
+      "name": "French Guiana",
+      "languageCodes": [
+        "fr",
+        "gcr",
+        "zh_Hant",
+        "hnj"
+      ],
+      "aliases": [
+        "French Guiana"
+      ]
+    },
+    {
+      "code": "GU",
+      "name": "Guam",
+      "languageCodes": [
+        "en",
+        "ch"
+      ],
+      "aliases": [
+        "Guam"
+      ]
+    },
+    {
+      "code": "GY",
+      "name": "Guyana",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Guyana"
+      ]
+    },
+    {
+      "code": "HK",
+      "name": "Hong Kong",
+      "languageCodes": [
+        "zh_Hant",
+        "yue",
+        "en",
+        "zh"
+      ],
+      "aliases": [
+        "Hong Kong"
+      ]
+    },
+    {
+      "code": "HM",
+      "name": "Heard Island and McDonald Islands",
+      "languageCodes": [
+        "und"
+      ],
+      "aliases": [
+        "Heard Island and McDonald Islands"
+      ]
+    },
+    {
+      "code": "HN",
+      "name": "Honduras",
+      "languageCodes": [
+        "es",
+        "en"
+      ],
+      "aliases": [
+        "Honduras"
+      ]
+    },
+    {
+      "code": "HR",
+      "name": "Croatia",
+      "languageCodes": [
+        "hr",
+        "en",
+        "it",
+        "vec"
+      ],
+      "aliases": [
+        "Croatia"
+      ]
+    },
+    {
+      "code": "HT",
+      "name": "Haiti",
+      "languageCodes": [
+        "ht",
+        "fr"
+      ],
+      "aliases": [
+        "Haiti"
+      ]
+    },
+    {
+      "code": "HU",
+      "name": "Hungary",
+      "languageCodes": [
+        "hu",
+        "en",
+        "de",
+        "fr",
+        "ro",
+        "hr",
+        "sk",
+        "sl"
+      ],
+      "aliases": [
+        "Hungary"
+      ]
+    },
+    {
+      "code": "ID",
+      "name": "Indonesia",
+      "languageCodes": [
+        "id",
+        "jv",
+        "su",
+        "mad",
+        "ms",
+        "min",
+        "bew",
+        "ban",
+        "bug",
+        "bjn",
+        "ace",
+        "ms_Arab",
+        "sas",
+        "bbc",
+        "zh_Hant",
+        "mak",
+        "ljp",
+        "rej",
+        "gor",
+        "nij",
+        "kge",
+        "aoz",
+        "kvr",
+        "lbw",
+        "gay",
+        "rob",
+        "mdr",
+        "sxn",
+        "sly",
+        "mwv",
+        "ban_Bali",
+        "kaw"
+      ],
+      "aliases": [
+        "Indonesia"
+      ]
+    },
+    {
+      "code": "IM",
+      "name": "Isle of Man",
+      "languageCodes": [
+        "en",
+        "gv"
+      ],
+      "aliases": [
+        "Isle of Man"
+      ]
+    },
+    {
+      "code": "IN",
+      "name": "India",
+      "languageCodes": [
+        "hi",
+        "en",
+        "bn",
+        "te",
+        "mr",
+        "ta",
+        "ur",
+        "gu",
+        "kn",
+        "ml",
+        "or",
+        "pa",
+        "bho",
+        "awa",
+        "as",
+        "bgc",
+        "mag",
+        "mai",
+        "mwr",
+        "hne",
+        "dcc",
+        "bjj",
+        "ne",
+        "sat",
+        "wtm",
+        "rkt",
+        "ks",
+        "knn",
+        "kok",
+        "swv",
+        "gbm",
+        "lmn",
+        "sd",
+        "gon",
+        "kfy",
+        "doi",
+        "kru",
+        "sck",
+        "wbq",
+        "xnr",
+        "khn",
+        "tcy",
+        "wbr",
+        "brx",
+        "sd_Deva",
+        "noe",
+        "bhb",
+        "mni",
+        "hi_Latn",
+        "raj",
+        "hoc",
+        "mtr",
+        "unr",
+        "bhi",
+        "hoj",
+        "kha",
+        "kfr",
+        "grt",
+        "unx",
+        "bfy",
+        "srx",
+        "saz",
+        "ccp",
+        "bfq",
+        "njo",
+        "ria",
+        "bo",
+        "bpy",
+        "bft",
+        "bra",
+        "lep",
+        "kxv",
+        "btv",
+        "lif",
+        "lah",
+        "sa",
+        "kht",
+        "dv",
+        "dz"
+      ],
+      "aliases": [
+        "India"
+      ]
+    },
+    {
+      "code": "IO",
+      "name": "British Indian Ocean Territory",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "British Indian Ocean Territory"
+      ]
+    },
+    {
+      "code": "IE",
+      "name": "Ireland",
+      "languageCodes": [
+        "en",
+        "ga",
+        "fr"
+      ],
+      "aliases": [
+        "Ireland"
+      ]
+    },
+    {
+      "code": "IR",
+      "name": "Iran, Islamic Republic of",
+      "languageCodes": [
+        "fa",
+        "az_Arab",
+        "mzn",
+        "glk",
+        "ckb",
+        "sdh",
+        "tk",
+        "lrc",
+        "ar",
+        "bal",
+        "rmt",
+        "bqi",
+        "luz",
+        "lki",
+        "kaa",
+        "bgn",
+        "prd",
+        "hy",
+        "ps",
+        "ka",
+        "gbz",
+        "kk_Arab"
+      ],
+      "aliases": [
+        "Iran",
+        "Islamic Republic of Iran"
+      ]
+    },
+    {
+      "code": "IQ",
+      "name": "Iraq",
+      "languageCodes": [
+        "ar",
+        "en",
+        "ckb",
+        "az_Arab",
+        "fa",
+        "lrc",
+        "syr"
+      ],
+      "aliases": [
+        "Iraq"
+      ]
+    },
+    {
+      "code": "IS",
+      "name": "Iceland",
+      "languageCodes": [
+        "is",
+        "da"
+      ],
+      "aliases": [
+        "Iceland"
+      ]
+    },
+    {
+      "code": "IL",
+      "name": "Israel",
+      "languageCodes": [
+        "he",
+        "en",
+        "ar",
+        "apc",
+        "ru",
+        "ro",
+        "yi",
+        "pl",
+        "lad",
+        "hu",
+        "am",
+        "ti",
+        "ml"
+      ],
+      "aliases": [
+        "Israel"
+      ]
+    },
+    {
+      "code": "IT",
+      "name": "Italy",
+      "languageCodes": [
+        "it",
+        "en",
+        "fr",
+        "lmo",
+        "sc",
+        "de",
+        "vec",
+        "nap",
+        "lij",
+        "scn",
+        "sdc",
+        "sl",
+        "fur",
+        "egl",
+        "lld",
+        "ca",
+        "el",
+        "pms",
+        "hr",
+        "mhn",
+        "rgn"
+      ],
+      "aliases": [
+        "Italy"
+      ]
+    },
+    {
+      "code": "JM",
+      "name": "Jamaica",
+      "languageCodes": [
+        "en",
+        "jam"
+      ],
+      "aliases": [
+        "Jamaica"
+      ]
+    },
+    {
+      "code": "JE",
+      "name": "Jersey",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Jersey"
+      ]
+    },
+    {
+      "code": "JO",
+      "name": "Jordan",
+      "languageCodes": [
+        "ar",
+        "apc",
+        "en"
+      ],
+      "aliases": [
+        "Jordan"
+      ]
+    },
+    {
+      "code": "JP",
+      "name": "Japan",
+      "languageCodes": [
+        "ja",
+        "ryu",
+        "ko"
+      ],
+      "aliases": [
+        "Japan"
+      ]
+    },
+    {
+      "code": "KZ",
+      "name": "Kazakhstan",
+      "languageCodes": [
+        "ru",
+        "kk",
+        "en",
+        "de",
+        "ug_Cyrl",
+        "kaa"
+      ],
+      "aliases": [
+        "Kazakhstan"
+      ]
+    },
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "languageCodes": [
+        "sw",
+        "en",
+        "ki",
+        "luy",
+        "luo",
+        "kam",
+        "kln",
+        "guz",
+        "mer",
+        "mas",
+        "ebu",
+        "so",
+        "dav",
+        "teo",
+        "pko",
+        "om",
+        "saq",
+        "ar",
+        "pa",
+        "gu"
+      ],
+      "aliases": [
+        "Kenya"
+      ]
+    },
+    {
+      "code": "KG",
+      "name": "Kyrgyzstan",
+      "languageCodes": [
+        "ky",
+        "ru",
+        "kaa"
+      ],
+      "aliases": [
+        "Kyrgyzstan"
+      ]
+    },
+    {
+      "code": "KH",
+      "name": "Cambodia",
+      "languageCodes": [
+        "km",
+        "cja",
+        "kdt"
+      ],
+      "aliases": [
+        "Cambodia"
+      ]
+    },
+    {
+      "code": "KI",
+      "name": "Kiribati",
+      "languageCodes": [
+        "en",
+        "gil"
+      ],
+      "aliases": [
+        "Kiribati"
+      ]
+    },
+    {
+      "code": "KN",
+      "name": "Saint Kitts and Nevis",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Saint Kitts and Nevis"
+      ]
+    },
+    {
+      "code": "KR",
+      "name": "Korea, Republic of",
+      "languageCodes": [
+        "ko"
+      ],
+      "aliases": [
+        "South Korea",
+        "Republic of Korea",
+        "Korea"
+      ]
+    },
+    {
+      "code": "KW",
+      "name": "Kuwait",
+      "languageCodes": [
+        "ar"
+      ],
+      "aliases": [
+        "Kuwait"
+      ]
+    },
+    {
+      "code": "LA",
+      "name": "Lao People's Democratic Republic",
+      "languageCodes": [
+        "lo",
+        "kjg",
+        "hnj",
+        "kdt"
+      ],
+      "aliases": [
+        "Lao People's Democratic Republic"
+      ]
+    },
+    {
+      "code": "LB",
+      "name": "Lebanon",
+      "languageCodes": [
+        "apc",
+        "ar",
+        "en",
+        "fr",
+        "hy",
+        "ku_Arab"
+      ],
+      "aliases": [
+        "Lebanon"
+      ]
+    },
+    {
+      "code": "LR",
+      "name": "Liberia",
+      "languageCodes": [
+        "en",
+        "kpe",
+        "vai",
+        "men",
+        "ff",
+        "ff_Adlm",
+        "vai_Latn"
+      ],
+      "aliases": [
+        "Liberia"
+      ]
+    },
+    {
+      "code": "LY",
+      "name": "Libya",
+      "languageCodes": [
+        "ar"
+      ],
+      "aliases": [
+        "Libya"
+      ]
+    },
+    {
+      "code": "LC",
+      "name": "Saint Lucia",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Saint Lucia"
+      ]
+    },
+    {
+      "code": "LI",
+      "name": "Liechtenstein",
+      "languageCodes": [
+        "de",
+        "gsw",
+        "wae"
+      ],
+      "aliases": [
+        "Liechtenstein"
+      ]
+    },
+    {
+      "code": "LK",
+      "name": "Sri Lanka",
+      "languageCodes": [
+        "si",
+        "ta",
+        "en"
+      ],
+      "aliases": [
+        "Sri Lanka"
+      ]
+    },
+    {
+      "code": "LS",
+      "name": "Lesotho",
+      "languageCodes": [
+        "st",
+        "en",
+        "zu",
+        "ss",
+        "xh"
+      ],
+      "aliases": [
+        "Lesotho"
+      ]
+    },
+    {
+      "code": "LT",
+      "name": "Lithuania",
+      "languageCodes": [
+        "lt",
+        "ru",
+        "en",
+        "de",
+        "sgs"
+      ],
+      "aliases": [
+        "Lithuania"
+      ]
+    },
+    {
+      "code": "LU",
+      "name": "Luxembourg",
+      "languageCodes": [
+        "fr",
+        "lb",
+        "de",
+        "en",
+        "pt"
+      ],
+      "aliases": [
+        "Luxembourg"
+      ]
+    },
+    {
+      "code": "LV",
+      "name": "Latvia",
+      "languageCodes": [
+        "lv",
+        "en",
+        "ru",
+        "ltg"
+      ],
+      "aliases": [
+        "Latvia"
+      ]
+    },
+    {
+      "code": "MO",
+      "name": "Macao",
+      "languageCodes": [
+        "zh_Hant",
+        "yue",
+        "en",
+        "zh",
+        "nan",
+        "fil",
+        "pt"
+      ],
+      "aliases": [
+        "Macao"
+      ]
+    },
+    {
+      "code": "MF",
+      "name": "Saint Martin (French part)",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "Saint Martin (French part)"
+      ]
+    },
+    {
+      "code": "MA",
+      "name": "Morocco",
+      "languageCodes": [
+        "ary",
+        "ar",
+        "fr",
+        "zgh",
+        "en",
+        "tzm",
+        "shi",
+        "shi_Latn",
+        "rif",
+        "rif_Tfng",
+        "es"
+      ],
+      "aliases": [
+        "Morocco"
+      ]
+    },
+    {
+      "code": "MC",
+      "name": "Monaco",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "Monaco"
+      ]
+    },
+    {
+      "code": "MD",
+      "name": "Moldova, Republic of",
+      "languageCodes": [
+        "ro",
+        "uk",
+        "bg",
+        "gag",
+        "ru"
+      ],
+      "aliases": [
+        "Moldova, Republic of"
+      ]
+    },
+    {
+      "code": "MG",
+      "name": "Madagascar",
+      "languageCodes": [
+        "mg",
+        "fr",
+        "en"
+      ],
+      "aliases": [
+        "Madagascar"
+      ]
+    },
+    {
+      "code": "MV",
+      "name": "Maldives",
+      "languageCodes": [
+        "dv",
+        "en"
+      ],
+      "aliases": [
+        "Maldives"
+      ]
+    },
+    {
+      "code": "MX",
+      "name": "Mexico",
+      "languageCodes": [
+        "es",
+        "en",
+        "yua",
+        "nhe",
+        "nhw",
+        "maz",
+        "nch",
+        "vec",
+        "sei"
+      ],
+      "aliases": [
+        "Mexico"
+      ]
+    },
+    {
+      "code": "MH",
+      "name": "Marshall Islands",
+      "languageCodes": [
+        "en",
+        "mh"
+      ],
+      "aliases": [
+        "Marshall Islands"
+      ]
+    },
+    {
+      "code": "MK",
+      "name": "North Macedonia",
+      "languageCodes": [
+        "mk",
+        "sq",
+        "tr"
+      ],
+      "aliases": [
+        "North Macedonia"
+      ]
+    },
+    {
+      "code": "ML",
+      "name": "Mali",
+      "languageCodes": [
+        "bm",
+        "fr",
+        "ffm",
+        "snk",
+        "mwk",
+        "ses",
+        "tmh",
+        "bm_Nkoo",
+        "khq",
+        "dtm",
+        "kao",
+        "ar",
+        "bmq",
+        "bze"
+      ],
+      "aliases": [
+        "Mali"
+      ]
+    },
+    {
+      "code": "MT",
+      "name": "Malta",
+      "languageCodes": [
+        "mt",
+        "en",
+        "it",
+        "fr"
+      ],
+      "aliases": [
+        "Malta"
+      ]
+    },
+    {
+      "code": "MM",
+      "name": "Myanmar",
+      "languageCodes": [
+        "my",
+        "shn",
+        "kac",
+        "rhg",
+        "mnw",
+        "hnj",
+        "kht"
+      ],
+      "aliases": [
+        "Myanmar"
+      ]
+    },
+    {
+      "code": "ME",
+      "name": "Montenegro",
+      "languageCodes": [
+        "sr_Latn",
+        "sq",
+        "sr"
+      ],
+      "aliases": [
+        "Montenegro"
+      ]
+    },
+    {
+      "code": "MN",
+      "name": "Mongolia",
+      "languageCodes": [
+        "mn",
+        "kk_Arab",
+        "zh",
+        "ru",
+        "ug_Cyrl"
+      ],
+      "aliases": [
+        "Mongolia"
+      ]
+    },
+    {
+      "code": "MP",
+      "name": "Northern Mariana Islands",
+      "languageCodes": [
+        "en",
+        "ch"
+      ],
+      "aliases": [
+        "Northern Mariana Islands"
+      ]
+    },
+    {
+      "code": "MZ",
+      "name": "Mozambique",
+      "languageCodes": [
+        "pt",
+        "vmw",
+        "ndc",
+        "ts",
+        "ngl",
+        "seh",
+        "mgh",
+        "rng",
+        "ny",
+        "yao",
+        "sw",
+        "zu"
+      ],
+      "aliases": [
+        "Mozambique"
+      ]
+    },
+    {
+      "code": "MR",
+      "name": "Mauritania",
+      "languageCodes": [
+        "ar",
+        "fr",
+        "ff",
+        "wo",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Mauritania"
+      ]
+    },
+    {
+      "code": "MS",
+      "name": "Montserrat",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Montserrat"
+      ]
+    },
+    {
+      "code": "MQ",
+      "name": "Martinique",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "Martinique"
+      ]
+    },
+    {
+      "code": "MU",
+      "name": "Mauritius",
+      "languageCodes": [
+        "mfe",
+        "fr",
+        "en",
+        "bho",
+        "ur",
+        "ta"
+      ],
+      "aliases": [
+        "Mauritius"
+      ]
+    },
+    {
+      "code": "MW",
+      "name": "Malawi",
+      "languageCodes": [
+        "en",
+        "ny",
+        "tum",
+        "tog",
+        "zu"
+      ],
+      "aliases": [
+        "Malawi"
+      ]
+    },
+    {
+      "code": "MY",
+      "name": "Malaysia",
+      "languageCodes": [
+        "ms",
+        "en",
+        "zh",
+        "ta",
+        "iba",
+        "jv",
+        "zmi",
+        "dtp",
+        "ml",
+        "bug",
+        "bjn"
+      ],
+      "aliases": [
+        "Malaysia"
+      ]
+    },
+    {
+      "code": "YT",
+      "name": "Mayotte",
+      "languageCodes": [
+        "swb",
+        "fr",
+        "buc",
+        "sw"
+      ],
+      "aliases": [
+        "Mayotte"
+      ]
+    },
+    {
+      "code": "NA",
+      "name": "Namibia",
+      "languageCodes": [
+        "af",
+        "kj",
+        "ng",
+        "naq",
+        "hz",
+        "en",
+        "de",
+        "tn"
+      ],
+      "aliases": [
+        "Namibia"
+      ]
+    },
+    {
+      "code": "NC",
+      "name": "New Caledonia",
+      "languageCodes": [
+        "fr"
+      ],
+      "aliases": [
+        "New Caledonia"
+      ]
+    },
+    {
+      "code": "NE",
+      "name": "Niger",
+      "languageCodes": [
+        "ha",
+        "dje",
+        "fr",
+        "fuq",
+        "tmh",
+        "ar",
+        "twq",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Niger"
+      ]
+    },
+    {
+      "code": "NF",
+      "name": "Norfolk Island",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Norfolk Island"
+      ]
+    },
+    {
+      "code": "NG",
+      "name": "Nigeria",
+      "languageCodes": [
+        "en",
+        "pcm",
+        "ha",
+        "ig",
+        "yo",
+        "fuv",
+        "tiv",
+        "efi",
+        "ibb",
+        "ha_Arab",
+        "bin",
+        "kaj",
+        "kcg",
+        "ar",
+        "cch",
+        "amo",
+        "ann",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Nigeria"
+      ]
+    },
+    {
+      "code": "NI",
+      "name": "Nicaragua",
+      "languageCodes": [
+        "es"
+      ],
+      "aliases": [
+        "Nicaragua"
+      ]
+    },
+    {
+      "code": "NU",
+      "name": "Niue",
+      "languageCodes": [
+        "en",
+        "niu"
+      ],
+      "aliases": [
+        "Niue"
+      ]
+    },
+    {
+      "code": "NL",
+      "name": "Netherlands",
+      "languageCodes": [
+        "nl",
+        "en",
+        "de",
+        "fr",
+        "nds",
+        "li",
+        "fy",
+        "gos",
+        "id",
+        "zea",
+        "rif",
+        "tr"
+      ],
+      "aliases": [
+        "Netherlands"
+      ]
+    },
+    {
+      "code": "NO",
+      "name": "Norway",
+      "languageCodes": [
+        "nb",
+        "no",
+        "nn",
+        "se"
+      ],
+      "aliases": [
+        "Norway"
+      ]
+    },
+    {
+      "code": "NP",
+      "name": "Nepal",
+      "languageCodes": [
+        "ne",
+        "mai",
+        "bho",
+        "new",
+        "jml",
+        "en",
+        "dty",
+        "awa",
+        "thl",
+        "bap",
+        "tdg",
+        "thr",
+        "lif",
+        "mgp",
+        "thq",
+        "mrd",
+        "bfy",
+        "xsr",
+        "rjs",
+        "taj",
+        "hi",
+        "gvr",
+        "bo",
+        "tkt",
+        "tdh",
+        "bn",
+        "unr_Deva",
+        "lep"
+      ],
+      "aliases": [
+        "Nepal"
+      ]
+    },
+    {
+      "code": "NR",
+      "name": "Nauru",
+      "languageCodes": [
+        "en",
+        "na"
+      ],
+      "aliases": [
+        "Nauru"
+      ]
+    },
+    {
+      "code": "NZ",
+      "name": "New Zealand",
+      "languageCodes": [
+        "en",
+        "mi"
+      ],
+      "aliases": [
+        "New Zealand"
+      ]
+    },
+    {
+      "code": "OM",
+      "name": "Oman",
+      "languageCodes": [
+        "ar",
+        "bal",
+        "fa"
+      ],
+      "aliases": [
+        "Oman"
+      ]
+    },
+    {
+      "code": "PK",
+      "name": "Pakistan",
+      "languageCodes": [
+        "ur",
+        "pa_Arab",
+        "en",
+        "lah",
+        "ps",
+        "sd",
+        "skr",
+        "bal",
+        "hno",
+        "brh",
+        "fa",
+        "bgn",
+        "hnd",
+        "tg_Arab",
+        "gju",
+        "bft",
+        "kvx",
+        "khw",
+        "mvy",
+        "gjk",
+        "kxp",
+        "ks",
+        "trw",
+        "btv"
+      ],
+      "aliases": [
+        "Pakistan"
+      ]
+    },
+    {
+      "code": "PA",
+      "name": "Panama",
+      "languageCodes": [
+        "es",
+        "en",
+        "zh_Hant"
+      ],
+      "aliases": [
+        "Panama"
+      ]
+    },
+    {
+      "code": "PN",
+      "name": "Pitcairn",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Pitcairn"
+      ]
+    },
+    {
+      "code": "PE",
+      "name": "Peru",
+      "languageCodes": [
+        "es",
+        "qu",
+        "ay"
+      ],
+      "aliases": [
+        "Peru"
+      ]
+    },
+    {
+      "code": "PH",
+      "name": "Philippines",
+      "languageCodes": [
+        "en",
+        "fil",
+        "es",
+        "ceb",
+        "ilo",
+        "hil",
+        "bik",
+        "war",
+        "fbl",
+        "pam",
+        "pag",
+        "mdh",
+        "tsg",
+        "zh_Hant",
+        "cps",
+        "krj",
+        "bto",
+        "hnn",
+        "tbw",
+        "bku"
+      ],
+      "aliases": [
+        "Philippines"
+      ]
+    },
+    {
+      "code": "PW",
+      "name": "Palau",
+      "languageCodes": [
+        "pau",
+        "en"
+      ],
+      "aliases": [
+        "Palau"
+      ]
+    },
+    {
+      "code": "PG",
+      "name": "Papua New Guinea",
+      "languageCodes": [
+        "tpi",
+        "en",
+        "ho"
+      ],
+      "aliases": [
+        "Papua New Guinea"
+      ]
+    },
+    {
+      "code": "PL",
+      "name": "Poland",
+      "languageCodes": [
+        "pl",
+        "en",
+        "de",
+        "ru",
+        "szl",
+        "be",
+        "uk",
+        "csb",
+        "sli",
+        "lt",
+        "prg"
+      ],
+      "aliases": [
+        "Poland"
+      ]
+    },
+    {
+      "code": "PR",
+      "name": "Puerto Rico",
+      "languageCodes": [
+        "es",
+        "en"
+      ],
+      "aliases": [
+        "Puerto Rico"
+      ]
+    },
+    {
+      "code": "KP",
+      "name": "Korea, Democratic People's Republic of",
+      "languageCodes": [
+        "ko"
+      ],
+      "aliases": [
+        "North Korea",
+        "DPRK"
+      ]
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "languageCodes": [
+        "pt",
+        "en",
+        "fr",
+        "es",
+        "gl"
+      ],
+      "aliases": [
+        "Portugal"
+      ]
+    },
+    {
+      "code": "PY",
+      "name": "Paraguay",
+      "languageCodes": [
+        "gn",
+        "es",
+        "de"
+      ],
+      "aliases": [
+        "Paraguay"
+      ]
+    },
+    {
+      "code": "PS",
+      "name": "Palestine, State of",
+      "languageCodes": [
+        "ar",
+        "apc"
+      ],
+      "aliases": [
+        "Palestine, State of"
+      ]
+    },
+    {
+      "code": "PF",
+      "name": "French Polynesia",
+      "languageCodes": [
+        "fr",
+        "ty",
+        "zh_Hant"
+      ],
+      "aliases": [
+        "French Polynesia"
+      ]
+    },
+    {
+      "code": "QA",
+      "name": "Qatar",
+      "languageCodes": [
+        "ar",
+        "fa",
+        "ml"
+      ],
+      "aliases": [
+        "Qatar"
+      ]
+    },
+    {
+      "code": "RE",
+      "name": "Réunion",
+      "languageCodes": [
+        "fr",
+        "rcf",
+        "ta"
+      ],
+      "aliases": [
+        "Réunion"
+      ]
+    },
+    {
+      "code": "RO",
+      "name": "Romania",
+      "languageCodes": [
+        "ro",
+        "en",
+        "fr",
+        "es",
+        "hu",
+        "de",
+        "tr",
+        "sr_Latn",
+        "bg",
+        "el",
+        "pl"
+      ],
+      "aliases": [
+        "Romania"
+      ]
+    },
+    {
+      "code": "RU",
+      "name": "Russian Federation",
+      "languageCodes": [
+        "ru",
+        "tt",
+        "ba",
+        "cv",
+        "hy",
+        "ce",
+        "av",
+        "udm",
+        "chm",
+        "os",
+        "sah",
+        "kbd",
+        "myv",
+        "dar",
+        "bua",
+        "mdf",
+        "kum",
+        "kv",
+        "lez",
+        "krc",
+        "inh",
+        "tyv",
+        "az_Cyrl",
+        "ady",
+        "krl",
+        "lbe",
+        "koi",
+        "pnt_Cyrl",
+        "mrj",
+        "alt",
+        "fi",
+        "sr",
+        "vep",
+        "mn",
+        "kaa",
+        "izh",
+        "cu",
+        "vot"
+      ],
+      "aliases": [
+        "Russia",
+        "Russian Federation"
+      ]
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "languageCodes": [
+        "rw",
+        "en",
+        "fr"
+      ],
+      "aliases": [
+        "Rwanda"
+      ]
+    },
+    {
+      "code": "SA",
+      "name": "Saudi Arabia",
+      "languageCodes": [
+        "ar",
+        "ars"
+      ],
+      "aliases": [
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "code": "SD",
+      "name": "Sudan",
+      "languageCodes": [
+        "apd",
+        "ar",
+        "en",
+        "bej",
+        "fvr",
+        "ha_Arab",
+        "mls",
+        "fia",
+        "zag"
+      ],
+      "aliases": [
+        "Sudan"
+      ]
+    },
+    {
+      "code": "SN",
+      "name": "Senegal",
+      "languageCodes": [
+        "wo",
+        "fr",
+        "ff",
+        "srr",
+        "dyo",
+        "sav",
+        "mfv",
+        "bjt",
+        "snf",
+        "knf",
+        "bsc",
+        "mey",
+        "tnr",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Senegal"
+      ]
+    },
+    {
+      "code": "SG",
+      "name": "Singapore",
+      "languageCodes": [
+        "en",
+        "zh",
+        "ms",
+        "ta",
+        "ml",
+        "pa"
+      ],
+      "aliases": [
+        "Singapore"
+      ]
+    },
+    {
+      "code": "GS",
+      "name": "South Georgia and the South Sandwich Islands",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "South Georgia and the South Sandwich Islands"
+      ]
+    },
+    {
+      "code": "SH",
+      "name": "Saint Helena, Ascension and Tristan da Cunha",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Saint Helena, Ascension and Tristan da Cunha"
+      ]
+    },
+    {
+      "code": "SJ",
+      "name": "Svalbard and Jan Mayen",
+      "languageCodes": [
+        "nb",
+        "ru"
+      ],
+      "aliases": [
+        "Svalbard and Jan Mayen"
+      ]
+    },
+    {
+      "code": "SB",
+      "name": "Solomon Islands",
+      "languageCodes": [
+        "en",
+        "pis",
+        "rug"
+      ],
+      "aliases": [
+        "Solomon Islands"
+      ]
+    },
+    {
+      "code": "SL",
+      "name": "Sierra Leone",
+      "languageCodes": [
+        "kri",
+        "en",
+        "men",
+        "tem",
+        "ff",
+        "ff_Adlm"
+      ],
+      "aliases": [
+        "Sierra Leone"
+      ]
+    },
+    {
+      "code": "SV",
+      "name": "El Salvador",
+      "languageCodes": [
+        "es",
+        "ccr",
+        "ppl",
+        "len"
+      ],
+      "aliases": [
+        "El Salvador"
+      ]
+    },
+    {
+      "code": "SM",
+      "name": "San Marino",
+      "languageCodes": [
+        "it",
+        "eo"
+      ],
+      "aliases": [
+        "San Marino"
+      ]
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "languageCodes": [
+        "so",
+        "ar",
+        "sw",
+        "om"
+      ],
+      "aliases": [
+        "Somalia"
+      ]
+    },
+    {
+      "code": "PM",
+      "name": "Saint Pierre and Miquelon",
+      "languageCodes": [
+        "fr",
+        "en"
+      ],
+      "aliases": [
+        "Saint Pierre and Miquelon"
+      ]
+    },
+    {
+      "code": "RS",
+      "name": "Serbia",
+      "languageCodes": [
+        "sr",
+        "sr_Latn",
+        "sq",
+        "hu",
+        "ro",
+        "hr",
+        "sk",
+        "uk"
+      ],
+      "aliases": [
+        "Serbia"
+      ]
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "languageCodes": [
+        "ar",
+        "en",
+        "nus"
+      ],
+      "aliases": [
+        "South Sudan"
+      ]
+    },
+    {
+      "code": "ST",
+      "name": "Sao Tome and Principe",
+      "languageCodes": [
+        "pt",
+        "fr"
+      ],
+      "aliases": [
+        "Sao Tome and Principe"
+      ]
+    },
+    {
+      "code": "SR",
+      "name": "Suriname",
+      "languageCodes": [
+        "nl",
+        "srn",
+        "zh_Hant",
+        "hnj"
+      ],
+      "aliases": [
+        "Suriname"
+      ]
+    },
+    {
+      "code": "SK",
+      "name": "Slovakia",
+      "languageCodes": [
+        "sk",
+        "cs",
+        "en",
+        "de",
+        "hu",
+        "uk",
+        "pl"
+      ],
+      "aliases": [
+        "Slovakia"
+      ]
+    },
+    {
+      "code": "SI",
+      "name": "Slovenia",
+      "languageCodes": [
+        "sl",
+        "hr",
+        "en",
+        "de",
+        "vec",
+        "hu",
+        "it"
+      ],
+      "aliases": [
+        "Slovenia"
+      ]
+    },
+    {
+      "code": "SE",
+      "name": "Sweden",
+      "languageCodes": [
+        "sv",
+        "en",
+        "fi",
+        "fit",
+        "se",
+        "rmu",
+        "yi",
+        "smj",
+        "sma",
+        "ia"
+      ],
+      "aliases": [
+        "Sweden"
+      ]
+    },
+    {
+      "code": "SZ",
+      "name": "Eswatini",
+      "languageCodes": [
+        "en",
+        "ss",
+        "zu",
+        "ts"
+      ],
+      "aliases": [
+        "Eswatini"
+      ]
+    },
+    {
+      "code": "SX",
+      "name": "Sint Maarten (Dutch part)",
+      "languageCodes": [
+        "en",
+        "es",
+        "vic",
+        "nl"
+      ],
+      "aliases": [
+        "Sint Maarten (Dutch part)"
+      ]
+    },
+    {
+      "code": "SC",
+      "name": "Seychelles",
+      "languageCodes": [
+        "crs",
+        "fr",
+        "en"
+      ],
+      "aliases": [
+        "Seychelles"
+      ]
+    },
+    {
+      "code": "SY",
+      "name": "Syrian Arab Republic",
+      "languageCodes": [
+        "apc",
+        "ar",
+        "ku",
+        "fr",
+        "hy",
+        "syr"
+      ],
+      "aliases": [
+        "Syrian Arab Republic"
+      ]
+    },
+    {
+      "code": "TC",
+      "name": "Turks and Caicos Islands",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Turks and Caicos Islands"
+      ]
+    },
+    {
+      "code": "TD",
+      "name": "Chad",
+      "languageCodes": [
+        "ar",
+        "fr"
+      ],
+      "aliases": [
+        "Chad"
+      ]
+    },
+    {
+      "code": "TG",
+      "name": "Togo",
+      "languageCodes": [
+        "fr",
+        "ee",
+        "ife",
+        "blo"
+      ],
+      "aliases": [
+        "Togo"
+      ]
+    },
+    {
+      "code": "TH",
+      "name": "Thailand",
+      "languageCodes": [
+        "th",
+        "en",
+        "tts",
+        "nod",
+        "sou",
+        "mfa",
+        "zh_Hant",
+        "kxm",
+        "kdt",
+        "mnw",
+        "hnj",
+        "shn",
+        "lcp",
+        "lwl"
+      ],
+      "aliases": [
+        "Thailand"
+      ]
+    },
+    {
+      "code": "TJ",
+      "name": "Tajikistan",
+      "languageCodes": [
+        "tg",
+        "ru",
+        "fa",
+        "ar"
+      ],
+      "aliases": [
+        "Tajikistan"
+      ]
+    },
+    {
+      "code": "TK",
+      "name": "Tokelau",
+      "languageCodes": [
+        "tkl",
+        "en",
+        "sm"
+      ],
+      "aliases": [
+        "Tokelau"
+      ]
+    },
+    {
+      "code": "TM",
+      "name": "Turkmenistan",
+      "languageCodes": [
+        "tk",
+        "ru",
+        "uz",
+        "ku",
+        "kaa"
+      ],
+      "aliases": [
+        "Turkmenistan"
+      ]
+    },
+    {
+      "code": "TL",
+      "name": "Timor-Leste",
+      "languageCodes": [
+        "pt",
+        "tet"
+      ],
+      "aliases": [
+        "Timor-Leste"
+      ]
+    },
+    {
+      "code": "TO",
+      "name": "Tonga",
+      "languageCodes": [
+        "to",
+        "en"
+      ],
+      "aliases": [
+        "Tonga"
+      ]
+    },
+    {
+      "code": "TT",
+      "name": "Trinidad and Tobago",
+      "languageCodes": [
+        "en",
+        "es"
+      ],
+      "aliases": [
+        "Trinidad and Tobago"
+      ]
+    },
+    {
+      "code": "TN",
+      "name": "Tunisia",
+      "languageCodes": [
+        "aeb",
+        "ar",
+        "fr"
+      ],
+      "aliases": [
+        "Tunisia"
+      ]
+    },
+    {
+      "code": "TR",
+      "name": "Türkiye",
+      "languageCodes": [
+        "tr",
+        "en",
+        "ku",
+        "apc",
+        "zza",
+        "kbd",
+        "az",
+        "az_Arab",
+        "ar",
+        "bgx",
+        "bg",
+        "ady",
+        "kiu",
+        "kaa",
+        "hy",
+        "ka",
+        "lzz",
+        "sr_Latn",
+        "sq",
+        "pnt_Latn",
+        "ab",
+        "el",
+        "tru",
+        "uz",
+        "ky_Latn",
+        "kk"
+      ],
+      "aliases": [
+        "Türkiye",
+        "Turkiye",
+        "Turkey",
+        "Türkei"
+      ]
+    },
+    {
+      "code": "TV",
+      "name": "Tuvalu",
+      "languageCodes": [
+        "tvl",
+        "en"
+      ],
+      "aliases": [
+        "Tuvalu"
+      ]
+    },
+    {
+      "code": "TW",
+      "name": "Taiwan, Province of China",
+      "languageCodes": [
+        "zh_Hant",
+        "nan_Hant",
+        "hak_Hant",
+        "trv"
+      ],
+      "aliases": [
+        "Taiwan",
+        "Republic of China"
+      ]
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania, United Republic of",
+      "languageCodes": [
+        "sw",
+        "en",
+        "suk",
+        "nym",
+        "kde",
+        "bez",
+        "ksb",
+        "mas",
+        "mgy",
+        "asa",
+        "lag",
+        "jmc",
+        "rof",
+        "vun",
+        "rwk",
+        "sbp"
+      ],
+      "aliases": [
+        "Tanzania, United Republic of"
+      ]
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "languageCodes": [
+        "sw",
+        "lg",
+        "nyn",
+        "cgg",
+        "xog",
+        "en",
+        "teo",
+        "laj",
+        "ach",
+        "myx",
+        "rw",
+        "ttj",
+        "hi"
+      ],
+      "aliases": [
+        "Uganda"
+      ]
+    },
+    {
+      "code": "UA",
+      "name": "Ukraine",
+      "languageCodes": [
+        "uk",
+        "ru",
+        "pl",
+        "yi",
+        "rue",
+        "be",
+        "crh",
+        "ro",
+        "bg",
+        "tr",
+        "hu",
+        "el"
+      ],
+      "aliases": [
+        "Ukraine"
+      ]
+    },
+    {
+      "code": "UM",
+      "name": "United States Minor Outlying Islands",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "United States Minor Outlying Islands"
+      ]
+    },
+    {
+      "code": "UY",
+      "name": "Uruguay",
+      "languageCodes": [
+        "es"
+      ],
+      "aliases": [
+        "Uruguay"
+      ]
+    },
+    {
+      "code": "US",
+      "name": "United States",
+      "languageCodes": [
+        "en",
+        "es",
+        "zh_Hant",
+        "fr",
+        "de",
+        "fil",
+        "it",
+        "vi",
+        "ko",
+        "ru",
+        "nv",
+        "yi",
+        "pdc",
+        "hnj",
+        "haw",
+        "frc",
+        "chr",
+        "esu",
+        "dak",
+        "cho",
+        "lkt",
+        "ik",
+        "mus",
+        "cad",
+        "cic",
+        "io",
+        "jbo",
+        "osa"
+      ],
+      "aliases": [
+        "USA",
+        "United States",
+        "United States of America",
+        "America"
+      ]
+    },
+    {
+      "code": "UZ",
+      "name": "Uzbekistan",
+      "languageCodes": [
+        "uz",
+        "uz_Cyrl",
+        "ru",
+        "kaa",
+        "tr"
+      ],
+      "aliases": [
+        "Uzbekistan"
+      ]
+    },
+    {
+      "code": "VA",
+      "name": "Holy See (Vatican City State)",
+      "languageCodes": [
+        "it",
+        "la"
+      ],
+      "aliases": [
+        "Holy See (Vatican City State)"
+      ]
+    },
+    {
+      "code": "VC",
+      "name": "Saint Vincent and the Grenadines",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Saint Vincent and the Grenadines"
+      ]
+    },
+    {
+      "code": "VE",
+      "name": "Venezuela, Bolivarian Republic of",
+      "languageCodes": [
+        "es",
+        "yrl"
+      ],
+      "aliases": [
+        "Venezuela, Bolivarian Republic of"
+      ]
+    },
+    {
+      "code": "VG",
+      "name": "Virgin Islands, British",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Virgin Islands, British"
+      ]
+    },
+    {
+      "code": "VI",
+      "name": "Virgin Islands, U.S.",
+      "languageCodes": [
+        "en"
+      ],
+      "aliases": [
+        "Virgin Islands, U.S."
+      ]
+    },
+    {
+      "code": "VN",
+      "name": "Viet Nam",
+      "languageCodes": [
+        "vi",
+        "zh_Hant",
+        "blt",
+        "hnj",
+        "cjm"
+      ],
+      "aliases": [
+        "Vietnam",
+        "Viet Nam"
+      ]
+    },
+    {
+      "code": "VU",
+      "name": "Vanuatu",
+      "languageCodes": [
+        "bi",
+        "en",
+        "fr"
+      ],
+      "aliases": [
+        "Vanuatu"
+      ]
+    },
+    {
+      "code": "WF",
+      "name": "Wallis and Futuna",
+      "languageCodes": [
+        "fr",
+        "wls",
+        "fud"
+      ],
+      "aliases": [
+        "Wallis and Futuna"
+      ]
+    },
+    {
+      "code": "WS",
+      "name": "Samoa",
+      "languageCodes": [
+        "sm",
+        "en"
+      ],
+      "aliases": [
+        "Samoa"
+      ]
+    },
+    {
+      "code": "YE",
+      "name": "Yemen",
+      "languageCodes": [
+        "ar",
+        "en"
+      ],
+      "aliases": [
+        "Yemen"
+      ]
+    },
+    {
+      "code": "ZA",
+      "name": "South Africa",
+      "languageCodes": [
+        "en",
+        "zu",
+        "xh",
+        "af",
+        "nso",
+        "tn",
+        "st",
+        "ts",
+        "ss",
+        "ve",
+        "hi",
+        "nr",
+        "sw"
+      ],
+      "aliases": [
+        "South Africa"
+      ]
+    },
+    {
+      "code": "ZM",
+      "name": "Zambia",
+      "languageCodes": [
+        "bem",
+        "ny",
+        "en",
+        "toi",
+        "loz",
+        "nse",
+        "leb",
+        "tum",
+        "kqn",
+        "lun",
+        "lue"
+      ],
+      "aliases": [
+        "Zambia"
+      ]
+    },
+    {
+      "code": "ZW",
+      "name": "Zimbabwe",
+      "languageCodes": [
+        "sn",
+        "en",
+        "nd",
+        "mxc",
+        "ndc",
+        "kck",
+        "ny",
+        "ve",
+        "tn"
+      ],
+      "aliases": [
+        "Zimbabwe"
+      ]
+    }
+  ]
+}

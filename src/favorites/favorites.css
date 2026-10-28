@@ -2281,3 +2281,6 @@ mark {
     grid-template-columns: 1fr;
   }
 }
+.suggestion-candidates{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.suggestion-candidate{border:1px solid rgba(124,92,255,.35);background:rgba(124,92,255,.09);color:inherit;border-radius:999px;padding:5px 9px;cursor:pointer;font:inherit}
+.suggestion-candidate span{opacity:.72;font-size:.85em}
