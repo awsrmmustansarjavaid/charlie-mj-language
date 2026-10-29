@@ -30,7 +30,7 @@ and thumbnails, Suggestions, and local data synchronization.
     <img src="https://img.shields.io/badge/charliemj--language-v2.0.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
-  <a href="downloads/charlie-mj-language/charlie-mj-language v2.1.0/CharlieMJ-Language-v2.1.0.zip">
+  <a href="downloads/charlie-mj-language/charlie-mj-language v2.1.0/CharlieMJ-Language-v2.1.0-final.zip">
     <img src="https://img.shields.io/badge/charliemj--language-v2.1.0-0969da?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Download charliemj-language v2.0.0">
   </a>
   &nbsp;
