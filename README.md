@@ -49,6 +49,8 @@ and thumbnails, Suggestions, and local data synchronization.
 
 The installer handles the required setup steps automatically. If you run the application with the `--setup` argument, it will repeat the clipboard configuration and Chrome Extensions page setup process.
 
+![Charlie MJ Language Installer](assets/charlie-mj-language-installer.png)
+
 ### ⚠️ Important Notes
 
 - **Windows SmartScreen:** Windows may display an **"Unknown publisher"** warning because the installer is not currently code-signed. If you trust the source, select **More info → Run anyway** to continue.
