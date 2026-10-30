@@ -2286,84 +2286,92 @@ mark {
 .suggestion-candidate span{opacity:.72;font-size:.85em}
 
 
+
 /* ==========================================================
    CHARLIE MJ — TRANSPARENT SEARCH SUGGESTIONS
-   Version: 1.0
-   Purpose:
-   - Make autocomplete suggestions transparent.
-   - Allow search results behind the dropdown to remain visible.
-   - Preserve readability and existing search functionality.
+   Version: 1.1
    ========================================================== */
 
-/* Main autocomplete dropdown container */
+/* ==========================================================
+   CUSTOM SETTINGS — CHANGE THESE VALUES
+   ========================================================== */
+
+:root {
+  /* Dropdown height: adjust to show approximately 2 results */
+  --suggestions-height: 130px;
+
+  /* Background transparency */
+  --suggestions-opacity: 0.78;
+
+  /* Glass blur intensity */
+  --suggestions-blur: 12px;
+}
+
+/* ==========================================================
+   MAIN AUTOCOMPLETE DROPDOWN
+   ========================================================== */
+
 .suggestions {
-  /* Semi-transparent dark background */
-  background: rgba(13, 23, 39, 0.78);
+  background: rgba(13, 23, 39, var(--suggestions-opacity));
 
-  /* Glassmorphism background blur */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--suggestions-blur));
+  -webkit-backdrop-filter: blur(var(--suggestions-blur));
 
-  /* Subtle glass border */
   border: 1px solid rgba(148, 163, 184, 0.25);
-
-  /* Rounded dropdown corners */
   border-radius: 10px;
 
-  /* Keep suggestions above the resource cards */
   position: absolute;
   z-index: 1000;
 
-  /* Limit dropdown height and allow scrolling */
-  max-height: 280px;
+  /* User-controlled dropdown height */
+  height: var(--suggestions-height);
+  max-height: var(--suggestions-height);
+
+  /* Enable scrolling for remaining results */
   overflow-y: auto;
   overflow-x: hidden;
 
-  /* Soft transparent shadow */
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30);
 
-  /* Smooth appearance */
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-/* Individual suggestion items */
+/* ==========================================================
+   INDIVIDUAL SUGGESTION ITEMS
+   ========================================================== */
+
 .suggestions button {
   display: block;
   width: 100%;
 
-  /* Transparent individual backgrounds */
   background: transparent;
-
-  /* Keep suggestion text readable */
   color: #e5e7eb;
 
   text-align: left;
   padding: 10px 12px;
 
-  /* Remove unnecessary individual borders */
   border: none;
   border-radius: 0;
 
-  /* Allow long suggestion text to wrap */
   white-space: normal;
   line-height: 1.5;
 
-  /* Smooth hover animation */
   transition: background 0.2s ease;
 }
 
-/* Highlight suggestion when hovering */
 .suggestions button:hover {
   background: rgba(99, 102, 241, 0.25);
   color: #ffffff;
 }
 
-/* Subtle separator between suggestions */
 .suggestions button + button {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Custom scrollbar */
+/* ==========================================================
+   CUSTOM SCROLLBAR
+   ========================================================== */
+
 .suggestions::-webkit-scrollbar {
   width: 6px;
 }
@@ -2381,7 +2389,10 @@ mark {
   background: rgba(148, 163, 184, 0.6);
 }
 
-/* Keep hidden suggestions completely hidden */
+/* ==========================================================
+   HIDDEN SUGGESTIONS
+   ========================================================== */
+
 .suggestions[hidden] {
   display: none !important;
 }
