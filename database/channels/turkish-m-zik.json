@@ -1,5 +1,702 @@
 [
   {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCBNKOJsrFIVQ6pGYQ_jAUJA",
+    "category": "Turkish müzik",
+    "categoryConfidence": 0.98,
+    "categoryEvidence": [
+      {
+        "confidence": 0.8248211926085953,
+        "keywords": [
+          "muzik",
+          "turkish",
+          "halay",
+          "havalari",
+          "oyun",
+          "sarkilar",
+          "roman",
+          "ciftetelli",
+          "horon",
+          "ankara",
+          "aylin",
+          "demir"
+        ],
+        "matchedRules": [],
+        "name": "Turkish müzik",
+        "score": 157.3,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.4924030630849641,
+        "keywords": [
+          "turkish"
+        ],
+        "matchedRules": [
+          "food-vlogger"
+        ],
+        "name": "Food Vlogger",
+        "score": 32.41,
+        "source": "metadata-rules"
+      },
+      {
+        "confidence": 0.48170901982686404,
+        "keywords": [
+          "muzik",
+          "turkish"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Muzik",
+        "score": 31.05,
+        "source": "existing-category"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.8248211926085953,
+          "keywords": [
+            "muzik",
+            "turkish",
+            "halay",
+            "havalari",
+            "oyun",
+            "sarkilar",
+            "roman",
+            "ciftetelli",
+            "horon",
+            "ankara",
+            "aylin",
+            "demir"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 157.3,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4924030630849641,
+          "keywords": [
+            "turkish"
+          ],
+          "matchedRules": [
+            "food-vlogger"
+          ],
+          "name": "Food Vlogger",
+          "score": 32.41,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.48170901982686404,
+          "keywords": [
+            "muzik",
+            "turkish"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Muzik",
+          "score": 31.05,
+          "source": "existing-category"
+        }
+      ],
+      "confidence": 0.98,
+      "countryCode": "TR",
+      "countryName": "Türkiye",
+      "evidence": [
+        {
+          "confidence": 0.8248211926085953,
+          "keywords": [
+            "muzik",
+            "turkish",
+            "halay",
+            "havalari",
+            "oyun",
+            "sarkilar",
+            "roman",
+            "ciftetelli",
+            "horon",
+            "ankara",
+            "aylin",
+            "demir"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 157.3,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4924030630849641,
+          "keywords": [
+            "turkish"
+          ],
+          "matchedRules": [
+            "food-vlogger"
+          ],
+          "name": "Food Vlogger",
+          "score": 32.41,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.48170901982686404,
+          "keywords": [
+            "muzik",
+            "turkish"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Muzik",
+          "score": 31.05,
+          "source": "existing-category"
+        }
+      ],
+      "keywords": [
+        "muzik",
+        "turkish",
+        "halay",
+        "havalari",
+        "oyun",
+        "sarkilar",
+        "roman",
+        "ciftetelli",
+        "horon",
+        "ankara",
+        "aylin",
+        "demir",
+        "yeni",
+        "turku",
+        "produksiyon",
+        "muzigi",
+        "yapim",
+        "arabesk",
+        "turkuler",
+        "resmi"
+      ],
+      "languageCode": "tr",
+      "languageName": "Turkish",
+      "level": "High",
+      "matchedRules": [],
+      "name": "Turkish müzik",
+      "reasons": [
+        "Country: Türkiye (turkish, ankara)",
+        "Language: Turkish (country default)",
+        "Turkish müzik: muzik, turkish, halay, havalari, oyun, sarkilar, roman, ciftetelli, horon, ankara, aylin, demir",
+        "Food Vlogger: turkish",
+        "Turkish Muzik: muzik, turkish"
+      ],
+      "source": "existing-category",
+      "strength": 24,
+      "suggestNew": false,
+      "suggestedName": "Turkish müzik"
+    },
+    "channelId": "UCBNKOJsrFIVQ6pGYQ_jAUJA",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "Türkiye",
+    "customUrl": "https://www.youtube.com/@Rivamuzik",
+    "dateAdded": "2026-10-30T07:57:31.406Z",
+    "description": "Riva Müzik’e hoş geldiniz! Oyun havaları, halay, roman havaları, Ankara havaları, çiftetelli, düğün müzikleri, arabesk ve türküler ile müziğin ve eğlencenin ritmi burada devam ediyor. Kanalımızda: • Kesintisiz oyun havası ve eğlence mixleri • Roman remix, davul zurna ve düğün dernek müzikleri • Arabesk, türkü ve duygusal müzik seçkileri • Turkish wedding music ve Turkish dance music içerikleri Riva Müzik ile eğlence hiç bitmez! Sinan Toprak Müzik Prodüksiyon Yapım A.Ş. Resmî YouTube Kanalıdır.",
+    "detectedLanguageCode": "tr",
+    "handle": "@Rivamuzik",
+    "hiddenSubscriberCount": false,
+    "id": "channel_14b0bbaa-c3c0-46fc-84eb-b06633b1148f",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"oyun havası\" halay \"oyun havaları\" \"ankara oyun havaları\" \"yeni oyun havası 2026\" \"roman oyun havası\" \"yeni halay 2026\" \"yeni ankara oyun havası 2026\" \"Riva...",
+      "oyun havası",
+      "halay",
+      "oyun havaları",
+      "ankara oyun havaları",
+      "yeni oyun havası 2026",
+      "roman oyun havası",
+      "yeni halay 2026",
+      "yeni ankara oyun havası 2026",
+      "Riva Müzik",
+      "Kesintisiz oyun havaları",
+      "Çiftetelli",
+      "Turkish Wedding Music",
+      "fatih bulut",
+      "aylin demir",
+      "oyna müzik",
+      "potpori oyun havaları",
+      "ankara potpori",
+      "halay potpori",
+      "mashup halay",
+      "Remix oyun havaları",
+      "remix halay",
+      "horon",
+      "2026 oyun havaları yeni çıkan",
+      "kına şarkıları",
+      "düğün de oynanacak oyun havaları",
+      "\"oyun havası\" halay \"oyun havaları\" \"ankara oyun havaları\" \"yeni oyun havası 2026\" \"roman oyun havası\" \"yeni halay 2026\" \"yeni ankara oyun havası 2026\" \"Riva Müzik\" \"Kesintisiz oyun havaları\" Çiftetelli \"Turkish Wedding Music\" \"fatih bulut\" \"aylin demir\" \"oyna müzik\" \"potpori oyun havaları\" \"ankara potpori\" \"halay potpori\" \"mashup halay\" \"Remix oyun havaları\" \"remix halay\" horon \"2026 oyun havaları yeni çıkan\" \"kına şarkıları\" \"düğün de oynanacak oyun havaları\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "tr",
+    "metadataLastChecked": "2026-10-30T07:57:31.328Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Riva Müzik - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "6 months ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/channel/UCBNKOJsrFIVQ6pGYQ_jAUJA",
+    "subscriberCount": "18.6K subscribers",
+    "subscriberCountNumber": 18600,
+    "tags": [
+      "\"oyun havası\" halay \"oyun havaları\" \"ankara oyun havaları\" \"yeni oyun havası 2026\" \"roman oyun havası\" \"yeni halay 2026\" \"yeni ankara oyun havası 2026\" \"Riva...",
+      "oyun havası",
+      "halay",
+      "oyun havaları",
+      "ankara oyun havaları",
+      "yeni oyun havası 2026",
+      "roman oyun havası",
+      "yeni halay 2026",
+      "yeni ankara oyun havası 2026",
+      "Riva Müzik",
+      "Kesintisiz oyun havaları",
+      "Çiftetelli",
+      "Turkish Wedding Music",
+      "fatih bulut",
+      "aylin demir",
+      "oyna müzik",
+      "potpori oyun havaları",
+      "ankara potpori",
+      "halay potpori",
+      "mashup halay",
+      "Remix oyun havaları",
+      "remix halay",
+      "horon",
+      "2026 oyun havaları yeni çıkan",
+      "kına şarkıları",
+      "düğün de oynanacak oyun havaları",
+      "\"oyun havası\" halay \"oyun havaları\" \"ankara oyun havaları\" \"yeni oyun havası 2026\" \"roman oyun havası\" \"yeni halay 2026\" \"yeni ankara oyun havası 2026\" \"Riva Müzik\" \"Kesintisiz oyun havaları\" Çiftetelli \"Turkish Wedding Music\" \"fatih bulut\" \"aylin demir\" \"oyna müzik\" \"potpori oyun havaları\" \"ankara potpori\" \"halay potpori\" \"mashup halay\" \"Remix oyun havaları\" \"remix halay\" horon \"2026 oyun havaları yeni çıkan\" \"kına şarkıları\" \"düğün de oynanacak oyun havaları\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/2Y_G4p9RbFYbjzObq9dcdjEb9g-dlxpX7SqDZuxTjb43Zd3uwVXSjeRI6rPXLhJsPktA6apExA=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T07:57:31.328Z",
+    "title": "Riva Müzik - YouTube",
+    "updatedAt": "2026-10-30T07:57:31.406Z",
+    "url": "https://www.youtube.com/channel/UCBNKOJsrFIVQ6pGYQ_jAUJA",
+    "verificationLabels": [
+      "Official Artist Channel",
+      "Verified"
+    ],
+    "verified": true,
+    "videoCount": "88 videos",
+    "videoCountNumber": 88,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCgtsD_JNdFE_Nuim96XDLWQ",
+    "category": "Turkish müzik",
+    "categoryConfidence": 0.98,
+    "categoryEvidence": [
+      {
+        "confidence": 0.9302325581395349,
+        "keywords": [
+          "sarki",
+          "turku",
+          "halay",
+          "arabesk"
+        ],
+        "matchedRules": [],
+        "name": "Turkish müzik",
+        "score": 30,
+        "source": "learned"
+      },
+      {
+        "confidence": 0.35714285714285715,
+        "keywords": [
+          "kanal"
+        ],
+        "matchedRules": [],
+        "name": "Türk dizisi",
+        "score": 1.25,
+        "source": "learned"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.9302325581395349,
+          "keywords": [
+            "sarki",
+            "turku",
+            "halay",
+            "arabesk"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 30,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.35714285714285715,
+          "keywords": [
+            "kanal"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 1.25,
+          "source": "learned"
+        }
+      ],
+      "confidence": 0.98,
+      "countryCode": "TR",
+      "countryName": "Türkiye",
+      "evidence": [
+        {
+          "confidence": 0.9302325581395349,
+          "keywords": [
+            "sarki",
+            "turku",
+            "halay",
+            "arabesk"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 30,
+          "source": "learned"
+        },
+        {
+          "confidence": 0.35714285714285715,
+          "keywords": [
+            "kanal"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 1.25,
+          "source": "learned"
+        }
+      ],
+      "keywords": [
+        "sarki",
+        "turku",
+        "halay",
+        "arabesk"
+      ],
+      "languageCode": "tr",
+      "languageName": "Turkish",
+      "level": "High",
+      "matchedRules": [],
+      "name": "Turkish müzik",
+      "reasons": [
+        "Country: Türkiye (ankara)",
+        "Language: Turkish (country default)",
+        "Turkish müzik: sarki, turku, halay, arabesk",
+        "Türk dizisi: kanal"
+      ],
+      "source": "learned",
+      "strength": 9.25,
+      "suggestNew": false,
+      "suggestedName": "Turkish müzik"
+    },
+    "channelId": "UCgtsD_JNdFE_Nuim96XDLWQ",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "Türkiye",
+    "customUrl": "https://www.youtube.com/@aylindemir",
+    "dateAdded": "2026-10-30T07:57:14.805Z",
+    "description": "Aylin Demir Resmi YouTube Kanalı sizlerin sevdiği her tarz eserleri yeni aranje sound ile kliplendirdik. Beğeninize sunuyorum.",
+    "detectedLanguageCode": "tr",
+    "handle": "@aylindemir",
+    "hiddenSubscriberCount": false,
+    "id": "channel_a9e5dff9-63e6-4fca-9499-7500dc660696",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "aylindemir \"oyun havaları\" halay türküler \"roman havaları\" \"çiftetelli oyun havaları\" \"horon oyun havaları\" \"ankara oyun havaları\" \"arabesk şarkılar\" \"fantez...",
+      "aylindemir",
+      "oyun havaları",
+      "halay",
+      "türküler",
+      "roman havaları",
+      "çiftetelli oyun havaları",
+      "horon oyun havaları",
+      "ankara oyun havaları",
+      "arabesk şarkılar",
+      "fantezi şarkılar",
+      "aylindemir \"oyun havaları\" halay türküler \"roman havaları\" \"çiftetelli oyun havaları\" \"horon oyun havaları\" \"ankara oyun havaları\" \"arabesk şarkılar\" \"fantezi şarkılar\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "tr",
+    "metadataLastChecked": "2026-10-30T07:57:14.736Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Aylin Demir - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "4 months ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/channel/UCgtsD_JNdFE_Nuim96XDLWQ",
+    "subscriberCount": "621K subscribers",
+    "subscriberCountNumber": 621000,
+    "tags": [
+      "aylindemir \"oyun havaları\" halay türküler \"roman havaları\" \"çiftetelli oyun havaları\" \"horon oyun havaları\" \"ankara oyun havaları\" \"arabesk şarkılar\" \"fantez...",
+      "aylindemir",
+      "oyun havaları",
+      "halay",
+      "türküler",
+      "roman havaları",
+      "çiftetelli oyun havaları",
+      "horon oyun havaları",
+      "ankara oyun havaları",
+      "arabesk şarkılar",
+      "fantezi şarkılar",
+      "aylindemir \"oyun havaları\" halay türküler \"roman havaları\" \"çiftetelli oyun havaları\" \"horon oyun havaları\" \"ankara oyun havaları\" \"arabesk şarkılar\" \"fantezi şarkılar\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/JXLswHNYnUI2GmTxIjYIoxt9kpCgzwCqm47KfNRXHwz1E9Ln18dB_vLnhqQPyrcONHuS1KLi2Bc=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T07:57:14.736Z",
+    "title": "Aylin Demir - YouTube",
+    "updatedAt": "2026-10-30T07:57:14.805Z",
+    "url": "https://www.youtube.com/channel/UCgtsD_JNdFE_Nuim96XDLWQ",
+    "verificationLabels": [
+      "Verified"
+    ],
+    "verified": true,
+    "videoCount": "477 videos",
+    "videoCountNumber": 477,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCsdsQ6P37eTJENPTteGsBzg",
+    "category": "Turkish müzik",
+    "categoryConfidence": 0.8700000000000001,
+    "categoryEvidence": [
+      {
+        "confidence": 0.48614958448753465,
+        "keywords": [
+          "muzik"
+        ],
+        "matchedRules": [],
+        "name": "Turkish müzik",
+        "score": 17.55,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.48614958448753465,
+        "keywords": [
+          "muzik"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Muzik",
+        "score": 17.55,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.3679727427597956,
+        "keywords": [
+          "turkce",
+          "turk"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Learning",
+        "score": 10.8,
+        "source": "multilingual-keywords"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.48614958448753465,
+          "keywords": [
+            "muzik"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 17.55,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.48614958448753465,
+          "keywords": [
+            "muzik"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Muzik",
+          "score": 17.55,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.3679727427597956,
+          "keywords": [
+            "turkce",
+            "turk"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Learning",
+          "score": 10.8,
+          "source": "multilingual-keywords"
+        }
+      ],
+      "confidence": 0.8700000000000001,
+      "countryCode": "TR",
+      "countryName": "Türkiye",
+      "evidence": [
+        {
+          "confidence": 0.48614958448753465,
+          "keywords": [
+            "muzik"
+          ],
+          "matchedRules": [],
+          "name": "Turkish müzik",
+          "score": 17.55,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.48614958448753465,
+          "keywords": [
+            "muzik"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Muzik",
+          "score": 17.55,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.3679727427597956,
+          "keywords": [
+            "turkce",
+            "turk"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Learning",
+          "score": 10.8,
+          "source": "multilingual-keywords"
+        }
+      ],
+      "keywords": [
+        "muzik"
+      ],
+      "languageCode": "tr",
+      "languageName": "Turkish",
+      "level": "High",
+      "matchedRules": [],
+      "name": "Turkish müzik",
+      "reasons": [
+        "Country: Türkiye (turk, turkce)",
+        "Language: Turkish (country default)",
+        "Turkish müzik: muzik",
+        "Turkish Muzik: muzik",
+        "Turkish Learning: turkce, turk"
+      ],
+      "source": "existing-category",
+      "strength": 24,
+      "suggestNew": false,
+      "suggestedName": "Turkish müzik"
+    },
+    "channelId": "UCsdsQ6P37eTJENPTteGsBzg",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "Türkiye",
+    "customUrl": "https://www.youtube.com/@kilicmuzikklip",
+    "dateAdded": "2026-10-30T07:56:42.513Z",
+    "description": "Kılıç Müzik",
+    "detectedLanguageCode": "tr",
+    "handle": "@kilicmuzikklip",
+    "hiddenSubscriberCount": false,
+    "id": "channel_c26d149f-78fd-47a9-aa15-607bd6bc08f9",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "müzik şarkı türkü \"sıra gecesi\" halay türkçe prodüksiyon özgün \"türk halk müziği\" yapım yerli arabesk",
+      "müzik",
+      "şarkı",
+      "türkü",
+      "sıra gecesi",
+      "halay",
+      "türkçe",
+      "prodüksiyon",
+      "özgün",
+      "türk halk müziği",
+      "yapım",
+      "yerli",
+      "arabesk"
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "tr",
+    "metadataLastChecked": "2026-10-30T07:56:42.443Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Kılıç Müzik - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "12y ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@kilicmuzikklip",
+    "subscriberCount": "",
+    "subscriberCountNumber": null,
+    "tags": [
+      "müzik şarkı türkü \"sıra gecesi\" halay türkçe prodüksiyon özgün \"türk halk müziği\" yapım yerli arabesk",
+      "müzik",
+      "şarkı",
+      "türkü",
+      "sıra gecesi",
+      "halay",
+      "türkçe",
+      "prodüksiyon",
+      "özgün",
+      "türk halk müziği",
+      "yapım",
+      "yerli",
+      "arabesk"
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/ue13L7ZaQTtDjTfNJ3WYqpE_-b3ClFQ36EGSev4aZecu5PY69XQIZU8xbLKl_ePm0ZcytVD8=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T07:56:42.443Z",
+    "title": "Kılıç Müzik - YouTube",
+    "updatedAt": "2026-10-30T07:56:42.513Z",
+    "url": "https://www.youtube.com/@kilicmuzikklip",
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "videoTitles": [],
+    "viewCount": "5,235 views",
+    "viewCountNumber": 5235
+  },
+  {
     "category": "Turkish müzik",
     "categorySuggestion": {
       "confidence": 0,

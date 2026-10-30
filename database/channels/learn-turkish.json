@@ -1,6 +1,263 @@
 [
   {
     "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCIB3i69egoyC5tUwyNix9Jw",
+    "category": "Learn Turkish",
+    "categoryConfidence": 0.8700000000000001,
+    "categoryEvidence": [
+      {
+        "confidence": 0.4992334540235509,
+        "keywords": [
+          "turkish",
+          "and",
+          "channel"
+        ],
+        "matchedRules": [
+          "chef-vlogger"
+        ],
+        "name": "Chef Vlogger",
+        "score": 61.22,
+        "source": "metadata-rules"
+      },
+      {
+        "confidence": 0.4958954488737112,
+        "keywords": [
+          "turkish"
+        ],
+        "matchedRules": [
+          "food-vlogger"
+        ],
+        "name": "Food Vlogger",
+        "score": 60.41,
+        "source": "metadata-rules"
+      },
+      {
+        "confidence": 0.4052954734742102,
+        "keywords": [
+          "turkish",
+          "learn turkish",
+          "learn"
+        ],
+        "matchedRules": [],
+        "name": "Learn Turkish",
+        "score": 41.85,
+        "source": "existing-category"
+      }
+    ],
+    "categoryMatchedRules": [
+      "chef-vlogger"
+    ],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.4992334540235509,
+          "keywords": [
+            "turkish",
+            "and",
+            "channel"
+          ],
+          "matchedRules": [
+            "chef-vlogger"
+          ],
+          "name": "Chef Vlogger",
+          "score": 61.22,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4958954488737112,
+          "keywords": [
+            "turkish"
+          ],
+          "matchedRules": [
+            "food-vlogger"
+          ],
+          "name": "Food Vlogger",
+          "score": 60.41,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4052954734742102,
+          "keywords": [
+            "turkish",
+            "learn turkish",
+            "learn"
+          ],
+          "matchedRules": [],
+          "name": "Learn Turkish",
+          "score": 41.85,
+          "source": "existing-category"
+        }
+      ],
+      "confidence": 0.8700000000000001,
+      "countryCode": "TR",
+      "countryName": "Türkiye",
+      "evidence": [
+        {
+          "confidence": 0.4992334540235509,
+          "keywords": [
+            "turkish",
+            "and",
+            "channel"
+          ],
+          "matchedRules": [
+            "chef-vlogger"
+          ],
+          "name": "Chef Vlogger",
+          "score": 61.22,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4958954488737112,
+          "keywords": [
+            "turkish"
+          ],
+          "matchedRules": [
+            "food-vlogger"
+          ],
+          "name": "Food Vlogger",
+          "score": 60.41,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4052954734742102,
+          "keywords": [
+            "turkish",
+            "learn turkish",
+            "learn"
+          ],
+          "matchedRules": [],
+          "name": "Learn Turkish",
+          "score": 41.85,
+          "source": "existing-category"
+        }
+      ],
+      "keywords": [
+        "turkish",
+        "and",
+        "channel"
+      ],
+      "languageCode": "tr",
+      "languageName": "Turkish",
+      "level": "High",
+      "matchedRules": [
+        "chef-vlogger"
+      ],
+      "name": "Chef Vlogger",
+      "reasons": [
+        "Country: Türkiye (turkish, turkey)",
+        "Language: Turkish (country default)",
+        "Chef Vlogger: turkish, and, channel",
+        "Food Vlogger: turkish",
+        "Learn Turkish: turkish, learn turkish, learn"
+      ],
+      "source": "metadata-rules",
+      "strength": 24,
+      "suggestNew": true,
+      "suggestedName": "Chef Vlogger"
+    },
+    "channelId": "UCIB3i69egoyC5tUwyNix9Jw",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "Türkiye",
+    "customUrl": "https://www.youtube.com/@turkishfromzero",
+    "dateAdded": "2026-10-29T12:54:14.826Z",
+    "description": "Learn Turkish from zero with Ali Akpinar, a Turkish language teacher offering Turkish language learning courses, lessons, books, worksheets for self-study and Turkish language classes online! Merhaba! I am Ali Akpinar. Thanks for visiting my Youtube channel where you can find Turkish language learning resources for self-study and FREE Turkish video lessons to support your Turkish studies. If you are looking for structured Turkish language lessons and courses for self-study, please visit Dem Turkish Center bookstore and download instantly: Thanks for your interest and enjoy learning Turkish from zero with me!",
+    "detectedLanguageCode": "tr",
+    "handle": "@turkishfromzero",
+    "hiddenSubscriberCount": false,
+    "id": "channel_dd74b396-f7d8-4d6e-9ed0-3417a6f34f74",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "turkish \"turkish language\" \"learn turkish\" \"turkish learning\" \"turkish lessons\" \"turkish language lessons\" \"free turkish lessons\" \"turkish course\" \"turkish c...",
+      "turkish",
+      "turkish language",
+      "learn turkish",
+      "turkish learning",
+      "turkish lessons",
+      "turkish language lessons",
+      "free turkish lessons",
+      "turkish course",
+      "turkish courses",
+      "turkish practice",
+      "turkish grammar",
+      "turkish words",
+      "turkish phrases",
+      "turkish vocabulary",
+      "turkish for beginners",
+      "beginner turkish",
+      "intermediate turkish",
+      "turkey language",
+      "learning turkish",
+      "easy turkish",
+      "easy turkish lessons",
+      "turkish \"turkish language\" \"learn turkish\" \"turkish learning\" \"turkish lessons\" \"turkish language lessons\" \"free turkish lessons\" \"turkish course\" \"turkish courses\" \"turkish practice\" \"turkish grammar\" \"turkish words\" \"turkish phrases\" \"turkish vocabulary\" \"turkish for beginners\" \"beginner turkish\" \"intermediate turkish\" \"turkey language\" \"learning turkish\" \"easy turkish\" \"easy turkish lessons\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "tr",
+    "metadataLastChecked": "2026-10-29T12:54:14.793Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Turkish From Zero - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "1 year ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@turkishfromzero/",
+    "subscriberCount": "",
+    "subscriberCountNumber": null,
+    "tags": [
+      "turkish \"turkish language\" \"learn turkish\" \"turkish learning\" \"turkish lessons\" \"turkish language lessons\" \"free turkish lessons\" \"turkish course\" \"turkish c...",
+      "turkish",
+      "turkish language",
+      "learn turkish",
+      "turkish learning",
+      "turkish lessons",
+      "turkish language lessons",
+      "free turkish lessons",
+      "turkish course",
+      "turkish courses",
+      "turkish practice",
+      "turkish grammar",
+      "turkish words",
+      "turkish phrases",
+      "turkish vocabulary",
+      "turkish for beginners",
+      "beginner turkish",
+      "intermediate turkish",
+      "turkey language",
+      "learning turkish",
+      "easy turkish",
+      "easy turkish lessons",
+      "turkish \"turkish language\" \"learn turkish\" \"turkish learning\" \"turkish lessons\" \"turkish language lessons\" \"free turkish lessons\" \"turkish course\" \"turkish courses\" \"turkish practice\" \"turkish grammar\" \"turkish words\" \"turkish phrases\" \"turkish vocabulary\" \"turkish for beginners\" \"beginner turkish\" \"intermediate turkish\" \"turkey language\" \"learning turkish\" \"easy turkish\" \"easy turkish lessons\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/Tv3hJoqqGc9_WIJdUvBT3TFy4q2yRw6kX5toB7wXSKmrYkkfpEG9ZySfjFcLFt7M704O7mfZ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-29T12:54:14.793Z",
+    "title": "Turkish From Zero - YouTube",
+    "updatedAt": "2026-10-29T12:54:14.826Z",
+    "url": "https://www.youtube.com/@turkishfromzero/",
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
     "canonicalUrl": "https://www.youtube.com/channel/UCoqoGKtzMhk2-031Fnp4rzg",
     "category": "Learn Turkish",
     "categorySuggestion": {

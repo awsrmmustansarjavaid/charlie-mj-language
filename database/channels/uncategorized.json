@@ -1,1 +1,90 @@
-[]
+[
+  {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UC0pXEN9QpszdOKK-4rde8ow",
+    "category": "Uncategorized",
+    "categoryConfidence": 0,
+    "categoryEvidence": [],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [],
+      "confidence": 0,
+      "countryCode": "TR",
+      "countryName": "TR",
+      "evidence": [],
+      "keywords": [],
+      "languageCode": "",
+      "languageName": "",
+      "level": "Low",
+      "matchedRules": [],
+      "name": "Uncategorized",
+      "reason": "no-match",
+      "reasons": [
+        "No category signal matched confidently."
+      ],
+      "suggestedName": ""
+    },
+    "channelId": "UC0pXEN9QpszdOKK-4rde8ow",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "TR",
+    "customUrl": "https://www.youtube.com/@KacakGelinlerDizi",
+    "dateAdded": "2026-10-30T07:49:52.542Z",
+    "description": "Kaçak Gelinler",
+    "detectedLanguageCode": "",
+    "handle": "@KacakGelinlerDizi",
+    "hiddenSubscriberCount": false,
+    "id": "channel_24c5d8fc-137e-49a0-956e-453e20a27920",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "Kaçak Gelinler",
+      "Kaçak",
+      "Gelinler"
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataLastChecked": "2026-10-30T07:49:52.487Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Kaçak Gelinler - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "2w ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@KacakGelinlerDizi",
+    "subscriberCount": "916K subscribers",
+    "subscriberCountNumber": 916000,
+    "tags": [
+      "Kaçak Gelinler",
+      "Kaçak",
+      "Gelinler"
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/ZeyO1U_NfD3iM2cjKkwvN-vU3PIAQ5hM3TxAv0qc0QzzIHNxnqPRKNLJ7tbpHB-5xIKpYmo_=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T07:49:52.487Z",
+    "title": "Kaçak Gelinler - YouTube",
+    "updatedAt": "2026-10-30T07:49:52.542Z",
+    "url": "https://www.youtube.com/@KacakGelinlerDizi",
+    "verificationLabels": [
+      "Verified"
+    ],
+    "verified": true,
+    "videoCount": "916 videos",
+    "videoCountNumber": 916,
+    "videoTitles": [],
+    "viewCount": "796 views",
+    "viewCountNumber": 796
+  }
+]

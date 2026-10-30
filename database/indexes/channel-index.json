@@ -1,5 +1,535 @@
 [
   {
+    "id": "UChot6JYwUI_YYcm5uLxCuzg",
+    "name": "Beni Affet - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCwLk2tAY4QA_OFbzWMJBiUg",
+    "name": "Acayip Hikayeler - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCb7sZHIESPgo79zo-pXUfKQ",
+    "name": "Küçük Hesaplar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCALHvpjqmBwdRwYPc3qVezw",
+    "name": "İşler Güçler - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCX2SQvg_kZiRl4rn3scUspg",
+    "name": "İbret-i Ailem - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC41jsZLhfpXrhN3-lu3dc6A",
+    "name": "Hayatımın Rolü - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCgfF6G-z1n5FLmRhamyPCpA",
+    "name": "Focus Film - YouTube",
+    "category": "Turkish Film Productions"
+  },
+  {
+    "id": "UCF8Z60MDOLKJfQVClTl4TUw",
+    "name": "Evlerden Biri - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCJMee2IhcaZeIOMmxWs6Xzg",
+    "name": "Ağır Roman Yeni Dünya - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCRxXtHviLGaeKgHBt6W_R4g",
+    "name": "Fırıldak Ailesi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCNOIHbSW5AzIe5Vg-gm25qw",
+    "name": "Benim Hala Umudum Var - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCw3lo7RxmuVtpLm0xNIxMQg",
+    "name": "Ben De Özledim - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC1FhXuMezhNOo5OjDn4FKxw",
+    "name": "Aşkın Bedeli - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCg_M7VyzrVTWHoI4x8Ri4_A",
+    "name": "Aramızda Kalsın (Resmi YouTube Kanalı) - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC6An1uAMk8hQIGrDrr-Lj-g",
+    "name": "Deniz Yıldızı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCdN3dYx56hsvpRDscIwwEGw",
+    "name": "Gönül İşleri (Resmi YouTube Kanalı) - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCvv7BXp2oCmtKkrOfFPq-EA",
+    "name": "Hatırla Gönül - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCdQdqLRqlF6xMrvqN9FSJ5Q",
+    "name": "Gonul - Hatırla Gönül - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCPeW1krXI7W7tDby8vZyTtA",
+    "name": "Urfalıyam Ezelden - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCBNKOJsrFIVQ6pGYQ_jAUJA",
+    "name": "Riva Müzik - YouTube",
+    "category": "Turkish müzik"
+  },
+  {
+    "id": "UCgtsD_JNdFE_Nuim96XDLWQ",
+    "name": "Aylin Demir - YouTube",
+    "category": "Turkish müzik"
+  },
+  {
+    "id": "UCsdsQ6P37eTJENPTteGsBzg",
+    "name": "Kılıç Müzik - YouTube",
+    "category": "Turkish müzik"
+  },
+  {
+    "id": "UC_TJpm39qinehTWcINFZpsA",
+    "name": "Hanım Köylü - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCfglhj-eyyH7UXYhy-K7lFg",
+    "name": "Baba Ocağı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCIlPBKgJ3sbGze9QF6FpiKg",
+    "name": "Son Bahar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC7o3Mbbj6mq3n31-5-lO7eQ",
+    "name": "Papatyam - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCRiIEw7HTNj_AStqsNZh1pA",
+    "name": "Aile Reisi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCxc7UMC9o7K6Kb4DDOKyE0w",
+    "name": "Benim Annem Bir Melek - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC0pXEN9QpszdOKK-4rde8ow",
+    "name": "Kaçak Gelinler - YouTube",
+    "category": "Uncategorized"
+  },
+  {
+    "id": "UCtkp8YehDHBNJ63CS9xwIQg",
+    "name": "Adını Feriha Koydum - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UChc4TEkDGPUSisZ9o353vKA",
+    "name": "Kiraz Mevsimi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCyIAQ5Y06jCT3Yri0kbe_WA",
+    "name": "Makber - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCfxtt5mgO7fAu3Rv_6xMb7Q",
+    "name": "TRT Diyanet Çocuk - YouTube",
+    "category": "Turkish Film Productions"
+  },
+  {
+    "id": "UCIrVOfDJCVCyeyVAcpXf2uw",
+    "name": "Küçük Kadınlar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCMBnqLQnGcu-2oGncJ7auKw",
+    "name": "Dürüye'nin Güğümleri - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCH3WnhFSx9r850HJRRs16lQ",
+    "name": "Behzat Ç. - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCf-r4TsXCQl_lUJFt6v6r1g",
+    "name": "Küçük Sırlar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCi2JfS9yjQXUwVUMtYEwZMg",
+    "name": "İzmir Çetesi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCfxGGtOoT0D3mx1BJMW-uyQ",
+    "name": "Cennetin Sırları - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC8rnNIpGh8n6ZpWVqOBaKUQ",
+    "name": "Sihirli Annem - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCFdAPBi_wrmre-zM2PeOrgg",
+    "name": "Anneler ile Kızları - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCwJXYZm-FuP383EB2EwwkAg",
+    "name": "Ay Tutulması - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCOXzhk-gVQXn-lpTI3VmOJw",
+    "name": "Iffet - English Subtitle - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCbblbFDvgefyK1XoVQpcPpg",
+    "name": "Firar - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC7hmK2jB3OPZaLofKG-9xoA",
+    "name": "Tek Başımıza - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCEpLJO8HfG8IAhSoV-8GPxg",
+    "name": "Koyu Kırmızı (Resmi YouTube Kanalı) - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCpvTyiKtjuxDjoKn2ZGQlwQ",
+    "name": "Kalbim 4 Mevsim - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCPpBBr7sbZs1BwHfmR9dEyQ",
+    "name": "Kanal D Arşiv - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC17odVjZPxXeC9MqSoinJww",
+    "name": "Yüksek Sosyete - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCLFsT7tlNW7gxZX8wZf6FQA",
+    "name": "Göç Zamanı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC0nIWcn0vBIADhhqMI5WRpQ",
+    "name": "Akrep - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC5OBS9zS43TE29WdbSxGW6g",
+    "name": "My Left Side - Sol Yanım - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCcxHJLb7yDoLTjSt0rktmbw",
+    "name": "İyi Günde Kötü Günde - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC4m9DyDmlReBfUSOkhed0Yg",
+    "name": "Menajerimi Ara - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCL7VMojYM3_srnvOBnc-5ow",
+    "name": "Babil - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCYKPH4JKMEdCWLaEZdj42Cg",
+    "name": "Sefirin Kızı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCFl99iZxISGjhqBB0Zhm9SQ",
+    "name": "Güvercin - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCWN8WujzGt-Uvnh8xJwPjQw",
+    "name": "Sevgili Geçmiş - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCldgyQVPJhGy670zH8swQNg",
+    "name": "Sevdim Seni Bir Kere - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCXGbSMPiI5WnTrDZDms1zyA",
+    "name": "Çocuk - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCJn8hK4TS9PatpoZ4RWzaBQ",
+    "name": "Benim Tatlı Yalanım - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCU-qNWXHo9j-nzGtrlNOS3A",
+    "name": "Kardeş Çocukları - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCOzGl2wthAvoiCdo_ipNMDg",
+    "name": "Erkenci Kuş - Pehla Panchi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCmHjujUw9zAtdT30kDYgETw",
+    "name": "Kalbimin Sultanı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCPv-6x7Jhz2KZaqi6SpUK2w",
+    "name": "Nefes Nefese - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC_0F1Fi31GwRLklISS5w6Kg",
+    "name": "Siyah İnci - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCe84m72uVMwBkep3HNmtvcA",
+    "name": "Adını Sen Koy TRT - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC8XKSX-XQy16hYXmkgtmP2w",
+    "name": "Ateşböceği - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCpSOc0PBZP3eVjEAhFoq3rg",
+    "name": "Türk Malı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UChLCKO4_cMjRYtZ_LrlfmSQ",
+    "name": "Fazilet Hanım ve Kızları - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UChz9YBGflFbhkCFMF_luVzQ",
+    "name": "Şahane Damat - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCR-xo2a2XVxlib346D-ASDA",
+    "name": "Anne - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC45ktxmhFf9sBR4LknKSh7g",
+    "name": "Hayat Bazen Tatlıdır - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCa5-F62Lno9qTPseCXXuXWg",
+    "name": "Yıldızlar Şahidim - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC7xHX82HI2XR_yoL-ru6SmQ",
+    "name": "İstanbullu Gelin - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCJkBcPylctTT0_jVC5XMFIg",
+    "name": "Söz Dizi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCOXkDMW4vQyEdEa3_gn0ItA",
+    "name": "Ah Nerede - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCZDgGODOrsKCpkyv--QN09g",
+    "name": "Kaderimin Oyunu - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCHjyRsbF1anAvs8ZRlVpEmQ",
+    "name": "Benim Hayatım - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCWrOPWWKImIy8OLimXe10zg",
+    "name": "Annemizi Saklarken - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCNy0Yw4Z5BshCU57VRcpsxg",
+    "name": "Sana Söz - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCD5YTASIQs59ri5GM9mwG6Q",
+    "name": "Be My Sunshine - Ada Masalı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC_tY5OsppFOkvotBFZKh7Sg",
+    "name": "Kazara Aşk - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC0VDwAbADmiPcpVc3rwiYbQ",
+    "name": "Kağıt Ev - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCy92syswr7NOfbLdPWmaC9A",
+    "name": "Seni Çok Bekledim - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCFjk78CzCbwK-NBO7ZOv0LA",
+    "name": "Kral Kaybederse - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCy8h-80kBxQPrbh5Tb2-Dyg",
+    "name": "Sahipsizler - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCyahIZNtNmqK1LeNF0KlFZw",
+    "name": "Yalı Çapkını - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCL4pLR7JkgUeeqTEKWdNbSg",
+    "name": "Sen Ağlama İstanbul - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCK1Nwg7wJ0K-hiUA1gylzDQ",
+    "name": "Ömer Dizisi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCM2JW9IWWlh7Z8jcXZpNSyw",
+    "name": "Sakla Beni - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCSc2Y-0fbwp-OY4nMevfEsA",
+    "name": "Yan Oda - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCS4tnlnBoPRma88t3s5Sidg",
+    "name": "Çöp Adam - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCgWcnYEVRBNU7KjRQw5dcHw",
+    "name": "Yüz Yıllık Mucize - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCBwrkjSObqEt2FyPsnuGXIw",
+    "name": "Toprak ile Fidan - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCxj-uh4HbLyGUvJf2Rsqnbg",
+    "name": "Gecenin Ucunda - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCFq4_AtSew8EdotLQLquOXg",
+    "name": "Duy Beni - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCXpZwLSj0BDr10nxxRZ1Xqg",
+    "name": "Çarpıntı Dizisi - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UChBo13HHgxKgYD_GDBAgXVA",
+    "name": "Doğanın Kanunu - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCBPji4yBwHYvOmJYyXMfThQ",
+    "name": "Başkalarının Hayatı - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCX8d_tK-HjGDQkAWUADy9sw",
+    "name": "Sevdiğim Sensin - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCIwMJS36WnQUyJnC3slgK-g",
+    "name": "Güneşin Doğduğu Yer - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCTAkwLbVzHxsbgsp6cRsPDg",
+    "name": "Çukur - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCIdiuKAg5xVZsvXDQbOG4cg",
+    "name": "Aşk-ı Memnu - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UC39kGVK0THxKO-UFtMWIvvQ",
+    "name": "Bizim Hikaye - YouTube",
+    "category": "Türk dizisi"
+  },
+  {
+    "id": "UCIB3i69egoyC5tUwyNix9Jw",
+    "name": "Turkish From Zero - YouTube",
+    "category": "Learn Turkish"
+  },
+  {
     "id": "UCEhzR1lnrd9QmNdKMfYR8RQ",
     "name": "İngilizce Kelime Öğrenme - Hızlı İngilizce Eğitim - YouTube",
     "category": "İngilizce"

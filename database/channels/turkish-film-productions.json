@@ -1,5 +1,477 @@
 [
   {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCgfF6G-z1n5FLmRhamyPCpA",
+    "category": "Turkish Film Productions",
+    "categoryConfidence": 0.8700000000000001,
+    "categoryEvidence": [
+      {
+        "confidence": 0.5071372372709902,
+        "keywords": [
+          "film"
+        ],
+        "matchedRules": [
+          "drama-tv-films"
+        ],
+        "name": "Drama / TV Series / Films",
+        "score": 45.12,
+        "source": "metadata-rules"
+      },
+      {
+        "confidence": 0.4942329873125721,
+        "keywords": [
+          "film",
+          "bolumler"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Film Productions",
+        "score": 42.85,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.2995207667731629,
+        "keywords": [
+          "deniz",
+          "dizi",
+          "bizim",
+          "aile"
+        ],
+        "matchedRules": [],
+        "name": "Türk dizisi",
+        "score": 18.75,
+        "source": "learned"
+      }
+    ],
+    "categoryMatchedRules": [
+      "drama-tv-films"
+    ],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.5071372372709902,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [
+            "drama-tv-films"
+          ],
+          "name": "Drama / TV Series / Films",
+          "score": 45.12,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4942329873125721,
+          "keywords": [
+            "film",
+            "bolumler"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 42.85,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.2995207667731629,
+          "keywords": [
+            "deniz",
+            "dizi",
+            "bizim",
+            "aile"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 18.75,
+          "source": "learned"
+        }
+      ],
+      "confidence": 0.8700000000000001,
+      "countryCode": "TR",
+      "countryName": "TR",
+      "evidence": [
+        {
+          "confidence": 0.5071372372709902,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [
+            "drama-tv-films"
+          ],
+          "name": "Drama / TV Series / Films",
+          "score": 45.12,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.4942329873125721,
+          "keywords": [
+            "film",
+            "bolumler"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 42.85,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.2995207667731629,
+          "keywords": [
+            "deniz",
+            "dizi",
+            "bizim",
+            "aile"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 18.75,
+          "source": "learned"
+        }
+      ],
+      "keywords": [
+        "film"
+      ],
+      "languageCode": "",
+      "languageName": "",
+      "level": "High",
+      "matchedRules": [
+        "drama-tv-films"
+      ],
+      "name": "Drama / TV Series / Films",
+      "reasons": [
+        "Drama / TV Series / Films: film",
+        "Turkish Film Productions: film, bolumler",
+        "Türk dizisi: deniz, dizi, bizim, aile"
+      ],
+      "source": "metadata-rules",
+      "strength": 24,
+      "suggestNew": true,
+      "suggestedName": "Drama / TV Series / Films"
+    },
+    "channelId": "UCgfF6G-z1n5FLmRhamyPCpA",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "TR",
+    "customUrl": "https://www.youtube.com/@focusfilm",
+    "dateAdded": "2026-10-30T08:06:39.021Z",
+    "description": "Focus Film'in resmi Youtube hesabıdır. Kanalımıza abone olarak tüm dizilerimizi buradan takip edebilir, yeni yüklenen bölümler olduğunda anında haberdar olabilirsiniz. Dizilerimiz (kronolojik sırayla): 2014: Hayat Ağacı 2013: Adını Kalbime Yazdım 2012: Sudan Bıkmış Balıklar 2011: Beni Affet 2010: Sensiz Yaşayamam 2009: Deniz Yıldızı 2008: Kayıp Prenses 2008: Unutma Beni 2008: Üvey Aile 2007: Bez Bebek 2007: Hırçın Kız 2007: Yemin 2002: Bizim Evin Halleri",
+    "detectedLanguageCode": "",
+    "handle": "@focusfilm",
+    "hiddenSubscriberCount": false,
+    "id": "channel_d7edec2c-efcc-4260-9371-3174391fc63c",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"focus film\" \"bez bebek\" \"yerli dizi\" \"günlük dizi\" dizi \"beni affet\" \"deniz yıldızı\" \"unutma beni\" \"kayıp prenses\" \"sensiz yaşayamam\" \"sevdim seni bir kere\"...",
+      "focus film",
+      "bez bebek",
+      "yerli dizi",
+      "günlük dizi",
+      "dizi",
+      "beni affet",
+      "deniz yıldızı",
+      "unutma beni",
+      "kayıp prenses",
+      "sensiz yaşayamam",
+      "sevdim seni bir kere",
+      "nilgün sağyaşar",
+      "\"focus film\" \"bez bebek\" \"yerli dizi\" \"günlük dizi\" dizi \"beni affet\" \"deniz yıldızı\" \"unutma beni\" \"kayıp prenses\" \"sensiz yaşayamam\" \"sevdim seni bir kere\" \"nilgün sağyaşar\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataLastChecked": "2026-10-30T08:06:38.955Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Focus Film - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "4 years ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@focusfilm",
+    "subscriberCount": "32.6K subscribers",
+    "subscriberCountNumber": 32600,
+    "tags": [
+      "\"focus film\" \"bez bebek\" \"yerli dizi\" \"günlük dizi\" dizi \"beni affet\" \"deniz yıldızı\" \"unutma beni\" \"kayıp prenses\" \"sensiz yaşayamam\" \"sevdim seni bir kere\"...",
+      "focus film",
+      "bez bebek",
+      "yerli dizi",
+      "günlük dizi",
+      "dizi",
+      "beni affet",
+      "deniz yıldızı",
+      "unutma beni",
+      "kayıp prenses",
+      "sensiz yaşayamam",
+      "sevdim seni bir kere",
+      "nilgün sağyaşar",
+      "\"focus film\" \"bez bebek\" \"yerli dizi\" \"günlük dizi\" dizi \"beni affet\" \"deniz yıldızı\" \"unutma beni\" \"kayıp prenses\" \"sensiz yaşayamam\" \"sevdim seni bir kere\" \"nilgün sağyaşar\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_mR8VYfwSr360hgN6jlHsn_kgZEfiwriZvtsUdJfFqOXA=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T08:06:38.955Z",
+    "title": "Focus Film - YouTube",
+    "updatedAt": "2026-10-30T08:06:39.021Z",
+    "url": "https://www.youtube.com/@focusfilm",
+    "verificationLabels": [
+      "Verified"
+    ],
+    "verified": true,
+    "videoCount": "178 videos",
+    "videoCountNumber": 178,
+    "videoTitles": [],
+    "viewCount": "3,739,090 views",
+    "viewCountNumber": 3739090
+  },
+  {
+    "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCfxtt5mgO7fAu3Rv_6xMb7Q",
+    "category": "Turkish Film Productions",
+    "categoryConfidence": 0.98,
+    "categoryEvidence": [
+      {
+        "confidence": 0.6529366895499618,
+        "keywords": [
+          "film"
+        ],
+        "matchedRules": [
+          "drama-tv-films"
+        ],
+        "name": "Drama / TV Series / Films",
+        "score": 17.12,
+        "source": "metadata-rules"
+      },
+      {
+        "confidence": 0.47093023255813954,
+        "keywords": [
+          "film"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Film Productions",
+        "score": 8.1,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.4518072289156626,
+        "keywords": [
+          "kucuk"
+        ],
+        "matchedRules": [],
+        "name": "Türk dizisi",
+        "score": 7.5,
+        "source": "learned"
+      }
+    ],
+    "categoryMatchedRules": [
+      "drama-tv-films"
+    ],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.6529366895499618,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [
+            "drama-tv-films"
+          ],
+          "name": "Drama / TV Series / Films",
+          "score": 17.12,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.47093023255813954,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 8.1,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4518072289156626,
+          "keywords": [
+            "kucuk"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 7.5,
+          "source": "learned"
+        }
+      ],
+      "confidence": 0.98,
+      "countryCode": "TR",
+      "countryName": "TR",
+      "evidence": [
+        {
+          "confidence": 0.6529366895499618,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [
+            "drama-tv-films"
+          ],
+          "name": "Drama / TV Series / Films",
+          "score": 17.12,
+          "source": "metadata-rules"
+        },
+        {
+          "confidence": 0.47093023255813954,
+          "keywords": [
+            "film"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 8.1,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.4518072289156626,
+          "keywords": [
+            "kucuk"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 7.5,
+          "source": "learned"
+        }
+      ],
+      "keywords": [
+        "film"
+      ],
+      "languageCode": "",
+      "languageName": "",
+      "level": "High",
+      "matchedRules": [
+        "drama-tv-films"
+      ],
+      "name": "Drama / TV Series / Films",
+      "reasons": [
+        "Drama / TV Series / Films: film",
+        "Turkish Film Productions: film",
+        "Türk dizisi: kucuk"
+      ],
+      "source": "metadata-rules",
+      "strength": 23.5,
+      "suggestNew": true,
+      "suggestedName": "Drama / TV Series / Films"
+    },
+    "channelId": "UCfxtt5mgO7fAu3Rv_6xMb7Q",
+    "country": "TR",
+    "countryCode": "TR",
+    "countryName": "TR",
+    "customUrl": "https://www.youtube.com/@TRTDiyanetCocuk",
+    "dateAdded": "2026-10-30T07:45:45.448Z",
+    "description": "Hoş geldiniz! Kalplere yolculuğumuzda bize eşlik edin! ❤️",
+    "detectedLanguageCode": "",
+    "handle": "@TRTDiyanetCocuk",
+    "hiddenSubscriberCount": false,
+    "id": "channel_8e908894-76a1-48e3-b4b8-75851b6a7334",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"trt diyanet çocuk\" \"diyanet çocuk\" \"çizgi film\" \"dini çizgi film\" \"trt diyanet çocuk çizgi film\" \"çocuk çizgi film\" \"trt diyanet çocuk bölümler\" \"trt diyane...",
+      "trt diyanet çocuk",
+      "diyanet çocuk",
+      "çizgi film",
+      "dini çizgi film",
+      "trt diyanet çocuk çizgi film",
+      "çocuk çizgi film",
+      "trt diyanet çocuk bölümler",
+      "trt diyanet çocuk çizgi film bölümleri",
+      "çocuk",
+      "çizgi film trt diyanet çocuk",
+      "fülfül hac yolunda",
+      "küçük hafız emin",
+      "temelden öğreniyorum",
+      "kutup ve arkadaşları",
+      "galip mülayim",
+      "dikkat balonu",
+      "cümbür cemaat kamptayız",
+      "7 kıtadan iyilik habercileri",
+      "gezgin çelebi",
+      "hayhak",
+      "haklı karınca",
+      "mimikolar",
+      "şef lina",
+      "sevimli sabahlar",
+      "\"trt diyanet çocuk\" \"diyanet çocuk\" \"çizgi film\" \"dini çizgi film\" \"trt diyanet çocuk çizgi film\" \"çocuk çizgi film\" \"trt diyanet çocuk bölümler\" \"trt diyanet çocuk çizgi film bölümleri\" çocuk \"çizgi film trt diyanet çocuk\" \"fülfül hac yolunda\" \"küçük hafız emin\" \"temelden öğreniyorum\" \"kutup ve arkadaşları\" \"galip mülayim\" \"dikkat balonu\" \"cümbür cemaat kamptayız\" \"7 kıtadan iyilik habercileri\" \"gezgin çelebi\" hayhak \"haklı karınca\" mimikolar \"şef lina\" \"sevimli sabahlar\""
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "",
+    "metadataLastChecked": "2026-10-30T07:45:45.295Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "TRT Diyanet Çocuk - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "2w ago",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/@TRTDiyanetCocuk",
+    "subscriberCount": "",
+    "subscriberCountNumber": null,
+    "tags": [
+      "\"trt diyanet çocuk\" \"diyanet çocuk\" \"çizgi film\" \"dini çizgi film\" \"trt diyanet çocuk çizgi film\" \"çocuk çizgi film\" \"trt diyanet çocuk bölümler\" \"trt diyane...",
+      "trt diyanet çocuk",
+      "diyanet çocuk",
+      "çizgi film",
+      "dini çizgi film",
+      "trt diyanet çocuk çizgi film",
+      "çocuk çizgi film",
+      "trt diyanet çocuk bölümler",
+      "trt diyanet çocuk çizgi film bölümleri",
+      "çocuk",
+      "çizgi film trt diyanet çocuk",
+      "fülfül hac yolunda",
+      "küçük hafız emin",
+      "temelden öğreniyorum",
+      "kutup ve arkadaşları",
+      "galip mülayim",
+      "dikkat balonu",
+      "cümbür cemaat kamptayız",
+      "7 kıtadan iyilik habercileri",
+      "gezgin çelebi",
+      "hayhak",
+      "haklı karınca",
+      "mimikolar",
+      "şef lina",
+      "sevimli sabahlar",
+      "\"trt diyanet çocuk\" \"diyanet çocuk\" \"çizgi film\" \"dini çizgi film\" \"trt diyanet çocuk çizgi film\" \"çocuk çizgi film\" \"trt diyanet çocuk bölümler\" \"trt diyanet çocuk çizgi film bölümleri\" çocuk \"çizgi film trt diyanet çocuk\" \"fülfül hac yolunda\" \"küçük hafız emin\" \"temelden öğreniyorum\" \"kutup ve arkadaşları\" \"galip mülayim\" \"dikkat balonu\" \"cümbür cemaat kamptayız\" \"7 kıtadan iyilik habercileri\" \"gezgin çelebi\" hayhak \"haklı karınca\" mimikolar \"şef lina\" \"sevimli sabahlar\""
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/B63Iy6s7806LvjKeJZCQOdmXqp5F74QmMQmPDEHfDsTpipBrVFW4zraq4E5O3OZDYm417YhAJg=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T07:45:45.295Z",
+    "title": "TRT Diyanet Çocuk - YouTube",
+    "updatedAt": "2026-10-30T07:45:45.448Z",
+    "url": "https://www.youtube.com/@TRTDiyanetCocuk",
+    "verificationLabels": [],
+    "verified": false,
+    "videoCount": "",
+    "videoCountNumber": null,
+    "videoTitles": [],
+    "viewCount": "18,463 views",
+    "viewCountNumber": 18463
+  },
+  {
     "category": "Turkish Film Productions",
     "categorySuggestion": {
       "confidence": 0,
