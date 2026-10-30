@@ -1,6 +1,178 @@
 [
   {
     "banner": "",
+    "canonicalUrl": "https://www.youtube.com/channel/UCbQ3o1_Ip4gbCgeyU9_4dvQ",
+    "category": "Türk dizisi",
+    "categoryConfidence": 0.98,
+    "categoryEvidence": [
+      {
+        "confidence": 0.8602484472049688,
+        "keywords": [
+          "dizisi",
+          "kanal",
+          "yaptigi"
+        ],
+        "matchedRules": [],
+        "name": "Türk dizisi",
+        "score": 13.85,
+        "source": "existing-category"
+      },
+      {
+        "confidence": 0.35714285714285715,
+        "keywords": [
+          "abone"
+        ],
+        "matchedRules": [],
+        "name": "Turkish Film Productions",
+        "score": 1.25,
+        "source": "learned"
+      }
+    ],
+    "categoryMatchedRules": [],
+    "categorySuggestion": {
+      "candidates": [
+        {
+          "confidence": 0.8602484472049688,
+          "keywords": [
+            "dizisi",
+            "kanal",
+            "yaptigi"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 13.85,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.35714285714285715,
+          "keywords": [
+            "abone"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 1.25,
+          "source": "learned"
+        }
+      ],
+      "confidence": 0.98,
+      "countryCode": "CI",
+      "countryName": "Côte d'Ivoire",
+      "evidence": [
+        {
+          "confidence": 0.8602484472049688,
+          "keywords": [
+            "dizisi",
+            "kanal",
+            "yaptigi"
+          ],
+          "matchedRules": [],
+          "name": "Türk dizisi",
+          "score": 13.85,
+          "source": "existing-category"
+        },
+        {
+          "confidence": 0.35714285714285715,
+          "keywords": [
+            "abone"
+          ],
+          "matchedRules": [],
+          "name": "Turkish Film Productions",
+          "score": 1.25,
+          "source": "learned"
+        }
+      ],
+      "keywords": [
+        "dizisi",
+        "kanal",
+        "yaptigi"
+      ],
+      "languageCode": "fr",
+      "languageName": "French",
+      "level": "High",
+      "matchedRules": [],
+      "name": "Türk dizisi",
+      "reasons": [
+        "Country: Côte d'Ivoire (d)",
+        "Language: French (country default)",
+        "Türk dizisi: dizisi, kanal, yaptigi",
+        "Turkish Film Productions: abone"
+      ],
+      "source": "existing-category",
+      "strength": 9.25,
+      "suggestNew": false,
+      "suggestedName": "Türk dizisi"
+    },
+    "channelId": "UCbQ3o1_Ip4gbCgeyU9_4dvQ",
+    "country": "TR",
+    "countryCode": "CI",
+    "countryName": "Côte d'Ivoire",
+    "customUrl": "https://www.youtube.com/@tatliintikamKanalD",
+    "dateAdded": "2026-10-30T09:25:59.765Z",
+    "description": "Kanala Abone Ol👇 Tatlı İntikam, 26 Mart 2016 tarihinden itibaren Kanal D'de yayınlanmaya başlayan, Barıș Erçetin imzalı, Leyla Lydia Tuğutlu, Furkan Andıç ve İlker Kızmaz’in başrollerini paylaştığı, senaristliğini Gülsev Karagöz, Zafer Özer Çetinel, Yasemin Özek, Leyla Uslu Oter'ın yaptığı, yönetmen koltuğuna Barıș Erçetin'ın oturduğu televizyon dizisi.",
+    "detectedLanguageCode": "fr",
+    "handle": "@tatliintikamKanalD",
+    "hiddenSubscriberCount": false,
+    "id": "channel_dd1a4936-782d-4d4d-9db4-1b5726677f54",
+    "itemCount": "",
+    "itemCountNumber": null,
+    "keywords": [
+      "\"Tatlı İntikam\" \"Kanal D\" \"Furkan Andıç\" leyla \"Leyla Lydia Tuğutlu\"",
+      "Tatlı İntikam",
+      "Kanal D",
+      "Furkan Andıç",
+      "leyla",
+      "Leyla Lydia Tuğutlu"
+    ],
+    "kind": "channel",
+    "labels": [],
+    "language": "",
+    "languageCode": "fr",
+    "metadataLastChecked": "2026-10-30T09:25:59.699Z",
+    "metadataSources": {
+      "canonicalUrl": true,
+      "jsonLd": true,
+      "metaTags": true,
+      "ytInitialData": true
+    },
+    "name": "Tatlı İntikam - YouTube",
+    "notes": "",
+    "owner": "",
+    "ownerChannelId": "",
+    "playlistId": "",
+    "playlistItems": [],
+    "playlistTitles": [],
+    "privacy": "",
+    "publishedAt": "",
+    "recentVideoTitles": [],
+    "resourceType": "channel",
+    "sourceUrl": "https://www.youtube.com/c/tatliintikam",
+    "subscriberCount": "692K subscribers",
+    "subscriberCountNumber": 692000,
+    "tags": [
+      "\"Tatlı İntikam\" \"Kanal D\" \"Furkan Andıç\" leyla \"Leyla Lydia Tuğutlu\"",
+      "Tatlı İntikam",
+      "Kanal D",
+      "Furkan Andıç",
+      "leyla",
+      "Leyla Lydia Tuğutlu"
+    ],
+    "thumbnail": "https://yt3.googleusercontent.com/hYzCTPpjF2VqJpZWOz8i-srQ4aiJPW8Ds_tS4CnDbd19ugmjc-bwer6-cBn3ucw8swrcgKnjyQ=s900-c-k-c0x00ffffff-no-rj",
+    "thumbnailChecked": "2026-10-30T09:25:59.699Z",
+    "title": "Tatlı İntikam - YouTube",
+    "updatedAt": "2026-10-30T09:25:59.765Z",
+    "url": "https://www.youtube.com/c/tatliintikam",
+    "verificationLabels": [
+      "Verified"
+    ],
+    "verified": true,
+    "videoCount": "9,259 videos",
+    "videoCountNumber": 9259,
+    "videoTitles": [],
+    "viewCount": "",
+    "viewCountNumber": null
+  },
+  {
+    "banner": "",
     "canonicalUrl": "https://www.youtube.com/channel/UChot6JYwUI_YYcm5uLxCuzg",
     "category": "Türk dizisi",
     "categoryConfidence": 0.98,
